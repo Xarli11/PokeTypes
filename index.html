@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poketypes - Your Pokémon Type Guide</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        lightBg: '#F7F8FA',         // Main light background
+                        lightSurface: '#FFFFFF',     // Card and main element background
+                        lightTextPrimary: '#333333', // Dark primary text
+                        lightTextSecondary: '#666666',// Grey secondary text
+                        lightDivider: '#E0E0E0',    // Divider lines
+                        lightBorderNormal: '#CCCCCC',// Form element border
+
+                        pokemonPrimary: '#3B4CCA',   // Pokémon Blue (e.g., buttons, logo)
+                        pokemonSecondary: '#CC0000', // Pokémon Red (e.g., logo gradient)
+                        
+                        // Specific colors for each Pokémon type
+                        typeNormal: '#A8A77A',
+                        typeFire: '#FD7D24',
+                        typeWater: '#4592C4',
+                        typeGrass: '#9BCC50',
+                        typeElectric: '#F9D700',
+                        typeIce: '#51C4E7',
+                        typeFighting: '#D56723',
+                        typePoison: '#B97FC9',
+                        typeGround: '#F7DE3F',
+                        typeFlying: '#A1BBED',
+                        typePsychic: '#F366B9',
+                        typeBug: '#729F3F',
+                        typeRock: '#A38C21',
+                        typeLight: '#FCEEA1', // Custom 'Light' type
+                        typeGhost: '#7B62A4',
+                        typeDragon: '#53A4CF',
+                        typeSteel: '#9EB7B8',
+                        typeFairy: '#FDB9E9',
+                        typeDark: '#707070',
+
+                        // Text colors for contrast on type pills
+                        typeTextDark: '#333333', 
+                        typeTextLight: '#FFFFFF',
+
+                        // Vibrant colors for label text/border in detail cards
+                        effectivenessTextSuper: '#28A745', // Vibrant Green
+                        effectivenessTextResist: '#DC3545', // Vibrant Red
+                        effectivenessTextImmune: '#6C757D', // Dark Grey
+                    },
+                    boxShadow: {
+                        'light-card': '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.08)', 
+                        'light-hover': '0 4px 10px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.08)', 
+                        'light-inner': 'inset 0 1px 2px rgba(0,0,0,0.06)', 
+                        'light-focus': '0 0 0 3px rgba(59, 76, 202, 0.25)', 
+                        'bento': '0 2px 8px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05)', 
+                        'fade-right': '5px 0 10px -5px rgba(0,0,0,0.2) inset', 
+                        'card-hover-effect': '0 6px 12px rgba(0,0,0,0.12), 0 3px 6px rgba(0,0,0,0.08)', 
+                        'title-text': '0 5px 20px rgba(0, 100, 200, 0.6), 0 0 30px rgba(37, 117, 252, 0.6)', /* Increased shadow for "cool" effect */
+                        'selector-card': '0 8px 16px rgba(0,0,0,0.15), 0 4px 8px rgba(0,0,0,0.1)', 
+                        'bento-card-shadow': '0 4px 12px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.05)', 
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style type="text/css">
+        /* Styles for select (for custom arrow icon) */
+        select {
+            -webkit-appearance: none; 
+            -moz-appearance: none;    
+            appearance: none;         
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww%2Ew3%2Eorg%2F2000%2Fsvg%22%20viewBox%3D%220%200%20256%20512%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M64%20192L128%20256l64-64v-64h-128v64zM192%20320L128%20256l-64%2064v64h128v-64z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 1.25rem center;
+            background-size: 1.4rem;
+            transition: border-color 0.2s, box-shadow 0.2s; 
+        }
+        select:focus {
+            outline: none; 
+            box-shadow: theme('boxShadow.light-focus'); 
+            border-color: theme('colors.pokemonPrimary'); 
+        }
+
+        /* Styles for the type table */
+        #type-table-container {
+            overflow-x: auto;
+        }
+        #type-table-container table {
+            width: 100%;
+            min-width: 900px;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #fff;
+            border-radius: 1.25rem;
+            box-shadow: 0 6px 32px 0 rgba(59,76,202,0.10), 0 1.5px 4px 0 rgba(59,76,202,0.04);
+            border-radius: 1.25rem;
+            overflow: hidden;
+        }
+
+        #type-table-container th,
+        #type-table-container td {
+            padding: 0.85rem 1.1rem;
+            text-align: center;
+            font-size: 1.05rem;
+            border-bottom: 1.5px solid #e3e8f0;
+            border-right: 1.5px solid #e3e8f0;
+            transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+        }
+
+        #type-table-container th {
+            background: linear-gradient(90deg, #f7f8fa 70%, #eaf0ff 100%);
+            color: #3B4CCA;
+            font-weight: 800;
+            letter-spacing: 0.01em;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-top: none;
+        }
+
+        #type-table-container th:first-child,
+        #type-table-container td:first-child {
+            background: linear-gradient(90deg, #3B4CCA 80%, #6a11cb 100%);
+            color: #fff;
+            font-weight: 900;
+            font-size: 1.08rem;
+            position: sticky;
+            left: 0;
+            z-index: 30;
+            box-shadow: 2px 0 16px 0 rgba(59,76,202,0.10), 1px 0 0 0 #e3e8f0;
+            border-left: none;
+            background-clip: padding-box;
+        }
+
+        #type-table-container th:last-child {
+            border-top-right-radius: 1.25rem;
+        }
+
+        #type-table-container tr:last-child td:first-child {
+            border-bottom-left-radius: 1.25rem;
+        }
+
+        #type-table-container tr:last-child td:last-child {
+            border-bottom-right-radius: 1.25rem;
+        }
+
+        #type-table-container tr:last-child td,
+        #type-table-container tr:last-child th {
+            border-bottom: none;
+        }
+        #type-table-container tr td:last-child,
+        #type-table-container tr th:last-child {
+            border-right: none;
+        }
+
+        #type-table-container td {
+            background: #f9fafb;
+            color: #333;
+            font-weight: 500;
+        }
+
+        #type-table-container td:hover:not(:first-child),
+        #type-table-container th:hover:not(:first-child) {
+            background: #eaf0ff;
+            color: #2575fc;
+            box-shadow: 0 2px 12px 0 rgba(59,76,202,0.08);
+            cursor: pointer;
+            /* z-index: 30; */
+            /* position: relative; */
+        }
+
+        @media (max-width: 900px) {
+            #type-table-container table {
+                min-width: 700px;
+            }
+        }
+
+        /* Styles for the selector */
+        .selector-controls {
+            background-image: linear-gradient(135deg, theme('colors.pokemonPrimary') 0%, theme('colors.pokemonSecondary') 100%);
+            @apply p-8 rounded-2xl shadow-selector-card flex flex-col sm:flex-row items-center justify-center relative gap-x-12 gap-y-6; 
+            max-width: fit-content; 
+            margin: 0 auto; 
+            border: 2px solid theme('colors.lightDivider'); 
+        }
+        .selector-controls::before {
+            content: '';
+            @apply hidden sm:block absolute bg-white/50; 
+            height: 60%; 
+            width: 2px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            top: 20%; 
+        }
+        .selector-controls select {
+            @apply px-6 py-3 border-4 border-white rounded-xl shadow-lg text-lg font-semibold; 
+            min-width: 220px; 
+            background-position: right 1.5rem center; 
+            background-size: 1.6rem; 
+            color: theme('colors.pokemonPrimary'); 
+            flex-grow: 1; 
+            background-color: white; 
+            z-index: 10; 
+        }
+        .selector-controls button {
+            @apply px-8 py-3 text-lg font-bold rounded-xl shadow-lg text-white bg-pokemonSecondary hover:bg-pokemonSecondary/90 focus:ring-4 focus:ring-white/50 transition-all duration-200; 
+            flex-grow: 1; 
+            z-index: 10;
+        }
+        @media (max-width: 639px) { 
+            .selector-controls select,
+            .selector-controls button {
+                margin-left: 0;
+                margin-right: 0;
+            }
+        }
+
+
+        /* --- STYLES FOR EFFECTIVENESS CARDS (DETAILS SECTION) --- */
+        .effectiveness-card {
+            background: var(--card-bg, #f8fafc);
+            border-radius: 1rem;
+            box-shadow: 0 2px 12px 0 rgba(0,0,0,0.04);
+            padding: 1.25rem 1rem;
+            margin-bottom: 1.25rem;
+            border: 2px solid transparent;
+            transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
+            min-height: 80px;
+        }
+        .effectiveness-card.card-super, .effectiveness-card.card-offense-super {
+            --card-bg: #e6f9ed;
+            border-color: #28a745;
+        }
+        .effectiveness-card.card-resist, .effectiveness-card.card-offense-resist {
+            --card-bg: #fbeaea;
+            border-color: #dc3545;
+        }
+        .effectiveness-card.card-immune {
+            --card-bg: #f3f4f6;
+            border-color: #a1a1aa;
+        }
+        .effectiveness-card:hover {
+            box-shadow: 0 4px 24px 0 rgba(56,189,248,0.12);
+            border-color: #6366f1;
+            background: #f0f9ff;
+        }
+        .effectiveness-card .label-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.75rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .effectiveness-card .label-icon {
+            width: 1.4em;
+            height: 1.4em;
+            margin-right: 0.5em;
+        }
+        .type-pills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5em;
+            justify-content: center;
+            align-items: center;
+            min-height: 2.5em;
+        }
+        
+        /* Colors for the entire label-group (icon + text) and its border */
+        .text-super-color { color: theme('colors.effectivenessTextSuper'); border-color: theme('colors.effectivenessTextSuper'); }
+        .text-resist-color { color: theme('colors.effectivenessTextResist'); border-color: theme('colors.effectivenessTextResist'); }
+        .text-immune-color { color: theme('colors.effectivenessTextImmune'); border-color: theme('colors.effectivenessTextImmune'); }
+
+
+        /* --- STYLES FOR THE TITLE --- */
+        .stylish-title {
+            background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%); /* More vibrant gradient */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent; /* Fallback for browsers that don't support text-fill-color */
+            font-weight: 900; 
+            font-size: 3.5rem; 
+            text-shadow: 0 5px 20px rgba(106, 17, 203, 0.6), 0 0 30px rgba(37, 117, 252, 0.6); /* More intense shadow */
+            letter-spacing: -0.05em; 
+            line-height: 1; 
+            text-align: center; /* Ensure it's centered */
+        }
+
+        .fancy-title {
+            background: linear-gradient(90deg, #6a11cb 0%, #2575fc 40%, #f7971e 80%, #ffd200 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+            font-weight: 900;
+            font-size: 3.5rem;
+            letter-spacing: -0.05em;
+            line-height: 1;
+            text-align: center;
+            text-shadow:
+                0 5px 20px rgba(106, 17, 203, 0.6),
+                0 0 30px rgba(37, 117, 252, 0.6),
+                0 2px 8px #ffd20066;
+            transition: background-position 1s;
+            animation: gradient-move 3s ease-in-out infinite alternate;
+            padding-right: 0.25em; /* Añade espacio a la derecha para evitar corte */
+            overflow: visible;     /* Asegura que no se corte el texto */
+            display: inline-block; /* Evita recortes por flexbox */
+        }
+
+        @keyframes gradient-move {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+
+        /* --- REST OF STYLES --- */
+        .type-pill {
+            @apply px-2.5 py-1 rounded-full font-semibold text-xs inline-flex items-center justify-center capitalize transition-all duration-200;
+            min-width: 50px;
+        }
+        .pokeball-icon {
+            @apply w-10 h-10 mr-3; 
+            color: theme('colors.pokemonPrimary'); 
+        }
+
+        /* Classes for type pill background colors */
+        .bg-type-normal { @apply bg-typeNormal; }
+        .bg-type-fire { @apply bg-typeFire; }
+        .bg-type-water { @apply bg-typeWater; }
+        .bg-type-grass { @apply bg-typeGrass; }
+        .bg-type-electric { @apply bg-typeElectric; }
+        .bg-type-ice { @apply bg-typeIce; }
+        .bg-type-fighting { @apply bg-typeFighting; }
+        .bg-type-poison { @apply bg-typePoison; }
+        .bg-type-ground { @apply bg-typeGround; }
+        .bg-type-flying { @apply bg-typeFlying; }
+        .bg-type-psychic { @apply bg-typePsychic; }
+        .bg-type-bug { @apply bg-typeBug; }
+        .bg-type-rock { @apply bg-typeRock; }
+        .bg-type-light { @apply bg-typeLight; } 
+        .bg-type-ghost { @apply bg-typeGhost; }
+        .bg-type-dragon { @apply bg-typeDragon; }
+        .bg-type-steel { @apply bg-typeSteel; }
+        .bg-type-fairy { @apply bg-typeFairy; }
+        .bg-type-dark { @apply bg-typeDark; }
+
+        /* Classes for type pill text color (for contrast) */
+        .type-text-dark { @apply text-typeTextDark; } 
+        .type-text-light { @apply text-typeTextLight; } 
+
+        /* Remove background image from the type select */
+        select#type-select {
+            background-image: none !important; /* Quita cualquier icono de fondo */
+        }
+    </style>
+</head>
+<body class="bg-lightBg text-lightTextPrimary font-sans flex flex-col min-h-screen">
+    <header class="bg-lightSurface p-6 shadow-light-card border-b border-lightDivider flex flex-col items-center justify-center">
+        <div class="flex flex-col items-center mb-4">
+            <div class="flex items-center mb-2">
+                <svg class="pokeball-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="14.31" y1="14.31" x2="20.07" y2="20.07"></line>
+                    <line x1="9.69" y1="9.69" x2="3.93" y2="3.93"></line>
+                    <line x1="14.31" y1="9.69" x2="20.07" y2="3.93"></line>
+                    <line x1="9.69" y1="14.31" x2="3.93" y2="20.07"></line>
+                    <circle cx="12" cy="12" r="4"></circle>
+                </svg>
+                <h1 class="stylish-title leading-tight fancy-title">Poketypes</h1>
+            </div>
+            <p class="text-lightTextSecondary text-center max-w-2xl text-lg mt-2">
+                Explore the Pokémon type effectiveness chart. Select a type to see a detailed breakdown of its offensive and defensive interactions.
+            </p>
+        </div>
+        <div class="selector-controls flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 mt-4 mb-8">
+            <select id="type-select"
+                class="block w-full sm:w-64 px-6 py-3 rounded-xl border-2 border-pokemonPrimary bg-white text-lg font-semibold text-pokemonPrimary shadow-lg focus:ring-4 focus:ring-pokemonPrimary/20 focus:border-pokemonPrimary transition-all duration-200 outline-none hover:border-pokemonSecondary hover:ring-pokemonSecondary/20">
+                <option value="">Select a type...</option>
+            </select>
+            <button id="reset-button"
+                class="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-pokemonSecondary to-pokemonPrimary text-white font-bold text-lg shadow-lg hover:from-pokemonPrimary hover:to-pokemonSecondary transition-all duration-200 focus:ring-4 focus:ring-pokemonPrimary/30">
+                Reset
+            </button>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8 flex-grow">
+        <section id="type-details" class="bg-lightSurface p-6 rounded-lg shadow-light-card mb-8 hidden">
+            <h2 class="text-2xl font-semibold text-lightTextPrimary mb-6 flex flex-col items-center sm:flex-row sm:justify-center">
+                Type Details: <span id="selected-type-name" class="type-pill mt-2 sm:mt-0 sm:ml-3"></span>
+            </h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-lightBg p-6 rounded-lg shadow-bento-card text-center sm:text-left">
+                    <h3 class="text-xl font-bold text-lightTextPrimary mb-4 border-b-2 border-pokemonPrimary pb-2 flex items-center justify-center sm:justify-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-pokemonPrimary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.007 12.007 0 002 12c0 2.83 1.044 5.485 2.884 7.514A12.007 12.007 0 0012 22c2.83 0 5.485-1.044 7.514-2.884A12.007 12.007 0 0022 12c0-2.83-1.044-5.485-2.884-7.514z" />
+                        </svg>
+                        Defense (When Attacked)
+                    </h3>
+                    <div id="weaknesses" class="effectiveness-card card-super"></div>
+                    <div id="resistances" class="effectiveness-card card-resist"></div>
+                    <div id="immunities" class="effectiveness-card card-immune"></div>
+                </div>
+
+                <div class="bg-lightBg p-6 rounded-lg shadow-bento-card text-center sm:text-left">
+                    <h3 class="text-xl font-bold text-lightTextPrimary mb-4 border-b-2 border-pokemonPrimary pb-2 flex items-center justify-center sm:justify-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-pokemonPrimary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Offense (When Attacking)
+                    </h3>
+                    <div id="super-effective" class="effectiveness-card card-super"></div>
+                    <div id="not-very-effective" class="effectiveness-card card-resist"></div>
+                    <div id="no-effect" class="effectiveness-card card-immune"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-lightBg p-4 md:p-6 rounded-lg shadow-inner shadow-gray-100 overflow-x-auto text-center">
+            <h2 class="text-2xl font-semibold text-lightTextPrimary mb-4">Type Effectiveness Chart</h2>
+            <p class="text-lightTextSecondary text-sm mb-2 block md:hidden">Scroll sideways to see the full chart ⟶</p>
+            <div id="type-table-container" style="overflow-x:auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Attacker/Defender</th>
+                    <th>Water</th>
+                    ...
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Normal</td>
+                    <td>1x</td>
+                    ...
+                  </tr>
+                  ...
+                </tbody>
+              </table>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-lightSurface text-lightTextSecondary text-center p-5 mt-auto border-t border-lightDivider shadow-inner shadow-gray-100">
+        <p>&copy; 2025 Poketypes. Created for Pokémon fans. Data based on 8th generation.</p>
+    </footer>
+
+    <script src="script.js"></script> 
+</body>
+</html>
