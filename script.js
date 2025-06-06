@@ -237,8 +237,10 @@ function displayTypeDetails(type1, type2) {
 
     typeDetailsDiv.style.display = 'block';
     let typeLabel = type1 || '';
-    if (type2) typeLabel += ` / ${type2}`;
-    selectedTypeNameSpan.textContent = typeLabel;
+    if (type2) typeLabel += ` + ${type2}`;
+    selectedTypeNameSpan.innerHTML = typeLabel
+        ? typeLabel.split(' + ').map(createTypePill).join('<span class="mx-1 font-bold text-lg text-lightTextPrimary"> + </span>')
+        : '';
 
     // Defensive calculation
     const weaknesses = [];
