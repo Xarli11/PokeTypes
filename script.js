@@ -202,21 +202,27 @@ function generateTypeTable() {
     tableContainer.innerHTML = tableHTML;
 }
 
-function populateTypeSelect() {
+function populateTypeSelects() {
     const typeSelect = document.getElementById('type-select');
-    typeSelect.innerHTML = '<option value="">Select a type...</option>'; // Translated
+    const type2Select = document.getElementById('type2-select');
+    typeSelect.innerHTML = '<option value="">Select a type...</option>';
+    type2Select.innerHTML = '<option value="">Select a second type...</option>';
     POKEMON_TYPES.forEach(type => {
-        const option = document.createElement('option');
-        option.value = type;
-        option.textContent = type;
-        typeSelect.appendChild(option);
+        const option1 = document.createElement('option');
+        option1.value = type;
+        option1.textContent = type;
+        typeSelect.appendChild(option1);
+
+        const option2 = document.createElement('option');
+        option2.value = type;
+        option2.textContent = type;
+        type2Select.appendChild(option2);
     });
 }
 
-function displayTypeDetails(selectedType) {
+function displayTypeDetails(type1, type2) {
     const typeDetailsDiv = document.getElementById('type-details');
     const selectedTypeNameSpan = document.getElementById('selected-type-name');
-    
     const weaknessesCard = document.getElementById('weaknesses');
     const resistancesCard = document.getElementById('resistances');
     const immunitiesCard = document.getElementById('immunities');
@@ -224,38 +230,45 @@ function displayTypeDetails(selectedType) {
     const notVeryEffectiveCard = document.getElementById('not-very-effective');
     const noEffectCard = document.getElementById('no-effect');
 
-    if (!selectedType) {
+    if (!type1 && !type2) {
         typeDetailsDiv.style.display = 'none';
         return;
     }
 
     typeDetailsDiv.style.display = 'block';
-    selectedTypeNameSpan.textContent = selectedType;
-    const selectedTypeTextClass = TYPE_COLOR_CONTRAST[selectedType] === 'dark' ? 'type-text-dark' : 'type-text-light';
-    // Adjusted class for centering on small screens, left-aligned on larger
-    selectedTypeNameSpan.className = `type-pill bg-type-${selectedType.toLowerCase()} mt-2 sm:mt-0 sm:ml-3 ${selectedTypeTextClass}`;
+    let typeLabel = type1 || '';
+    if (type2) typeLabel += ` / ${type2}`;
+    selectedTypeNameSpan.textContent = typeLabel;
 
-    const weaknesses = []; 
-    const resistances = []; 
-    const immunities = []; 
+    // Defensive calculation
+    const weaknesses = [];
+    const resistances = [];
+    const immunities = [];
 
-    const superEffective = []; 
-    const notVeryEffective = []; 
-    const noEffect = []; 
+    // Offensive calculation
+    const superEffective = [];
+    const notVeryEffective = [];
+    const noEffect = [];
 
+    // Defensive: how much damage does the Pokémon take from each type?
     POKEMON_TYPES.forEach(attackingType => {
-        const modifier = getEffectiveness(attackingType, selectedType);
-        if (modifier === 2) {
+        let modifier = getEffectiveness(attackingType, type1);
+        if (type2) modifier *= getEffectiveness(attackingType, type2);
+
+        if (modifier === 2 || modifier === 4) {
             weaknesses.push(attackingType);
-        } else if (modifier === 0.5) {
+        } else if (modifier === 0.5 || modifier === 0.25) {
             resistances.push(attackingType);
         } else if (modifier === 0) {
             immunities.push(attackingType);
         }
     });
 
+    // Offensive: how much damage does the Pokémon deal to each type?
     POKEMON_TYPES.forEach(defendingType => {
-        const modifier = getEffectiveness(selectedType, defendingType);
+        let modifier = getEffectiveness(type1, defendingType);
+        if (type2) modifier = Math.max(modifier, getEffectiveness(type2, defendingType));
+
         if (modifier === 2) {
             superEffective.push(defendingType);
         } else if (modifier === 0.5) {
@@ -265,7 +278,6 @@ function displayTypeDetails(selectedType) {
         }
     });
 
-    // Function to render the content of an effectiveness card with integrated icon and text styling
     function renderEffectivenessCard(cardElement, labelText, typeList, noContentText, iconType, textColorClass) {
         let contentHTML = `
             <div class="label-group ${textColorClass}"> ${getEffectivenessIcon(iconType)} <span class="label-text">${labelText}</span> 
@@ -281,9 +293,8 @@ function displayTypeDetails(selectedType) {
         cardElement.innerHTML = contentHTML;
     }
 
-    // Update the function calls with English text
     renderEffectivenessCard(weaknessesCard, 'Weak to (2x)', weaknesses, 'None', 'super', 'text-super-color'); 
-    renderEffectivenessCard(resistancesCard, 'Resists (0.5x)', resistances, 'None', 'resist', 'text-resist-color'); 
+    renderEffectivenessCard(resistancesCard, 'Resists (0.5x or less)', resistances, 'None', 'resist', 'text-resist-color'); 
     renderEffectivenessCard(immunitiesCard, 'Immune to (0x)', immunities, 'None', 'immune', 'text-immune-color'); 
 
     renderEffectivenessCard(superEffectiveCard, 'Very Effective (2x)', superEffective, 'None', 'super', 'text-super-color'); 
@@ -293,16 +304,22 @@ function displayTypeDetails(selectedType) {
 
 document.addEventListener('DOMContentLoaded', () => {
     generateTypeTable();
-    populateTypeSelect();
+    populateTypeSelects();
 
     const typeSelect = document.getElementById('type-select');
-    typeSelect.addEventListener('change', (event) => {
-        displayTypeDetails(event.target.value);
-    });
-
+    const type2Select = document.getElementById('type2-select');
     const resetButton = document.getElementById('reset-button');
+
+    function updateDetails() {
+        displayTypeDetails(typeSelect.value, type2Select.value);
+    }
+
+    typeSelect.addEventListener('change', updateDetails);
+    type2Select.addEventListener('change', updateDetails);
+
     resetButton.addEventListener('click', () => {
         typeSelect.value = '';
-        displayTypeDetails('');
+        type2Select.value = '';
+        displayTypeDetails('', '');
     });
 });
