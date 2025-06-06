@@ -3,7 +3,7 @@
 // Definition of all Pokémon types in the desired order for the table
 const POKEMON_TYPES = [
     'Normal', 'Fire', 'Water', 'Grass', 'Electric', 'Ice', 'Fighting',
-    'Poison', 'Ground', 'Flying', 'Psychic', 'Bug', 'Rock', 'Light', 
+    'Poison', 'Ground', 'Flying', 'Psychic', 'Bug', 'Rock', 'Light',
     'Ghost', 'Dragon', 'Steel', 'Fairy', 'Dark'
 ];
 
@@ -60,9 +60,9 @@ const TYPE_EFFECTIVENESS = {
         Fire: 2, Ice: 2, Flying: 2, Bug: 2,
         Fighting: 0.5, Ground: 0.5, Steel: 0.5
     },
-    Light: { 
-        Dark: 2, Ghost: 2, 
-        Fighting: 0.5, Rock: 0.5, 
+    Light: {
+        Dark: 2, Ghost: 2,
+        Fighting: 0.5, Rock: 0.5,
         Poison: 0, Steel: 0.5,
     },
     Ghost: {
@@ -88,8 +88,8 @@ const TYPE_EFFECTIVENESS = {
 };
 
 const TYPE_COLOR_CONTRAST = {
-    Normal: 'dark', 
-    Fire: 'light',  
+    Normal: 'dark',
+    Fire: 'light',
     Water: 'light',
     Grass: 'light',
     Electric: 'dark',
@@ -97,7 +97,7 @@ const TYPE_COLOR_CONTRAST = {
     Fighting: 'light',
     Poison: 'light',
     Ground: 'dark',
-    Flying: 'dark', 
+    Flying: 'dark',
     Psychic: 'light',
     Bug: 'light',
     Rock: 'light',
@@ -105,7 +105,7 @@ const TYPE_COLOR_CONTRAST = {
     Ghost: 'light',
     Dragon: 'light',
     Steel: 'dark',
-    Fairy: 'dark',  
+    Fairy: 'dark',
     Dark: 'light'
 };
 
@@ -171,7 +171,7 @@ function generateTypeTable() {
     POKEMON_TYPES.forEach(attackingType => {
         const textColorClass = TYPE_COLOR_CONTRAST[attackingType] === 'dark' ? 'type-text-dark' : 'type-text-light';
         tableHTML += '<tr>';
-        
+
         // First column (attacking type)
         tableHTML += `<td class="sticky left-0 z-10 font-semibold bg-type-${attackingType.toLowerCase()} ${textColorClass}">
                         ${attackingType}
@@ -192,7 +192,7 @@ function generateTypeTable() {
                 cellClass = 'interaction-0x';
                 cellText = '0x';
             }
-            
+
             tableHTML += `<td class="${cellClass}">${cellText}</td>`;
         });
         tableHTML += '</tr>';
@@ -237,10 +237,18 @@ function displayTypeDetails(type1, type2) {
 
     typeDetailsDiv.style.display = 'block';
     let typeLabel = type1 || '';
-    if (type2) typeLabel += ` + ${type2}`;
-    selectedTypeNameSpan.innerHTML = typeLabel
-        ? typeLabel.split(' + ').map(createTypePill).join('<span class="mx-1 font-bold text-lg text-lightTextPrimary"> + </span>')
-        : '';
+    if (type1 && type2) {
+        selectedTypeNameSpan.innerHTML =
+            createTypePill(type1) +
+            '<span class="mx-1 font-bold text-lg text-lightTextPrimary">+</span>' +
+            createTypePill(type2);
+    } else if (type1) {
+        selectedTypeNameSpan.innerHTML = createTypePill(type1);
+    } else if (type2) {
+        selectedTypeNameSpan.innerHTML = createTypePill(type2);
+    } else {
+        selectedTypeNameSpan.innerHTML = '';
+    }
 
     // Defensive calculation
     const weaknesses = [];
@@ -287,21 +295,21 @@ function displayTypeDetails(type1, type2) {
             <div class="type-pills-container">
         `;
         if (typeList.length) {
-            contentHTML += typeList.map(createTypePill).join(''); 
+            contentHTML += typeList.map(createTypePill).join('');
         } else {
             contentHTML += `<span class="text-lightTextSecondary text-sm">${noContentText}</span>`;
         }
-        contentHTML += `</div>`; 
+        contentHTML += `</div>`;
         cardElement.innerHTML = contentHTML;
     }
 
-    renderEffectivenessCard(weaknessesCard, 'Weak to (2x)', weaknesses, 'None', 'super', 'text-super-color'); 
-    renderEffectivenessCard(resistancesCard, 'Resists (0.5x or less)', resistances, 'None', 'resist', 'text-resist-color'); 
-    renderEffectivenessCard(immunitiesCard, 'Immune to (0x)', immunities, 'None', 'immune', 'text-immune-color'); 
+    renderEffectivenessCard(weaknessesCard, 'Weak to (2x)', weaknesses, 'None', 'super', 'text-super-color');
+    renderEffectivenessCard(resistancesCard, 'Resists (0.5x or less)', resistances, 'None', 'resist', 'text-resist-color');
+    renderEffectivenessCard(immunitiesCard, 'Immune to (0x)', immunities, 'None', 'immune', 'text-immune-color');
 
-    renderEffectivenessCard(superEffectiveCard, 'Very Effective (2x)', superEffective, 'None', 'super', 'text-super-color'); 
-    renderEffectivenessCard(notVeryEffectiveCard, 'Not Very Effective (0.5x)', notVeryEffective, 'None', 'resist', 'text-resist-color'); 
-    renderEffectivenessCard(noEffectCard, 'No Effect (0x)', noEffect, 'None', 'immune', 'text-immune-color'); 
+    renderEffectivenessCard(superEffectiveCard, 'Very Effective (2x)', superEffective, 'None', 'super', 'text-super-color');
+    renderEffectivenessCard(notVeryEffectiveCard, 'Not Very Effective (0.5x)', notVeryEffective, 'None', 'resist', 'text-resist-color');
+    renderEffectivenessCard(noEffectCard, 'No Effect (0x)', noEffect, 'None', 'immune', 'text-immune-color');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
