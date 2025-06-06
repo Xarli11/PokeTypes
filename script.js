@@ -261,12 +261,16 @@ function displayTypeDetails(type1, type2) {
     const noEffect = [];
 
     // Defensive: how much damage does the Pokémon take from each type?
+    const weaknesses4x = [];
+    const weaknesses2x = [];
     POKEMON_TYPES.forEach(attackingType => {
         let modifier = getEffectiveness(attackingType, type1);
         if (type2) modifier *= getEffectiveness(attackingType, type2);
 
-        if (modifier === 2 || modifier === 4) {
-            weaknesses.push(attackingType);
+        if (modifier === 4) {
+            weaknesses4x.push(attackingType);
+        } else if (modifier === 2) {
+            weaknesses2x.push(attackingType);
         } else if (modifier === 0.5 || modifier === 0.25) {
             resistances.push(attackingType);
         } else if (modifier === 0) {
@@ -275,12 +279,16 @@ function displayTypeDetails(type1, type2) {
     });
 
     // Offensive: how much damage does the Pokémon deal to each type?
+    const superEffective4x = [];
+    const superEffective2x = [];
     POKEMON_TYPES.forEach(defendingType => {
         let modifier = getEffectiveness(type1, defendingType);
         if (type2) modifier = Math.max(modifier, getEffectiveness(type2, defendingType));
 
-        if (modifier === 2) {
-            superEffective.push(defendingType);
+        if (modifier === 4) {
+            superEffective4x.push(defendingType);
+        } else if (modifier === 2) {
+            superEffective2x.push(defendingType);
         } else if (modifier === 0.5) {
             notVeryEffective.push(defendingType);
         } else if (modifier === 0) {
@@ -303,11 +311,37 @@ function displayTypeDetails(type1, type2) {
         cardElement.innerHTML = contentHTML;
     }
 
-    renderEffectivenessCard(weaknessesCard, 'Weak to (2x)', weaknesses, 'None', 'super', 'text-super-color');
+    // Nueva función para renderizar x4 y x2 en la misma tarjeta
+    function renderSplitEffectivenessCard(cardElement, labelText, x4List, x2List, noContentText, iconType, textColorClass) {
+        let contentHTML = `
+            <div class="label-group ${textColorClass}"> ${getEffectivenessIcon(iconType)} <span class="label-text">${labelText}</span> 
+            </div>
+            <div class="type-pills-container" style="flex-direction:column;align-items:flex-start;">
+        `;
+        if (x4List.length) {
+            contentHTML += `<div style="margin-bottom:0.5em"><span class="font-bold" style="color:#e53935;background:#fdecea;padding:0.15em 0.8em;border-radius:999px;margin-right:0.7em;">x4</span>`;
+            contentHTML += x4List.map(createTypePill).join('');
+            contentHTML += `</div>`;
+        }
+        if (x2List.length) {
+            contentHTML += `<div><span class="font-bold" style="color:#fb8c00;background:#fff3e0;padding:0.15em 0.8em;border-radius:999px;margin-right:0.7em;">x2</span>`;
+            contentHTML += x2List.map(createTypePill).join('');
+            contentHTML += `</div>`;
+        }
+        if (!x4List.length && !x2List.length) {
+            contentHTML += `<span class="text-lightTextSecondary text-sm">${noContentText}</span>`;
+        }
+        contentHTML += `</div>`;
+        cardElement.innerHTML = contentHTML;
+    }
+
+    // Usar la nueva función para Weaknesses y Very Effective
+    renderSplitEffectivenessCard(weaknessesCard, 'Weak to', weaknesses4x, weaknesses2x, 'None', 'super', 'text-super-color');
+    renderSplitEffectivenessCard(superEffectiveCard, 'Very Effective', superEffective4x, superEffective2x, 'None', 'super', 'text-super-color');
+
+    // El resto igual:
     renderEffectivenessCard(resistancesCard, 'Resists (0.5x or less)', resistances, 'None', 'resist', 'text-resist-color');
     renderEffectivenessCard(immunitiesCard, 'Immune to (0x)', immunities, 'None', 'immune', 'text-immune-color');
-
-    renderEffectivenessCard(superEffectiveCard, 'Very Effective (2x)', superEffective, 'None', 'super', 'text-super-color');
     renderEffectivenessCard(notVeryEffectiveCard, 'Not Very Effective (0.5x)', notVeryEffective, 'None', 'resist', 'text-resist-color');
     renderEffectivenessCard(noEffectCard, 'No Effect (0x)', noEffect, 'None', 'immune', 'text-immune-color');
 }
