@@ -19,7 +19,7 @@
 1. **Clona el repositorio:**
    ```bash
    git clone https://github.com/tuusuario/poketypes.git
-   cd poketypes
+   cd PokeTypes
    ```
 2. **Abre `index.html` en tu navegador favorito.**
 3. **¡Explora los tipos Pokémon!**
