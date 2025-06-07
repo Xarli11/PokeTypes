@@ -92,7 +92,15 @@
                 Explore the Pokémon type effectiveness chart. Select a type to see a detailed breakdown of its offensive and defensive interactions.
             </p>
         </div>
-        <div class="selector-controls flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 mt-4 mb-8">
+        <!-- NUEVO: Selector de Pokémon arriba de los selectores de tipo -->
+        <div class="w-full flex justify-center mb-4">
+            <select id="pokemon-select"
+                class="block w-full sm:w-80 px-6 py-3 rounded-xl border-2 border-pokemonPrimary bg-white text-lg font-semibold text-pokemonPrimary shadow-lg focus:ring-4 focus:ring-pokemonPrimary/20 focus:border-pokemonPrimary transition-all duration-200 outline-none hover:border-pokemonSecondary hover:ring-pokemonSecondary/20"
+                style="max-width: 350px;">
+                <option value="">Selecciona un Pokémon...</option>
+            </select>
+        </div>
+        <div class="selector-controls flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 mt-2 mb-8">
             <select id="type-select"
                 class="block w-full sm:w-64 px-6 py-3 rounded-xl border-2 border-pokemonPrimary bg-white text-lg font-semibold text-pokemonPrimary shadow-lg focus:ring-4 focus:ring-pokemonPrimary/20 focus:border-pokemonPrimary transition-all duration-200 outline-none hover:border-pokemonSecondary hover:ring-pokemonSecondary/20">
                 <option value="">Select a type...</option>
@@ -170,6 +178,7 @@
         <p>&copy; 2025 Poketypes. Created for Pokémon fans. Data based on 8th generation.</p>
     </footer>
 
-    <script src="script.js"></script> 
+    <script src="data/pokemonList.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
