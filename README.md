@@ -40,12 +40,6 @@
 
 ---
 
-## 📄 Licencia
-
-Este proyecto está licenciado bajo la [GNU GPL v3](LICENSE).
-
----
-
 ## ❤️ Créditos
 
 - Inspirado por [Pokémon](https://www.pokemon.com/) y la comunidad de fans.
