@@ -120,7 +120,7 @@ function capitalizeWords(str) {
 
 function populatePokemonSelect() {
     const pokemonSelect = document.getElementById('pokemon-select');
-    pokemonSelect.innerHTML = '<option value="">Selecciona un Pokémon...</option>';
+    pokemonSelect.innerHTML = '<option value="">Select a Pokemon ...</option>';
     POKEMON_LIST.forEach(pokemon => {
         const option = document.createElement('option');
         option.value = pokemon.name;
