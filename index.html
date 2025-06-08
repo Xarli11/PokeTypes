@@ -93,12 +93,15 @@
             </p>
         </div>
         <!-- NUEVO: Selector de Pokémon arriba de los selectores de tipo -->
-        <div class="w-full flex justify-center mb-4">
-            <select id="pokemon-select"
-                class="block w-full sm:w-80 px-6 py-3 rounded-xl border-2 border-pokemonPrimary bg-white text-lg font-semibold text-pokemonPrimary shadow-lg focus:ring-4 focus:ring-pokemonPrimary/20 focus:border-pokemonPrimary transition-all duration-200 outline-none hover:border-pokemonSecondary hover:ring-pokemonSecondary/20"
-                style="max-width: 350px;">
-                <option value="">Select a Pokemon...</option>
-            </select>
+        <div class="w-full flex justify-center mb-4 relative">
+            <input id="pokemon-search" 
+                   type="text" 
+                   placeholder="Search for a Pokémon..." 
+                   class="block w-full sm:w-80 px-6 py-3 rounded-xl border-2 border-pokemonPrimary bg-white text-lg font-semibold text-pokemonPrimary shadow-lg focus:ring-4 focus:ring-pokemonPrimary/20 focus:border-pokemonPrimary transition-all duration-200 outline-none hover:border-pokemonSecondary hover:ring-pokemonSecondary/20"
+                   style="max-width: 350px;">
+            <ul id="suggestions" 
+                class="absolute top-full left-0 w-full sm:w-80 bg-white border border-lightDivider rounded-lg shadow-lg z-10 hidden">
+            </ul>
         </div>
         <div class="selector-controls flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 mt-2 mb-8">
             <select id="type-select"
