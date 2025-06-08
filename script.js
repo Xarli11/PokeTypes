@@ -118,16 +118,7 @@ function capitalizeWords(str) {
         .join(' ');
 }
 
-function populatePokemonSelect() {
-    const pokemonSelect = document.getElementById('pokemon-select');
-    pokemonSelect.innerHTML = '<option value="">Select a Pokemon ...</option>';
-    POKEMON_LIST.forEach(pokemon => {
-        const option = document.createElement('option');
-        option.value = pokemon.name;
-        option.textContent = capitalizeWords(pokemon.name);
-        pokemonSelect.appendChild(option);
-    });
-}
+
 
 function displayTypeDetails(type1, type2) {
     const typeDetailsDiv = document.getElementById('type-details');
@@ -369,11 +360,10 @@ function clearPokemonDetails() {
 document.addEventListener('DOMContentLoaded', () => {
     generateTypeTable();
     populateTypeSelects();
-    populatePokemonSelect(); // <-- Agrega esto
 
     const typeSelect = document.getElementById('type-select');
     const type2Select = document.getElementById('type2-select');
-    const pokemonSelect = document.getElementById('pokemon-select'); // <-- Agrega esto
+    const pokemonSearch = document.getElementById('pokemon-search');
     const resetButton = document.getElementById('reset-button');
 
     function updateDetails() {
@@ -383,36 +373,24 @@ document.addEventListener('DOMContentLoaded', () => {
     typeSelect.addEventListener('change', updateDetails);
     type2Select.addEventListener('change', updateDetails);
 
-    pokemonSelect.addEventListener('change', () => {
-        const selected = POKEMON_LIST.find(p => p.name === pokemonSelect.value);
-        if (selected) {
-            typeSelect.value = selected.types[0] || '';
-            type2Select.value = selected.types[1] || '';
-        } else {
-            typeSelect.value = '';
-            type2Select.value = '';
-        }
-        updateDetails();
-    });
-
     resetButton.addEventListener('click', () => {
         typeSelect.value = '';
         type2Select.value = '';
-        pokemonSelect.value = '';
+        pokemonSearch.value = '';
         displayTypeDetails('', '');
     });
 
     document.getElementById('type-select').addEventListener('change', function() {
-        const pokemonSelect = document.getElementById('pokemon-select');
-        if (pokemonSelect.value) {
-            pokemonSelect.value = "";
+        const searchInput = document.getElementById('pokemon-search');
+        if (searchInput.value) {
+            searchInput.value = "";
         }
     });
 
     document.getElementById('type2-select').addEventListener('change', function() {
-        const pokemonSelect = document.getElementById('pokemon-select');
-        if (pokemonSelect.value) {
-            pokemonSelect.value = "";
+        const searchInput = document.getElementById('pokemon-search');
+        if (searchInput.value) {
+            searchInput.value = "";
         }
     });
 });
