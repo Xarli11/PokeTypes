@@ -19,7 +19,7 @@
 1. **Clona el repositorio:**
    ```bash
    git clone https://github.com/tuusuario/poketypes.git
-   cd poketypes
+   cd PokeTypes
    ```
 2. **Abre `index.html` en tu navegador favorito.**
 3. **¡Explora los tipos Pokémon!**
@@ -37,12 +37,6 @@
 - HTML5 + CSS3 (Tailwind + custom)
 - JavaScript puro
 - Sin dependencias externas (excepto Tailwind CDN)
-
----
-
-## 📄 Licencia
-
-Este proyecto está licenciado bajo la [GNU GPL v3](LICENSE).
 
 ---
 

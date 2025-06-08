@@ -1,115 +1,5 @@
 // script.js
 
-// Definition of all Pokémon types in the desired order for the table
-const POKEMON_TYPES = [
-    'Normal', 'Fire', 'Water', 'Grass', 'Electric', 'Ice', 'Fighting',
-    'Poison', 'Ground', 'Flying', 'Psychic', 'Bug', 'Rock', 'Light',
-    'Ghost', 'Dragon', 'Steel', 'Fairy', 'Dark'
-];
-
-// Type interaction data
-const TYPE_EFFECTIVENESS = {
-    Normal: {
-        Rock: 0.5, Ghost: 0
-    },
-    Fire: {
-        Grass: 2, Ice: 2, Bug: 2, Steel: 2,
-        Fire: 0.5, Water: 0.5, Rock: 0.5, Dragon: 0.5
-    },
-    Water: {
-        Fire: 2, Ground: 2, Rock: 2,
-        Water: 0.5, Grass: 0.5, Dragon: 0.5
-    },
-    Grass: {
-        Water: 2, Ground: 2, Rock: 2,
-        Fire: 0.5, Grass: 0.5, Poison: 0.5, Flying: 0.5, Bug: 0.5, Dragon: 0.5, Steel: 0.5
-    },
-    Electric: {
-        Water: 2, Flying: 2,
-        Grass: 0.5, Electric: 0.5, Dragon: 0.5, Ground: 0
-    },
-    Ice: {
-        Grass: 2, Ground: 2, Flying: 2, Dragon: 2,
-        Fire: 0.5, Water: 0.5, Ice: 0.5, Steel: 0.5
-    },
-    Fighting: {
-        Normal: 2, Ice: 2, Rock: 2, Dark: 2, Steel: 2,
-        Poison: 0.5, Flying: 0.5, Psychic: 0.5, Bug: 0.5, Fairy: 0.5, Ghost: 0
-    },
-    Poison: {
-        Grass: 2, Fairy: 2,
-        Poison: 0.5, Ground: 0.5, Rock: 0.5, Ghost: 0.5, Steel: 0
-    },
-    Ground: {
-        Fire: 2, Electric: 2, Poison: 2, Rock: 2, Steel: 2,
-        Grass: 0.5, Bug: 0.5, Flying: 0
-    },
-    Flying: {
-        Grass: 2, Fighting: 2, Bug: 2,
-        Electric: 0.5, Rock: 0.5, Steel: 0.5
-    },
-    Psychic: {
-        Fighting: 2, Poison: 2,
-        Psychic: 0.5, Steel: 0.5, Dark: 0
-    },
-    Bug: {
-        Grass: 2, Psychic: 2, Dark: 2,
-        Fighting: 0.5, Flying: 0.5, Poison: 0.5, Ghost: 0.5, Steel: 0.5, Fire: 0.5, Fairy: 0.5
-    },
-    Rock: {
-        Fire: 2, Ice: 2, Flying: 2, Bug: 2,
-        Fighting: 0.5, Ground: 0.5, Steel: 0.5
-    },
-    Light: {
-        Dark: 2, Ghost: 2,
-        Fighting: 0.5, Rock: 0.5,
-        Poison: 0, Steel: 0.5,
-    },
-    Ghost: {
-        Psychic: 2, Ghost: 2,
-        Normal: 0, Fighting: 0, Dark: 0.5, Bug: 0.5
-    },
-    Dragon: {
-        Dragon: 2,
-        Steel: 0.5, Fairy: 0
-    },
-    Steel: {
-        Ice: 2, Rock: 2, Fairy: 2,
-        Fire: 0.5, Water: 0.5, Electric: 0.5, Steel: 0.5, Grass: 0.5, Ice: 0.5, Fighting: 0.5, Ground: 0.5
-    },
-    Fairy: {
-        Fighting: 2, Dragon: 2, Dark: 2,
-        Poison: 0.5, Steel: 0.5, Fire: 0.5
-    },
-    Dark: {
-        Psychic: 2, Ghost: 2,
-        Fighting: 0.5, Dark: 0.5, Fairy: 0.5
-    }
-};
-
-const TYPE_COLOR_CONTRAST = {
-    Normal: 'dark',
-    Fire: 'light',
-    Water: 'light',
-    Grass: 'light',
-    Electric: 'dark',
-    Ice: 'dark',
-    Fighting: 'light',
-    Poison: 'light',
-    Ground: 'dark',
-    Flying: 'dark',
-    Psychic: 'light',
-    Bug: 'light',
-    Rock: 'light',
-    Light: 'dark',
-    Ghost: 'light',
-    Dragon: 'light',
-    Steel: 'dark',
-    Fairy: 'dark',
-    Dark: 'light'
-};
-
-
 function getEffectiveness(attackingType, defendingType) {
     const attackerEffects = TYPE_EFFECTIVENESS[attackingType];
     if (attackerEffects && attackerEffects.hasOwnProperty(defendingType)) {
@@ -217,6 +107,25 @@ function populateTypeSelects() {
         option2.value = type;
         option2.textContent = type;
         type2Select.appendChild(option2);
+    });
+}
+
+function capitalizeWords(str) {
+    return str
+        .replace(/-/g, ' ')
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+}
+
+function populatePokemonSelect() {
+    const pokemonSelect = document.getElementById('pokemon-select');
+    pokemonSelect.innerHTML = '<option value="">Select a Pokemon ...</option>';
+    POKEMON_LIST.forEach(pokemon => {
+        const option = document.createElement('option');
+        option.value = pokemon.name;
+        option.textContent = capitalizeWords(pokemon.name);
+        pokemonSelect.appendChild(option);
     });
 }
 
@@ -349,9 +258,11 @@ function displayTypeDetails(type1, type2) {
 document.addEventListener('DOMContentLoaded', () => {
     generateTypeTable();
     populateTypeSelects();
+    populatePokemonSelect(); // <-- Agrega esto
 
     const typeSelect = document.getElementById('type-select');
     const type2Select = document.getElementById('type2-select');
+    const pokemonSelect = document.getElementById('pokemon-select'); // <-- Agrega esto
     const resetButton = document.getElementById('reset-button');
 
     function updateDetails() {
@@ -361,9 +272,36 @@ document.addEventListener('DOMContentLoaded', () => {
     typeSelect.addEventListener('change', updateDetails);
     type2Select.addEventListener('change', updateDetails);
 
+    pokemonSelect.addEventListener('change', () => {
+        const selected = POKEMON_LIST.find(p => p.name === pokemonSelect.value);
+        if (selected) {
+            typeSelect.value = selected.types[0] || '';
+            type2Select.value = selected.types[1] || '';
+        } else {
+            typeSelect.value = '';
+            type2Select.value = '';
+        }
+        updateDetails();
+    });
+
     resetButton.addEventListener('click', () => {
         typeSelect.value = '';
         type2Select.value = '';
+        pokemonSelect.value = '';
         displayTypeDetails('', '');
+    });
+
+    document.getElementById('type-select').addEventListener('change', function() {
+        const pokemonSelect = document.getElementById('pokemon-select');
+        if (pokemonSelect.value) {
+            pokemonSelect.value = "";
+        }
+    });
+
+    document.getElementById('type2-select').addEventListener('change', function() {
+        const pokemonSelect = document.getElementById('pokemon-select');
+        if (pokemonSelect.value) {
+            pokemonSelect.value = "";
+        }
     });
 });
