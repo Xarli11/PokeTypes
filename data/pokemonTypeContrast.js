@@ -1,0 +1,21 @@
+const TYPE_COLOR_CONTRAST = {
+    Normal: 'dark',
+    Fire: 'light',
+    Water: 'light',
+    Grass: 'light',
+    Electric: 'dark',
+    Ice: 'dark',
+    Fighting: 'light',
+    Poison: 'light',
+    Ground: 'dark',
+    Flying: 'dark',
+    Psychic: 'light',
+    Bug: 'light',
+    Rock: 'light',
+    Light: 'dark',
+    Ghost: 'light',
+    Dragon: 'light',
+    Steel: 'dark',
+    Fairy: 'dark',
+    Dark: 'light'
+};

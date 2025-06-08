@@ -1,4 +1,4 @@
-window.POKEMON_LIST = [
+const POKEMON_LIST = [
   {
     "name": "Bulbasaur",
     "types": [
