@@ -2,11 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="pokeball.png">
-    <!-- O usa el enlace directo: -->
-    <!-- <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/PokeAPI/media/master/logo/pokeapi_256.png"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Poketypes - Your Pokémon Type Guide</title>
+    <meta name="description" content="Explore the Pokémon type effectiveness chart. Learn the strengths and weaknesses of each type to improve your battle strategies.">
+    <meta name="keywords" content="Pokémon, Pokémon types, type effectiveness, Pokémon strengths, Pokémon weaknesses, Pokémon type chart">
+    <meta name="author" content="Xarli11">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://poketypes-smoky.vercel.app/"> <!-- Replace with your URL -->
+    <title>Poketypes</title>
+    
+    <link rel="icon" type="image/png" href="pokeball.png">
+    <!-- Or use a direct link: -->
+    <!-- <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/PokeAPI/media/master/logo/pokeapi_256.png"> -->
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -81,18 +87,35 @@
 
     <link rel="stylesheet" href="styles.css">
 
+    <!-- Schema.org markup for Google+ -->
+    <meta itemprop="name" content="Poketypes - Pokémon Type Effectiveness Guide">
+    <meta itemprop="description" content="Explore the Pokémon type effectiveness chart. Learn the strengths and weaknesses of each type to improve your battle strategies.">
+    <meta itemprop="image" content="https://poketypes-smoky.vercel.app/logo.png"> <!-- Replace with your image -->
+
+    <!-- Twitter Card data -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Poketypes - Pokémon Type Effectiveness Guide">
+    <meta name="twitter:description" content="Explore the Pokémon type effectiveness chart. Learn the strengths and weaknesses of each type to improve your battle strategies.">
+    <meta name="twitter:image" content="pokeball.png"> <!-- Cambiado a pokeball.png -->
+
+    <!-- Open Graph data -->
+    <meta property="og:title" content="Poketypes - Pokémon Type Effectiveness Guide" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://poketypes-smoky.vercel.app/" />
+    <meta property="og:image" content="pokeball.png" /> <!-- Cambiado a pokeball.png -->
+    <meta property="og:description" content="Explore the Pokémon type effectiveness chart. Learn the strengths and weaknesses of each type to improve your battle strategies." />
+    <meta property="og:site_name" content="Poketypes" />
 </head>
 <body class="bg-lightBg text-lightTextPrimary font-sans flex flex-col min-h-screen">
     <header class="bg-lightSurface p-6 shadow-light-card border-b border-lightDivider flex flex-col items-center justify-center">
         <div class="flex flex-col items-center mb-4">
             <div class="flex items-center mb-2">
-                <h1 class="stylish-title leading-tight fancy-title">PokeTypes</h1>
+                <h1 class="stylish-title leading-tight fancy-title">Poketypes</h1>
             </div>
             <p class="text-lightTextSecondary text-center max-w-2xl text-lg mt-2">
                 Explore the Pokémon type effectiveness chart. Select a type to see a detailed breakdown of its offensive and defensive interactions.
             </p>
         </div>
-        <!-- NUEVO: Selector de Pokémon arriba de los selectores de tipo -->
         <div class="w-full flex justify-center mb-4 relative">
             <input id="pokemon-search" 
                    type="text" 
@@ -103,17 +126,19 @@
                 class="absolute top-full left-0 w-full sm:w-80 bg-white border border-lightDivider rounded-lg shadow-lg z-10 hidden">
             </ul>
         </div>
-        <div class="selector-controls flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 mt-2 mb-8">
-            <select id="type-select"
-                class="block w-full sm:w-64 px-6 py-3 rounded-xl border-2 border-pokemonPrimary bg-white text-lg font-semibold text-pokemonPrimary shadow-lg focus:ring-4 focus:ring-pokemonPrimary/20 focus:border-pokemonPrimary transition-all duration-200 outline-none hover:border-pokemonSecondary hover:ring-pokemonSecondary/20">
+        <div class="selector-controls flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 mt-4 mb-8">
+            <select id="type-select" 
+                    class="block w-full sm:w-64 px-6 py-3 rounded-xl border-2 border-pokemonPrimary bg-white text-lg font-semibold text-pokemonPrimary shadow-lg focus:ring-4 focus:ring-pokemonPrimary/20 focus:border-pokemonPrimary transition-all duration-200 outline-none hover:border-pokemonSecondary hover:ring-pokemonSecondary/20">
                 <option value="">Select a type...</option>
+                <!-- Options will be populated dynamically -->
             </select>
-            <select id="type2-select"
-                class="block w-full sm:w-64 px-6 py-3 rounded-xl border-2 border-pokemonPrimary bg-white text-lg font-semibold text-pokemonPrimary shadow-lg focus:ring-4 focus:ring-pokemonPrimary/20 focus:border-pokemonPrimary transition-all duration-200 outline-none hover:border-pokemonSecondary hover:ring-pokemonSecondary/20">
+            <select id="type2-select" 
+                    class="block w-full sm:w-64 px-6 py-3 rounded-xl border-2 border-pokemonPrimary bg-white text-lg font-semibold text-pokemonPrimary shadow-lg focus:ring-4 focus:ring-pokemonPrimary/20 focus:border-pokemonPrimary transition-all duration-200 outline-none hover:border-pokemonSecondary hover:ring-pokemonSecondary/20">
                 <option value="">Select a second type...</option>
+                <!-- Options will be populated dynamically -->
             </select>
-            <button id="reset-button"
-                class="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-pokemonSecondary to-pokemonPrimary text-white font-bold text-lg shadow-lg hover:from-pokemonPrimary hover:to-pokemonSecondary transition-all duration-200 focus:ring-4 focus:ring-pokemonPrimary/30">
+            <button id="reset-button" 
+                    class="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-pokemonSecondary to-pokemonPrimary text-white font-bold text-lg shadow-lg hover:from-pokemonPrimary hover:to-pokemonSecondary transition-all duration-200 focus:ring-4 focus:ring-pokemonPrimary/30">
                 Reset
             </button>
         </div>
@@ -128,9 +153,6 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-lightBg p-6 rounded-lg shadow-bento-card text-center sm:text-left">
                     <h3 class="text-xl font-bold text-lightTextPrimary mb-4 border-b-2 border-pokemonPrimary pb-2 flex items-center justify-center sm:justify-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-pokemonPrimary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.007 12.007 0 002 12c0 2.83 1.044 5.485 2.884 7.514A12.007 12.007 0 0012 22c2.83 0 5.485-1.044 7.514-2.884A12.007 12.007 0 0022 12c0-2.83-1.044-5.485-2.884-7.514z" />
-                        </svg>
                         Defense (When Attacked)
                     </h3>
                     <div id="weaknesses" class="effectiveness-card card-super"></div>
@@ -140,9 +162,6 @@
 
                 <div class="bg-lightBg p-6 rounded-lg shadow-bento-card text-center sm:text-left">
                     <h3 class="text-xl font-bold text-lightTextPrimary mb-4 border-b-2 border-pokemonPrimary pb-2 flex items-center justify-center sm:justify-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-pokemonPrimary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
                         Offense (When Attacking)
                     </h3>
                     <div id="super-effective" class="effectiveness-card card-super"></div>
@@ -192,5 +211,16 @@
 
     <!-- Main script -->
     <script src="script.js"></script>
+    <script>
+      fetch('structured-data.jsonld')
+        .then(response => response.json())
+        .then(data => {
+          const script = document.createElement('script');
+          script.type = 'application/ld+json';
+          script.textContent = JSON.stringify(data);
+          document.head.appendChild(script);
+        })
+        .catch(error => console.error('Error loading JSON-LD:', error));
+    </script>
 </body>
 </html>
