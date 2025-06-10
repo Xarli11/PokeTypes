@@ -1,0 +1,21 @@
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Poketypes - Pokémon Type Effectiveness Guide",
+  "description": "Explore the Pokémon type effectiveness chart. Learn the strengths and weaknesses of each type to improve your battle strategies.",
+  "url": "https://poketypes-smoky.vercel.app/",
+  "author": {
+    "@type": "Person",
+    "name": "Xarli11"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Poketypes",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://poketypes-smoky.vercel.app/pokeball.png",
+      "width": 256,
+      "height": 256
+    }
+  }
+}
