@@ -139,6 +139,7 @@ select:hover {
     max-width: fit-content;
     margin: 0 auto;
     border: 2px solid #E0E0E0;
+    margin-top: 6rem; /* Aumenta el espacio entre el buscador y los selectores */
 }
 .selector-controls::before {
     content: '';
@@ -344,4 +345,61 @@ select:hover {
 /* Remove background image from the type select */
 select#type-select {
     background-image: none !important;
+}
+
+/* Contenedor de sugerencias */
+#suggestions {
+    position: fixed; /* Cambia a posición fija */
+    top: calc(100% + 0.5rem); /* Ajusta la posición para que quede debajo del input */
+    left: 50%; /* Centra horizontalmente */
+    transform: translateX(-50%); /* Ajusta el centrado */
+    z-index: 20; /* Asegura que esté por encima de otros elementos */
+    max-height: 200px; /* Limita la altura */
+    overflow-y: auto; /* Habilita el desplazamiento vertical */
+    border-radius: 0.75rem; /* Bordes redondeados */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    background-color: var(--lightSurface); /* Fondo consistente con la página */
+    border: 1px solid var(--lightDivider); /* Borde similar al diseño */
+    margin-top: 0.5rem; /* Añade un margen para separarlo del input */
+    position: absolute; /* Asegura que se posicione relativo al input */
+}
+
+/* Elementos de la lista de sugerencias */
+#suggestions li {
+    padding: 0.75rem 1rem; /* Espaciado interno */
+    font-size: 1rem; /* Tamaño de fuente */
+    color: var(--lightTextPrimary); /* Color de texto principal */
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Hover en los elementos */
+#suggestions li:hover {
+    background-color: var(--lightBg); /* Fondo al pasar el cursor */
+    color: var(--pokemonPrimary); /* Color de texto al pasar el cursor */
+}
+
+/* Último elemento sin borde */
+#suggestions li:last-child {
+    border-bottom: none;
+}
+
+/* Mensaje de "No Pokémon found" */
+#suggestions li.text-lightTextSecondary {
+    color: var(--lightTextSecondary); /* Color de texto secundario */
+    text-align: center;
+}
+
+.w-full.flex.justify-center.mb-4.relative {
+    position: relative;
+    margin-bottom: 4rem; /* Aumenta el espacio debajo del buscador */
+}
+
+/* Estilo para resaltar las coincidencias */
+.highlight {
+    color: var(--pokemonPrimary); /* Usa el color principal de Pokémon */
+    font-weight: bold; /* Resalta el texto con negrita */
+    background-color: rgba(59, 76, 202, 0.2); /* Fondo suave */
+    border-radius: 0.25rem; /* Bordes redondeados */
+    padding: 0 0.2rem; /* Espaciado interno */
 }

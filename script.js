@@ -118,16 +118,7 @@ function capitalizeWords(str) {
         .join(' ');
 }
 
-function populatePokemonSelect() {
-    const pokemonSelect = document.getElementById('pokemon-select');
-    pokemonSelect.innerHTML = '<option value="">Select a Pokemon ...</option>';
-    POKEMON_LIST.forEach(pokemon => {
-        const option = document.createElement('option');
-        option.value = pokemon.name;
-        option.textContent = capitalizeWords(pokemon.name);
-        pokemonSelect.appendChild(option);
-    });
-}
+
 
 function displayTypeDetails(type1, type2) {
     const typeDetailsDiv = document.getElementById('type-details');
@@ -255,14 +246,124 @@ function displayTypeDetails(type1, type2) {
     renderEffectivenessCard(noEffectCard, 'No Effect (0x)', noEffect, 'None', 'immune', 'text-immune-color');
 }
 
+// Escucha el evento de entrada en el campo de búsqueda
+const searchInput = document.getElementById('pokemon-search');
+const suggestionsList = document.getElementById('suggestions');
+const typeSelect = document.getElementById('type-select');
+const type2Select = document.getElementById('type2-select');
+
+// Escucha el evento de entrada en el campo de búsqueda
+searchInput.addEventListener('input', (event) => {
+    const query = event.target.value.trim().toLowerCase();
+
+    // Si no hay texto, oculta las sugerencias
+    if (!query) {
+        suggestionsList.innerHTML = '';
+        suggestionsList.classList.add('hidden');
+        return;
+    }
+
+    // Filtra los Pokémon que coincidan con el texto ingresado
+    const matches = POKEMON_LIST.filter(pokemon => pokemon.name.toLowerCase().includes(query));
+
+    // Si no hay coincidencias, muestra un mensaje
+    if (matches.length === 0) {
+        suggestionsList.innerHTML = '<li class="p-2 text-lightTextSecondary">No Pokémon found</li>';
+        suggestionsList.classList.remove('hidden');
+        return;
+    }
+
+    // Genera las sugerencias con las coincidencias resaltadas
+    suggestionsList.innerHTML = matches
+        .map(pokemon => {
+            const highlightedName = pokemon.name.replace(
+                new RegExp(query, 'gi'), // Busca todas las coincidencias (case-insensitive)
+                match => `<span class="highlight">${match}</span>` // Envuelve las coincidencias en un span
+            );
+            return `<li class="p-2 cursor-pointer hover:bg-lightBg" data-name="${pokemon.name}">${highlightedName}</li>`;
+        })
+        .join('');
+    suggestionsList.classList.remove('hidden');
+
+    // Añade eventos de clic a las sugerencias
+    Array.from(suggestionsList.children).forEach(item => {
+        item.addEventListener('click', () => {
+            const selectedPokemonName = item.getAttribute('data-name');
+            const selectedPokemon = POKEMON_LIST.find(p => p.name === selectedPokemonName);
+
+            // Actualiza el campo de búsqueda con el nombre seleccionado
+            searchInput.value = capitalizeWords(selectedPokemon.name);
+
+            // Oculta las sugerencias
+            suggestionsList.innerHTML = '';
+            suggestionsList.classList.add('hidden');
+
+            // Actualiza los selectores de tipo
+            typeSelect.value = selectedPokemon.types[0] || ''; // Primer tipo
+            type2Select.value = selectedPokemon.types[1] || ''; // Segundo tipo (si existe)
+
+            displayTypeDetails(typeSelect.value, type2Select.value);
+        });
+    });
+});
+
+// Oculta las sugerencias si el usuario hace clic fuera del campo de búsqueda
+document.addEventListener('click', (event) => {
+    if (!searchInput.contains(event.target) && !suggestionsList.contains(event.target)) {
+        suggestionsList.innerHTML = '';
+        suggestionsList.classList.add('hidden');
+    }
+});
+
+function displayPokemonDetails(pokemon) {
+    const typeDetails = document.getElementById('type-details');
+    const typeName = document.getElementById('selected-type-name');
+    const weaknesses = document.getElementById('weaknesses');
+    const resistances = document.getElementById('resistances');
+    const immunities = document.getElementById('immunities');
+
+    // Actualiza los detalles del Pokémon
+    typeName.textContent = capitalizeWords(pokemon.name);
+    weaknesses.innerHTML = ''; // Limpia datos anteriores
+    resistances.innerHTML = ''; // Limpia datos anteriores
+    immunities.innerHTML = ''; // Limpia datos anteriores
+
+    // Muestra los tipos del Pokémon
+    pokemon.types.forEach(type => {
+        const typeElement = document.createElement('div');
+        typeElement.textContent = capitalizeWords(type);
+        typeElement.className = `type-pill bg-${type.toLowerCase()}`;
+        weaknesses.appendChild(typeElement); // Ejemplo: Añadir a debilidades
+    });
+
+    // Muestra la sección de detalles
+    typeDetails.classList.remove('hidden');
+}
+
+function clearPokemonDetails() {
+    const typeDetails = document.getElementById('type-details');
+    const typeName = document.getElementById('selected-type-name');
+    const weaknesses = document.getElementById('weaknesses');
+    const resistances = document.getElementById('resistances');
+    const immunities = document.getElementById('immunities');
+
+    // Limpia los detalles
+    typeName.textContent = '';
+    weaknesses.innerHTML = '';
+    resistances.innerHTML = '';
+    immunities.innerHTML = '';
+
+    // Oculta la sección de detalles
+    typeDetails.classList.add('hidden');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     generateTypeTable();
     populateTypeSelects();
-    populatePokemonSelect(); // <-- Agrega esto
 
     const typeSelect = document.getElementById('type-select');
     const type2Select = document.getElementById('type2-select');
-    const pokemonSelect = document.getElementById('pokemon-select'); // <-- Agrega esto
+    const pokemonSearch = document.getElementById('pokemon-search');
     const resetButton = document.getElementById('reset-button');
 
     function updateDetails() {
@@ -272,36 +373,24 @@ document.addEventListener('DOMContentLoaded', () => {
     typeSelect.addEventListener('change', updateDetails);
     type2Select.addEventListener('change', updateDetails);
 
-    pokemonSelect.addEventListener('change', () => {
-        const selected = POKEMON_LIST.find(p => p.name === pokemonSelect.value);
-        if (selected) {
-            typeSelect.value = selected.types[0] || '';
-            type2Select.value = selected.types[1] || '';
-        } else {
-            typeSelect.value = '';
-            type2Select.value = '';
-        }
-        updateDetails();
-    });
-
     resetButton.addEventListener('click', () => {
         typeSelect.value = '';
         type2Select.value = '';
-        pokemonSelect.value = '';
+        pokemonSearch.value = '';
         displayTypeDetails('', '');
     });
 
     document.getElementById('type-select').addEventListener('change', function() {
-        const pokemonSelect = document.getElementById('pokemon-select');
-        if (pokemonSelect.value) {
-            pokemonSelect.value = "";
+        const searchInput = document.getElementById('pokemon-search');
+        if (searchInput.value) {
+            searchInput.value = "";
         }
     });
 
     document.getElementById('type2-select').addEventListener('change', function() {
-        const pokemonSelect = document.getElementById('pokemon-select');
-        if (pokemonSelect.value) {
-            pokemonSelect.value = "";
+        const searchInput = document.getElementById('pokemon-search');
+        if (searchInput.value) {
+            searchInput.value = "";
         }
     });
 });
