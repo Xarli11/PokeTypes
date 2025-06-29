@@ -403,3 +403,178 @@ select#type-select {
     border-radius: 0.25rem; /* Bordes redondeados */
     padding: 0 0.2rem; /* Espaciado interno */
 }
+
+/* Dark mode styles */
+body.dark-mode {
+    --lightBg: #1a202c;
+    --lightSurface: #2d3748;
+    --lightTextPrimary: #e2e8f0;
+    --lightTextSecondary: #a0aec0;
+    --lightDivider: #4a5568;
+    --lightBorderNormal: #718096;
+    --card-bg: #2d3748; /* For effectiveness cards */
+}
+
+body.dark-mode select {
+    border-color: #4a5568 !important;
+    background-color: #2d3748 !important;
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode select:hover {
+    border-color: #3B4CCA !important;
+    background-color: #4a5568 !important;
+}
+
+body.dark-mode #type-table-container table {
+    background: #2d3748;
+}
+
+body.dark-mode #type-table-container th {
+    background: linear-gradient(90deg, #2d3748 70%, #1a202c 100%);
+    color: #63b3ed;
+    border-bottom: 1.5px solid #4a5568;
+    border-right: 1.5px solid #4a5568;
+}
+
+body.dark-mode #type-table-container td {
+    background: #2d3748;
+    color: #e2e8f0;
+    border-bottom: 1.5px solid #4a5568;
+    border-right: 1.5px solid #4a5568;
+}
+
+body.dark-mode #type-table-container th:first-child,
+body.dark-mode #type-table-container td:first-child {
+    background: linear-gradient(90deg, #3B4CCA 80%, #6a11cb 100%);
+    color: #fff;
+    box-shadow: 2px 0 16px 0 rgba(59,76,202,0.20), 1px 0 0 0 #4a5568;
+}
+
+body.dark-mode #type-table-container td:hover:not(:first-child),
+body.dark-mode #type-table-container th:hover:not(:first-child) {
+    background: #4a5568;
+    color: #63b3ed;
+}
+
+body.dark-mode .selector-controls {
+    background-image: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    border: 2px solid #4a5568;
+}
+
+body.dark-mode .selector-controls::before {
+    background: rgba(255,255,255,0.1);
+}
+
+body.dark-mode .selector-controls select {
+    border: 4px solid #4a5568;
+    background-color: #2d3748;
+    color: #e2e8f0;
+}
+
+body.dark-mode .effectiveness-card {
+    background: var(--card-bg, #2d3748);
+    border-color: transparent;
+}
+
+body.dark-mode .effectiveness-card.card-super,
+body.dark-mode .effectiveness-card.card-offense-super {
+    --card-bg: #2f855a; /* Darker green */
+    border-color: #38a169;
+}
+
+body.dark-mode .effectiveness-card.card-resist,
+body.dark-mode .effectiveness-card.card-offense-resist {
+    --card-bg: #c53030; /* Darker red */
+    border-color: #e53e3e;
+}
+
+body.dark-mode .effectiveness-card.card-immune {
+    --card-bg: #4a5568; /* Darker grey */
+    border-color: #718096;
+}
+
+body.dark-mode .effectiveness-card:hover {
+    border-color: #63b3ed;
+    background: #4a5568;
+}
+
+body.dark-mode .text-super-color { color: #68D391; border-color: #68D391; } /* Lighter green for dark mode */
+body.dark-mode .text-resist-color { color: #FC8181; border-color: #FC8181; } /* Lighter red for dark mode */
+body.dark-mode .text-immune-color { color: #A0AEC0; border-color: #A0AEC0; } /* Lighter grey for dark mode */
+
+
+body.dark-mode .stylish-title {
+    /* Keep the gradient, but adjust shadows if needed, or leave as is if it looks good */
+    text-shadow: 0 5px 20px rgba(106, 17, 203, 0.8), 0 0 30px rgba(37, 117, 252, 0.8);
+}
+
+body.dark-mode .fancy-title {
+    /* Keep the gradient, but adjust shadows if needed */
+    text-shadow:
+        0 5px 20px rgba(106, 17, 203, 0.8),
+        0 0 30px rgba(37, 117, 252, 0.8),
+        0 2px 8px rgba(255, 210, 0, 0.7);
+}
+
+body.dark-mode #suggestions {
+    background-color: var(--lightSurface);
+    border: 1px solid var(--lightDivider);
+}
+
+body.dark-mode #suggestions li {
+    color: var(--lightTextPrimary);
+}
+
+body.dark-mode #suggestions li:hover {
+    background-color: var(--lightBg);
+    color: var(--pokemonPrimary);
+}
+
+body.dark-mode #suggestions li.text-lightTextSecondary {
+    color: var(--lightTextSecondary);
+}
+
+body.dark-mode .highlight {
+    color: var(--pokemonPrimary);
+    background-color: rgba(59, 76, 202, 0.3); /* Slightly more opaque for dark mode */
+}
+
+body.dark-mode input#pokemon-search {
+    border-color: var(--pokemonPrimary);
+    background-color: var(--lightSurface);
+    color: var(--lightTextPrimary);
+}
+
+body.dark-mode input#pokemon-search:hover {
+    border-color: var(--pokemonSecondary);
+}
+
+body.dark-mode input#pokemon-search::placeholder {
+    color: var(--lightTextSecondary);
+}
+
+body.dark-mode #dark-mode-toggle {
+    background-color: #4a5568; /* Dark gray background */
+    color: #e2e8f0; /* Light text/icon */
+}
+
+body.dark-mode #dark-mode-toggle:hover {
+    background-color: #2d3748; /* Slightly darker on hover */
+}
+
+/* Ensure pokeball icon in header maintains its color or adjust if needed */
+body.dark-mode .pokeball-icon {
+    color: #63b3ed; /* Example: Light blue, or keep original if it looks good */
+}
+
+/* Adjust footer for dark mode */
+body.dark-mode footer {
+    background-color: var(--lightSurface);
+    color: var(--lightTextSecondary);
+    border-top: 1px solid var(--lightDivider);
+}
+
+body.dark-mode footer .text-pokemonPrimary {
+    color: #63b3ed; /* Lighter blue for primary Pokémon color in text */
+}
