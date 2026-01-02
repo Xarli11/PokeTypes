@@ -1,4 +1,4 @@
-const POKEMON_LIST = [
+[
   {
     "name": "Bulbasaur",
     "types": [
@@ -6675,111 +6675,732 @@ const POKEMON_LIST = [
       "Ghost"
     ]
   },
-  { "name": "Mega Venusaur", "types": ["Grass", "Poison"] },
-  { "name": "Mega Charizard X", "types": ["Fire", "Dragon"] },
-  { "name": "Mega Charizard Y", "types": ["Fire", "Flying"] },
-  { "name": "Mega Blastoise", "types": ["Water"] },
-  { "name": "Mega Beedrill", "types": ["Bug", "Poison"] },
-  { "name": "Mega Pidgeot", "types": ["Normal", "Flying"] },
-  { "name": "Alolan Rattata", "types": ["Dark", "Normal"] },
-  { "name": "Alolan Raticate", "types": ["Dark", "Normal"] },
-  { "name": "Alolan Raichu", "types": ["Electric", "Psychic"] },
-  { "name": "Alolan Sandshrew", "types": ["Ice", "Steel"] },
-  { "name": "Alolan Sandslash", "types": ["Ice", "Steel"] },
-  { "name": "Alolan Vulpix", "types": ["Ice"] },
-  { "name": "Alolan Ninetales", "types": ["Ice", "Fairy"] },
-  { "name": "Alolan Diglett", "types": ["Ground", "Steel"] },
-  { "name": "Alolan Dugtrio", "types": ["Ground", "Steel"] },
-  { "name": "Alolan Meowth", "types": ["Dark"] },
-  { "name": "Alolan Persian", "types": ["Dark"] },
-  { "name": "Alolan Geodude", "types": ["Rock", "Electric"] },
-  { "name": "Alolan Graveler", "types": ["Rock", "Electric"] },
-  { "name": "Alolan Golem", "types": ["Rock", "Electric"] },
-  { "name": "Alolan Grimer", "types": ["Poison", "Dark"] },
-  { "name": "Alolan Muk", "types": ["Poison", "Dark"] },
-  { "name": "Alolan Exeggutor", "types": ["Grass", "Dragon"] },
-  { "name": "Alolan Marowak", "types": ["Fire", "Ghost"] },
-  { "name": "Mega Alakazam", "types": ["Psychic"] },
-  { "name": "Mega Slowbro", "types": ["Water", "Psychic"] },
-  { "name": "Mega Gengar", "types": ["Ghost", "Poison"] },
-  { "name": "Mega Kangaskhan", "types": ["Normal"] },
-  { "name": "Mega Pinsir", "types": ["Bug", "Flying"] },
-  { "name": "Mega Gyarados", "types": ["Water", "Dark"] },
-  { "name": "Mega Aerodactyl", "types": ["Rock", "Flying"] },
-  { "name": "Mega Mewtwo X", "types": ["Psychic", "Fighting"] },
-  { "name": "Mega Mewtwo Y", "types": ["Psychic"] },
-  { "name": "Mega Ampharos", "types": ["Electric", "Dragon"] },
-  { "name": "Mega Steelix", "types": ["Steel", "Ground"] },
-  { "name": "Mega Scizor", "types": ["Bug", "Steel"] },
-  { "name": "Mega Heracross", "types": ["Bug", "Fighting"] },
-  { "name": "Mega Houndoom", "types": ["Dark", "Fire"] },
-  { "name": "Mega Tyranitar", "types": ["Rock", "Dark"] },
-  { "name": "Mega Sceptile", "types": ["Grass", "Dragon"] },
-  { "name": "Mega Blaziken", "types": ["Fire", "Fighting"] },
-  { "name": "Mega Swampert", "types": ["Water", "Ground"] },
-  { "name": "Mega Gardevoir", "types": ["Psychic", "Fairy"] },
-  { "name": "Mega Sableye", "types": ["Dark", "Ghost"] },
-  { "name": "Mega Mawile", "types": ["Steel", "Fairy"] },
-  { "name": "Mega Aggron", "types": ["Steel"] },
-  { "name": "Mega Medicham", "types": ["Fighting", "Psychic"] },
-  { "name": "Mega Manectric", "types": ["Electric"] },
-  { "name": "Mega Sharpedo", "types": ["Water", "Dark"] },
-  { "name": "Mega Camerupt", "types": ["Fire", "Ground"] },
-  { "name": "Mega Altaria", "types": ["Dragon", "Fairy"] },
-  { "name": "Mega Banette", "types": ["Ghost"] },
-  { "name": "Mega Absol", "types": ["Dark"] },
-  { "name": "Mega Glalie", "types": ["Ice"] },
-  { "name": "Mega Salamence", "types": ["Dragon", "Flying"] },
-  { "name": "Mega Metagross", "types": ["Steel", "Psychic"] },
-  { "name": "Mega Latias", "types": ["Dragon", "Psychic"] },
-  { "name": "Mega Latios", "types": ["Dragon", "Psychic"] },
-  { "name": "Mega Rayquaza", "types": ["Dragon", "Flying"] },
-  { "name": "Primal Kyogre", "types": ["Water"] },
-  { "name": "Primal Groudon", "types": ["Ground", "Fire"] },
-  { "name": "Mega Lopunny", "types": ["Normal", "Fighting"] },
-  { "name": "Mega Garchomp", "types": ["Dragon", "Ground"] },
-  { "name": "Mega Lucario", "types": ["Fighting", "Steel"] },
-  { "name": "Mega Abomasnow", "types": ["Grass", "Ice"] },
-  { "name": "Mega Gallade", "types": ["Psychic", "Fighting"] },
-  { "name": "Mega Audino", "types": ["Normal", "Fairy"] },
-  { "name": "Mega Diancie", "types": ["Rock", "Fairy"] },
-  { "name": "Galarian Meowth", "types": ["Steel"] },
-  { "name": "Galarian Ponyta", "types": ["Psychic"] },
-  { "name": "Galarian Rapidash", "types": ["Psychic", "Fairy"] },
-  { "name": "Galarian Slowpoke", "types": ["Psychic"] },
-  { "name": "Galarian Slowbro", "types": ["Poison", "Psychic"] },
-  { "name": "Galarian Farfetch'd", "types": ["Fighting"] },
-  { "name": "Galarian Weezing", "types": ["Poison", "Fairy"] },
-  { "name": "Galarian Mr. Mime", "types": ["Ice", "Psychic"] },
-  { "name": "Galarian Articuno", "types": ["Psychic", "Flying"] },
-  { "name": "Galarian Zapdos", "types": ["Fighting", "Flying"] },
-  { "name": "Galarian Moltres", "types": ["Dark", "Flying"] },
-  { "name": "Galarian Slowking", "types": ["Poison", "Psychic"] },
-  { "name": "Galarian Corsola", "types": ["Ghost"] },
-  { "name": "Galarian Zigzagoon", "types": ["Dark", "Normal"] },
-  { "name": "Galarian Linoone", "types": ["Dark", "Normal"] },
-  { "name": "Galarian Darumaka", "types": ["Ice"] },
-  { "name": "Galarian Darmanitan", "types": ["Ice"] },
-  { "name": "Galarian Yamask", "types": ["Ground", "Ghost"] },
-  { "name": "Galarian Stunfisk", "types": ["Ground", "Steel"] },
-  { "name": "Hisuian Growlithe", "types": ["Fire", "Rock"] },
-  { "name": "Hisuian Arcanine", "types": ["Fire", "Rock"] },
-  { "name": "Hisuian Voltorb", "types": ["Electric", "Grass"] },
-  { "name": "Hisuian Electrode", "types": ["Electric", "Grass"] },
-  { "name": "Hisuian Typhlosion", "types": ["Fire", "Ghost"] },
-  { "name": "Hisuian Qwilfish", "types": ["Dark", "Poison"] },
-  { "name": "Hisuian Sneasel", "types": ["Fighting", "Poison"] },
-  { "name": "Hisuian Samurott", "types": ["Water", "Dark"] },
-  { "name": "Hisuian Lilligant", "types": ["Grass", "Fighting"] },
-  { "name": "Hisuian Zorua", "types": ["Normal", "Ghost"] },
-  { "name": "Hisuian Zoroark", "types": ["Normal", "Ghost"] },
-  { "name": "Hisuian Braviary", "types": ["Psychic", "Flying"] },
-  { "name": "Hisuian Sliggoo", "types": ["Steel", "Dragon"] },
-  { "name": "Hisuian Goodra", "types": ["Steel", "Dragon"] },
-  { "name": "Hisuian Avalugg", "types": ["Ice", "Rock"] },
-  { "name": "Hisuian Decidueye", "types": ["Grass", "Fighting"] },
-  { "name": "Paldean Wooper", "types": ["Poison", "Ground"] },
-  { "name": "Paldean Tauros (Combat)", "types": ["Fighting"] },
-  { "name": "Paldean Tauros (Blaze)", "types": ["Fighting", "Fire"] },
-  { "name": "Paldean Tauros (Aqua)", "types": ["Fighting", "Water"] }
-];
+  {
+    "name": "Mega Venusaur",
+    "types": [
+      "Grass",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Mega Charizard X",
+    "types": [
+      "Fire",
+      "Dragon"
+    ]
+  },
+  {
+    "name": "Mega Charizard Y",
+    "types": [
+      "Fire",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Mega Blastoise",
+    "types": [
+      "Water"
+    ]
+  },
+  {
+    "name": "Mega Beedrill",
+    "types": [
+      "Bug",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Mega Pidgeot",
+    "types": [
+      "Normal",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Alolan Rattata",
+    "types": [
+      "Dark",
+      "Normal"
+    ]
+  },
+  {
+    "name": "Alolan Raticate",
+    "types": [
+      "Dark",
+      "Normal"
+    ]
+  },
+  {
+    "name": "Alolan Raichu",
+    "types": [
+      "Electric",
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Alolan Sandshrew",
+    "types": [
+      "Ice",
+      "Steel"
+    ]
+  },
+  {
+    "name": "Alolan Sandslash",
+    "types": [
+      "Ice",
+      "Steel"
+    ]
+  },
+  {
+    "name": "Alolan Vulpix",
+    "types": [
+      "Ice"
+    ]
+  },
+  {
+    "name": "Alolan Ninetales",
+    "types": [
+      "Ice",
+      "Fairy"
+    ]
+  },
+  {
+    "name": "Alolan Diglett",
+    "types": [
+      "Ground",
+      "Steel"
+    ]
+  },
+  {
+    "name": "Alolan Dugtrio",
+    "types": [
+      "Ground",
+      "Steel"
+    ]
+  },
+  {
+    "name": "Alolan Meowth",
+    "types": [
+      "Dark"
+    ]
+  },
+  {
+    "name": "Alolan Persian",
+    "types": [
+      "Dark"
+    ]
+  },
+  {
+    "name": "Alolan Geodude",
+    "types": [
+      "Rock",
+      "Electric"
+    ]
+  },
+  {
+    "name": "Alolan Graveler",
+    "types": [
+      "Rock",
+      "Electric"
+    ]
+  },
+  {
+    "name": "Alolan Golem",
+    "types": [
+      "Rock",
+      "Electric"
+    ]
+  },
+  {
+    "name": "Alolan Grimer",
+    "types": [
+      "Poison",
+      "Dark"
+    ]
+  },
+  {
+    "name": "Alolan Muk",
+    "types": [
+      "Poison",
+      "Dark"
+    ]
+  },
+  {
+    "name": "Alolan Exeggutor",
+    "types": [
+      "Grass",
+      "Dragon"
+    ]
+  },
+  {
+    "name": "Alolan Marowak",
+    "types": [
+      "Fire",
+      "Ghost"
+    ]
+  },
+  {
+    "name": "Mega Alakazam",
+    "types": [
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Mega Slowbro",
+    "types": [
+      "Water",
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Mega Gengar",
+    "types": [
+      "Ghost",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Mega Kangaskhan",
+    "types": [
+      "Normal"
+    ]
+  },
+  {
+    "name": "Mega Pinsir",
+    "types": [
+      "Bug",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Mega Gyarados",
+    "types": [
+      "Water",
+      "Dark"
+    ]
+  },
+  {
+    "name": "Mega Aerodactyl",
+    "types": [
+      "Rock",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Mega Mewtwo X",
+    "types": [
+      "Psychic",
+      "Fighting"
+    ]
+  },
+  {
+    "name": "Mega Mewtwo Y",
+    "types": [
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Mega Ampharos",
+    "types": [
+      "Electric",
+      "Dragon"
+    ]
+  },
+  {
+    "name": "Mega Steelix",
+    "types": [
+      "Steel",
+      "Ground"
+    ]
+  },
+  {
+    "name": "Mega Scizor",
+    "types": [
+      "Bug",
+      "Steel"
+    ]
+  },
+  {
+    "name": "Mega Heracross",
+    "types": [
+      "Bug",
+      "Fighting"
+    ]
+  },
+  {
+    "name": "Mega Houndoom",
+    "types": [
+      "Dark",
+      "Fire"
+    ]
+  },
+  {
+    "name": "Mega Tyranitar",
+    "types": [
+      "Rock",
+      "Dark"
+    ]
+  },
+  {
+    "name": "Mega Sceptile",
+    "types": [
+      "Grass",
+      "Dragon"
+    ]
+  },
+  {
+    "name": "Mega Blaziken",
+    "types": [
+      "Fire",
+      "Fighting"
+    ]
+  },
+  {
+    "name": "Mega Swampert",
+    "types": [
+      "Water",
+      "Ground"
+    ]
+  },
+  {
+    "name": "Mega Gardevoir",
+    "types": [
+      "Psychic",
+      "Fairy"
+    ]
+  },
+  {
+    "name": "Mega Sableye",
+    "types": [
+      "Dark",
+      "Ghost"
+    ]
+  },
+  {
+    "name": "Mega Mawile",
+    "types": [
+      "Steel",
+      "Fairy"
+    ]
+  },
+  {
+    "name": "Mega Aggron",
+    "types": [
+      "Steel"
+    ]
+  },
+  {
+    "name": "Mega Medicham",
+    "types": [
+      "Fighting",
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Mega Manectric",
+    "types": [
+      "Electric"
+    ]
+  },
+  {
+    "name": "Mega Sharpedo",
+    "types": [
+      "Water",
+      "Dark"
+    ]
+  },
+  {
+    "name": "Mega Camerupt",
+    "types": [
+      "Fire",
+      "Ground"
+    ]
+  },
+  {
+    "name": "Mega Altaria",
+    "types": [
+      "Dragon",
+      "Fairy"
+    ]
+  },
+  {
+    "name": "Mega Banette",
+    "types": [
+      "Ghost"
+    ]
+  },
+  {
+    "name": "Mega Absol",
+    "types": [
+      "Dark"
+    ]
+  },
+  {
+    "name": "Mega Glalie",
+    "types": [
+      "Ice"
+    ]
+  },
+  {
+    "name": "Mega Salamence",
+    "types": [
+      "Dragon",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Mega Metagross",
+    "types": [
+      "Steel",
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Mega Latias",
+    "types": [
+      "Dragon",
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Mega Latios",
+    "types": [
+      "Dragon",
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Mega Rayquaza",
+    "types": [
+      "Dragon",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Primal Kyogre",
+    "types": [
+      "Water"
+    ]
+  },
+  {
+    "name": "Primal Groudon",
+    "types": [
+      "Ground",
+      "Fire"
+    ]
+  },
+  {
+    "name": "Mega Lopunny",
+    "types": [
+      "Normal",
+      "Fighting"
+    ]
+  },
+  {
+    "name": "Mega Garchomp",
+    "types": [
+      "Dragon",
+      "Ground"
+    ]
+  },
+  {
+    "name": "Mega Lucario",
+    "types": [
+      "Fighting",
+      "Steel"
+    ]
+  },
+  {
+    "name": "Mega Abomasnow",
+    "types": [
+      "Grass",
+      "Ice"
+    ]
+  },
+  {
+    "name": "Mega Gallade",
+    "types": [
+      "Psychic",
+      "Fighting"
+    ]
+  },
+  {
+    "name": "Mega Audino",
+    "types": [
+      "Normal",
+      "Fairy"
+    ]
+  },
+  {
+    "name": "Mega Diancie",
+    "types": [
+      "Rock",
+      "Fairy"
+    ]
+  },
+  {
+    "name": "Galarian Meowth",
+    "types": [
+      "Steel"
+    ]
+  },
+  {
+    "name": "Galarian Ponyta",
+    "types": [
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Galarian Rapidash",
+    "types": [
+      "Psychic",
+      "Fairy"
+    ]
+  },
+  {
+    "name": "Galarian Slowpoke",
+    "types": [
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Galarian Slowbro",
+    "types": [
+      "Poison",
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Galarian Farfetch'd",
+    "types": [
+      "Fighting"
+    ]
+  },
+  {
+    "name": "Galarian Weezing",
+    "types": [
+      "Poison",
+      "Fairy"
+    ]
+  },
+  {
+    "name": "Galarian Mr. Mime",
+    "types": [
+      "Ice",
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Galarian Articuno",
+    "types": [
+      "Psychic",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Galarian Zapdos",
+    "types": [
+      "Fighting",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Galarian Moltres",
+    "types": [
+      "Dark",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Galarian Slowking",
+    "types": [
+      "Poison",
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Galarian Corsola",
+    "types": [
+      "Ghost"
+    ]
+  },
+  {
+    "name": "Galarian Zigzagoon",
+    "types": [
+      "Dark",
+      "Normal"
+    ]
+  },
+  {
+    "name": "Galarian Linoone",
+    "types": [
+      "Dark",
+      "Normal"
+    ]
+  },
+  {
+    "name": "Galarian Darumaka",
+    "types": [
+      "Ice"
+    ]
+  },
+  {
+    "name": "Galarian Darmanitan",
+    "types": [
+      "Ice"
+    ]
+  },
+  {
+    "name": "Galarian Yamask",
+    "types": [
+      "Ground",
+      "Ghost"
+    ]
+  },
+  {
+    "name": "Galarian Stunfisk",
+    "types": [
+      "Ground",
+      "Steel"
+    ]
+  },
+  {
+    "name": "Hisuian Growlithe",
+    "types": [
+      "Fire",
+      "Rock"
+    ]
+  },
+  {
+    "name": "Hisuian Arcanine",
+    "types": [
+      "Fire",
+      "Rock"
+    ]
+  },
+  {
+    "name": "Hisuian Voltorb",
+    "types": [
+      "Electric",
+      "Grass"
+    ]
+  },
+  {
+    "name": "Hisuian Electrode",
+    "types": [
+      "Electric",
+      "Grass"
+    ]
+  },
+  {
+    "name": "Hisuian Typhlosion",
+    "types": [
+      "Fire",
+      "Ghost"
+    ]
+  },
+  {
+    "name": "Hisuian Qwilfish",
+    "types": [
+      "Dark",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Hisuian Sneasel",
+    "types": [
+      "Fighting",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Hisuian Samurott",
+    "types": [
+      "Water",
+      "Dark"
+    ]
+  },
+  {
+    "name": "Hisuian Lilligant",
+    "types": [
+      "Grass",
+      "Fighting"
+    ]
+  },
+  {
+    "name": "Hisuian Zorua",
+    "types": [
+      "Normal",
+      "Ghost"
+    ]
+  },
+  {
+    "name": "Hisuian Zoroark",
+    "types": [
+      "Normal",
+      "Ghost"
+    ]
+  },
+  {
+    "name": "Hisuian Braviary",
+    "types": [
+      "Psychic",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Hisuian Sliggoo",
+    "types": [
+      "Steel",
+      "Dragon"
+    ]
+  },
+  {
+    "name": "Hisuian Goodra",
+    "types": [
+      "Steel",
+      "Dragon"
+    ]
+  },
+  {
+    "name": "Hisuian Avalugg",
+    "types": [
+      "Ice",
+      "Rock"
+    ]
+  },
+  {
+    "name": "Hisuian Decidueye",
+    "types": [
+      "Grass",
+      "Fighting"
+    ]
+  },
+  {
+    "name": "Paldean Wooper",
+    "types": [
+      "Poison",
+      "Ground"
+    ]
+  },
+  {
+    "name": "Paldean Tauros (Combat)",
+    "types": [
+      "Fighting"
+    ]
+  },
+  {
+    "name": "Paldean Tauros (Blaze)",
+    "types": [
+      "Fighting",
+      "Fire"
+    ]
+  },
+  {
+    "name": "Paldean Tauros (Aqua)",
+    "types": [
+      "Fighting",
+      "Water"
+    ]
+  }
+]

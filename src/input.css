@@ -1,0 +1,110 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  body {
+    @apply bg-[#F9FAFB] text-slate-900 antialiased;
+  }
+}
+
+@layer components {
+  /* Bento Card Base */
+  .bento-card {
+    @apply bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 transition-all duration-300 hover:shadow-md;
+  }
+
+  /* Minimalist Type Pill */
+  .type-pill {
+    @apply inline-flex items-center justify-center px-4 py-1.5 rounded-full text-sm font-bold tracking-tight uppercase border-2 border-transparent transition-all duration-200;
+  }
+
+  /* Specific Type Colors (Minimalist versions) */
+  .bg-type-normal { background-color: #A8A77A; }
+  .bg-type-fire { background-color: #EE8130; }
+  .bg-type-water { background-color: #6390F0; }
+  .bg-type-grass { background-color: #7AC74C; }
+  .bg-type-electric { background-color: #F7D02C; }
+  .bg-type-ice { background-color: #96D9D6; }
+  .bg-type-fighting { background-color: #C22E28; }
+  .bg-type-poison { background-color: #A33EA1; }
+  .bg-type-ground { background-color: #E2BF65; }
+  .bg-type-flying { background-color: #A98FF3; }
+  .bg-type-psychic { background-color: #F95587; }
+  .bg-type-bug { background-color: #A6B91A; }
+  .bg-type-rock { background-color: #B6A136; }
+  .bg-type-ghost { background-color: #735797; }
+  .bg-type-dragon { background-color: #6F35FC; }
+  .bg-type-steel { background-color: #B7B7CE; }
+  .bg-type-fairy { background-color: #D685AD; }
+  .bg-type-dark { background-color: #705746; }
+
+  /* Text Colors for Contrast */
+  .type-text-dark { @apply text-slate-900; }
+  .type-text-light { @apply text-white; }
+
+  /* Table Custom Styles */
+  #type-table-container table {
+    @apply w-full border-separate border-spacing-1 text-sm;
+  }
+  #type-table-container th, #type-table-container td {
+    @apply p-2 rounded-lg text-center transition-colors duration-150;
+  }
+  #type-table-container th {
+    @apply font-bold text-[10px] uppercase tracking-wider;
+  }
+  #type-table-container td {
+    @apply bg-gray-50/50 font-medium text-slate-600;
+  }
+  
+  /* First column (Attackers) styling */
+  #type-table-container td:first-child {
+    @apply bg-white! text-slate-900 font-bold text-left sticky left-0 z-10 pr-4 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)];
+  }
+  
+  /* Interaction Classes */
+  .interaction-2x { @apply bg-green-100! text-green-700! font-bold; }
+  .interaction-05x { @apply bg-red-50! text-red-600! opacity-80; }
+  .interaction-0x { @apply bg-slate-800! text-white! font-black; }
+  .interaction-1x { @apply opacity-40; }
+
+  /* Custom Search Input */
+  .search-input {
+    @apply w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-lg font-medium text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200;
+  }
+
+  /* Custom Select */
+  .bento-select {
+    @apply appearance-none w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-lg font-semibold text-indigo-600 cursor-pointer focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww%2Ew3%2Eorg%2Fsvg%22%20viewBox%3D%220%200%20256%20512%22%3E%3Cpath%20fill%3D%22%236366f1%22%20d%3D%22M64%20192L128%20256l64-64v-64h-128v64zM192%20320L128%20256l-64%2064v64h128v-64z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 1.5rem center;
+    background-size: 1rem;
+  }
+}
+
+/* Fancy Animated Title */
+.bento-title {
+  @apply text-5xl md:text-6xl font-black tracking-tighter text-slate-900 mb-2;
+}
+
+#suggestions {
+  @apply absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-gray-100 shadow-xl z-50 max-h-60 overflow-y-auto overflow-hidden;
+}
+#suggestions li {
+  @apply px-6 py-3 cursor-pointer transition-colors duration-150 text-slate-600 font-medium hover:bg-indigo-50 hover:text-indigo-600;
+}
+
+.label-group {
+  @apply flex items-center gap-2 mb-4 text-sm font-bold uppercase tracking-widest;
+}
+.label-icon {
+  @apply w-5 h-5;
+}
+
+.effectiveness-card {
+  @apply mb-8 last:mb-0;
+}
+
+.type-pills-container {
+  @apply flex flex-wrap gap-2;
+}
