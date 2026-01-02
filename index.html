@@ -6,158 +6,107 @@
     <meta name="description" content="Explore the Pokémon type effectiveness chart. Learn the strengths and weaknesses of each type to improve your battle strategies.">
     <meta name="keywords" content="Pokémon, Pokémon types, type effectiveness, Pokémon strengths, Pokémon weaknesses, Pokémon type chart">
     <meta name="author" content="Xarli11">
-    <meta name="robots" content="index, follow">
-    
-    <link rel="canonical" href="https://poketypes-smoky.vercel.app/"> <!-- Replace with your URL -->
-    <title>Poketypes</title>
+    <link rel="canonical" href="https://poketypes-smoky.vercel.app/">
+    <title>Poketypes — Modern Pokemon Type Calculator</title>
     
     <link rel="icon" type="image/png" href="pokeball.png">
-    <!-- Or use a direct link: -->
-    <!-- <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/PokeAPI/media/master/logo/pokeapi_256.png"> -->
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5778743399428042"
-     crossorigin="anonymous"></script>
-    
     <link rel="stylesheet" href="styles.css">
-
-    <!-- Schema.org markup for Google+ -->
-    <meta itemprop="name" content="Poketypes - Pokémon Type Effectiveness Guide">
-    <meta itemprop="description" content="Explore the Pokémon type effectiveness chart. Learn the strengths and weaknesses of each type to improve your battle strategies.">
-    <meta itemprop="image" content="https://poketypes-smoky.vercel.app/logo.png"> <!-- Replace with your image -->
-
-    <!-- Twitter Card data -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Poketypes - Pokémon Type Effectiveness Guide">
-    <meta name="twitter:description" content="Explore the Pokémon type effectiveness chart. Learn the strengths and weaknesses of each type to improve your battle strategies.">
-    <meta name="twitter:image" content="pokeball.png"> <!-- Cambiado a pokeball.png -->
-
-    <!-- Open Graph data -->
-    <meta property="og:title" content="Poketypes - Pokémon Type Effectiveness Guide" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://poketypes-smoky.vercel.app/" />
-    <meta property="og:image" content="pokeball.png" /> <!-- Cambiado a pokeball.png -->
-    <meta property="og:description" content="Explore the Pokémon type effectiveness chart. Learn the strengths and weaknesses of each type to improve your battle strategies." />
-    <meta property="og:site_name" content="Poketypes" />
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5778743399428042" crossorigin="anonymous"></script>
 </head>
-<body class="bg-lightBg text-lightTextPrimary font-sans flex flex-col min-h-screen">
-    <header class="bg-lightSurface p-6 shadow-light-card border-b border-lightDivider flex flex-col items-center justify-center">
-        <div class="flex flex-col items-center mb-4">
-            <div class="flex items-center mb-2">
-                <h1 class="stylish-title leading-tight fancy-title">Poketypes</h1>
-            </div>
-            <p class="text-lightTextSecondary text-center max-w-2xl text-lg mt-2">
-                Explore the Pokémon type effectiveness chart. Select a type to see a detailed breakdown of its offensive and defensive interactions.
+<body class="min-h-screen py-12 px-4 md:px-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <header class="text-center mb-16">
+            <h1 class="bento-title">Poketypes</h1>
+            <p class="text-slate-400 text-lg font-medium max-w-xl mx-auto">
+                Quickly analyze type coverage, weaknesses, and resistances for any Pokémon or type combination.
             </p>
-        </div>
-        <div class="w-full flex justify-center mb-4 relative">
-            <input id="pokemon-search" 
-                   type="text" 
-                   placeholder="Search for a Pokémon..." 
-                   class="block w-full sm:w-80 px-6 py-3 rounded-xl border-2 border-pokemonPrimary bg-white text-lg font-semibold text-pokemonPrimary shadow-lg focus:ring-4 focus:ring-pokemonPrimary/20 focus:border-pokemonPrimary transition-all duration-200 outline-none hover:border-pokemonSecondary hover:ring-pokemonSecondary/20"
-                   style="max-width: 350px;">
-            <ul id="suggestions" 
-                class="absolute top-full left-0 w-full sm:w-80 bg-white border border-lightDivider rounded-lg shadow-lg z-10 hidden">
-            </ul>
-        </div>
-        <div class="selector-controls flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 mt-4 mb-8">
-            <select id="type-select" 
-                    class="block w-full sm:w-64 px-6 py-3 rounded-xl border-2 border-pokemonPrimary bg-white text-lg font-semibold text-pokemonPrimary shadow-lg focus:ring-4 focus:ring-pokemonPrimary/20 focus:border-pokemonPrimary transition-all duration-200 outline-none hover:border-pokemonSecondary hover:ring-pokemonSecondary/20">
-                <option value="">Select a type...</option>
-                <!-- Options will be populated dynamically -->
-            </select>
-            <select id="type2-select" 
-                    class="block w-full sm:w-64 px-6 py-3 rounded-xl border-2 border-pokemonPrimary bg-white text-lg font-semibold text-pokemonPrimary shadow-lg focus:ring-4 focus:ring-pokemonPrimary/20 focus:border-pokemonPrimary transition-all duration-200 outline-none hover:border-pokemonSecondary hover:ring-pokemonSecondary/20">
-                <option value="">Select a second type...</option>
-                <!-- Options will be populated dynamically -->
-            </select>
-            <button id="reset-button" 
-                    class="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-pokemonSecondary to-pokemonPrimary text-white font-bold text-lg shadow-lg hover:from-pokemonPrimary hover:to-pokemonSecondary transition-all duration-200 focus:ring-4 focus:ring-pokemonPrimary/30">
-                Reset
-            </button>
-        </div>
-    </header>
+        </header>
 
-    <main class="container mx-auto p-4 md:p-8 flex-grow">
-        <section id="type-details" class="bg-lightSurface p-6 rounded-lg shadow-light-card mb-8 hidden">
-            <h2 class="text-2xl font-semibold text-lightTextPrimary mb-6 flex flex-col items-center sm:flex-row sm:justify-center">
-                Type Details: <span id="selected-type-name" class="inline-block mt-2 sm:mt-0 sm:ml-3"></span>
-            </h2>
+        <!-- Main Bento Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
             
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-lightBg p-6 rounded-lg shadow-bento-card text-center sm:text-left">
-                    <h3 class="text-xl font-bold text-lightTextPrimary mb-4 border-b-2 border-pokemonPrimary pb-2 flex items-center justify-center sm:justify-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <!-- Control Center (Search & Selects) -->
+            <section class="md:col-span-12 bento-card flex flex-col lg:flex-row items-center gap-6">
+                <div class="relative w-full lg:flex-1">
+                    <input id="pokemon-search" type="text" placeholder="Search Pokémon..." class="search-input">
+                    <ul id="suggestions" class="hidden"></ul>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
+                    <div class="relative w-full sm:w-48">
+                        <select id="type-select" class="bento-select">
+                            <option value="">Type 1</option>
+                        </select>
+                    </div>
+                    <div class="relative w-full sm:w-48">
+                        <select id="type2-select" class="bento-select">
+                            <option value="">Type 2</option>
+                        </select>
+                    </div>
+                    <button id="reset-button" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-slate-900 text-white font-bold hover:bg-indigo-600 transition-colors duration-200">
+                        Reset
+                    </button>
+                </div>
+            </section>
+
+            <!-- Type Details (Visible on selection) -->
+            <section id="type-details" class="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
+                <!-- Info Header (Full width within section) -->
+                <div class="md:col-span-2 bento-card !py-6 !px-10 flex items-center justify-between">
+                    <h2 class="text-xl font-bold text-slate-400 uppercase tracking-widest">Active Analysis</h2>
+                    <div id="selected-type-name" class="flex items-center gap-2"></div>
+                </div>
+
+                <!-- Defense Card -->
+                <div class="bento-card">
+                    <div class="label-group text-indigo-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="label-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l7 4v6a8 8 0 01-7 8 8 8 0 01-7-8V6l7-4z" />
                         </svg>
-                        Defense (When Attacked)
-                    </h3>
-                    <div id="weaknesses" class="effectiveness-card card-super"></div>
-                    <div id="resistances" class="effectiveness-card card-resist"></div>
-                    <div id="immunities" class="effectiveness-card card-immune"></div>
+                        Defense Breakdown
+                    </div>
+                    <div id="weaknesses" class="effectiveness-card"></div>
+                    <div id="resistances" class="effectiveness-card border-t border-gray-50 pt-6"></div>
+                    <div id="immunities" class="effectiveness-card border-t border-gray-50 pt-6"></div>
                 </div>
 
-                <div class="bg-lightBg p-6 rounded-lg shadow-bento-card text-center sm:text-left">
-                    <h3 class="text-xl font-bold text-lightTextPrimary mb-4 border-b-2 border-pokemonPrimary pb-2 flex items-center justify-center sm:justify-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <!-- Offense Card -->
+                <div class="bento-card">
+                    <div class="label-group text-orange-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="label-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
-                        Offense (When Attacking)
-                    </h3>
-                    <div id="super-effective" class="effectiveness-card card-super"></div>
-                    <div id="not-very-effective" class="effectiveness-card card-resist"></div>
-                    <div id="no-effect" class="effectiveness-card card-immune"></div>
+                        Offense Breakdown
+                    </div>
+                    <div id="super-effective" class="effectiveness-card"></div>
+                    <div id="not-very-effective" class="effectiveness-card border-t border-gray-50 pt-6"></div>
+                    <div id="no-effect" class="effectiveness-card border-t border-gray-50 pt-6"></div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section class="bg-lightBg p-4 md:p-6 rounded-lg shadow-inner shadow-gray-100 overflow-x-auto text-center">
-            <h2 class="text-2xl font-semibold text-lightTextPrimary mb-4">Type Effectiveness Chart</h2>
-            <p class="text-lightTextSecondary text-sm mb-2 block md:hidden">Scroll sideways to see the full chart ⟶</p>
-            <div id="type-table-container" style="overflow-x:auto;">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Attacker/Defender</th>
-                    <th>Water</th>
-                    ...
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Normal</td>
-                    <td>1x</td>
-                    ...
-                  </tr>
-                  ...
-                </tbody>
-              </table>
-            </div>
-        </section>
-    </main>
+            <!-- Type Chart -->
+            <section class="md:col-span-12 bento-card overflow-hidden !p-0">
+                <div class="p-8 border-b border-gray-50 flex items-center justify-between">
+                    <h2 class="text-xl font-bold">Global Type Chart</h2>
+                </div>
+                <div class="overflow-x-auto p-4">
+                    <div id="type-table-container"></div>
+                </div>
+            </section>
 
-    <footer class="bg-lightSurface text-lightTextSecondary text-center p-5 mt-auto border-t border-lightDivider shadow-inner shadow-gray-100">
-        <p>
-            &copy; 2025 Poketypes. Created for Pokémon fans. Data based on 8th generation.<br>
-            <span class="font-semibold text-pokemonPrimary">Powered by Xarli11</span>
-        </p>
-    </footer>
+        </div>
+
+        <footer class="mt-20 text-center text-slate-400 text-sm font-medium">
+            <p>&copy; 2025 Poketypes &bull; Data up to Gen 9</p>
+            <p class="mt-2">Created by <span class="text-slate-900 font-bold">Xarli11</span></p>
+        </footer>
+    </div>
 
     <!-- Main script -->
-    <script src="script.js"></script>
-    <script>
-      fetch('structured-data.jsonld')
-        .then(response => response.json())
-        .then(data => {
-          const script = document.createElement('script');
-          script.type = 'application/ld+json';
-          script.textContent = JSON.stringify(data);
-          document.head.appendChild(script);
-        })
-        .catch(error => console.error('Error loading JSON-LD:', error));
-    </script>
+    <script type="module" src="src/js/main.js"></script>
 </body>
 </html>

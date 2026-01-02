@@ -1,407 +1,110 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
-/* Styles for select (for custom arrow icon) */
-select {
-    -webkit-appearance: none; 
-    -moz-appearance: none;    
-    appearance: none;         
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww%2Ew3%2Eorg%2Fsvg%22%20viewBox%3D%220%200%20256%20512%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M64%20192L128%20256l64-64v-64h-128v64zM192%20320L128%20256l-64%2064v64h128v-64z%22%2F%3E%3C%2Fsvg%3E');
+@layer base {
+  body {
+    @apply bg-[#F9FAFB] text-slate-900 antialiased;
+  }
+}
+
+@layer components {
+  /* Bento Card Base */
+  .bento-card {
+    @apply bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 transition-all duration-300 hover:shadow-md;
+  }
+
+  /* Minimalist Type Pill */
+  .type-pill {
+    @apply inline-flex items-center justify-center px-4 py-1.5 rounded-full text-sm font-bold tracking-tight uppercase border-2 border-transparent transition-all duration-200;
+  }
+
+  /* Specific Type Colors (Minimalist versions) */
+  .bg-type-normal { background-color: #A8A77A; }
+  .bg-type-fire { background-color: #EE8130; }
+  .bg-type-water { background-color: #6390F0; }
+  .bg-type-grass { background-color: #7AC74C; }
+  .bg-type-electric { background-color: #F7D02C; }
+  .bg-type-ice { background-color: #96D9D6; }
+  .bg-type-fighting { background-color: #C22E28; }
+  .bg-type-poison { background-color: #A33EA1; }
+  .bg-type-ground { background-color: #E2BF65; }
+  .bg-type-flying { background-color: #A98FF3; }
+  .bg-type-psychic { background-color: #F95587; }
+  .bg-type-bug { background-color: #A6B91A; }
+  .bg-type-rock { background-color: #B6A136; }
+  .bg-type-ghost { background-color: #735797; }
+  .bg-type-dragon { background-color: #6F35FC; }
+  .bg-type-steel { background-color: #B7B7CE; }
+  .bg-type-fairy { background-color: #D685AD; }
+  .bg-type-dark { background-color: #705746; }
+
+  /* Text Colors for Contrast */
+  .type-text-dark { @apply text-slate-900; }
+  .type-text-light { @apply text-white; }
+
+  /* Table Custom Styles */
+  #type-table-container table {
+    @apply w-full border-separate border-spacing-1 text-sm;
+  }
+  #type-table-container th, #type-table-container td {
+    @apply p-2 rounded-lg text-center transition-colors duration-150;
+  }
+  #type-table-container th {
+    @apply font-bold text-[10px] uppercase tracking-wider;
+  }
+  #type-table-container td {
+    @apply bg-gray-50/50 font-medium text-slate-600;
+  }
+  
+  /* First column (Attackers) styling */
+  #type-table-container td:first-child {
+    @apply bg-white! text-slate-900 font-bold text-left sticky left-0 z-10 pr-4 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)];
+  }
+  
+  /* Interaction Classes */
+  .interaction-2x { @apply bg-green-100! text-green-700! font-bold; }
+  .interaction-05x { @apply bg-red-50! text-red-600! opacity-80; }
+  .interaction-0x { @apply bg-slate-800! text-white! font-black; }
+  .interaction-1x { @apply opacity-40; }
+
+  /* Custom Search Input */
+  .search-input {
+    @apply w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-lg font-medium text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200;
+  }
+
+  /* Custom Select */
+  .bento-select {
+    @apply appearance-none w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-lg font-semibold text-indigo-600 cursor-pointer focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww%2Ew3%2Eorg%2Fsvg%22%20viewBox%3D%220%200%20256%20512%22%3E%3Cpath%20fill%3D%22%236366f1%22%20d%3D%22M64%20192L128%20256l64-64v-64h-128v64zM192%20320L128%20256l-64%2064v64h128v-64z%22%2F%3E%3C%2Fsvg%3E');
     background-repeat: no-repeat;
-    background-position: right 1.25rem center;
-    background-size: 1.4rem;
-    transition: border-color 0.2s, box-shadow 0.2s; 
-    border-width: 2px !important;
-    border-color: #e0e7ef !important; /* Un gris claro por defecto */
-}
-
-
-/* Quitar borde de focus y poner efecto sutil al hacer focus o active */
-select:focus, select:active {
-    outline: none !important;
-    border-color: #e0e7ef !important;
-    box-shadow: none !important;
-    background-color: #fff !important;
-}
-
-/* Efecto atractivo y sutil al pasar el ratón */
-select:hover {
-    border-color: #3B4CCA !important;
-    box-shadow: 0 2px 12px 0 #3b4cca22;
-    background-color: #f5f8ff;
-    transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
-}
-
-/* Styles for the type table */
-#type-table-container {
-    overflow-x: auto;
-}
-#type-table-container table {
-    width: 100%;
-    min-width: 900px;
-    border-collapse: separate;
-    border-spacing: 0;
-    background: #fff;
-    border-radius: 1.25rem;
-    box-shadow: 0 6px 32px 0 rgba(59,76,202,0.10), 0 1.5px 4px 0 rgba(59,76,202,0.04);
-    border-radius: 1.25rem;
-    overflow: hidden;
-}
-
-#type-table-container th,
-#type-table-container td {
-    padding: 0.85rem 1.1rem;
-    text-align: center;
-    font-size: 1.05rem;
-    border-bottom: 1.5px solid #e3e8f0;
-    border-right: 1.5px solid #e3e8f0;
-    transition: background 0.18s, color 0.18s, box-shadow 0.18s;
-}
-
-#type-table-container th {
-    background: linear-gradient(90deg, #f7f8fa 70%, #eaf0ff 100%);
-    color: #3B4CCA;
-    font-weight: 800;
-    letter-spacing: 0.01em;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    border-top: none;
-}
-
-#type-table-container th:first-child,
-#type-table-container td:first-child {
-    background: linear-gradient(90deg, #3B4CCA 80%, #6a11cb 100%);
-    color: #fff;
-    font-weight: 900;
-    font-size: 1.08rem;
-    position: sticky;
-    left: 0;
-    z-index: 30;
-    box-shadow: 2px 0 16px 0 rgba(59,76,202,0.10), 1px 0 0 0 #e3e8f0;
-    border-left: none;
-    background-clip: padding-box;
-}
-
-#type-table-container th:last-child {
-    border-top-right-radius: 1.25rem;
-}
-
-#type-table-container tr:last-child td:first-child {
-    border-bottom-left-radius: 1.25rem;
-}
-
-#type-table-container tr:last-child td:last-child {
-    border-bottom-right-radius: 1.25rem;
-}
-
-#type-table-container tr:last-child td,
-#type-table-container tr:last-child th {
-    border-bottom: none;
-}
-#type-table-container tr td:last-child,
-#type-table-container tr th:last-child {
-    border-right: none;
-}
-
-#type-table-container td {
-    background: #f9fafb;
-    color: #333;
-    font-weight: 500;
-}
-
-#type-table-container td:hover:not(:first-child),
-#type-table-container th:hover:not(:first-child) {
-    background: #eaf0ff;
-    color: #2575fc;
-    box-shadow: 0 2px 12px 0 rgba(59,76,202,0.08);
-    cursor: pointer;
-    /* z-index: 30; */
-    /* position: relative; */
-}
-
-@media (max-width: 900px) {
-    #type-table-container table {
-        min-width: 700px;
-    }
-}
-
-/* Styles for the selector */
-.selector-controls {
-    background-image: linear-gradient(135deg, theme('colors.pokemonPrimary') 0%, theme('colors.pokemonSecondary') 100%);
-    /* Tailwind utility classes replaced by equivalent CSS for external file */
-    padding: 2rem;
-    border-radius: 1rem;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.15), 0 4px 8px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem 3rem;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    max-width: fit-content;
-    margin: 0 auto;
-    border: 2px solid #E0E0E0;
-    margin-top: 6rem; /* Aumenta el espacio entre el buscador y los selectores */
-}
-.selector-controls::before {
-    content: '';
-    display: none;
-}
-@media (min-width: 640px) {
-    .selector-controls {
-        flex-direction: row;
-    }
-    .selector-controls::before {
-        display: block;
-        position: absolute;
-        background: rgba(255,255,255,0.5);
-        height: 60%;
-        width: 2px;
-        left: 50%;
-        transform: translateX(-50%);
-        top: 20%;
-        content: '';
-    }
-}
-.selector-controls select {
-    padding: 0.75rem 1.5rem;
-    border: 4px solid #fff;
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.08);
-    font-size: 1.125rem;
-    font-weight: 600;
-    min-width: 220px;
     background-position: right 1.5rem center;
-    background-size: 1.6rem;
-    color: #3B4CCA;
-    flex-grow: 1;
-    background-color: white;
-    z-index: 10;
-}
-.selector-controls button {
-    padding: 0.75rem 2rem;
-    font-size: 1.125rem;
-    font-weight: bold;
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.08);
-    color: #fff;
-    background: linear-gradient(90deg, #CC0000 0%, #3B4CCA 100%);
-    transition: background 0.2s;
-    flex-grow: 1;
-    z-index: 10;
-}
-.selector-controls button:hover {
-    background: linear-gradient(90deg, #3B4CCA 0%, #CC0000 100%);
-}
-@media (max-width: 639px) { 
-    .selector-controls select,
-    .selector-controls button {
-        margin-left: 0;
-        margin-right: 0;
-    }
+    background-size: 1rem;
+  }
 }
 
-/* --- STYLES FOR EFFECTIVENESS CARDS (DETAILS SECTION) --- */
-.effectiveness-card {
-    background: var(--card-bg, #f8fafc);
-    border-radius: 1rem;
-    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.04);
-    padding: 1.25rem 1rem;
-    margin-bottom: 1.25rem;
-    border: 2px solid transparent;
-    transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
-    min-height: 80px;
-}
-.effectiveness-card.card-super, .effectiveness-card.card-offense-super {
-    --card-bg: #e6f9ed;
-    border-color: #28a745;
-}
-.effectiveness-card.card-resist, .effectiveness-card.card-offense-resist {
-    --card-bg: #fbeaea;
-    border-color: #dc3545;
-}
-.effectiveness-card.card-immune {
-    --card-bg: #f3f4f6;
-    border-color: #a1a1aa;
-}
-.effectiveness-card:hover {
-    box-shadow: 0 4px 24px 0 rgba(56,189,248,0.12);
-    border-color: #6366f1;
-    background: #f0f9ff;
-}
-.effectiveness-card .label-group {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 0.75rem;
-    font-size: 1.2rem;
-    font-weight: 700;
-}
-.effectiveness-card .label-icon {
-    width: 1.4em;
-    height: 1.4em;
-    margin-right: 0.5em;
-}
-.type-pills-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5em;
-    justify-content: center;
-    align-items: center;
-    min-height: 2.5em;
+/* Fancy Animated Title */
+.bento-title {
+  @apply text-5xl md:text-6xl font-black tracking-tighter text-slate-900 mb-2;
 }
 
-/* Colors for the entire label-group (icon + text) and its border */
-.text-super-color { color: #28A745; border-color: #28A745; }
-.text-resist-color { color: #DC3545; border-color: #DC3545; }
-.text-immune-color { color: #6C757D; border-color: #6C757D; }
-
-/* --- STYLES FOR THE TITLE --- */
-.stylish-title {
-    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent;
-    font-weight: 900; 
-    font-size: 3.5rem; 
-    text-shadow: 0 5px 20px rgba(106, 17, 203, 0.6), 0 0 30px rgba(37, 117, 252, 0.6);
-    letter-spacing: -0.05em; 
-    line-height: 1; 
-    text-align: center;
-}
-
-.fancy-title {
-    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 40%, #f7971e 80%, #ffd200 100%);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent;
-    font-weight: 900;
-    font-size: 3.5rem;
-    letter-spacing: -0.05em;
-    line-height: 1;
-    text-align: center;
-    text-shadow:
-        0 5px 20px rgba(106, 17, 203, 0.6),
-        0 0 30px rgba(37, 117, 252, 0.6),
-        0 2px 8px #ffd20066;
-    transition: background-position 1s;
-    animation: gradient-move 3s ease-in-out infinite alternate;
-    padding-right: 0.25em;
-    overflow: visible;
-    display: inline-block;
-}
-
-@keyframes gradient-move {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 100% 50%; }
-}
-
-/* --- REST OF STYLES --- */
-.type-pill {
-    padding: 0.25rem 0.75rem;
-    border-radius: 999px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-transform: capitalize;
-    transition: all 0.2s;
-    min-width: 50px;
-}
-.pokeball-icon {
-    width: 2.5rem;
-    height: 2.5rem;
-    margin-right: 0.75rem;
-    color: #3B4CCA;
-}
-
-/* Classes for type pill background colors */
-.bg-type-normal { background: #A8A77A; }
-.bg-type-fire { background: #FD7D24; }
-.bg-type-water { background: #4592C4; }
-.bg-type-grass { background: #9BCC50; }
-.bg-type-electric { background: #F9D700; }
-.bg-type-ice { background: #51C4E7; }
-.bg-type-fighting { background: #D56723; }
-.bg-type-poison { background: #B97FC9; }
-.bg-type-ground { background: #F7DE3F; }
-.bg-type-flying { background: #A1BBED; }
-.bg-type-psychic { background: #F366B9; }
-.bg-type-bug { background: #729F3F; }
-.bg-type-rock { background: #A38C21; }
-.bg-type-ghost { background: #7B62A4; }
-.bg-type-dragon { background: #53A4CF; }
-.bg-type-steel { background: #9EB7B8; }
-.bg-type-fairy { background: #FDB9E9; }
-.bg-type-dark { background: #707070; }
-
-/* Classes for type pill text color (for contrast) */
-.type-text-dark { color: #333333; }
-.type-text-light { color: #FFFFFF; }
-
-/* Remove background image from the type select */
-select#type-select {
-    background-image: none !important;
-}
-
-/* Contenedor de sugerencias */
 #suggestions {
-    position: fixed; /* Cambia a posición fija */
-    top: calc(100% + 0.5rem); /* Ajusta la posición para que quede debajo del input */
-    left: 50%; /* Centra horizontalmente */
-    transform: translateX(-50%); /* Ajusta el centrado */
-    z-index: 20; /* Asegura que esté por encima de otros elementos */
-    max-height: 200px; /* Limita la altura */
-    overflow-y: auto; /* Habilita el desplazamiento vertical */
-    border-radius: 0.75rem; /* Bordes redondeados */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    background-color: var(--lightSurface); /* Fondo consistente con la página */
-    border: 1px solid var(--lightDivider); /* Borde similar al diseño */
-    margin-top: 0.5rem; /* Añade un margen para separarlo del input */
-    position: absolute; /* Asegura que se posicione relativo al input */
+  @apply absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-gray-100 shadow-xl z-50 max-h-60 overflow-y-auto overflow-hidden;
 }
-
-/* Elementos de la lista de sugerencias */
 #suggestions li {
-    padding: 0.75rem 1rem; /* Espaciado interno */
-    font-size: 1rem; /* Tamaño de fuente */
-    color: var(--lightTextPrimary); /* Color de texto principal */
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
+  @apply px-6 py-3 cursor-pointer transition-colors duration-150 text-slate-600 font-medium hover:bg-indigo-50 hover:text-indigo-600;
 }
 
-/* Hover en los elementos */
-#suggestions li:hover {
-    background-color: var(--lightBg); /* Fondo al pasar el cursor */
-    color: var(--pokemonPrimary); /* Color de texto al pasar el cursor */
+.label-group {
+  @apply flex items-center gap-2 mb-4 text-sm font-bold uppercase tracking-widest;
+}
+.label-icon {
+  @apply w-5 h-5;
 }
 
-/* Último elemento sin borde */
-#suggestions li:last-child {
-    border-bottom: none;
+.effectiveness-card {
+  @apply mb-8 last:mb-0;
 }
 
-/* Mensaje de "No Pokémon found" */
-#suggestions li.text-lightTextSecondary {
-    color: var(--lightTextSecondary); /* Color de texto secundario */
-    text-align: center;
-}
-
-.w-full.flex.justify-center.mb-4.relative {
-    position: relative;
-    margin-bottom: 4rem; /* Aumenta el espacio debajo del buscador */
-}
-
-/* Estilo para resaltar las coincidencias */
-.highlight {
-    color: var(--pokemonPrimary); /* Usa el color principal de Pokémon */
-    font-weight: bold; /* Resalta el texto con negrita */
-    background-color: rgba(59, 76, 202, 0.2); /* Fondo suave */
-    border-radius: 0.25rem; /* Bordes redondeados */
-    padding: 0 0.2rem; /* Espaciado interno */
+.type-pills-container {
+  @apply flex flex-wrap gap-2;
 }

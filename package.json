@@ -5,6 +5,8 @@
   "main": "script.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"npm run dev:css\" \"live-server .\"",
+    "build": "npm run build:css",
     "build:css": "tailwindcss -i ./src/input.css -o ./styles.css --minify",
     "dev:css": "tailwindcss -i ./src/input.css -o ./styles.css --watch"
   },
@@ -23,6 +25,8 @@
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.18",
     "autoprefixer": "^10.4.23",
+    "concurrently": "^9.2.1",
+    "live-server": "^1.2.2",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18"
   }
