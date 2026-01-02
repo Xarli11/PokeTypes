@@ -1,5 +1,40 @@
 // script.js
 
+// Global variables for data
+let POKEMON_LIST = [];
+let POKEMON_TYPES = [];
+let TYPE_EFFECTIVENESS = {};
+let TYPE_COLOR_CONTRAST = {};
+
+// Fetch data function
+async function loadData() {
+    try {
+        const [typeDataResponse, pokedexResponse] = await Promise.all([
+            fetch('data/type-data.json'),
+            fetch('data/pokedex.json')
+        ]);
+
+        if (!typeDataResponse.ok || !pokedexResponse.ok) {
+            throw new Error('Failed to load data files');
+        }
+
+        const typeData = await typeDataResponse.json();
+        const pokedex = await pokedexResponse.json();
+
+        // Initialize globals
+        POKEMON_TYPES = typeData.types;
+        TYPE_EFFECTIVENESS = typeData.effectiveness;
+        TYPE_COLOR_CONTRAST = typeData.contrast;
+        POKEMON_LIST = pokedex;
+
+        // Initialize UI
+        initApp();
+    } catch (error) {
+        console.error('Error loading data:', error);
+        // Fallback or user notification could go here
+    }
+}
+
 function getEffectiveness(attackingType, defendingType) {
     const attackerEffects = TYPE_EFFECTIVENESS[attackingType];
     if (attackerEffects && attackerEffects.hasOwnProperty(defendingType)) {
@@ -248,87 +283,85 @@ function displayTypeDetails(type1, type2) {
     // El resto igual:
     renderEffectivenessCard(resistancesCard, 'Resists (0.5x or less)', resistances, 'None', 'resist', 'text-resist-color');
     renderEffectivenessCard(immunitiesCard, 'Immune to (0x)', immunities, 'None', 'immune', 'text-immune-color');
-    renderEffectivenessCard(notVeryEffectiveCard, 'Not Very Effective (0.5x)', notVeryEffective, 'None', 'resist', 'text-resist-color');
+    renderEffectivenessCard(notVeryEffectiveCard, 'Not Very Effective (0x)', notVeryEffective, 'None', 'resist', 'text-resist-color');
     renderEffectivenessCard(noEffectCard, 'No Effect (0x)', noEffect, 'None', 'immune', 'text-immune-color');
 }
 
-// Escucha el evento de entrada en el campo de búsqueda
-const searchInput = document.getElementById('pokemon-search');
-const suggestionsList = document.getElementById('suggestions');
-const typeSelect = document.getElementById('type-select');
-const type2Select = document.getElementById('type2-select');
+// initApp encapsula la lógica de inicialización del DOM
+function initApp() {
+    // Escucha el evento de entrada en el campo de búsqueda
+    const searchInput = document.getElementById('pokemon-search');
+    const suggestionsList = document.getElementById('suggestions');
+    const typeSelect = document.getElementById('type-select');
+    const type2Select = document.getElementById('type2-select');
 
-// Escucha el evento de entrada en el campo de búsqueda
-searchInput.addEventListener('input', (event) => {
-    const query = event.target.value.trim().toLowerCase();
+    // Escucha el evento de entrada en el campo de búsqueda
+    searchInput.addEventListener('input', (event) => {
+        const query = event.target.value.trim().toLowerCase();
 
-    // Si no hay texto, oculta las sugerencias
-    if (!query) {
-        suggestionsList.innerHTML = '';
-        suggestionsList.classList.add('hidden');
-        return;
-    }
-
-    // Filtra los Pokémon que coincidan con el texto ingresado
-    const matches = POKEMON_LIST.filter(pokemon => pokemon.name.toLowerCase().includes(query));
-
-    // Si no hay coincidencias, muestra un mensaje
-    if (matches.length === 0) {
-        suggestionsList.innerHTML = '<li class="p-2 text-lightTextSecondary">No Pokémon found</li>';
-        suggestionsList.classList.remove('hidden');
-        return;
-    }
-
-    // Genera las sugerencias con las coincidencias resaltadas
-    suggestionsList.innerHTML = matches
-        .map(pokemon => {
-            const highlightedName = pokemon.name.replace(
-                new RegExp(query, 'gi'), // Busca todas las coincidencias (case-insensitive)
-                match => `<span class="highlight">${match}</span>` // Envuelve las coincidencias en un span
-            );
-            return `<li class="p-2 cursor-pointer hover:bg-lightBg" data-name="${pokemon.name}">${highlightedName}</li>`;
-        })
-        .join('');
-    suggestionsList.classList.remove('hidden');
-
-    // Añade eventos de clic a las sugerencias
-    Array.from(suggestionsList.children).forEach(item => {
-        item.addEventListener('click', () => {
-            const selectedPokemonName = item.getAttribute('data-name');
-            const selectedPokemon = POKEMON_LIST.find(p => p.name === selectedPokemonName);
-
-            // Actualiza el campo de búsqueda con el nombre seleccionado
-            searchInput.value = capitalizeWords(selectedPokemon.name);
-
-            // Oculta las sugerencias
+        // Si no hay texto, oculta las sugerencias
+        if (!query) {
             suggestionsList.innerHTML = '';
             suggestionsList.classList.add('hidden');
+            return;
+        }
 
-            // Actualiza los selectores de tipo
-            typeSelect.value = selectedPokemon.types[0] || ''; // Primer tipo
-            type2Select.value = selectedPokemon.types[1] || ''; // Segundo tipo (si existe)
+        // Filtra los Pokémon que coincidan con el texto ingresado
+        const matches = POKEMON_LIST.filter(pokemon => pokemon.name.toLowerCase().includes(query));
 
-            displayTypeDetails(typeSelect.value, type2Select.value);
+        // Si no hay coincidencias, muestra un mensaje
+        if (matches.length === 0) {
+            suggestionsList.innerHTML = '<li class="p-2 text-lightTextSecondary">No Pokémon found</li>';
+            suggestionsList.classList.remove('hidden');
+            return;
+        }
+
+        // Genera las sugerencias con las coincidencias resaltadas
+        suggestionsList.innerHTML = matches
+            .map(pokemon => {
+                const highlightedName = pokemon.name.replace(
+                    new RegExp(query, 'gi'), // Busca todas las coincidencias (case-insensitive)
+                    match => `<span class="highlight">${match}</span>` // Envuelve las coincidencias en un span
+                );
+                return `<li class="p-2 cursor-pointer hover:bg-lightBg" data-name="${pokemon.name}">${highlightedName}</li>`;
+            })
+            .join('');
+        suggestionsList.classList.remove('hidden');
+
+        // Añade eventos de clic a las sugerencias
+        Array.from(suggestionsList.children).forEach(item => {
+            item.addEventListener('click', () => {
+                const selectedPokemonName = item.getAttribute('data-name');
+                const selectedPokemon = POKEMON_LIST.find(p => p.name === selectedPokemonName);
+
+                // Actualiza el campo de búsqueda con el nombre seleccionado
+                searchInput.value = capitalizeWords(selectedPokemon.name);
+
+                // Oculta las sugerencias
+                suggestionsList.innerHTML = '';
+                suggestionsList.classList.add('hidden');
+
+                // Actualiza los selectores de tipo
+                typeSelect.value = selectedPokemon.types[0] || ''; // Primer tipo
+                type2Select.value = selectedPokemon.types[1] || ''; // Segundo tipo (si existe)
+
+                displayTypeDetails(typeSelect.value, type2Select.value);
+            });
         });
     });
-});
 
-// Oculta las sugerencias si el usuario hace clic fuera del campo de búsqueda
-document.addEventListener('click', (event) => {
-    if (searchInput.contains(event.target) || suggestionsList.contains(event.target)) {
-        return;
-    }
-    suggestionsList.innerHTML = '';
-    suggestionsList.classList.add('hidden');
-});
+    // Oculta las sugerencias si el usuario hace clic fuera del campo de búsqueda
+    document.addEventListener('click', (event) => {
+        if (searchInput.contains(event.target) || suggestionsList.contains(event.target)) {
+            return;
+        }
+        suggestionsList.innerHTML = '';
+        suggestionsList.classList.add('hidden');
+    });
 
-document.addEventListener('DOMContentLoaded', () => {
     generateTypeTable();
     populateTypeSelects();
 
-    const typeSelect = document.getElementById('type-select');
-    const type2Select = document.getElementById('type2-select');
-    const pokemonSearch = document.getElementById('pokemon-search');
     const resetButton = document.getElementById('reset-button');
 
     function updateDetails() {
@@ -341,21 +374,24 @@ document.addEventListener('DOMContentLoaded', () => {
     resetButton.addEventListener('click', () => {
         typeSelect.value = '';
         type2Select.value = '';
-        pokemonSearch.value = '';
+        searchInput.value = '';
         displayTypeDetails('', '');
     });
 
     document.getElementById('type-select').addEventListener('change', function() {
-        const searchInput = document.getElementById('pokemon-search');
         if (searchInput.value) {
             searchInput.value = "";
         }
     });
 
     document.getElementById('type2-select').addEventListener('change', function() {
-        const searchInput = document.getElementById('pokemon-search');
         if (searchInput.value) {
             searchInput.value = "";
         }
     });
+}
+
+// Start data loading on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    loadData();
 });
