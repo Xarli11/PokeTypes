@@ -136,6 +136,12 @@ function displayTypeDetails(type1, type2) {
     }
 
     typeDetailsDiv.style.display = 'block';
+    
+    // Handle case where user selects same type twice (treat as monotype)
+    if (type1 === type2) {
+        type2 = '';
+    }
+
     let typeLabel = type1 || '';
     if (type1 && type2) {
         selectedTypeNameSpan.innerHTML =
@@ -179,16 +185,16 @@ function displayTypeDetails(type1, type2) {
     });
 
     // Offensive: how much damage does the Pokémon deal to each type?
-    const superEffective4x = [];
+    // Note: superEffective4x is impossible against single types (POKEMON_TYPES),
+    // but we keep the variable for consistency if we ever check against dual types.
+    // For now, we just rely on superEffective2x for coverage against single types.
     const superEffective2x = [];
     POKEMON_TYPES.forEach(defendingType => {
         let modifier = getEffectiveness(type1, defendingType);
         if (type2) modifier = Math.max(modifier, getEffectiveness(type2, defendingType));
 
-        if (modifier === 4) {
-            superEffective4x.push(defendingType);
-        } else if (modifier === 2) {
-            superEffective2x.push(defendingType);
+        if (modifier >= 2) {
+             superEffective2x.push(defendingType);
         } else if (modifier === 0.5) {
             notVeryEffective.push(defendingType);
         } else if (modifier === 0) {
@@ -218,17 +224,17 @@ function displayTypeDetails(type1, type2) {
             </div>
             <div class="type-pills-container" style="flex-direction:column;align-items:flex-start;">
         `;
-        if (x4List.length) {
+        if (x4List && x4List.length) {
             contentHTML += `<div style="margin-bottom:0.5em"><span class="font-bold" style="color:#e53935;background:#fdecea;padding:0.15em 0.8em;border-radius:999px;margin-right:0.7em;">x4</span>`;
             contentHTML += x4List.map(createTypePill).join('');
             contentHTML += `</div>`;
         }
-        if (x2List.length) {
+        if (x2List && x2List.length) {
             contentHTML += `<div><span class="font-bold" style="color:#fb8c00;background:#fff3e0;padding:0.15em 0.8em;border-radius:999px;margin-right:0.7em;">x2</span>`;
             contentHTML += x2List.map(createTypePill).join('');
             contentHTML += `</div>`;
         }
-        if (!x4List.length && !x2List.length) {
+        if ((!x4List || !x4List.length) && (!x2List || !x2List.length)) {
             contentHTML += `<span class="text-lightTextSecondary text-sm">${noContentText}</span>`;
         }
         contentHTML += `</div>`;
@@ -237,7 +243,7 @@ function displayTypeDetails(type1, type2) {
 
     // Usar la nueva función para Weaknesses y Very Effective
     renderSplitEffectivenessCard(weaknessesCard, 'Weak to', weaknesses4x, weaknesses2x, 'None', 'super', 'text-super-color');
-    renderSplitEffectivenessCard(superEffectiveCard, 'Very Effective', superEffective4x, superEffective2x, 'None', 'super', 'text-super-color');
+    renderSplitEffectivenessCard(superEffectiveCard, 'Very Effective', [], superEffective2x, 'None', 'super', 'text-super-color');
 
     // El resto igual:
     renderEffectivenessCard(resistancesCard, 'Resists (0.5x or less)', resistances, 'None', 'resist', 'text-resist-color');
@@ -309,53 +315,12 @@ searchInput.addEventListener('input', (event) => {
 
 // Oculta las sugerencias si el usuario hace clic fuera del campo de búsqueda
 document.addEventListener('click', (event) => {
-    if (!searchInput.contains(event.target) && !suggestionsList.contains(event.target)) {
-        suggestionsList.innerHTML = '';
-        suggestionsList.classList.add('hidden');
+    if (searchInput.contains(event.target) || suggestionsList.contains(event.target)) {
+        return;
     }
+    suggestionsList.innerHTML = '';
+    suggestionsList.classList.add('hidden');
 });
-
-function displayPokemonDetails(pokemon) {
-    const typeDetails = document.getElementById('type-details');
-    const typeName = document.getElementById('selected-type-name');
-    const weaknesses = document.getElementById('weaknesses');
-    const resistances = document.getElementById('resistances');
-    const immunities = document.getElementById('immunities');
-
-    // Actualiza los detalles del Pokémon
-    typeName.textContent = capitalizeWords(pokemon.name);
-    weaknesses.innerHTML = ''; // Limpia datos anteriores
-    resistances.innerHTML = ''; // Limpia datos anteriores
-    immunities.innerHTML = ''; // Limpia datos anteriores
-
-    // Muestra los tipos del Pokémon
-    pokemon.types.forEach(type => {
-        const typeElement = document.createElement('div');
-        typeElement.textContent = capitalizeWords(type);
-        typeElement.className = `type-pill bg-${type.toLowerCase()}`;
-        weaknesses.appendChild(typeElement); // Ejemplo: Añadir a debilidades
-    });
-
-    // Muestra la sección de detalles
-    typeDetails.classList.remove('hidden');
-}
-
-function clearPokemonDetails() {
-    const typeDetails = document.getElementById('type-details');
-    const typeName = document.getElementById('selected-type-name');
-    const weaknesses = document.getElementById('weaknesses');
-    const resistances = document.getElementById('resistances');
-    const immunities = document.getElementById('immunities');
-
-    // Limpia los detalles
-    typeName.textContent = '';
-    weaknesses.innerHTML = '';
-    resistances.innerHTML = '';
-    immunities.innerHTML = '';
-
-    // Oculta la sección de detalles
-    typeDetails.classList.add('hidden');
-}
 
 document.addEventListener('DOMContentLoaded', () => {
     generateTypeTable();
