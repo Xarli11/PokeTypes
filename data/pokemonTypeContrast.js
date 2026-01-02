@@ -12,7 +12,6 @@ const TYPE_COLOR_CONTRAST = {
     Psychic: 'light',
     Bug: 'light',
     Rock: 'light',
-    Light: 'dark',
     Ghost: 'light',
     Dragon: 'light',
     Steel: 'dark',

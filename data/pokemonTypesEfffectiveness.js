@@ -51,11 +51,6 @@ const TYPE_EFFECTIVENESS = {
         Fire: 2, Ice: 2, Flying: 2, Bug: 2,
         Fighting: 0.5, Ground: 0.5, Steel: 0.5
     },
-    Light: {
-        Dark: 2, Ghost: 2,
-        Fighting: 0.5, Rock: 0.5,
-        Poison: 0, Steel: 0.5,
-    },
     Ghost: {
         Psychic: 2, Ghost: 2,
         Normal: 0, Fighting: 0, Dark: 0.5, Bug: 0.5
