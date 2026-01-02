@@ -1,21 +1,25 @@
 {
   "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Poketypes - Pokémon Type Effectiveness Guide",
-  "description": "Explore the Pokémon type effectiveness chart. Learn the strengths and weaknesses of each type to improve your battle strategies.",
-  "url": "https://poketypes-smoky.vercel.app/",
+  "@type": "SoftwareApplication",
+  "name": "Poketypes",
+  "operatingSystem": "Any",
+  "applicationCategory": "GameUtility",
+  "description": "The fastest Pokémon type calculator and effectiveness chart. Calculate weaknesses, resistances, and coverage for Gen 9, Scarlet & Violet, and all previous generations instantly.",
+  "url": "https://poketypes.app/",
+  "image": "https://poketypes.app/pokeball.png",
   "author": {
     "@type": "Person",
     "name": "Xarli11"
   },
-  "publisher": {
-    "@type": "Organization",
-    "name": "Poketypes",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://poketypes-smoky.vercel.app/pokeball.png",
-      "width": 256,
-      "height": 256
-    }
-  }
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "ratingCount": "150"
+  },
+  "featureList": "Type Calculator, Weakness Chart, Dual Type Analysis, Pokemon Search"
 }

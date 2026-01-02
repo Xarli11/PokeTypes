@@ -1,12 +1,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://poketypes-smoky.vercel.app/</loc>
-    <lastmod>2025-06-10</lastmod>
+    <loc>https://poketypes.app/</loc>
+    <lastmod>2026-01-02</lastmod>
     <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://poketypes-smoky.vercel.app/type-effectiveness-chart</loc>
-    <lastmod>2025-06-10</lastmod>
-    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
   </url>
 </urlset>

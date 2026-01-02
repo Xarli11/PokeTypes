@@ -57,9 +57,28 @@ function setupEventListeners() {
         const matches = appData.pokemonList.filter(p => p.name.toLowerCase().includes(query)).slice(0, 10);
         
         if (matches.length === 0) {
-            suggestionsList.innerHTML = '<li class="text-slate-400 italic">No results found</li>';
+            suggestionsList.innerHTML = '<li class="p-4 text-slate-400 italic text-center">No results found</li>';
         } else {
-            suggestionsList.innerHTML = matches.map(p => `<li data-name="${p.name}">${ui.capitalizeWords(p.name)}</li>`).join('');
+            suggestionsList.innerHTML = matches.map(p => {
+                const spriteName = p.name.toLowerCase()
+                    .replace(/[\s.']/g, '-')
+                    .replace(/--+/g, '-')
+                    .replace(/^-|-$/g, '');
+                
+                const typePills = p.types.map(t => ui.createTypePill(t, appData.contrast)).join('');
+                
+                return `
+                    <li data-name="${p.name}" class="flex items-center gap-4 !py-3">
+                        <img src="https://img.pokemondb.net/sprites/sword-shield/icon/${spriteName}.png" 
+                             alt="${p.name}" 
+                             class="w-10 h-10 object-contain flex-shrink-0"
+                             onerror="this.onerror=null; this.src='pokeball.png';">
+                        <span class="flex-1 font-bold text-slate-700">${ui.capitalizeWords(p.name)}</span>
+                        <div class="flex gap-1 scale-90 origin-right">
+                            ${typePills}
+                        </div>
+                    </li>`;
+            }).join('');
         }
         suggestionsList.classList.remove('hidden');
     });

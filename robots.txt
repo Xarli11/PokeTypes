@@ -1,4 +1,3 @@
 User-agent: *
-Disallow: /admin/
 Allow: /
-Sitemap: https://poketypes-smoky.vercel.app/sitemap.xml
+Sitemap: https://poketypes.app/sitemap.xml
