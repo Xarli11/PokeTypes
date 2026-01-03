@@ -145,28 +145,46 @@
             </section>
 
             <!-- SEO Content Section -->
-            <section class="md:col-span-12 mt-12 px-4">
-                <article class="prose prose-slate max-w-4xl mx-auto">
-                    <h2 class="text-2xl font-bold text-slate-800 mb-4">Mastering the Pokemon Type Chart</h2>
-                    <p class="text-slate-600 mb-6">
-                        Understanding type effectiveness is crucial for any Pokemon trainer, whether you're playing <strong>Pokemon Scarlet and Violet</strong> (Gen 9) or classic titles. 
+            <section class="md:col-span-12 bento-card !py-10 !px-8 md:!px-12">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                        Mastering the Pokemon Type Chart
+                    </h2>
+                    
+                    <p class="text-slate-600 leading-relaxed mb-8 text-lg">
+                        Understanding type effectiveness is crucial for any Pokemon trainer, whether you're playing <strong class="text-indigo-600">Pokemon Scarlet and Violet</strong> (Gen 9) or classic titles. 
                         Our <strong>Pokemon Type Calculator</strong> helps you instantly find weaknesses, resistances, and immunities for any single or dual-type Pokemon.
                     </p>
 
-                    <h3 class="text-xl font-bold text-slate-800 mb-3">How Type Effectiveness Works</h3>
-                    <p class="text-slate-600 mb-6">
-                        Every attack in the game has a type modifier. A standard attack deals 1x damage. 
-                        If a move is <strong>Super Effective</strong>, it deals 2x damage. If it's <strong>Not Very Effective</strong>, it deals 0.5x damage.
-                        Immunities result in 0x damage, meaning the attack has no effect at all.
-                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                            <h3 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                                How Effectiveness Works
+                            </h3>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                Every attack in the game has a type modifier. A standard attack deals 1x damage. 
+                                If a move is <strong>Super Effective</strong>, it deals 2x damage. If it's <strong>Not Very Effective</strong>, it deals 0.5x damage.
+                                Immunities result in 0x damage, meaning the attack has no effect at all.
+                            </p>
+                        </div>
 
-                    <h3 class="text-xl font-bold text-slate-800 mb-3">Dual Type Weaknesses (4x Damage)</h3>
-                    <p class="text-slate-600 mb-6">
-                        Many Pokemon possess two types (e.g., Charizard is Fire/Flying). Weaknesses stack! 
-                        If both types are weak to the same element (like Rock vs. Fire/Flying), the damage multiplier becomes <strong>4x</strong>. 
-                        Conversely, resistances can cancel out weaknesses, making dual-type interactions complex. Use our calculator above to navigate these combinations effortlessly.
-                    </p>
-                </article>
+                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                            <h3 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                                Dual Type Weaknesses
+                            </h3>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                Many Pokemon possess two types (e.g., Charizard is Fire/Flying). Weaknesses stack! 
+                                If both types are weak to the same element (like Rock vs. Fire/Flying), the damage multiplier becomes <strong>4x</strong>. 
+                                Conversely, resistances can cancel out weaknesses.
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </section>
 
         </div>
