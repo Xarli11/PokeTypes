@@ -1,4 +1,4 @@
-const CACHE_NAME = 'poketypes-v2.3.3';
+const CACHE_NAME = 'poketypes-v2.3.4';
 const ASSETS = [
   '/',
   '/index.html',
@@ -14,7 +14,7 @@ const ASSETS = [
 
 // Install: Cache files
 self.addEventListener('install', (event) => {
-  self.skipWaiting(); // Force activation immediately
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS);
@@ -34,18 +34,32 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
-    }).then(() => self.clients.claim()) // Take control of all clients immediately
+    }).then(() => self.clients.claim())
   );
 });
 
-// Fetch: Network first for HTML, Cache first for assets (Stale-while-revalidate strategy could be better but sticking to simple cache-first with network fallback for now, or network-first for dev safety)
-// Let's stick to the previous simple logic but now with versioning working correctly.
-// Actually, for an app like this, Network First for HTML is safer to ensure updates are seen.
+// Fetch: Network First, falling back to Cache
+// This ensures users always get the latest version if they are online.
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      // Return cached response if found, else fetch from network
-      return response || fetch(event.request);
-    })
+    fetch(event.request)
+      .then((networkResponse) => {
+        // If network fetch is successful, clone it and update the cache
+        // verification: check if valid response
+        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+          return networkResponse;
+        }
+        
+        const responseToCache = networkResponse.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
+        });
+
+        return networkResponse;
+      })
+      .catch(() => {
+        // If network fails (offline), return from cache
+        return caches.match(event.request);
+      })
   );
 });
