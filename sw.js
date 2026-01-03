@@ -1,4 +1,4 @@
-const CACHE_NAME = 'poketypes-v2.3.0';
+const CACHE_NAME = 'poketypes-v2.3.3';
 const ASSETS = [
   '/',
   '/index.html',
