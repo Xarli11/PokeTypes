@@ -45,3 +45,32 @@ export function calculateOffense(type1, type2, types, effectiveness) {
 
     return results;
 }
+
+export function findImmuneDualTypes(type1, type2, types, effectiveness) {
+    const immuneCombinations = [];
+
+    for (let i = 0; i < types.length; i++) {
+        for (let j = i + 1; j < types.length; j++) {
+            const defType1 = types[i];
+            const defType2 = types[j];
+
+            // Damage from Attacker Type 1
+            const damage1 = getEffectiveness(type1, defType1, effectiveness) * getEffectiveness(type1, defType2, effectiveness);
+            
+            // Damage from Attacker Type 2 (if present)
+            let damage2 = 0;
+            if (type2) {
+                damage2 = getEffectiveness(type2, defType1, effectiveness) * getEffectiveness(type2, defType2, effectiveness);
+            }
+
+            // If we have two types, we use the one that deals the most damage.
+            // If the BEST we can do is still 0, then they are fully immune.
+            const bestOutcome = type2 ? Math.max(damage1, damage2) : damage1;
+
+            if (bestOutcome === 0) {
+                immuneCombinations.push([defType1, defType2]);
+            }
+        }
+    }
+    return immuneCombinations;
+}

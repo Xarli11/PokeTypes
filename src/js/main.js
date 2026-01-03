@@ -1,5 +1,5 @@
 import { loadAppData } from './modules/data.js';
-import { calculateDefense, calculateOffense } from './modules/calculator.js';
+import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js';
 import * as ui from './modules/ui.js';
 
 let appData = null;
@@ -165,6 +165,7 @@ function displayAnalysis(t1, t2) {
     // Calculations
     const def = calculateDefense(t1, t2, appData.types, appData.effectiveness);
     const off = calculateOffense(t1, t2, appData.types, appData.effectiveness);
+    const dualImmunities = findImmuneDualTypes(t1, t2, appData.types, appData.effectiveness);
 
     // Render Cards
     ui.renderSplitEffectivenessCard(document.getElementById('weaknesses'), 'Weak to', def.weaknesses4x, def.weaknesses2x, 'None', 'super', appData.contrast);
@@ -174,6 +175,8 @@ function displayAnalysis(t1, t2) {
     ui.renderEffectivenessCard(document.getElementById('super-effective'), 'Super Effective', off.superEffective2x, 'None', 'super', appData.contrast);
     ui.renderEffectivenessCard(document.getElementById('not-very-effective'), 'Not Very Effective', off.notVeryEffective, 'None', 'resist', appData.contrast);
     ui.renderEffectivenessCard(document.getElementById('no-effect'), 'No Effect', off.noEffect, 'None', 'immune', appData.contrast);
+    
+    ui.renderDualImmunities(document.getElementById('dual-immunities'), 'Totally Walled By (Dual Types)', dualImmunities, appData.contrast);
 }
 
 document.addEventListener('DOMContentLoaded', init);

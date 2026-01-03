@@ -66,6 +66,40 @@ export function renderSplitEffectivenessCard(cardElement, labelText, x4List, x2L
     cardElement.innerHTML = contentHTML;
 }
 
+export function renderDualImmunities(container, labelText, pairs, contrastData) {
+    if (!pairs || pairs.length === 0) {
+        container.classList.add('hidden');
+        return;
+    }
+
+    container.classList.remove('hidden');
+    let contentHTML = `<div class="label-group">
+        <svg class="label-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+        </svg>
+        <span>${labelText}</span>
+    </div>`;
+    
+    contentHTML += `<div class="flex flex-col gap-2 mt-2">`;
+    
+    pairs.forEach(pair => {
+        const p1 = createTypePill(pair[0], contrastData);
+        const p2 = createTypePill(pair[1], contrastData);
+        
+        contentHTML += `
+            <div class="flex items-center gap-2 text-sm text-slate-600 bg-slate-50 p-2 rounded-lg">
+                <div class="flex scale-90 origin-left -space-x-1">
+                    ${p1}${p2}
+                </div>
+                <span class="font-medium">Immune</span>
+            </div>
+        `;
+    });
+    
+    contentHTML += `</div>`;
+    container.innerHTML = contentHTML;
+}
+
 export function generateTypeTable(containerId, types, effectiveness, contrastData) {
     const tableContainer = document.getElementById(containerId);
     let tableHTML = '<table><thead><tr><th></th>';
