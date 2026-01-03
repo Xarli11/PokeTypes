@@ -8,7 +8,8 @@
     "dev": "concurrently \"npm run dev:css\" \"live-server .\"",
     "build": "npm run build:css",
     "build:css": "tailwindcss -i ./src/input.css -o ./styles.css --minify",
-    "dev:css": "tailwindcss -i ./src/input.css -o ./styles.css --watch"
+    "dev:css": "tailwindcss -i ./src/input.css -o ./styles.css --watch",
+    "release": "node scripts/release.js"
   },
   "repository": {
     "type": "git",
