@@ -63,17 +63,19 @@ function setupEventListeners() {
             suggestionsList.innerHTML = '<li class="p-4 text-slate-400 italic text-center">No results found</li>';
         } else {
             suggestionsList.innerHTML = matches.map((p, index) => {
-                const spriteName = p.name.toLowerCase()
-                    .replace(/[\s.']/g, '-')
-                    .replace(/--+/g, '-')
-                    .replace(/^-|-$/g, '');
-                
+                // Use PokeAPI sprites via raw.githubusercontent.com
+                // p.id was added to pokedex.json by migration script
+                const imageUrl = p.id 
+                    ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png`
+                    : 'pokeball.png';
+
                 const typePills = p.types.map(t => ui.createTypePill(t, appData.contrast)).join('');
                 
                 return `
                     <li data-name="${p.name}" data-index="${index}" class="suggestion-item flex items-center gap-4 !py-3">
-                        <img src="https://img.pokemondb.net/sprites/sword-shield/icon/${spriteName}.png" 
+                        <img src="${imageUrl}" 
                              alt="${p.name}" 
+                             loading="lazy"
                              class="w-10 h-10 object-contain flex-shrink-0"
                              onerror="this.onerror=null; this.src='pokeball.png';">
                         <span class="flex-1 font-bold text-slate-700">${ui.capitalizeWords(p.name)}</span>
