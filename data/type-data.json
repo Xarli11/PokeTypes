@@ -22,7 +22,8 @@
   "effectiveness": {
     "Normal": {
       "Rock": 0.5,
-      "Ghost": 0
+      "Ghost": 0,
+      "Steel": 0.5
     },
     "Fire": {
       "Grass": 2,
@@ -144,8 +145,7 @@
       "Psychic": 2,
       "Ghost": 2,
       "Normal": 0,
-      "Dark": 0.5,
-      "Bug": 0.5
+      "Dark": 0.5
     },
     "Dragon": {
       "Dragon": 2,
