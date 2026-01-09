@@ -8534,5 +8534,248 @@
       "Fighting",
       "Water"
     ]
+  },
+  {
+    "id": null,
+    "name": "Mega Raichu X",
+    "types": [
+      "Electric"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Raichu Y",
+    "types": [
+      "Electric"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Clefable",
+    "types": [
+      "Fairy",
+      "Flying"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Victreebel",
+    "types": [
+      "Grass",
+      "Poison"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Dragonite",
+    "types": [
+      "Dragon",
+      "Flying"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Meganium",
+    "types": [
+      "Grass",
+      "Fairy"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Feraligatr",
+    "types": [
+      "Water",
+      "Dragon"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Starmie",
+    "types": [
+      "Water",
+      "Psychic"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Skarmory",
+    "types": [
+      "Steel",
+      "Flying"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Froslass",
+    "types": [
+      "Ice",
+      "Ghost"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Chesnaught",
+    "types": [
+      "Grass",
+      "Fighting"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Delphox",
+    "types": [
+      "Fire",
+      "Psychic"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Greninja",
+    "types": [
+      "Water",
+      "Dark"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Malamar",
+    "types": [
+      "Dark",
+      "Psychic"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Hawlucha",
+    "types": [
+      "Fighting",
+      "Flying"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Zeraora",
+    "types": [
+      "Electric"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Scovillain",
+    "types": [
+      "Grass",
+      "Fire"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Glimmora",
+    "types": [
+      "Rock",
+      "Poison"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Barbaracle",
+    "types": [
+      "Rock",
+      "Fighting"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Chandelure",
+    "types": [
+      "Ghost",
+      "Fire"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Dragalge",
+    "types": [
+      "Poison",
+      "Dragon"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Drampa",
+    "types": [
+      "Normal",
+      "Dragon"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Pyroar",
+    "types": [
+      "Fire",
+      "Normal"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Baxcalibur",
+    "types": [
+      "Dragon",
+      "Ice"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Chimecho",
+    "types": [
+      "Psychic",
+      "Steel"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Absol Z",
+    "types": [
+      "Dark",
+      "Ghost"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Staraptor",
+    "types": [
+      "Fighting",
+      "Flying"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Excadrill",
+    "types": [
+      "Ground",
+      "Steel"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Eelektross",
+    "types": [
+      "Electric"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Falinks",
+    "types": [
+      "Fighting"
+    ]
+  },
+  {
+    "id": null,
+    "name": "Mega Crabominable",
+    "types": [
+      "Fighting",
+      "Ice"
+    ]
   }
 ]
