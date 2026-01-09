@@ -19,7 +19,7 @@
 
 1. **Clona el repositorio:**
    ```bash
-   git clone https://github.com/tuusuario/poketypes.git
+   git clone https://github.com/Xarli11/PokeTypes.git
    cd PokeTypes
    ```
 2. **Abre `index.html` en tu navegador favorito.**
@@ -27,17 +27,12 @@
 
 ---
 
-## 🖼️ Capturas
-
-![Poketypes Screenshot](https://i.imgur.com/VaUFfs0.png)
-
----
-
 ## 🛠️ Tecnologías
 
-- HTML5 + CSS3 (Tailwind + custom)
-- JavaScript puro
-- Sin dependencias externas (excepto Tailwind CDN)
+- **HTML5** + **CSS3** (TailwindCSS)
+- **JavaScript** (Vanilla)
+- **Responsive Design**
+- **Git & GitHub**
 
 ---
 
@@ -45,8 +40,4 @@
 
 - Inspirado por [Pokémon](https://www.pokemon.com/) y la comunidad de fans.
 - Datos de tipos y Pokémon actualizados hasta la **9ª generación**.
-- Diseño y código por @Xarli11.
-
----
-
-¡Haz un fork, contribuye o simplemente disfruta aprendiendo sobre los tipos Pokémon!
+- Diseño y código por **[Xarli11](https://github.com/Xarli11)**.
