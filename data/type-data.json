@@ -153,16 +153,13 @@
       "Fairy": 0
     },
     "Steel": {
-      "Ice": 0.5,
       "Rock": 2,
+      "Ice": 2,
       "Fairy": 2,
       "Fire": 0.5,
       "Water": 0.5,
       "Electric": 0.5,
-      "Steel": 0.5,
-      "Grass": 0.5,
-      "Fighting": 0.5,
-      "Ground": 0.5
+      "Steel": 0.5
     },
     "Fairy": {
       "Fighting": 2,
