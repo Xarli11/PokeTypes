@@ -141,6 +141,24 @@ function setupEventListeners() {
             suggestionsList.classList.add('hidden');
         }
     });
+
+    // Contact/Discord Logic
+    const discordBtn = document.getElementById('discord-btn');
+    const discordTooltip = document.getElementById('discord-tooltip');
+    
+    if (discordBtn && discordTooltip) {
+        discordBtn.addEventListener('click', () => {
+            const username = 'xarli11';
+            navigator.clipboard.writeText(username).then(() => {
+                discordTooltip.classList.remove('opacity-0');
+                setTimeout(() => {
+                    discordTooltip.classList.add('opacity-0');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        });
+    }
 }
 
 function displayAnalysis(t1, t2) {
