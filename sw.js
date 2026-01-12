@@ -1,4 +1,4 @@
-const CACHE_NAME = 'poketypes-v2.6.0';
+const CACHE_NAME = 'poketypes-v2.7.0';
 const ASSETS = [
   '/',
   '/index.html',
@@ -9,7 +9,8 @@ const ASSETS = [
   '/src/js/modules/ui.js',
   '/data/pokedex.json',
   '/data/type-data.json',
-  '/pokeball.png'
+  '/pokeball.png',
+  '/favicon.ico'
 ];
 
 // Install: Cache files
@@ -59,7 +60,7 @@ self.addEventListener('fetch', (event) => {
       })
       .catch(() => {
         // If network fails (offline), return from cache
-        return caches.match(event.request);
+        return caches.match(event.request, { ignoreSearch: true });
       })
   );
 });
