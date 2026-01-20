@@ -1,6 +1,6 @@
 {
   "name": "poketypes",
-  "version": "2.7.2",
+  "version": "2.8.0",
   "description": "**Poketypes** es una herramienta visual interactiva para explorar la efectividad de los tipos Pokémon, tanto en defensa como en ataque. Selecciona uno o dos tipos y descubre todas sus debilidades, resistencias, inmunidades y fortalezas de un vistazo.",
   "main": "script.js",
   "scripts": {
