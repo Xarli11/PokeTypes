@@ -189,10 +189,12 @@ function displayAnalysis(t1, t2) {
 
     // Render Cards
     ui.renderSplitEffectivenessCard(document.getElementById('weaknesses'), 'Weak to', def.weaknesses4x, def.weaknesses2x, 'None', 'super', appData.contrast);
+    ui.renderEffectivenessCard(document.getElementById('neutral-damage'), 'Neutral Damage', def.neutral, 'None', 'neutral', appData.contrast);
     ui.renderEffectivenessCard(document.getElementById('resistances'), 'Resistances', def.resistances, 'None', 'resist', appData.contrast);
     ui.renderEffectivenessCard(document.getElementById('immunities'), 'Immunities', def.immunities, 'None', 'immune', appData.contrast);
 
     ui.renderEffectivenessCard(document.getElementById('super-effective'), 'Super Effective', off.superEffective2x, 'None', 'super', appData.contrast);
+    ui.renderEffectivenessCard(document.getElementById('neutral-offense'), 'Neutral Damage', off.neutral, 'None', 'neutral', appData.contrast);
     ui.renderEffectivenessCard(document.getElementById('not-very-effective'), 'Not Very Effective', off.notVeryEffective, 'None', 'resist', appData.contrast);
     ui.renderEffectivenessCard(document.getElementById('no-effect'), 'No Effect', off.noEffect, 'None', 'immune', appData.contrast);
     

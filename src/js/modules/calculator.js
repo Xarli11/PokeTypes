@@ -10,6 +10,7 @@ export function calculateDefense(type1, type2, types, effectiveness) {
     const results = {
         weaknesses4x: [],
         weaknesses2x: [],
+        neutral: [],
         resistances: [],
         immunities: []
     };
@@ -20,6 +21,7 @@ export function calculateDefense(type1, type2, types, effectiveness) {
 
         if (modifier === 4) results.weaknesses4x.push(attackingType);
         else if (modifier === 2) results.weaknesses2x.push(attackingType);
+        else if (modifier === 1) results.neutral.push(attackingType);
         else if (modifier === 0.5 || modifier === 0.25) results.resistances.push(attackingType);
         else if (modifier === 0) results.immunities.push(attackingType);
     });
@@ -30,6 +32,7 @@ export function calculateDefense(type1, type2, types, effectiveness) {
 export function calculateOffense(type1, type2, types, effectiveness) {
     const results = {
         superEffective2x: [],
+        neutral: [],
         notVeryEffective: [],
         noEffect: []
     };
@@ -39,6 +42,7 @@ export function calculateOffense(type1, type2, types, effectiveness) {
         if (type2) modifier = Math.max(modifier, getEffectiveness(type2, defendingType, effectiveness));
 
         if (modifier >= 2) results.superEffective2x.push(defendingType);
+        else if (modifier === 1) results.neutral.push(defendingType);
         else if (modifier === 0.5) results.notVeryEffective.push(defendingType);
         else if (modifier === 0) results.noEffect.push(defendingType);
     });
