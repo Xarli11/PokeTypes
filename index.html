@@ -41,7 +41,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="styles.css?v=2.8.1">
+    <link rel="stylesheet" href="styles.css?v=2.9.0">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5778743399428042" crossorigin="anonymous"></script>
     
     <!-- Structured Data (Schema.org) -->
@@ -63,11 +63,23 @@
     }
     </script>
 </head>
-<body class="min-h-screen py-12 px-4 md:px-8">
-    <div class="max-w-7xl mx-auto">
+<body class="min-h-screen py-12 px-4 md:px-8 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto relative">
+        <!-- Theme Toggle -->
+        <button id="theme-toggle" class="absolute top-0 right-0 p-2 rounded-lg bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm transition-all" aria-label="Toggle Dark Mode">
+            <!-- Sun Icon (for Dark Mode) -->
+            <svg class="w-6 h-6 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <!-- Moon Icon (for Light Mode) -->
+            <svg class="w-6 h-6 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+        </button>
+
         <!-- Header Section -->
         <header class="text-center mb-16">
-            <h1 class="bento-title">Poketypes</h1>
+            <h1 class="bento-title dark:text-white">Poketypes</h1>
             <p class="text-slate-400 text-lg font-medium max-w-xl mx-auto">
                 Quickly analyze type coverage, weaknesses, and resistances for any Pokemon or type combination.
             </p>
@@ -77,23 +89,23 @@
         <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
             
             <!-- Control Center (Search & Selects) -->
-            <section class="md:col-span-12 bento-card flex flex-col lg:flex-row items-center gap-6">
+            <section class="md:col-span-12 bento-card dark:bg-slate-800 dark:border-slate-700 flex flex-col lg:flex-row items-center gap-6">
                 <div class="relative w-full lg:flex-1">
-                    <input id="pokemon-search" type="text" placeholder="Search Pokemon..." class="search-input">
-                    <ul id="suggestions" class="hidden"></ul>
+                    <input id="pokemon-search" type="text" placeholder="Search Pokemon..." class="search-input dark:bg-slate-900 dark:text-white dark:border-slate-700 dark:placeholder-slate-500">
+                    <ul id="suggestions" class="hidden dark:bg-slate-800 dark:border-slate-700"></ul>
                 </div>
                 <div class="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
                     <div class="relative w-full sm:w-48">
-                        <select id="type-select" class="bento-select">
+                        <select id="type-select" class="bento-select dark:bg-slate-900 dark:text-white dark:border-slate-700">
                             <option value="">Type 1</option>
                         </select>
                     </div>
                     <div class="relative w-full sm:w-48">
-                        <select id="type2-select" class="bento-select">
+                        <select id="type2-select" class="bento-select dark:bg-slate-900 dark:text-white dark:border-slate-700">
                             <option value="">Type 2</option>
                         </select>
                     </div>
-                    <button id="reset-button" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-slate-900 text-white font-bold hover:bg-indigo-600 transition-colors duration-200">
+                    <button id="reset-button" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-slate-900 text-white font-bold hover:bg-indigo-600 transition-colors duration-200 dark:bg-indigo-600 dark:hover:bg-indigo-500">
                         Reset
                     </button>
                 </div>
@@ -102,45 +114,45 @@
             <!-- Type Details (Visible on selection) -->
             <section id="type-details" class="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
                 <!-- Info Header (Full width within section) -->
-                <div class="md:col-span-2 bento-card !py-6 !px-10 flex items-center justify-between">
+                <div class="md:col-span-2 bento-card dark:bg-slate-800 dark:border-slate-700 !py-6 !px-10 flex items-center justify-between">
                     <h2 class="text-xl font-bold text-slate-400 uppercase tracking-widest">Active Analysis</h2>
                     <div id="selected-type-name" class="flex items-center gap-2"></div>
                 </div>
 
                 <!-- Defense Card -->
-                <div class="bento-card">
-                    <div class="label-group text-indigo-500">
+                <div class="bento-card dark:bg-slate-800 dark:border-slate-700">
+                    <div class="label-group text-indigo-500 dark:text-indigo-400">
                         <svg xmlns="http://www.w3.org/2000/svg" class="label-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l7 4v6a8 8 0 01-7 8 8 8 0 01-7-8V6l7-4z" />
                         </svg>
                         Defense Breakdown
                     </div>
-                    <div id="weaknesses" class="effectiveness-card"></div>
-                    <div id="neutral-damage" class="effectiveness-card border-t border-gray-50 pt-6"></div>
-                    <div id="resistances" class="effectiveness-card border-t border-gray-50 pt-6"></div>
-                    <div id="immunities" class="effectiveness-card border-t border-gray-50 pt-6"></div>
+                    <div id="weaknesses" class="effectiveness-card dark:border-slate-700"></div>
+                    <div id="neutral-damage" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
+                    <div id="resistances" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
+                    <div id="immunities" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
                 </div>
 
                 <!-- Offense Card -->
-                <div class="bento-card">
-                    <div class="label-group text-orange-500">
+                <div class="bento-card dark:bg-slate-800 dark:border-slate-700">
+                    <div class="label-group text-orange-500 dark:text-orange-400">
                         <svg xmlns="http://www.w3.org/2000/svg" class="label-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                         Offense Breakdown
                     </div>
-                    <div id="super-effective" class="effectiveness-card"></div>
-                    <div id="neutral-offense" class="effectiveness-card border-t border-gray-50 pt-6"></div>
-                    <div id="not-very-effective" class="effectiveness-card border-t border-gray-50 pt-6"></div>
-                    <div id="no-effect" class="effectiveness-card border-t border-gray-50 pt-6"></div>
-                    <div id="dual-immunities" class="effectiveness-card border-t border-gray-50 pt-6 hidden"></div>
+                    <div id="super-effective" class="effectiveness-card dark:border-slate-700"></div>
+                    <div id="neutral-offense" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
+                    <div id="not-very-effective" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
+                    <div id="no-effect" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
+                    <div id="dual-immunities" class="effectiveness-card border-t border-gray-50 pt-6 hidden dark:border-slate-700"></div>
                 </div>
             </section>
 
             <!-- Type Chart -->
-            <section class="md:col-span-12 bento-card overflow-hidden !p-0">
-                <div class="p-8 border-b border-gray-50 flex items-center justify-between">
-                    <h2 class="text-xl font-bold">Global Type Chart</h2>
+            <section class="md:col-span-12 bento-card dark:bg-slate-800 dark:border-slate-700 overflow-hidden !p-0">
+                <div class="p-8 border-b border-gray-50 dark:border-slate-700 flex items-center justify-between">
+                    <h2 class="text-xl font-bold dark:text-white">Global Type Chart</h2>
                 </div>
                 <div class="overflow-x-auto p-4">
                     <div id="type-table-container"></div>
@@ -148,39 +160,39 @@
             </section>
 
             <!-- SEO Content Section -->
-            <section class="md:col-span-12 bento-card !py-10 !px-8 md:!px-12">
+            <section class="md:col-span-12 bento-card dark:bg-slate-800 dark:border-slate-700 !py-10 !px-8 md:!px-12">
                 <div class="max-w-4xl mx-auto">
-                    <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-6 flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                         </svg>
                         Mastering the Pokemon Type Chart
                     </h2>
                     
-                    <p class="text-slate-600 leading-relaxed mb-8 text-lg">
-                        Understanding type effectiveness is crucial for any Pokemon trainer, whether you're playing <strong class="text-indigo-600">Pokemon Scarlet and Violet</strong> (Gen 9) or classic titles. 
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-8 text-lg">
+                        Understanding type effectiveness is crucial for any Pokemon trainer, whether you're playing <strong class="text-indigo-600 dark:text-indigo-400">Pokemon Scarlet and Violet</strong> (Gen 9) or classic titles. 
                         Our <strong>Pokemon Type Calculator</strong> helps you instantly find weaknesses, resistances, and immunities for any single or dual-type Pokemon.
                     </p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                            <h3 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                        <div class="bg-slate-50 dark:bg-slate-700 p-6 rounded-2xl border border-slate-100 dark:border-slate-600">
+                            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-indigo-500 dark:bg-indigo-400"></span>
                                 How Effectiveness Works
                             </h3>
-                            <p class="text-slate-600 text-sm leading-relaxed">
+                            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
                                 Every attack in the game has a type modifier. A standard attack deals 1x damage. 
                                 If a move is <strong>Super Effective</strong>, it deals 2x damage. If it's <strong>Not Very Effective</strong>, it deals 0.5x damage.
                                 Immunities result in 0x damage, meaning the attack has no effect at all.
                             </p>
                         </div>
 
-                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                            <h3 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                        <div class="bg-slate-50 dark:bg-slate-700 p-6 rounded-2xl border border-slate-100 dark:border-slate-600">
+                            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-orange-500 dark:bg-orange-400"></span>
                                 Dual Type Weaknesses
                             </h3>
-                            <p class="text-slate-600 text-sm leading-relaxed">
+                            <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
                                 Many Pokemon possess two types (e.g., Charizard is Fire/Flying). Weaknesses stack! 
                                 If both types are weak to the same element (like Rock vs. Fire/Flying), the damage multiplier becomes <strong>4x</strong>. 
                                 Conversely, resistances can cancel out weaknesses.
@@ -192,13 +204,13 @@
 
                         <!-- Contact & Feedback Section -->
 
-                        <section class="md:col-span-12 bento-card flex flex-col md:flex-row items-center justify-between gap-8 !py-10 !px-8 md:!px-12 bg-gradient-to-r from-white to-slate-50">
+                        <section class="md:col-span-12 bento-card flex flex-col md:flex-row items-center justify-between gap-8 !py-10 !px-8 md:!px-12 bg-gradient-to-r from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 dark:border-slate-700">
 
                             <div class="flex-1 text-center md:text-left">
 
-                                <h2 class="text-2xl font-bold text-slate-800 mb-2">Got suggestions or feedback?</h2>
+                                <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Got suggestions or feedback?</h2>
 
-                                <p class="text-slate-500 text-lg">
+                                <p class="text-slate-500 dark:text-slate-400 text-lg">
 
                                     I'm always looking to improve PokeTypes. Whether it's a feature request or a bug report, I'd love to hear from you!
 
@@ -212,7 +224,7 @@
 
                                                     <!-- Discord -->
 
-                                                    <div id="discord-btn" class="relative group cursor-pointer flex items-center gap-2 px-4 py-2.5 bg-[#5865F2]/10 rounded-xl border border-[#5865F2]/20 text-[#5865F2] hover:bg-[#5865F2]/20 transition-all active:scale-95 select-none" title="Click to copy username">
+                                                    <div id="discord-btn" class="relative group cursor-pointer flex items-center gap-2 px-4 py-2.5 bg-[#5865F2]/10 dark:bg-[#5865F2]/20 rounded-xl border border-[#5865F2]/20 text-[#5865F2] dark:text-[#7289DA] hover:bg-[#5865F2]/20 transition-all active:scale-95 select-none" title="Click to copy username">
 
                                                         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-2.595-9.133-4.833-12.724a.076.076 0 0 0-.038-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.086 2.157 2.419 0 1.334-.956 2.42-2.157 2.42zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.086 2.157 2.419 0 1.334-.946 2.42-2.157 2.42z"/></svg>
 
@@ -226,7 +238,7 @@
 
                                 <!-- Email -->
 
-                                <a href="mailto:carlosgt2001@icloud.com" class="flex items-center gap-2 px-4 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-slate-600 hover:bg-white hover:text-indigo-600 hover:border-indigo-200 hover:shadow-sm transition-all duration-200">
+                                <a href="mailto:carlosgt2001@icloud.com" class="flex items-center gap-2 px-4 py-2.5 bg-slate-50 dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-600 hover:text-indigo-600 dark:hover:text-indigo-400 hover:border-indigo-200 hover:shadow-sm transition-all duration-200">
 
                                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 
@@ -242,7 +254,7 @@
 
                                 <!-- GitHub -->
 
-                                <a href="https://github.com/Xarli11" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 px-4 py-2.5 bg-slate-900 rounded-xl text-white hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
+                                <a href="https://github.com/Xarli11" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 px-4 py-2.5 bg-slate-900 dark:bg-black rounded-xl text-white hover:bg-slate-800 dark:hover:bg-slate-900 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
 
                                     <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.42-1.305.763-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
 
@@ -256,13 +268,13 @@
 
                     </div>
 
-        <footer class="mt-20 text-center text-slate-400 text-sm font-medium">
+        <footer class="mt-20 text-center text-slate-400 dark:text-slate-600 text-sm font-medium">
             <p>&copy; 2026 Poketypes &bull; Data up to Gen 9</p>
-            <p class="mt-2">Created by <span class="text-slate-900 font-bold">Xarli11</span></p>
+            <p class="mt-2">Created by <span class="text-slate-900 dark:text-slate-400 font-bold">Xarli11</span></p>
         </footer>
     </div>
 
     <!-- Main script -->
-    <script type="module" src="src/js/main.js?v=2.8.1"></script>
+    <script type="module" src="src/js/main.js?v=2.9.0"></script>
 </body>
 </html>
