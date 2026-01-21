@@ -32,3 +32,9 @@ Input a specific move and see how it performs against different type combination
 
 ---
 *Last updated: January 21, 2026*
+
+## ✅ Recently Completed
+
+*   **Dark Mode (v2.9.0):** Full theme support with system detection and manual toggle.
+*   **Neutral Damage Analysis (v2.8.0):** Integrated 1x effectiveness in both defense and offense cards.
+*   **SEO & Canonical Fixes (v2.7.2):** Resolved indexing issues and unified URL structures.

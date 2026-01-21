@@ -8,10 +8,11 @@
 
 - **Buscador de Pokémon:** Encuentra rápidamente cualquier Pokémon, incluyendo **Mega Evoluciones** y formas regionales (**Alola, Galar, Hisui, Paldea**).
 - **Selector doble de tipos:** Elige uno o dos tipos para ver cómo se combinan sus debilidades y resistencias.
+- **Modo Oscuro:** Disfruta de una interfaz adaptada a tus preferencias de sistema o cámbiala manualmente.
+- **Análisis Completo:** Desglose detallado de debilidades, resistencias, inmunidades y **daño neutro**.
 - **Tabla de efectividad:** Consulta rápidamente cómo interactúan todos los tipos entre sí.
-- **Detalles visuales:** Visualiza de forma clara y atractiva las fortalezas y debilidades de cada tipo.
 - **Diseño responsive:** Perfecto en escritorio y móvil.
-- **Estética moderna:** Inspirada en la paleta y estilo Pokémon.
+- **Estética moderna:** Diseño estilo "Bento Grid" limpio y profesional.
 
 ---
 
