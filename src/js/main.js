@@ -1,11 +1,13 @@
 import { loadAppData } from './modules/data.js';
 import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js';
 import * as ui from './modules/ui.js';
+import { initTheme } from './modules/theme.js';
 
 let appData = null;
 
 async function init() {
     try {
+        initTheme(); // Initialize Dark/Light Mode
         appData = await loadAppData();
         
         ui.populateSelects(['type-select', 'type2-select'], appData.types);
