@@ -4,7 +4,12 @@ This document outlines the planned features, improvements, and future vision for
 
 ## 📋 Upcoming Features
 
-### 1. PokeAnalyzer (Pokemon Details) 🔍
+### 1. Deep Linking & Shareable URLs 🔗 (Priority)
+Allow users to share specific analyses and maintain state on refresh.
+*   **Functionality:** Sync selected types or Pokemon with the URL query parameters (e.g., `?t1=fire&t2=flying` or `?pokemon=gengar`).
+*   **User Benefit:** Easy sharing via Discord/WhatsApp and persistent state when reloading.
+
+### 2. PokeAnalyzer (Pokemon Details) 🔍
 Expand the application from a type calculator to a quick-reference tool for competitive and casual play.
 
 *   **Phase 1: Base Stats & Abilities**
