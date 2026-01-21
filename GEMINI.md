@@ -9,6 +9,8 @@ The project is a client-side web application built with vanilla JavaScript and T
 ### Key Features
 
 *   **Type Calculator:** Analyze single and dual-type Pokémon defense and offense.
+*   **Neutral Damage Analysis:** Detailed breakdown of types that deal normal damage (1x).
+*   **Dark Mode:** Built-in theme support with system preference detection and manual toggle.
 *   **Pokémon Search:** Search for Pokémon by name, including Mega Evolutions and regional forms.
 *   **Interactive Chart:** A visual grid showing type interactions.
 *   **PWA Support:** Installable on mobile and desktop with offline capabilities.
@@ -94,7 +96,7 @@ The project follows a strict **Gitflow** strategy combined with **Conventional C
 
 ### Branching Strategy
 
-*   **`main`**: Production-ready code. Contains version tags (e.g., `v2.7.1`).
+*   **`main`**: Production-ready code. Contains version tags (e.g., `v2.9.0`).
 *   **`develop`**: Integration branch. All features and fixes are merged here first.
 *   **Feature Branches**: Created from `develop`.
     *   Format: `feature/description-of-feature`
