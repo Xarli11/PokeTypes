@@ -3,22 +3,23 @@
 
 @layer base {
   body {
-    @apply bg-[#F9FAFB] text-slate-900 antialiased;
+    @apply bg-[#F9FAFB] text-slate-900 antialiased dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300;
   }
 }
 
 @layer components {
   /* Bento Card Base */
   .bento-card {
-    @apply bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 transition-all duration-300 hover:shadow-md;
+    @apply bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 transition-all duration-300 hover:shadow-md dark:bg-slate-800 dark:border-slate-700 dark:shadow-none;
   }
 
   /* Minimalist Type Pill */
   .type-pill {
-    @apply inline-flex items-center justify-center px-4 py-1.5 rounded-full text-sm font-bold tracking-tight uppercase border-2 border-transparent transition-all duration-200;
+    @apply inline-flex items-center justify-center px-4 py-1.5 rounded-full text-sm font-bold tracking-tight uppercase border-2 border-transparent transition-all duration-200 shadow-sm;
   }
 
   /* Specific Type Colors (Minimalist versions) */
+  /* Kept same for brand identity, but shadows help in dark mode */
   .bg-type-normal { background-color: #A8A77A; }
   .bg-type-fire { background-color: #EE8130; }
   .bg-type-water { background-color: #6390F0; }
@@ -50,48 +51,61 @@
     @apply p-2 rounded-lg text-center transition-colors duration-150;
   }
   #type-table-container th {
-    @apply font-bold text-[10px] uppercase tracking-wider;
+    @apply font-bold text-[10px] uppercase tracking-wider dark:text-slate-400;
   }
   #type-table-container td {
-    @apply bg-gray-50/50 font-medium text-slate-600;
+    @apply bg-gray-50/50 font-medium text-slate-600 dark:bg-slate-700/50 dark:text-slate-400;
   }
   
   /* First column (Attackers) styling */
   #type-table-container td:first-child {
-    @apply bg-white! text-slate-900 font-bold text-left sticky left-0 z-10 pr-4 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)];
+    @apply bg-white! text-slate-900 font-bold text-left sticky left-0 z-10 pr-4 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] dark:bg-slate-800! dark:text-slate-200 dark:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)];
   }
   
-  /* Interaction Classes */
-  .interaction-2x { @apply bg-green-100! text-green-700! font-bold; }
-  .interaction-05x { @apply bg-red-50! text-red-600! opacity-80; }
-  .interaction-0x { @apply bg-slate-800! text-white! font-black; }
-  .interaction-1x { @apply opacity-40; }
+  /* Interaction Classes - Dark Mode Optimized */
+  .interaction-2x { 
+    @apply bg-green-100! text-green-700! font-bold dark:bg-green-900/40! dark:text-green-300!; 
+  }
+  .interaction-05x { 
+    @apply bg-red-50! text-red-600! opacity-80 dark:bg-red-900/30! dark:text-red-300! dark:opacity-100; 
+  }
+  .interaction-0x { 
+    @apply bg-slate-800! text-white! font-black dark:bg-black! dark:text-slate-400!; 
+  }
+  .interaction-1x { 
+    @apply opacity-40 dark:opacity-20; 
+  }
 
   /* Custom Search Input */
   .search-input {
-    @apply w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-lg font-medium text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200;
+    @apply w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-lg font-medium text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200 dark:bg-slate-900 dark:text-slate-200 dark:placeholder-slate-600 dark:focus:ring-indigo-400/30;
   }
 
   /* Custom Select */
   .bento-select {
-    @apply appearance-none w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-lg font-semibold text-indigo-600 cursor-pointer focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200;
+    @apply appearance-none w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-lg font-semibold text-indigo-600 cursor-pointer focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200 dark:bg-slate-900 dark:text-indigo-400 dark:focus:ring-indigo-400/30;
     background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww%2Ew3%2Eorg%2Fsvg%22%20viewBox%3D%220%200%20256%20512%22%3E%3Cpath%20fill%3D%22%236366f1%22%20d%3D%22M64%20192L128%20256l64-64v-64h-128v64zM192%20320L128%20256l-64%2064v64h128v-64z%22%2F%3E%3C%2Fsvg%3E');
     background-repeat: no-repeat;
     background-position: right 1.5rem center;
     background-size: 1rem;
   }
+  
+  /* Dark mode override for select arrow to be lighter */
+  :is(.dark .bento-select) {
+     background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww%2Ew3%2Eorg%2Fsvg%22%20viewBox%3D%220%200%20256%20512%22%3E%3Cpath%20fill%3D%22%23818cf8%22%20d%3D%22M64%20192L128%20256l64-64v-64h-128v64zM192%20320L128%20256l-64%2064v64h128v-64z%22%2F%3E%3C%2Fsvg%3E');
+  }
 }
 
 /* Fancy Animated Title */
 .bento-title {
-  @apply text-5xl md:text-6xl font-black tracking-tighter text-slate-900 mb-2;
+  @apply text-5xl md:text-6xl font-black tracking-tighter text-slate-900 mb-2 dark:text-white transition-colors duration-300;
 }
 
 #suggestions {
-  @apply absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-gray-100 shadow-xl z-50 max-h-60 overflow-y-auto overflow-hidden;
+  @apply absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-gray-100 shadow-xl z-50 max-h-60 overflow-y-auto overflow-hidden dark:bg-slate-800 dark:border-slate-700 dark:shadow-2xl;
 }
 #suggestions li {
-  @apply px-6 py-3 cursor-pointer transition-colors duration-150 text-slate-600 font-medium hover:bg-indigo-50 hover:text-indigo-600;
+  @apply px-6 py-3 cursor-pointer transition-colors duration-150 text-slate-600 font-medium hover:bg-indigo-50 hover:text-indigo-600 dark:text-slate-300 dark:hover:bg-indigo-900/30 dark:hover:text-indigo-300;
 }
 
 .label-group {
