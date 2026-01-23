@@ -46,6 +46,49 @@ https.get(POKEDEX_URL, (res) => {
             for (const key in showdownDex) {
                 const entry = showdownDex[key];
 
+                // Skip non-standard/placeholder entries (negative IDs are usually CAP or glitches)
+                if (entry.num <= 0) continue;
+
+                // Skip cosmetic costume forms
+                // Pikachu costumes: Cosplay, Rock-Star, Belle, Pop-Star, PhD, Libre, Caps (Original, Hoenn, etc.)
+                const name = entry.name;
+                const isCosmeticPikachu = name.startsWith('Pikachu-') && (
+                    name.includes('Cosplay') || name.includes('Rock-Star') || 
+                    name.includes('Belle') || name.includes('Pop-Star') || 
+                    name.includes('PhD') || name.includes('Libre') || 
+                    name.includes('Original') || name.includes('Hoenn') || 
+                    name.includes('Sinnoh') || name.includes('Unova') || 
+                    name.includes('Kalos') || name.includes('Alola') || 
+                    name.includes('Partner') || name.includes('Starter') || 
+                    name.includes('World')
+                );
+
+                // Other cosmetic forms (Vivillon patterns, Alcremie flavors, Minior colors, Furfrou trims)
+                // We keep base forms (usually just "Vivillon", "Alcremie", etc. in Showdown data, 
+                // but sometimes Showdown lists "Vivillon-Meadow" as base? Let's check.)
+                // Actually Showdown has base entries usually.
+                
+                const isCosmeticVivillon = name.startsWith('Vivillon-') && !name.includes('Gmax'); // Vivillon doesn't have Gmax but just to be safe
+                const isCosmeticAlcremie = name.startsWith('Alcremie-') && !name.includes('Gmax');
+                const isCosmeticMinior = name.startsWith('Minior-') && !name.includes('Meteor'); // Keep Meteor as it changes stats significantly (shields down mechanic)
+                const isCosmeticFurfrou = name.startsWith('Furfrou-'); 
+                
+                // More cosmetic/same-type forms
+                const isCosmeticFloette = name.includes('Floette-Eternal'); 
+                const isCosmeticTatsugiri = name.startsWith('Tatsugiri-') || name.includes('Mega Tatsugiri-'); // Cleaning up variants
+                const isCosmeticSquawkabilly = name.startsWith('Squawkabilly-');
+                // Lycanroc forms share pure Rock type. Showdown base "Lycanroc" is usually Midday.
+                const isCosmeticLycanroc = name === 'Lycanroc-Midnight' || name === 'Lycanroc-Dusk';
+                // Toxtricity Low-Key shares Electric/Poison.
+                const isCosmeticToxtricity = name.includes('Toxtricity-Low-Key');
+
+                // Exclude specific cosmetic forms
+                if (isCosmeticPikachu || isCosmeticVivillon || isCosmeticAlcremie || isCosmeticMinior || 
+                    isCosmeticFurfrou || isCosmeticFloette || isCosmeticTatsugiri || 
+                    isCosmeticSquawkabilly || isCosmeticLycanroc || isCosmeticToxtricity) {
+                    continue;
+                }
+
                 // Map to our project format:
                 // { "id": number, "name": string, "types": string[] }
                 

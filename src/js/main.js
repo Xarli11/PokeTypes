@@ -80,7 +80,7 @@ function setupEventListeners() {
                              loading="lazy"
                              class="w-10 h-10 object-contain flex-shrink-0"
                              onerror="this.onerror=null; this.src='pokeball.png';">
-                        <span class="flex-1 font-bold text-slate-700">${ui.capitalizeWords(p.name)}</span>
+                        <span class="flex-1 font-bold text-slate-700 dark:text-slate-200">${ui.capitalizeWords(p.name)}</span>
                         <div class="flex gap-1 scale-90 origin-right">
                             ${typePills}
                         </div>
@@ -115,10 +115,10 @@ function setupEventListeners() {
     function updateActiveSuggestion(items) {
         items.forEach((item, index) => {
             if (index === activeIndex) {
-                item.classList.add('bg-indigo-50', 'text-indigo-600');
+                item.classList.add('bg-indigo-50', 'dark:bg-indigo-900/40', 'text-indigo-600', 'dark:text-indigo-300');
                 item.scrollIntoView({ block: 'nearest' });
             } else {
-                item.classList.remove('bg-indigo-50', 'text-indigo-600');
+                item.classList.remove('bg-indigo-50', 'dark:bg-indigo-900/40', 'text-indigo-600', 'dark:text-indigo-300');
             }
         });
     }
