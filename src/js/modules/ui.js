@@ -91,7 +91,7 @@ export function renderDualImmunities(container, labelText, pairs, contrastData) 
         const p2 = createTypePill(pair[1], contrastData);
         
         contentHTML += `
-            <div class="flex items-center gap-2 text-sm text-slate-600 bg-slate-50 p-2 rounded-lg">
+            <div class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-700/50 p-2 rounded-lg border border-slate-100 dark:border-slate-700">
                 <div class="flex scale-90 origin-left -space-x-1">
                     ${p1}${p2}
                 </div>
