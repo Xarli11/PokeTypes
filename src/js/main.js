@@ -1,4 +1,4 @@
-import { loadAppData } from './modules/data.js';
+import { loadAppData, fetchPokemonDetails } from './modules/data.js';
 import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js';
 import * as ui from './modules/ui.js';
 import { initTheme } from './modules/theme.js';
@@ -25,6 +25,7 @@ function setupEventListeners() {
     const typeSelect = document.getElementById('type-select');
     const type2Select = document.getElementById('type2-select');
     const resetButton = document.getElementById('reset-button');
+    const statsSection = document.getElementById('pokemon-stats');
 
     const updateUI = () => {
         const t1 = typeSelect.value;
@@ -34,10 +35,12 @@ function setupEventListeners() {
 
     typeSelect.addEventListener('change', () => {
         searchInput.value = '';
+        statsSection.classList.add('hidden');
         updateUI();
     });
     type2Select.addEventListener('change', () => {
         searchInput.value = '';
+        statsSection.classList.add('hidden');
         updateUI();
     });
 
@@ -45,6 +48,7 @@ function setupEventListeners() {
         typeSelect.value = '';
         type2Select.value = '';
         searchInput.value = '';
+        statsSection.classList.add('hidden');
         displayAnalysis('', '');
     });
 
@@ -123,7 +127,7 @@ function setupEventListeners() {
         });
     }
 
-    suggestionsList.addEventListener('click', (e) => {
+    suggestionsList.addEventListener('click', async (e) => {
         const li = e.target.closest('li');
         if (!li || !li.hasAttribute('data-name')) return;
 
@@ -136,6 +140,27 @@ function setupEventListeners() {
         
         suggestionsList.classList.add('hidden');
         updateUI();
+
+        // Fetch and display details
+        if (pokemon.id) {
+            try {
+                // Show loading state or clear previous
+                document.getElementById('stats-container').innerHTML = '<div class="text-center p-4 text-slate-400">Loading stats...</div>';
+                document.getElementById('abilities-container').innerHTML = '';
+                statsSection.classList.remove('hidden');
+
+                const details = await fetchPokemonDetails(pokemon.id);
+                if (details) {
+                    ui.renderStats(document.getElementById('stats-container'), details.stats);
+                    ui.renderAbilities(document.getElementById('abilities-container'), details.abilities);
+                } else {
+                    statsSection.classList.add('hidden');
+                }
+            } catch (err) {
+                console.error('Error displaying details:', err);
+                statsSection.classList.add('hidden');
+            }
+        }
     });
 
     document.addEventListener('click', (e) => {

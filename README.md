@@ -7,6 +7,7 @@
 ## ✨ Características
 
 - **Buscador de Pokémon:** Encuentra rápidamente cualquier Pokémon, incluyendo **Mega Evoluciones** y formas regionales (**Alola, Galar, Hisui, Paldea**).
+- **Estadísticas y Habilidades:** Visualiza stats base (coloreados por nivel) y habilidades (con descripción) al seleccionar un Pokémon.
 - **Selector doble de tipos:** Elige uno o dos tipos para ver cómo se combinan sus debilidades y resistencias.
 - **Modo Oscuro:** Disfruta de una interfaz adaptada a tus preferencias de sistema o cámbiala manualmente.
 - **Análisis Completo:** Desglose detallado de debilidades, resistencias, inmunidades y **daño neutro**.

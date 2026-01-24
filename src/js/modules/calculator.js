@@ -53,26 +53,44 @@ export function calculateOffense(type1, type2, types, effectiveness) {
 export function findImmuneDualTypes(type1, type2, types, effectiveness) {
     const immuneCombinations = [];
 
+    // Helper to check if a single defending type is immune to ALL attacker types
+    const isImmuneToAll = (defType) => {
+        const d1 = getEffectiveness(type1, defType, effectiveness);
+        const d2 = type2 ? getEffectiveness(type2, defType, effectiveness) : 0;
+        
+        // If single type attacker: needs to be immune to type1 (d1 === 0)
+        // If dual type attacker: needs to be immune to type1 AND type2 (d1 === 0 && d2 === 0)
+        // Wait, "Totally Walled" means the attacker has NO moves that work.
+        // So the defender must be immune to the BEST option.
+        // If Attacker has Electric (0 vs Ground) and Normal (1 vs Ground). Max is 1. Ground is NOT immune to all.
+        // If Attacker has Electric (0 vs Ground) and Poison (0.5 vs Ground). Max is 0.5.
+        // We want cases where Max(Damage) is 0.
+        
+        const bestOutcome = type2 ? Math.max(d1, d2) : d1;
+        return bestOutcome === 0;
+    };
+
     for (let i = 0; i < types.length; i++) {
         for (let j = i + 1; j < types.length; j++) {
             const defType1 = types[i];
             const defType2 = types[j];
 
-            // Damage from Attacker Type 1
+            // 1. Check strict immunity for the pair
             const damage1 = getEffectiveness(type1, defType1, effectiveness) * getEffectiveness(type1, defType2, effectiveness);
-            
-            // Damage from Attacker Type 2 (if present)
             let damage2 = 0;
             if (type2) {
                 damage2 = getEffectiveness(type2, defType1, effectiveness) * getEffectiveness(type2, defType2, effectiveness);
             }
+            const pairBestOutcome = type2 ? Math.max(damage1, damage2) : damage1;
 
-            // If we have two types, we use the one that deals the most damage.
-            // If the BEST we can do is still 0, then they are fully immune.
-            const bestOutcome = type2 ? Math.max(damage1, damage2) : damage1;
+            if (pairBestOutcome === 0) {
+                // 2. Filter out redundant pairs (where one type alone is enough)
+                const d1AloneImmune = isImmuneToAll(defType1);
+                const d2AloneImmune = isImmuneToAll(defType2);
 
-            if (bestOutcome === 0) {
-                immuneCombinations.push([defType1, defType2]);
+                if (!d1AloneImmune && !d2AloneImmune) {
+                    immuneCombinations.push([defType1, defType2]);
+                }
             }
         }
     }

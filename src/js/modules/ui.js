@@ -84,18 +84,17 @@ export function renderDualImmunities(container, labelText, pairs, contrastData) 
         <span>${labelText}</span>
     </div>`;
     
-    contentHTML += `<div class="flex flex-col gap-2 mt-2">`;
+    contentHTML += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">`;
     
     pairs.forEach(pair => {
         const p1 = createTypePill(pair[0], contrastData);
         const p2 = createTypePill(pair[1], contrastData);
         
         contentHTML += `
-            <div class="flex items-center gap-2 text-sm text-slate-600 bg-slate-50 p-2 rounded-lg">
-                <div class="flex scale-90 origin-left -space-x-1">
+            <div class="flex items-center justify-center gap-1 p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-700">
+                <div class="flex scale-90 -space-x-2">
                     ${p1}${p2}
                 </div>
-                <span class="font-medium">Immune</span>
             </div>
         `;
     });
@@ -146,6 +145,73 @@ export function populateSelects(ids, types) {
             select.appendChild(opt);
         });
     });
+}
+
+
+export function renderStats(container, stats) {
+    if (!stats || !stats.length) {
+        container.innerHTML = '';
+        return;
+    }
+
+    // Map PokeAPI stat names to shorter display names
+    const statNames = {
+        'hp': 'HP',
+        'attack': 'Atk',
+        'defense': 'Def',
+        'special-attack': 'SpA',
+        'special-defense': 'SpD',
+        'speed': 'Spe'
+    };
+
+    const contentHTML = stats.map(stat => {
+        const val = stat.base_stat;
+        let colorClass = 'bg-red-500';
+        let width = Math.min((val / 255) * 100, 100);
+
+        if (val >= 120) colorClass = 'bg-purple-500';
+        else if (val >= 90) colorClass = 'bg-green-500';
+        else if (val >= 60) colorClass = 'bg-yellow-500';
+
+        return `
+            <div class="flex items-center gap-3 text-sm">
+                <span class="w-8 font-bold text-slate-500 dark:text-slate-400 text-right uppercase text-xs tracking-wider">${statNames[stat.stat.name] || stat.stat.name}</span>
+                <span class="w-8 font-bold text-slate-800 dark:text-slate-200 text-right">${val}</span>
+                <div class="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <div class="h-full rounded-full ${colorClass} transition-all duration-500 ease-out" style="width: ${width}%"></div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = contentHTML;
+}
+
+export function renderAbilities(container, abilities) {
+    if (!abilities || !abilities.length) {
+        container.innerHTML = '';
+        return;
+    }
+
+    const contentHTML = abilities.map(entry => {
+        const name = capitalizeWords(entry.ability.name);
+        const isHidden = entry.is_hidden;
+        const description = entry.description || 'Loading description...';
+        
+        return `
+            <div class="flex flex-col gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-700">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-slate-700 dark:text-slate-200">${name}</span>
+                    ${isHidden 
+                        ? `<span class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded bg-slate-200 dark:bg-slate-600 text-slate-500 dark:text-slate-400">Hidden</span>`
+                        : ''}
+                </div>
+                <p class="text-sm text-slate-500 dark:text-slate-400 leading-snug">${description}</p>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = contentHTML;
 }
 
 export function capitalizeWords(str) {
