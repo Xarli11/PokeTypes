@@ -111,9 +111,9 @@
                 </div>
             </section>
 
-            <!-- Analysis Section -->
-            <section id="analysis-section" class="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
-                <!-- Info Header (Full width) -->
+            <!-- Type Details (Visible on selection) -->
+            <section id="type-details" class="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
+                <!-- Info Header (Full width within section) -->
                 <div class="md:col-span-2 bento-card dark:bg-slate-800 dark:border-slate-700 !py-6 !px-10 flex items-center justify-between">
                     <h2 class="text-xl font-bold text-slate-400 uppercase tracking-widest">Active Analysis</h2>
                     <div id="selected-type-name" class="flex items-center gap-2"></div>
@@ -133,17 +133,6 @@
                     <div id="immunities" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
                 </div>
 
-                <!-- Stats Card -->
-                <div id="stats-card" class="bento-card dark:bg-slate-800 dark:border-slate-700 hidden">
-                    <div class="label-group text-emerald-500 dark:text-emerald-400 mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="label-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                        Base Stats
-                    </div>
-                    <div id="stats-container" class="space-y-4"></div>
-                </div>
-
                 <!-- Offense Card -->
                 <div class="bento-card dark:bg-slate-800 dark:border-slate-700">
                     <div class="label-group text-orange-500 dark:text-orange-400">
@@ -158,9 +147,23 @@
                     <div id="no-effect" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
                     <div id="dual-immunities" class="effectiveness-card border-t border-gray-50 pt-6 hidden dark:border-slate-700"></div>
                 </div>
+            </section>
 
-                <!-- Abilities Card -->
-                <div id="abilities-card" class="bento-card dark:bg-slate-800 dark:border-slate-700 hidden">
+            <!-- Stats & Abilities (Visible on Pokemon selection) -->
+            <section id="pokemon-stats" class="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
+                <!-- Base Stats -->
+                <div class="bento-card dark:bg-slate-800 dark:border-slate-700">
+                    <div class="label-group text-emerald-500 dark:text-emerald-400 mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="label-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        Base Stats
+                    </div>
+                    <div id="stats-container" class="space-y-4"></div>
+                </div>
+
+                <!-- Abilities -->
+                <div class="bento-card dark:bg-slate-800 dark:border-slate-700">
                     <div class="label-group text-blue-500 dark:text-blue-400 mb-6">
                         <svg xmlns="http://www.w3.org/2000/svg" class="label-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />

@@ -25,9 +25,7 @@ function setupEventListeners() {
     const typeSelect = document.getElementById('type-select');
     const type2Select = document.getElementById('type2-select');
     const resetButton = document.getElementById('reset-button');
-    const analysisSection = document.getElementById('analysis-section');
-    const statsCard = document.getElementById('stats-card');
-    const abilitiesCard = document.getElementById('abilities-card');
+    const statsSection = document.getElementById('pokemon-stats');
 
     const updateUI = () => {
         const t1 = typeSelect.value;
@@ -37,14 +35,12 @@ function setupEventListeners() {
 
     typeSelect.addEventListener('change', () => {
         searchInput.value = '';
-        statsCard.classList.add('hidden');
-        abilitiesCard.classList.add('hidden');
+        statsSection.classList.add('hidden');
         updateUI();
     });
     type2Select.addEventListener('change', () => {
         searchInput.value = '';
-        statsCard.classList.add('hidden');
-        abilitiesCard.classList.add('hidden');
+        statsSection.classList.add('hidden');
         updateUI();
     });
 
@@ -52,8 +48,7 @@ function setupEventListeners() {
         typeSelect.value = '';
         type2Select.value = '';
         searchInput.value = '';
-        statsCard.classList.add('hidden');
-        abilitiesCard.classList.add('hidden');
+        statsSection.classList.add('hidden');
         displayAnalysis('', '');
     });
 
@@ -152,21 +147,18 @@ function setupEventListeners() {
                 // Show loading state or clear previous
                 document.getElementById('stats-container').innerHTML = '<div class="text-center p-4 text-slate-400">Loading stats...</div>';
                 document.getElementById('abilities-container').innerHTML = '';
-                statsCard.classList.remove('hidden');
-                abilitiesCard.classList.remove('hidden');
+                statsSection.classList.remove('hidden');
 
                 const details = await fetchPokemonDetails(pokemon.id);
                 if (details) {
                     ui.renderStats(document.getElementById('stats-container'), details.stats);
                     ui.renderAbilities(document.getElementById('abilities-container'), details.abilities);
                 } else {
-                    statsCard.classList.add('hidden');
-                    abilitiesCard.classList.add('hidden');
+                    statsSection.classList.add('hidden');
                 }
             } catch (err) {
                 console.error('Error displaying details:', err);
-                statsCard.classList.add('hidden');
-                abilitiesCard.classList.add('hidden');
+                statsSection.classList.add('hidden');
             }
         }
     });
@@ -197,7 +189,7 @@ function setupEventListeners() {
 }
 
 function displayAnalysis(t1, t2) {
-    const section = document.getElementById('analysis-section');
+    const section = document.getElementById('type-details');
     const nameSpan = document.getElementById('selected-type-name');
     
     if (!t1 && !t2) {
