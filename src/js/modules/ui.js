@@ -196,13 +196,17 @@ export function renderAbilities(container, abilities) {
     const contentHTML = abilities.map(entry => {
         const name = capitalizeWords(entry.ability.name);
         const isHidden = entry.is_hidden;
+        const description = entry.description || 'Loading description...';
         
         return `
-            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-700">
-                <span class="font-bold text-slate-700 dark:text-slate-200">${name}</span>
-                ${isHidden 
-                    ? `<span class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded bg-slate-200 dark:bg-slate-600 text-slate-500 dark:text-slate-400">Hidden</span>`
-                    : ''}
+            <div class="flex flex-col gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-700">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-slate-700 dark:text-slate-200">${name}</span>
+                    ${isHidden 
+                        ? `<span class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded bg-slate-200 dark:bg-slate-600 text-slate-500 dark:text-slate-400">Hidden</span>`
+                        : ''}
+                </div>
+                <p class="text-sm text-slate-500 dark:text-slate-400 leading-snug">${description}</p>
             </div>
         `;
     }).join('');

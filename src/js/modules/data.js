@@ -29,7 +29,26 @@ export async function fetchPokemonDetails(id) {
     try {
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
         if (!response.ok) throw new Error('Pokemon not found');
-        return await response.json();
+        const data = await response.json();
+
+        // Fetch ability descriptions
+        const abilityPromises = data.abilities.map(async (entry) => {
+            try {
+                const abilityRes = await fetch(entry.ability.url);
+                const abilityData = await abilityRes.json();
+                const englishEntry = abilityData.effect_entries.find(e => e.language.name === 'en');
+                // Prefer short_effect, fallback to effect, fallback to "No description available."
+                entry.description = englishEntry ? (englishEntry.short_effect || englishEntry.effect) : 'No description available.';
+            } catch (err) {
+                console.error(`Failed to fetch description for ${entry.ability.name}`, err);
+                entry.description = 'Description unavailable.';
+            }
+            return entry;
+        });
+
+        await Promise.all(abilityPromises);
+        return data;
+
     } catch (error) {
         console.error('Error fetching Pokemon details:', error);
         return null;
