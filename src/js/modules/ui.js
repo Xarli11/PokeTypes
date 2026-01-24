@@ -210,3 +210,7 @@ export function renderAbilities(container, abilities) {
 
     container.innerHTML = contentHTML;
 }
+
+export function capitalizeWords(str) {
+    return str.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+}
