@@ -1,4 +1,4 @@
-const CACHE_NAME = 'poketypes-v2.11.0';
+const CACHE_NAME = 'poketypes-v2.11.1';
 const ASSETS = [
   '/',
   '/index.html',
@@ -6,6 +6,7 @@ const ASSETS = [
   '/src/js/main.js',
   '/src/js/modules/calculator.js',
   '/src/js/modules/data.js',
+  '/src/js/modules/theme.js',
   '/src/js/modules/ui.js',
   '/data/pokedex.json',
   '/data/type-data.json',
