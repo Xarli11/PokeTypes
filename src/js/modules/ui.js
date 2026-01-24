@@ -84,18 +84,17 @@ export function renderDualImmunities(container, labelText, pairs, contrastData) 
         <span>${labelText}</span>
     </div>`;
     
-    contentHTML += `<div class="flex flex-col gap-2 mt-2">`;
+    contentHTML += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">`;
     
     pairs.forEach(pair => {
         const p1 = createTypePill(pair[0], contrastData);
         const p2 = createTypePill(pair[1], contrastData);
         
         contentHTML += `
-            <div class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-700/50 p-2 rounded-lg border border-slate-100 dark:border-slate-700">
-                <div class="flex scale-90 origin-left -space-x-1">
+            <div class="flex items-center justify-center gap-1 p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-700">
+                <div class="flex scale-90 -space-x-2">
                     ${p1}${p2}
                 </div>
-                <span class="font-medium">Immune</span>
             </div>
         `;
     });
