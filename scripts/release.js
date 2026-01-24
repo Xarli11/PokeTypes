@@ -55,10 +55,20 @@ indexContent = indexContent.replace(
 fs.writeFileSync(indexPath, indexContent);
 console.log('✅ Updated index.html asset versions');
 
+// 3.1 Update main.js internal imports (Module Cache Busting)
+const mainJsPath = path.join(rootDir, 'src', 'js', 'main.js');
+let mainJsContent = fs.readFileSync(mainJsPath, 'utf8');
+mainJsContent = mainJsContent.replace(
+    /from '\.\/modules\/([\w\.-]+)\.js\?v=[\w\.-]+'/g,
+    `from './modules/$1.js?v=${newVersion}'`
+);
+fs.writeFileSync(mainJsPath, mainJsContent);
+console.log('✅ Updated main.js internal module versions');
+
 // 4. Git Commands
 try {
     console.log('📦 Committing changes...');
-    execSync(`git add package.json sw.js index.html`);
+    execSync(`git add package.json sw.js index.html src/js/main.js`);
     execSync(`git commit -m "chore: release v${newVersion}"`);
     
     console.log('🏷️  Tagging version...');
