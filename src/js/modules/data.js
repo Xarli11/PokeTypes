@@ -23,3 +23,15 @@ export async function loadAppData() {
         throw error;
     }
 }
+
+export async function fetchPokemonDetails(id) {
+    if (!id) return null;
+    try {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+        if (!response.ok) throw new Error('Pokemon not found');
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching Pokemon details:', error);
+        return null;
+    }
+}
