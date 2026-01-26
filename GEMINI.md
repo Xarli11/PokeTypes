@@ -118,6 +118,7 @@ The project follows a strict **Gitflow** strategy combined with **Conventional C
 3.  **Merge to Develop:**
     *   Switch to `develop`: `git checkout develop`.
     *   Merge with a commit: `git merge --no-ff feature/my-cool-feature`.
+    *   **Agent Responsibility:** The agent must always provide a clear merge commit message to avoid interactive blocks.
     *   Push to remote: `git push origin develop`.
 4.  **Release Process:**
     *   Create a release branch from `develop`: `git checkout -b release/vX.Y.Z`.
@@ -130,6 +131,8 @@ The project follows a strict **Gitflow** strategy combined with **Conventional C
         *   `git checkout develop`
         *   `git merge --no-ff release/vX.Y.Z`
     *   Push everything: `git push origin main develop --tags`.
+
+**Note on Branch Management:** Do not delete feature or release branches after merging. Keep them to maintain a full historical record of the development process.
 
 ## Marketing & Growth
 
