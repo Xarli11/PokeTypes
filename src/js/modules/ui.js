@@ -256,16 +256,51 @@ export function renderAbilityAlerts(container, abilities) {
         </div>
     `;
 
-    contentHTML += `<div class="grid gap-2">`;
-
-    uniqueModifiers.forEach(mod => {
-        contentHTML += `
-            <div class="p-3 rounded-lg border border-indigo-100 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/30 text-sm text-slate-700 dark:text-slate-300">
-                <span class="font-bold text-indigo-700 dark:text-indigo-300">${mod.abilityName}</span>: ${mod.description}
-            </div>
-        `;
-    });
-
     contentHTML += `</div>`;
+    container.innerHTML = contentHTML;
+}
+
+export function renderTacticalAdvice(container, advice) {
+    if (!advice) {
+        container.innerHTML = '';
+        container.classList.add('hidden');
+        return;
+    }
+
+    container.classList.remove('hidden');
+
+    const suggestedTypesHTML = advice.suggestedTypes.map(t => `<span class="font-bold text-slate-700 dark:text-slate-200">${t}</span>`).join(' or ');
+    const suggestedMonsHTML = advice.suggestedPokemon.map(p => capitalizeWords(p.name)).join(', ');
+
+    const contentHTML = `
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-700 p-6 text-white shadow-lg">
+            <!-- Background Decoration -->
+            <svg class="absolute -right-4 -bottom-8 w-32 h-32 text-white/10" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+            </svg>
+
+            <div class="relative z-10">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="bg-white/20 p-1.5 rounded-lg backdrop-blur-sm">
+                        <svg class="w-5 h-5 text-yellow-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                    </span>
+                    <h3 class="font-bold uppercase tracking-wider text-xs text-indigo-100">Smart Tactical Advisor</h3>
+                </div>
+
+                <p class="text-sm md:text-base leading-relaxed font-medium text-white/95">
+                    Huge weakness to <span class="font-bold text-red-200 border-b border-red-200/50">${advice.threat}</span> detected! 
+                    Consider adding a ${suggestedTypesHTML} partner.
+                </p>
+                
+                <div class="mt-4 flex items-center gap-3 text-xs font-medium text-indigo-100 bg-black/20 p-3 rounded-lg backdrop-blur-sm border border-white/10">
+                    <span class="uppercase tracking-wide opacity-70">Recommended:</span>
+                    <span class="text-white">${suggestedMonsHTML}</span>
+                </div>
+            </div>
+        </div>
+    `;
+
     container.innerHTML = contentHTML;
 }
