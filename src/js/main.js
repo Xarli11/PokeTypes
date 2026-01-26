@@ -82,10 +82,6 @@ async function showPokemonDetails(pokemon) {
 
         const details = await fetchPokemonDetails(pokemon.id);
         if (details) {
-            // DEBUG ALERT
-            const abilityNames = details.abilities.map(a => a.ability.name).join(', ');
-            alert(`[DEBUG] Loaded ${pokemon.name}\nAbilities: ${abilityNames}`);
-            
             ui.renderStats(document.getElementById('stats-container'), details.stats);
             ui.renderAbilities(document.getElementById('abilities-container'), details.abilities);
             ui.renderAbilityAlerts(document.getElementById('ability-alerts'), details.abilities);
@@ -295,11 +291,6 @@ function displayAnalysis(t1, t2) {
     // AI Advisor
     try {
         const advice = getTacticalAdvice(def.weaknesses4x, def.weaknesses2x, appData.types, appData.effectiveness, appData.pokemonList);
-        
-        // DEBUG ALERT
-        if (advice) alert(`[DEBUG] Advisor\nThreat: ${advice.threat}\nSuggestion: ${advice.suggestedTypes.join(', ')}`);
-        else alert(`[DEBUG] Advisor: No advice generated (maybe no weaknesses?)`);
-
         ui.renderTacticalAdvice(document.getElementById('tactical-advice'), advice);
     } catch (error) {
         console.error("AI Advisor error:", error);

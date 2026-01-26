@@ -50,34 +50,28 @@ export function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiv
     // 3. Find Example Pokemon (High Stats)
     const suggestions = [];
     
-    // Filter fully evolved or high stat mons (heuristic: name doesn't imply baby, or just grab random high stat ones if we had stats in the list)
-    // Since our list doesn't have stats loaded by default (only on fetch), we will filter by known fully evolved names or popularity if possible.
-    // For now, we will pick random ones that match the type.
-    
-    // We need to verify these pokemon exist in the list
-    topTypes.forEach(type => {
-        const potentialPartners = pokemonList.filter(p => 
-            p.types.includes(type) && 
-            !p.name.includes('Mega') && // Avoid megas for general advice
-            !p.name.includes('Gmax')
-        );
-        
-        // Simple heuristic for "good" pokemon: longer names often mean fully evolved? No.
-        // Let's just pick random ones to avoid bias, or maybe check specific popular ones if we had a tier list.
-        // Let's pick 2 random ones per type.
-        if (potentialPartners.length > 0) {
-            // Shuffle
-            const shuffled = potentialPartners.sort(() => 0.5 - Math.random());
-            const example = shuffled[0];
-            suggestions.push(example);
-        }
-    });
+    if (pokemonList && Array.isArray(pokemonList)) {
+        topTypes.forEach(type => {
+            const potentialPartners = pokemonList.filter(p => 
+                p.types && p.types.includes(type) && 
+                p.name && !p.name.includes('Mega') && 
+                !p.name.includes('Gmax')
+            );
+            
+            if (potentialPartners.length > 0) {
+                // Shuffle
+                const shuffled = potentialPartners.sort(() => 0.5 - Math.random());
+                const example = shuffled[0];
+                suggestions.push(example);
+            }
+        });
+    }
 
     // 4. Construct the advice object
     return {
         threat: targetThreat,
         multiplier: threatMultiplier,
         suggestedTypes: topTypes,
-        suggestedPokemon: suggestions
+        suggestedPokemon: suggestions // Can be empty, UI should handle it
     };
 }
