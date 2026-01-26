@@ -153,6 +153,7 @@ function setupEventListeners() {
                 if (details) {
                     ui.renderStats(document.getElementById('stats-container'), details.stats);
                     ui.renderAbilities(document.getElementById('abilities-container'), details.abilities);
+                    ui.renderAbilityAlerts(document.getElementById('ability-alerts'), details.abilities);
                 } else {
                     statsSection.classList.add('hidden');
                 }
@@ -191,6 +192,13 @@ function setupEventListeners() {
 function displayAnalysis(t1, t2) {
     const section = document.getElementById('type-details');
     const nameSpan = document.getElementById('selected-type-name');
+    const abilityAlerts = document.getElementById('ability-alerts');
+    
+    // Always clear alerts when refreshing analysis (generic type analysis implies no specific abilities)
+    if (abilityAlerts) {
+        abilityAlerts.innerHTML = '';
+        abilityAlerts.classList.add('hidden');
+    }
     
     if (!t1 && !t2) {
         section.classList.add('hidden');
