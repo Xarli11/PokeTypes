@@ -52,17 +52,32 @@ export function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiv
     
     if (pokemonList && Array.isArray(pokemonList)) {
         topTypes.forEach(type => {
-            const potentialPartners = pokemonList.filter(p => 
+            // Filter for strong candidates (BST >= 485 is a good baseline for fully evolved/competitive)
+            let potentialPartners = pokemonList.filter(p => 
                 p.types && p.types.includes(type) && 
                 p.name && !p.name.includes('Mega') && 
-                !p.name.includes('Gmax')
+                !p.name.includes('Gmax') &&
+                (p.bst || 0) >= 485 
             );
             
+            // Fallback: If no strong pokemon found (e.g. Bug type has few high BST), lower the bar
+            if (potentialPartners.length === 0) {
+                potentialPartners = pokemonList.filter(p => 
+                    p.types && p.types.includes(type) && 
+                    !p.name.includes('Mega') && !p.name.includes('Gmax') &&
+                    (p.bst || 0) >= 400
+                );
+            }
+
             if (potentialPartners.length > 0) {
-                // Shuffle
-                const shuffled = potentialPartners.sort(() => 0.5 - Math.random());
-                const example = shuffled[0];
-                suggestions.push(example);
+                // Sort by BST descending (strongest first)
+                potentialPartners.sort((a, b) => b.bst - a.bst);
+                
+                // Pick one from the top 5 to add variety but keep quality
+                const topSelection = potentialPartners.slice(0, 5);
+                const randomChoice = topSelection[Math.floor(Math.random() * topSelection.length)];
+                
+                suggestions.push(randomChoice);
             }
         });
     }
