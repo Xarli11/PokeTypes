@@ -1,6 +1,7 @@
 import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.13.0';
-import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.13.0';
-import * as ui from './modules/ui.js?v=2.13.0';
+import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.12.0';
+import { getTacticalAdvice } from './modules/advisor.js?v=2.12.0';
+import * as ui from './modules/ui.js?v=2.12.0';
 import { initTheme } from './modules/theme.js?v=2.13.0';
 
 let appData = null;
@@ -259,6 +260,8 @@ function displayAnalysis(t1, t2) {
     
     if (!t1 && !t2) {
         section.classList.add('hidden');
+        document.getElementById('tactical-advice').innerHTML = ''; // Clear advice
+        document.getElementById('tactical-advice').classList.add('hidden');
         return;
     }
 
@@ -284,6 +287,10 @@ function displayAnalysis(t1, t2) {
     ui.renderEffectivenessCard(document.getElementById('neutral-damage'), 'Neutral Damage', def.neutral, 'None', 'neutral', appData.contrast);
     ui.renderEffectivenessCard(document.getElementById('resistances'), 'Resistances', def.resistances, 'None', 'resist', appData.contrast);
     ui.renderEffectivenessCard(document.getElementById('immunities'), 'Immunities', def.immunities, 'None', 'immune', appData.contrast);
+
+    // AI Advisor
+    const advice = getTacticalAdvice(def.weaknesses4x, def.weaknesses2x, appData.types, appData.effectiveness, appData.pokemonList);
+    ui.renderTacticalAdvice(document.getElementById('tactical-advice'), advice);
 
     ui.renderEffectivenessCard(document.getElementById('super-effective'), 'Super Effective', off.superEffective2x, 'None', 'super', appData.contrast);
     ui.renderEffectivenessCard(document.getElementById('neutral-offense'), 'Neutral Damage', off.neutral, 'None', 'neutral', appData.contrast);

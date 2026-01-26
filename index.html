@@ -123,17 +123,22 @@
                 <div id="ability-alerts" class="md:col-span-2 hidden"></div>
 
                 <!-- Defense Card -->
-                <div class="bento-card dark:bg-slate-800 dark:border-slate-700">
-                    <div class="label-group text-indigo-500 dark:text-indigo-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="label-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l7 4v6a8 8 0 01-7 8 8 8 0 01-7-8V6l7-4z" />
-                        </svg>
-                        Defense Breakdown
+                <div class="flex flex-col gap-6">
+                    <div class="bento-card dark:bg-slate-800 dark:border-slate-700">
+                        <div class="label-group text-indigo-500 dark:text-indigo-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="label-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l7 4v6a8 8 0 01-7 8 8 8 0 01-7-8V6l7-4z" />
+                            </svg>
+                            Defense Breakdown
+                        </div>
+                        <div id="weaknesses" class="effectiveness-card dark:border-slate-700"></div>
+                        <div id="neutral-damage" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
+                        <div id="resistances" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
+                        <div id="immunities" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
                     </div>
-                    <div id="weaknesses" class="effectiveness-card dark:border-slate-700"></div>
-                    <div id="neutral-damage" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
-                    <div id="resistances" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
-                    <div id="immunities" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
+
+                    <!-- AI Advisor -->
+                    <div id="tactical-advice" class="hidden"></div>
                 </div>
 
                 <!-- Offense Card -->
