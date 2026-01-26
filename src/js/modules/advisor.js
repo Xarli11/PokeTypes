@@ -52,32 +52,30 @@ export function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiv
     
     if (pokemonList && Array.isArray(pokemonList)) {
         topTypes.forEach(type => {
-            // Filter for strong candidates (BST >= 485 is a good baseline for fully evolved/competitive)
-            let potentialPartners = pokemonList.filter(p => 
+            // Base filter: Type match, no Megas/Gmax (unless needed, but usually base form is enough for ID)
+            const baseFilter = p => 
                 p.types && p.types.includes(type) && 
                 p.name && !p.name.includes('Mega') && 
-                !p.name.includes('Gmax') &&
-                (p.bst || 0) >= 485 
-            );
-            
-            // Fallback: If no strong pokemon found (e.g. Bug type has few high BST), lower the bar
-            if (potentialPartners.length === 0) {
-                potentialPartners = pokemonList.filter(p => 
-                    p.types && p.types.includes(type) && 
-                    !p.name.includes('Mega') && !p.name.includes('Gmax') &&
-                    (p.bst || 0) >= 400
-                );
+                !p.name.includes('Gmax');
+
+            // Tier A: Standard Competitive (Sweet Spot: Starters, Pseudos, Strong mons like Alakazam, Lucario)
+            // Range: 480 - 600
+            let candidates = pokemonList.filter(p => baseFilter(p) && (p.bst || 0) >= 480 && (p.bst || 0) <= 600);
+
+            // Tier S: Gods/Ubers (Mewtwo, Arceus, etc.) - Fallback if no Tier A
+            if (candidates.length === 0) {
+                candidates = pokemonList.filter(p => baseFilter(p) && (p.bst || 0) > 600);
             }
 
-            if (potentialPartners.length > 0) {
-                // Sort by BST descending (strongest first)
-                potentialPartners.sort((a, b) => b.bst - a.bst);
-                
-                // Pick one from the top 5 to add variety but keep quality
-                const topSelection = potentialPartners.slice(0, 5);
-                const randomChoice = topSelection[Math.floor(Math.random() * topSelection.length)];
-                
-                suggestions.push(randomChoice);
+            // Tier B: Decent (For weaker types like Bug/Pre-evos) - Last resort
+            if (candidates.length === 0) {
+                candidates = pokemonList.filter(p => baseFilter(p) && (p.bst || 0) >= 400);
+            }
+
+            if (candidates.length > 0) {
+                // Shuffle candidates to give variety (don't just pick the strongest of the tier every time)
+                const shuffled = candidates.sort(() => 0.5 - Math.random());
+                suggestions.push(shuffled[0]);
             }
         });
     }
