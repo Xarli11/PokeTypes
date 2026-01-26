@@ -1,4 +1,4 @@
-import { getEffectiveness } from './calculator.js';
+import { getEffectiveness, getAbilityModifiers } from './calculator.js';
 
 export function createTypePill(type, contrastData) {
     const textColorClass = contrastData[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
@@ -216,4 +216,56 @@ export function renderAbilities(container, abilities) {
 
 export function capitalizeWords(str) {
     return str.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+}
+
+export function renderAbilityAlerts(container, abilities) {
+    if (!abilities || !abilities.length) {
+        container.innerHTML = '';
+        container.classList.add('hidden');
+        return;
+    }
+
+    const uniqueModifiers = new Map();
+
+    abilities.forEach(entry => {
+        const modifiers = getAbilityModifiers(entry.ability.name);
+        modifiers.forEach(mod => {
+            // Create a unique key to avoid duplicates
+            const key = `${mod.type}-${mod.modifier}-${entry.ability.name}`;
+            if (!uniqueModifiers.has(key)) {
+                uniqueModifiers.set(key, { ...mod, abilityName: capitalizeWords(entry.ability.name) });
+            }
+        });
+    });
+
+    if (uniqueModifiers.size === 0) {
+        container.innerHTML = '';
+        container.classList.add('hidden');
+        return;
+    }
+
+    container.classList.remove('hidden');
+    
+    // Header
+    let contentHTML = `
+        <div class="mb-2 flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="font-bold text-sm uppercase tracking-wide">Ability Considerations</span>
+        </div>
+    `;
+
+    contentHTML += `<div class="grid gap-2">`;
+
+    uniqueModifiers.forEach(mod => {
+        contentHTML += `
+            <div class="p-3 rounded-lg border border-indigo-100 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/30 text-sm text-slate-700 dark:text-slate-300">
+                <span class="font-bold text-indigo-700 dark:text-indigo-300">${mod.abilityName}</span>: ${mod.description}
+            </div>
+        `;
+    });
+
+    contentHTML += `</div>`;
+    container.innerHTML = contentHTML;
 }

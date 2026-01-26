@@ -96,3 +96,45 @@ export function findImmuneDualTypes(type1, type2, types, effectiveness) {
     }
     return immuneCombinations;
 }
+
+export const ABILITY_EFFECTIVENESS = {
+    'levitate': [{ type: 'Ground', modifier: 0, description: 'Grants immunity to Ground-type moves.' }],
+    'flash-fire': [{ type: 'Fire', modifier: 0, description: 'Grants immunity to Fire-type moves.' }],
+    'volt-absorb': [{ type: 'Electric', modifier: 0, description: 'Grants immunity to Electric-type moves.' }],
+    'motor-drive': [{ type: 'Electric', modifier: 0, description: 'Grants immunity to Electric-type moves.' }],
+    'lightning-rod': [{ type: 'Electric', modifier: 0, description: 'Grants immunity to Electric-type moves.' }],
+    'sap-sipper': [{ type: 'Grass', modifier: 0, description: 'Grants immunity to Grass-type moves.' }],
+    'water-absorb': [{ type: 'Water', modifier: 0, description: 'Grants immunity to Water-type moves.' }],
+    'storm-drain': [{ type: 'Water', modifier: 0, description: 'Grants immunity to Water-type moves.' }],
+    'dry-skin': [
+        { type: 'Water', modifier: 0, description: 'Grants immunity to Water-type moves.' },
+        { type: 'Fire', modifier: 1.25, description: 'Takes 25% more damage from Fire-type moves.' }
+    ],
+    'earth-eater': [{ type: 'Ground', modifier: 0, description: 'Grants immunity to Ground-type moves.' }],
+    'thick-fat': [
+        { type: 'Fire', modifier: 0.5, description: 'Halves damage from Fire-type moves.' },
+        { type: 'Ice', modifier: 0.5, description: 'Halves damage from Ice-type moves.' }
+    ],
+    'heatproof': [{ type: 'Fire', modifier: 0.5, description: 'Halves damage from Fire-type moves.' }],
+    'purifying-salt': [{ type: 'Ghost', modifier: 0.5, description: 'Halves damage from Ghost-type moves.' }],
+    'well-baked-body': [{ type: 'Fire', modifier: 0, description: 'Grants immunity to Fire-type moves.' }],
+    'water-bubble': [{ type: 'Fire', modifier: 0.5, description: 'Halves damage from Fire-type moves.' }],
+    'fluffy': [{ type: 'Fire', modifier: 2, description: 'Takes 2x damage from Fire-type moves.' }],
+    'filter': [{ type: 'All', modifier: 0.75, description: 'Reduces Super Effective damage by 25%.' }],
+    'solid-rock': [{ type: 'All', modifier: 0.75, description: 'Reduces Super Effective damage by 25%.' }],
+    'prism-armor': [{ type: 'All', modifier: 0.75, description: 'Reduces Super Effective damage by 25%.' }],
+    'wonder-guard': [{ type: 'All', modifier: 0, description: 'Immune to all non-Super Effective damage.' }],
+    'multiscale': [{ type: 'All', modifier: 0.5, description: 'Halves damage when HP is full.' }],
+    'shadow-shield': [{ type: 'All', modifier: 0.5, description: 'Halves damage when HP is full.' }],
+    'delta-stream': [{ type: 'Flying', modifier: 1, description: 'Removes weaknesses of Flying-type Pokemon.' }],
+    'desolate-land': [{ type: 'Water', modifier: 0, description: 'Grants immunity to Water-type moves.' }],
+    'primordial-sea': [{ type: 'Fire', modifier: 0, description: 'Grants immunity to Fire-type moves.' }],
+    'tinted-lens': [{ type: 'Offensive', modifier: 2, description: 'Doubles damage of "Not Very Effective" moves.' }],
+    'scrappy': [{ type: 'Offensive', modifier: 1, description: 'Allows Normal and Fighting moves to hit Ghost types.' }],
+    'minds-eye': [{ type: 'Offensive', modifier: 1, description: 'Allows Normal and Fighting moves to hit Ghost types.' }]
+};
+
+export function getAbilityModifiers(abilityName) {
+    if (!abilityName) return [];
+    return ABILITY_EFFECTIVENESS[abilityName.toLowerCase()] || [];
+}
