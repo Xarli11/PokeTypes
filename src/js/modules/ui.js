@@ -219,7 +219,11 @@ export function capitalizeWords(str) {
 }
 
 export function renderAbilityAlerts(container, abilities) {
+    // Debug logging
+    console.log('renderAbilityAlerts called with:', abilities);
+
     if (!abilities || !abilities.length) {
+        console.log('No abilities provided to renderAbilityAlerts');
         container.innerHTML = '';
         container.classList.add('hidden');
         return;
@@ -228,15 +232,21 @@ export function renderAbilityAlerts(container, abilities) {
     const uniqueModifiers = new Map();
 
     abilities.forEach(entry => {
-        const modifiers = getAbilityModifiers(entry.ability.name);
+        const name = entry.ability.name;
+        const modifiers = getAbilityModifiers(name);
+        
+        console.log(`Checking ability "${name}":`, modifiers);
+
         modifiers.forEach(mod => {
             // Create a unique key to avoid duplicates
-            const key = `${mod.type}-${mod.modifier}-${entry.ability.name}`;
+            const key = `${mod.type}-${mod.modifier}-${name}`;
             if (!uniqueModifiers.has(key)) {
-                uniqueModifiers.set(key, { ...mod, abilityName: capitalizeWords(entry.ability.name) });
+                uniqueModifiers.set(key, { ...mod, abilityName: capitalizeWords(name) });
             }
         });
     });
+
+    console.log('Unique modifiers found:', uniqueModifiers.size);
 
     if (uniqueModifiers.size === 0) {
         container.innerHTML = '';
@@ -245,6 +255,7 @@ export function renderAbilityAlerts(container, abilities) {
     }
 
     container.classList.remove('hidden');
+    console.log('Rendering ability alerts to container');
     
     // Header
     let contentHTML = `
