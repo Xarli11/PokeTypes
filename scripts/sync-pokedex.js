@@ -90,12 +90,16 @@ https.get(POKEDEX_URL, (res) => {
                 }
 
                 // Map to our project format:
-                // { "id": number, "name": string, "types": string[] }
+                // { "id": number, "name": string, "types": string[], "bst": number }
                 
+                const stats = entry.baseStats;
+                const bst = stats ? (stats.hp + stats.atk + stats.def + stats.spa + stats.spd + stats.spe) : 0;
+
                 cleanDex.push({
                     id: entry.num,
                     name: formatName(entry.name),
-                    types: entry.types
+                    types: entry.types,
+                    bst: bst
                 });
             }
 
