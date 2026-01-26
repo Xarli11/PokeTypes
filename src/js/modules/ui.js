@@ -219,17 +219,16 @@ export function capitalizeWords(str) {
 }
 
 export function renderAbilityAlerts(container, abilities) {
-    // Debug logging
     console.log('renderAbilityAlerts called with:', abilities);
 
     if (!abilities || !abilities.length) {
-        console.log('No abilities provided to renderAbilityAlerts');
         container.innerHTML = '';
         container.classList.add('hidden');
         return;
     }
 
-    const uniqueModifiers = new Map();
+    const alertsToRender = [];
+    const seenKeys = new Set();
 
     abilities.forEach(entry => {
         const name = entry.ability.name;
@@ -238,24 +237,29 @@ export function renderAbilityAlerts(container, abilities) {
         console.log(`Checking ability "${name}":`, modifiers);
 
         modifiers.forEach(mod => {
-            // Create a unique key to avoid duplicates
+            // Simple key for deduplication
             const key = `${mod.type}-${mod.modifier}-${name}`;
-            if (!uniqueModifiers.has(key)) {
-                uniqueModifiers.set(key, { ...mod, abilityName: capitalizeWords(name) });
+            if (!seenKeys.has(key)) {
+                seenKeys.add(key);
+                alertsToRender.push({
+                    abilityName: capitalizeWords(name),
+                    description: mod.description,
+                    type: mod.type,
+                    modifier: mod.modifier
+                });
             }
         });
     });
 
-    console.log('Unique modifiers found:', uniqueModifiers.size);
+    console.log('Alerts to render:', alertsToRender.length);
 
-    if (uniqueModifiers.size === 0) {
+    if (alertsToRender.length === 0) {
         container.innerHTML = '';
         container.classList.add('hidden');
         return;
     }
 
     container.classList.remove('hidden');
-    console.log('Rendering ability alerts to container');
     
     // Header
     let contentHTML = `
@@ -267,8 +271,19 @@ export function renderAbilityAlerts(container, abilities) {
         </div>
     `;
 
+    contentHTML += `<div class="grid gap-2">`;
+
+    alertsToRender.forEach(alert => {
+        contentHTML += `
+            <div class="p-3 rounded-lg border border-indigo-100 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/30 text-sm text-slate-700 dark:text-slate-300">
+                <span class="font-bold text-indigo-700 dark:text-indigo-300">${alert.abilityName}</span>: ${alert.description}
+            </div>
+        `;
+    });
+
     contentHTML += `</div>`;
     container.innerHTML = contentHTML;
+    console.log('HTML updated');
 }
 
 export function renderTacticalAdvice(container, advice) {
