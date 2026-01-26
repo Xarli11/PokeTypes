@@ -14,8 +14,82 @@ async function init() {
         ui.generateTypeTable('type-table-container', appData.types, appData.effectiveness, appData.contrast);
         
         setupEventListeners();
+        
+        // Initial state from URL
+        await applyStateFromURL();
+        
     } catch (error) {
         console.error("Initialization failed:", error);
+    }
+}
+
+function syncURLWithState(t1, t2, pokemonName) {
+    const url = new URL(window.location);
+    if (t1) url.searchParams.set('t1', t1.toLowerCase()); else url.searchParams.delete('t1');
+    if (t2) url.searchParams.set('t2', t2.toLowerCase()); else url.searchParams.delete('t2');
+    if (pokemonName) url.searchParams.set('p', pokemonName.toLowerCase()); else url.searchParams.delete('p');
+    
+    window.history.replaceState({}, '', url);
+}
+
+async function applyStateFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const t1 = params.get('t1');
+    const t2 = params.get('t2');
+    const p = params.get('p');
+
+    const typeSelect = document.getElementById('type-select');
+    const type2Select = document.getElementById('type2-select');
+    const searchInput = document.getElementById('pokemon-search');
+
+    if (p) {
+        const pokemon = appData.pokemonList.find(item => item.name.toLowerCase() === p.toLowerCase());
+        if (pokemon) {
+            searchInput.value = ui.capitalizeWords(pokemon.name);
+            typeSelect.value = pokemon.types[0] || '';
+            type2Select.value = pokemon.types[1] || '';
+            displayAnalysis(typeSelect.value, type2Select.value);
+            await showPokemonDetails(pokemon);
+            return;
+        }
+    }
+
+    if (t1 || t2) {
+        // Ensure types exist in appData (case insensitive match)
+        const findType = (val) => appData.types.find(t => t.toLowerCase() === val?.toLowerCase());
+        const validT1 = findType(t1);
+        const validT2 = findType(t2);
+
+        if (validT1) typeSelect.value = validT1;
+        if (validT2) type2Select.value = validT2;
+        
+        displayAnalysis(typeSelect.value, type2Select.value);
+    }
+}
+
+async function showPokemonDetails(pokemon) {
+    const statsSection = document.getElementById('pokemon-stats');
+    if (!pokemon.id) {
+        statsSection.classList.add('hidden');
+        return;
+    }
+
+    try {
+        document.getElementById('stats-container').innerHTML = '<div class="text-center p-4 text-slate-400">Loading stats...</div>';
+        document.getElementById('abilities-container').innerHTML = '';
+        statsSection.classList.remove('hidden');
+
+        const details = await fetchPokemonDetails(pokemon.id);
+        if (details) {
+            ui.renderStats(document.getElementById('stats-container'), details.stats);
+            ui.renderAbilities(document.getElementById('abilities-container'), details.abilities);
+            ui.renderAbilityAlerts(document.getElementById('ability-alerts'), details.abilities);
+        } else {
+            statsSection.classList.add('hidden');
+        }
+    } catch (err) {
+        console.error('Error displaying details:', err);
+        statsSection.classList.add('hidden');
     }
 }
 
@@ -31,6 +105,7 @@ function setupEventListeners() {
         const t1 = typeSelect.value;
         const t2 = type2Select.value;
         displayAnalysis(t1, t2);
+        syncURLWithState(t1, t2, searchInput.value);
     };
 
     typeSelect.addEventListener('change', () => {
@@ -50,6 +125,7 @@ function setupEventListeners() {
         searchInput.value = '';
         statsSection.classList.add('hidden');
         displayAnalysis('', '');
+        syncURLWithState('', '', '');
     });
 
     // Search Logic
@@ -142,26 +218,7 @@ function setupEventListeners() {
         updateUI();
 
         // Fetch and display details
-        if (pokemon.id) {
-            try {
-                // Show loading state or clear previous
-                document.getElementById('stats-container').innerHTML = '<div class="text-center p-4 text-slate-400">Loading stats...</div>';
-                document.getElementById('abilities-container').innerHTML = '';
-                statsSection.classList.remove('hidden');
-
-                const details = await fetchPokemonDetails(pokemon.id);
-                if (details) {
-                    ui.renderStats(document.getElementById('stats-container'), details.stats);
-                    ui.renderAbilities(document.getElementById('abilities-container'), details.abilities);
-                    ui.renderAbilityAlerts(document.getElementById('ability-alerts'), details.abilities);
-                } else {
-                    statsSection.classList.add('hidden');
-                }
-            } catch (err) {
-                console.error('Error displaying details:', err);
-                statsSection.classList.add('hidden');
-            }
-        }
+        await showPokemonDetails(pokemon);
     });
 
     document.addEventListener('click', (e) => {
