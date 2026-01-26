@@ -1,8 +1,8 @@
-import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.14.0';
-import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.14.0';
-import { getTacticalAdvice } from './modules/advisor.js?v=2.14.0';
-import * as ui from './modules/ui.js?v=2.14.0';
-import { initTheme } from './modules/theme.js?v=2.14.0';
+import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.14.1';
+import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.14.1';
+import { getTacticalAdvice } from './modules/advisor.js?v=2.14.1';
+import * as ui from './modules/ui.js?v=2.14.1';
+import { initTheme } from './modules/theme.js?v=2.14.1';
 
 let appData = null;
 
@@ -289,8 +289,13 @@ function displayAnalysis(t1, t2) {
     ui.renderEffectivenessCard(document.getElementById('immunities'), 'Immunities', def.immunities, 'None', 'immune', appData.contrast);
 
     // AI Advisor
-    const advice = getTacticalAdvice(def.weaknesses4x, def.weaknesses2x, appData.types, appData.effectiveness, appData.pokemonList);
-    ui.renderTacticalAdvice(document.getElementById('tactical-advice'), advice);
+    try {
+        const advice = getTacticalAdvice(def.weaknesses4x, def.weaknesses2x, appData.types, appData.effectiveness, appData.pokemonList);
+        ui.renderTacticalAdvice(document.getElementById('tactical-advice'), advice);
+    } catch (error) {
+        console.error("AI Advisor error:", error);
+        document.getElementById('tactical-advice').classList.add('hidden');
+    }
 
     ui.renderEffectivenessCard(document.getElementById('super-effective'), 'Super Effective', off.superEffective2x, 'None', 'super', appData.contrast);
     ui.renderEffectivenessCard(document.getElementById('neutral-offense'), 'Neutral Damage', off.neutral, 'None', 'neutral', appData.contrast);
