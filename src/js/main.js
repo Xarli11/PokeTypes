@@ -289,8 +289,13 @@ function displayAnalysis(t1, t2) {
     ui.renderEffectivenessCard(document.getElementById('immunities'), 'Immunities', def.immunities, 'None', 'immune', appData.contrast);
 
     // AI Advisor
-    const advice = getTacticalAdvice(def.weaknesses4x, def.weaknesses2x, appData.types, appData.effectiveness, appData.pokemonList);
-    ui.renderTacticalAdvice(document.getElementById('tactical-advice'), advice);
+    try {
+        const advice = getTacticalAdvice(def.weaknesses4x, def.weaknesses2x, appData.types, appData.effectiveness, appData.pokemonList);
+        ui.renderTacticalAdvice(document.getElementById('tactical-advice'), advice);
+    } catch (error) {
+        console.error("AI Advisor error:", error);
+        document.getElementById('tactical-advice').classList.add('hidden');
+    }
 
     ui.renderEffectivenessCard(document.getElementById('super-effective'), 'Super Effective', off.superEffective2x, 'None', 'super', appData.contrast);
     ui.renderEffectivenessCard(document.getElementById('neutral-offense'), 'Neutral Damage', off.neutral, 'None', 'neutral', appData.contrast);
