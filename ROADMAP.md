@@ -33,6 +33,7 @@ Input a specific move and see how it performs against different type combination
 
 ## ✅ Recently Completed
 
+*   **UI Consistency (v2.17.1):** Standardized multipliers to decimals (x0.5, x0.25) and unified badge styling across Defense and Offense cards.
 *   **Dual Resistances Fix (v2.17.0):** Correctly distinguished between 0.5x (Resist) and 0.25x (Double Resist) damage modifiers in the UI.
 *   **Tactical Advisor (v2.16.0):** Heuristic-based engine that suggests team partners to cover weaknesses, filtering by competitive stats (BST).
 *   **Deep Linking & Shareable URLs (v2.13.0):** Automatic sync of application state with URL query parameters for easy sharing and persistence.

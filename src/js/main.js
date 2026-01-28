@@ -1,8 +1,8 @@
-import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.17.0';
-import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.17.0';
-import { getTacticalAdvice } from './modules/advisor.js?v=2.17.0';
-import * as ui from './modules/ui.js?v=2.17.0';
-import { initTheme } from './modules/theme.js?v=2.17.0';
+import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.17.1';
+import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.17.1';
+import { getTacticalAdvice } from './modules/advisor.js?v=2.17.1';
+import * as ui from './modules/ui.js?v=2.17.1';
+import { initTheme } from './modules/theme.js?v=2.17.1';
 
 let appData = null;
 
@@ -297,9 +297,9 @@ function displayAnalysis(t1, t2) {
         document.getElementById('tactical-advice').classList.add('hidden');
     }
 
-    ui.renderEffectivenessCard(document.getElementById('super-effective'), 'Super Effective', off.superEffective2x, 'None', 'super', appData.contrast);
+    ui.renderBadgedCard(document.getElementById('super-effective'), 'Super Effective', off.superEffective2x, 'None', 'super', 'x2', 'bg-orange-500', appData.contrast);
     ui.renderEffectivenessCard(document.getElementById('neutral-offense'), 'Neutral Damage', off.neutral, 'None', 'neutral', appData.contrast);
-    ui.renderEffectivenessCard(document.getElementById('not-very-effective'), 'Not Very Effective', off.notVeryEffective, 'None', 'resist', appData.contrast);
+    ui.renderBadgedCard(document.getElementById('not-very-effective'), 'Not Very Effective', off.notVeryEffective, 'None', 'resist', 'x0.5', 'bg-emerald-500', appData.contrast);
     ui.renderEffectivenessCard(document.getElementById('no-effect'), 'No Effect', off.noEffect, 'None', 'immune', appData.contrast);
     
     ui.renderDualImmunities(document.getElementById('dual-immunities'), 'Totally Walled By (Dual Types)', dualImmunities, appData.contrast);
