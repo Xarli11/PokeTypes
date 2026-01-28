@@ -11,7 +11,8 @@ export function calculateDefense(type1, type2, types, effectiveness) {
         weaknesses4x: [],
         weaknesses2x: [],
         neutral: [],
-        resistances: [],
+        resistances05x: [],
+        resistances025x: [],
         immunities: []
     };
 
@@ -22,7 +23,8 @@ export function calculateDefense(type1, type2, types, effectiveness) {
         if (modifier === 4) results.weaknesses4x.push(attackingType);
         else if (modifier === 2) results.weaknesses2x.push(attackingType);
         else if (modifier === 1) results.neutral.push(attackingType);
-        else if (modifier === 0.5 || modifier === 0.25) results.resistances.push(attackingType);
+        else if (modifier === 0.5) results.resistances05x.push(attackingType);
+        else if (modifier === 0.25) results.resistances025x.push(attackingType);
         else if (modifier === 0) results.immunities.push(attackingType);
     });
 

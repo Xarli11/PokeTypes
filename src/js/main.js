@@ -1,8 +1,8 @@
-import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.16.1';
-import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.16.1';
-import { getTacticalAdvice } from './modules/advisor.js?v=2.16.1';
-import * as ui from './modules/ui.js?v=2.16.1';
-import { initTheme } from './modules/theme.js?v=2.16.1';
+import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.17.0';
+import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.17.0';
+import { getTacticalAdvice } from './modules/advisor.js?v=2.17.0';
+import * as ui from './modules/ui.js?v=2.17.0';
+import { initTheme } from './modules/theme.js?v=2.17.0';
 
 let appData = null;
 
@@ -285,7 +285,7 @@ function displayAnalysis(t1, t2) {
     // Render Cards
     ui.renderSplitEffectivenessCard(document.getElementById('weaknesses'), 'Weak to', def.weaknesses4x, def.weaknesses2x, 'None', 'super', appData.contrast);
     ui.renderEffectivenessCard(document.getElementById('neutral-damage'), 'Neutral Damage', def.neutral, 'None', 'neutral', appData.contrast);
-    ui.renderEffectivenessCard(document.getElementById('resistances'), 'Resistances', def.resistances, 'None', 'resist', appData.contrast);
+    ui.renderSplitResistanceCard(document.getElementById('resistances'), 'Resistances', def.resistances025x, def.resistances05x, 'None', 'resist', appData.contrast);
     ui.renderEffectivenessCard(document.getElementById('immunities'), 'Immunities', def.immunities, 'None', 'immune', appData.contrast);
 
     // AI Advisor

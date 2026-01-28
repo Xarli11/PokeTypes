@@ -70,6 +70,32 @@ export function renderSplitEffectivenessCard(cardElement, labelText, x4List, x2L
     cardElement.innerHTML = contentHTML;
 }
 
+export function renderSplitResistanceCard(cardElement, labelText, x025List, x05List, noContentText, iconType, contrastData) {
+    let contentHTML = `<div class="label-group">${getEffectivenessIcon(iconType)} <span>${labelText}</span></div>`;
+    contentHTML += `<div class="flex flex-col gap-4">`;
+    
+    if (x025List && x025List.length) {
+        contentHTML += `<div class="flex items-center gap-3">
+            <span class="w-8 h-8 flex items-center justify-center rounded-lg bg-green-600 text-white font-black text-xs">¼</span>
+            <div class="type-pills-container">${x025List.map(t => createTypePill(t, contrastData)).join('')}</div>
+        </div>`;
+    }
+    
+    if (x05List && x05List.length) {
+        contentHTML += `<div class="flex items-center gap-3">
+            <span class="w-8 h-8 flex items-center justify-center rounded-lg bg-emerald-500 text-white font-black text-xs">½</span>
+            <div class="type-pills-container">${x05List.map(t => createTypePill(t, contrastData)).join('')}</div>
+        </div>`;
+    }
+    
+    if ((!x025List || !x025List.length) && (!x05List || !x05List.length)) {
+        contentHTML += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">${noContentText}</span>`;
+    }
+    
+    contentHTML += `</div>`;
+    cardElement.innerHTML = contentHTML;
+}
+
 export function renderDualImmunities(container, labelText, pairs, contrastData) {
     if (!pairs || pairs.length === 0) {
         container.classList.add('hidden');
