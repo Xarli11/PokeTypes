@@ -50,14 +50,14 @@ export function renderSplitEffectivenessCard(cardElement, labelText, x4List, x2L
     
     if (x4List && x4List.length) {
         contentHTML += `<div class="flex items-center gap-3">
-            <span class="w-8 h-8 flex items-center justify-center rounded-lg bg-red-600 text-white font-black text-xs">x4</span>
+            <span class="px-2 h-8 min-w-[2rem] flex items-center justify-center rounded-lg bg-red-600 text-white font-black text-xs">x4</span>
             <div class="type-pills-container">${x4List.map(t => createTypePill(t, contrastData)).join('')}</div>
         </div>`;
     }
     
     if (x2List && x2List.length) {
         contentHTML += `<div class="flex items-center gap-3">
-            <span class="w-8 h-8 flex items-center justify-center rounded-lg bg-orange-500 text-white font-black text-xs">x2</span>
+            <span class="px-2 h-8 min-w-[2rem] flex items-center justify-center rounded-lg bg-orange-500 text-white font-black text-xs">x2</span>
             <div class="type-pills-container">${x2List.map(t => createTypePill(t, contrastData)).join('')}</div>
         </div>`;
     }
@@ -76,14 +76,14 @@ export function renderSplitResistanceCard(cardElement, labelText, x025List, x05L
     
     if (x025List && x025List.length) {
         contentHTML += `<div class="flex items-center gap-3">
-            <span class="w-8 h-8 flex items-center justify-center rounded-lg bg-green-600 text-white font-black text-xs">¼</span>
+            <span class="px-2 h-8 min-w-[2rem] flex items-center justify-center rounded-lg bg-green-600 text-white font-black text-xs">x0.25</span>
             <div class="type-pills-container">${x025List.map(t => createTypePill(t, contrastData)).join('')}</div>
         </div>`;
     }
     
     if (x05List && x05List.length) {
         contentHTML += `<div class="flex items-center gap-3">
-            <span class="w-8 h-8 flex items-center justify-center rounded-lg bg-emerald-500 text-white font-black text-xs">½</span>
+            <span class="px-2 h-8 min-w-[2rem] flex items-center justify-center rounded-lg bg-emerald-500 text-white font-black text-xs">x0.5</span>
             <div class="type-pills-container">${x05List.map(t => createTypePill(t, contrastData)).join('')}</div>
         </div>`;
     }
@@ -92,6 +92,23 @@ export function renderSplitResistanceCard(cardElement, labelText, x025List, x05L
         contentHTML += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">${noContentText}</span>`;
     }
     
+    contentHTML += `</div>`;
+    cardElement.innerHTML = contentHTML;
+}
+
+export function renderBadgedCard(cardElement, labelText, typeList, noContentText, iconType, badgeText, badgeColorClass, contrastData) {
+    let contentHTML = `<div class="label-group">${getEffectivenessIcon(iconType)} <span>${labelText}</span></div>`;
+    contentHTML += `<div class="flex flex-col gap-4">`;
+
+    if (typeList && typeList.length) {
+        contentHTML += `<div class="flex items-center gap-3">
+            <span class="px-2 h-8 min-w-[2rem] flex items-center justify-center rounded-lg ${badgeColorClass} text-white font-black text-xs">${badgeText}</span>
+            <div class="type-pills-container">${typeList.map(t => createTypePill(t, contrastData)).join('')}</div>
+        </div>`;
+    } else {
+        contentHTML += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">${noContentText}</span>`;
+    }
+
     contentHTML += `</div>`;
     cardElement.innerHTML = contentHTML;
 }
