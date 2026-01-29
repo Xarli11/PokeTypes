@@ -4,12 +4,7 @@ This document outlines the planned features, improvements, and future vision for
 
 ## 📋 Upcoming Features
 
-### 1. Deep Linking & Shareable URLs 🔗 (Priority)
-Allow users to share specific analyses and maintain state on refresh.
-*   **Functionality:** Sync selected types or Pokemon with the URL query parameters (e.g., `?t1=fire&t2=flying` or `?pokemon=gengar`).
-*   **User Benefit:** Easy sharing via Discord/WhatsApp and persistent state when reloading.
-
-### 2. PokeAnalyzer (Pokemon Details) 🔍
+### 1. PokeAnalyzer (Pokemon Details) 🔍
 Expand the application from a type calculator to a quick-reference tool for competitive and casual play.
 
 *   **Phase 3: Learnsets (Long-term)**
@@ -33,6 +28,7 @@ Input a specific move and see how it performs against different type combination
 
 ## ✅ Recently Completed
 
+*   **Share Button (v2.17.2):** Added native Web Share API integration for one-click analysis sharing on mobile and desktop.
 *   **UI Consistency (v2.17.1):** Standardized multipliers to decimals (x0.5, x0.25) and unified badge styling across Defense and Offense cards.
 *   **Dual Resistances Fix (v2.17.0):** Correctly distinguished between 0.5x (Resist) and 0.25x (Double Resist) damage modifiers in the UI.
 *   **Tactical Advisor (v2.16.0):** Heuristic-based engine that suggests team partners to cover weaknesses, filtering by competitive stats (BST).
