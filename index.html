@@ -41,7 +41,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="styles.css?v=2.17.1">
+    <link rel="stylesheet" href="styles.css?v=2.17.2">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5778743399428042" crossorigin="anonymous"></script>
     
     <!-- Structured Data (Schema.org) -->
@@ -114,9 +114,16 @@
             <!-- Type Details (Visible on selection) -->
             <section id="type-details" class="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
                 <!-- Info Header (Full width within section) -->
-                <div class="md:col-span-2 bento-card dark:bg-slate-800 dark:border-slate-700 !py-6 !px-10 flex items-center justify-between">
+                <div class="md:col-span-2 bento-card dark:bg-slate-800 dark:border-slate-700 !py-6 !px-10 flex flex-wrap items-center justify-between gap-4">
                     <h2 class="text-xl font-bold text-slate-400 uppercase tracking-widest">Active Analysis</h2>
-                    <div id="selected-type-name" class="flex items-center gap-2"></div>
+                    <div class="flex items-center gap-4">
+                        <div id="selected-type-name" class="flex items-center gap-2"></div>
+                        <button id="share-btn" class="hidden p-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors" title="Share Analysis" aria-label="Share Analysis">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Ability Alerts (Dynamic) -->
@@ -308,6 +315,6 @@
     </div>
 
     <!-- Main script -->
-    <script type="module" src="src/js/main.js?v=2.17.1"></script>
+    <script type="module" src="src/js/main.js?v=2.17.2"></script>
 </body>
 </html>
