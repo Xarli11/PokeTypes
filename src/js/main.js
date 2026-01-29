@@ -1,8 +1,8 @@
-import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.17.1';
-import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.17.1';
-import { getTacticalAdvice } from './modules/advisor.js?v=2.17.1';
-import * as ui from './modules/ui.js?v=2.17.1';
-import { initTheme } from './modules/theme.js?v=2.17.1';
+import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.17.2';
+import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.17.2';
+import { getTacticalAdvice } from './modules/advisor.js?v=2.17.2';
+import * as ui from './modules/ui.js?v=2.17.2';
+import { initTheme } from './modules/theme.js?v=2.17.2';
 
 let appData = null;
 
