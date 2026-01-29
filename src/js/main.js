@@ -1,9 +1,9 @@
-import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.18.3';
-import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.18.3';
-import { getTacticalAdvice } from './modules/advisor.js?v=2.18.3';
-import * as ui from './modules/ui.js?v=2.18.3';
-import { initTheme } from './modules/theme.js?v=2.18.3';
-import { i18n } from './modules/i18n.js?v=2.18.3';
+import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.18.4';
+import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.18.4';
+import { getTacticalAdvice } from './modules/advisor.js?v=2.18.4';
+import * as ui from './modules/ui.js?v=2.18.4';
+import { initTheme } from './modules/theme.js?v=2.18.4';
+import { i18n } from './modules/i18n.js?v=2.18.4';
 
 let appData = null;
 
@@ -199,14 +199,38 @@ function setupEventListeners() {
             return;
         }
 
-        const matches = appData.pokemonList.filter(p => p.name.toLowerCase().includes(query)).slice(0, 10);
+        // 1. Get matches with localization support
+        const matches = appData.pokemonList.map(p => {
+            // Check if we have a localized name for this pokemon (using its slug/name as key)
+            const localizedName = i18n.t(p.name.toLowerCase());
+            return {
+                ...p,
+                displayName: localizedName !== p.name.toLowerCase() ? localizedName : ui.capitalizeWords(p.name),
+                searchName: (localizedName + " " + p.name).toLowerCase()
+            };
+        }).filter(p => p.searchName.includes(query));
+
+        // 2. Sort matches: Prefix matches first, then by Dex ID
+        matches.sort((a, b) => {
+            const aName = a.displayName.toLowerCase();
+            const bName = b.displayName.toLowerCase();
+            const aStarts = aName.startsWith(query);
+            const bStarts = bName.startsWith(query);
+
+            if (aStarts && !bStarts) return -1;
+            if (!aStarts && bStarts) return 1;
+            
+            // If both start with query or both don't, sort by Dex ID
+            // This still keeps a consistent order but gives priority to the query
+            return a.id - b.id;
+        });
+
+        const topMatches = matches.slice(0, 10);
         
-        if (matches.length === 0) {
+        if (topMatches.length === 0) {
             suggestionsList.innerHTML = '<li class="p-4 text-slate-400 italic text-center">' + i18n.t('none') + '</li>';
         } else {
-            suggestionsList.innerHTML = matches.map((p, index) => {
-                // Use PokeAPI sprites via raw.githubusercontent.com
-                // p.id was added to pokedex.json by migration script
+            suggestionsList.innerHTML = topMatches.map((p, index) => {
                 const imageUrl = p.id 
                     ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png`
                     : 'pokeball.png';
@@ -216,11 +240,11 @@ function setupEventListeners() {
                 return `
                     <li data-name="${p.name}" data-index="${index}" class="suggestion-item flex items-center gap-4 !py-3">
                         <img src="${imageUrl}" 
-                             alt="${p.name}" 
+                             alt="${p.displayName}" 
                              loading="lazy"
                              class="w-10 h-10 object-contain flex-shrink-0"
                              onerror="this.onerror=null; this.src='pokeball.png';">
-                        <span class="flex-1 font-bold text-slate-700 dark:text-slate-200">${ui.capitalizeWords(p.name)}</span>
+                        <span class="flex-1 font-bold text-slate-700 dark:text-slate-200">${p.displayName}</span>
                         <div class="flex gap-1 scale-90 origin-right">
                             ${typePills}
                         </div>
@@ -270,7 +294,10 @@ function setupEventListeners() {
         const name = li.getAttribute('data-name');
         const pokemon = appData.pokemonList.find(p => p.name === name);
         
-        searchInput.value = ui.capitalizeWords(pokemon.name);
+        // Use localized name for the input field
+        const localizedName = i18n.t(pokemon.name.toLowerCase());
+        searchInput.value = localizedName !== pokemon.name.toLowerCase() ? localizedName : ui.capitalizeWords(pokemon.name);
+        
         typeSelect.value = pokemon.types[0] || '';
         type2Select.value = pokemon.types[1] || '';
         

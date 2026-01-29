@@ -75,7 +75,30 @@ export const messages = {
         suggestions_desc: "I'm always looking to improve PokeTypes. Whether it's a feature request or a bug report, I'd love to hear from you!",
         email_btn: "Email Me",
         footer_copyright: "Data up to Gen 9",
-        created_by: "Created by"
+        created_by: "Created by",
+
+        // Special Pokemon Names
+        "type-null": "Type: Null",
+        "great-tusk": "Great Tusk",
+        "scream-tail": "Scream Tail",
+        "brute-bonnet": "Brute Bonnet",
+        "flutter-mane": "Flutter Mane",
+        "slither-wing": "Slither Wing",
+        "sandy-shocks": "Sandy Shocks",
+        "iron-treads": "Iron Treads",
+        "iron-bundle": "Iron Bundle",
+        "iron-hands": "Iron Hands",
+        "iron-jugulis": "Iron Jugulis",
+        "iron-moth": "Iron Moth",
+        "iron-thorns": "Iron Thorns",
+        "roaring-moon": "Roaring Moon",
+        "iron-valiant": "Iron Valiant",
+        "walking-wake": "Walking Wake",
+        "iron-leaves": "Iron Leaves",
+        "gouging-fire": "Gouging Fire",
+        "raging-bolt": "Raging Bolt",
+        "iron-boulder": "Iron Boulder",
+        "iron-crown": "Iron Crown"
     },
     es: {
         // UI Headers & Labels
@@ -153,6 +176,29 @@ export const messages = {
         suggestions_desc: "Siempre busco mejorar PokeTypes. Si tienes una idea o encuentras un error, ¡me encantaría escucharte!",
         email_btn: "Envíame un Email",
         footer_copyright: "Datos hasta Gen 9",
-        created_by: "Creado por"
+        created_by: "Creado por",
+
+        // Special Pokemon Names
+        "type-null": "Código Cero",
+        "great-tusk": "Colmilargo",
+        "scream-tail": "Colagrito",
+        "brute-bonnet": "Furioseta",
+        "flutter-mane": "Melenalete",
+        "slither-wing": "Reptalada",
+        "sandy-shocks": "Pelarena",
+        "iron-treads": "Ferrodada",
+        "iron-bundle": "Ferrosaco",
+        "iron-hands": "Ferropalmas",
+        "iron-jugulis": "Ferrocuello",
+        "iron-moth": "Ferropolilla",
+        "iron-thorns": "Ferropúas",
+        "roaring-moon": "Bramaluna",
+        "iron-valiant": "Ferropaladín",
+        "walking-wake": "Ondulagua",
+        "iron-leaves": "Ferroverdor",
+        "gouging-fire": "Flamariete",
+        "raging-bolt": "Electrofuria",
+        "iron-boulder": "Ferromuro",
+        "iron-crown": "Ferrotesta"
     }
 };
