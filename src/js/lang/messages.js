@@ -32,6 +32,12 @@ export const messages = {
         // Type Chart
         global_chart: "Global Type Chart",
         
+        // Advisor
+        advisor_title: "Smart Tactical Advisor",
+        advisor_weakness: "Huge weakness to {type} detected!",
+        advisor_suggestion: "Consider adding a {type} partner.",
+        advisor_recommended: "Recommended:",
+        
         // Footer & Info
         mastering_chart: "Mastering the Pokemon Type Chart",
         chart_desc: "Understanding type effectiveness is crucial for any Pokemon trainer. Our tool helps you instantly find weaknesses, resistances, and immunities.",
@@ -103,6 +109,12 @@ export const messages = {
         
         // Type Chart
         global_chart: "Tabla de Tipos Global",
+        
+        // Advisor
+        advisor_title: "Consejero Táctico",
+        advisor_weakness: "¡Gran debilidad a {type} detectada!",
+        advisor_suggestion: "Considera añadir un compañero {type}.",
+        advisor_recommended: "Recomendado:",
         
         // Footer & Info
         mastering_chart: "Dominando la Tabla de Tipos",

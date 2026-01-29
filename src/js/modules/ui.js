@@ -340,9 +340,13 @@ export function renderTacticalAdvice(container, advice) {
 
     container.classList.remove('hidden');
 
-    // These could be translated in the future, currently keeping dynamic logic in English
-    const suggestedTypesHTML = advice.suggestedTypes.map(t => `<span class="font-bold text-slate-700 dark:text-slate-200">${i18n.tType(t)}</span>`).join(' or ');
+    // Prepare interpolated values
+    // Join types with " or " (translated "or" would be ideal but "/" is neutral enough for now, or just space)
+    // Actually, let's just stick to the current list.
+    const suggestedTypesHTML = advice.suggestedTypes.map(t => `<span class="font-bold text-slate-700 dark:text-slate-200">${i18n.tType(t)}</span>`).join('/');
     const suggestedMonsHTML = advice.suggestedPokemon.map(p => capitalizeWords(p.name)).join(', ');
+
+    const threatTypeHTML = `<span class="font-bold text-red-200 border-b border-red-200/50">${i18n.tType(advice.threat)}</span>`;
 
     const contentHTML = `
         <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-700 p-6 text-white shadow-lg">
@@ -358,16 +362,16 @@ export function renderTacticalAdvice(container, advice) {
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                         </svg>
                     </span>
-                    <h3 class="font-bold uppercase tracking-wider text-xs text-indigo-100">Smart Tactical Advisor</h3>
+                    <h3 class="font-bold uppercase tracking-wider text-xs text-indigo-100">${i18n.t('advisor_title')}</h3>
                 </div>
 
                 <p class="text-sm md:text-base leading-relaxed font-medium text-white/95">
-                    Huge weakness to <span class="font-bold text-red-200 border-b border-red-200/50">${i18n.tType(advice.threat)}</span> detected! 
-                    Consider adding a ${suggestedTypesHTML} partner.
+                    ${i18n.t('advisor_weakness', { type: threatTypeHTML })} 
+                    ${i18n.t('advisor_suggestion', { type: suggestedTypesHTML })}
                 </p>
                 
                 <div class="mt-4 flex items-center gap-3 text-xs font-medium text-indigo-100 bg-black/20 p-3 rounded-lg backdrop-blur-sm border border-white/10">
-                    <span class="uppercase tracking-wide opacity-70">Recommended:</span>
+                    <span class="uppercase tracking-wide opacity-70">${i18n.t('advisor_recommended')}</span>
                     <span class="text-white">${suggestedMonsHTML}</span>
                 </div>
             </div>
