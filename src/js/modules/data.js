@@ -1,3 +1,5 @@
+import { i18n } from './i18n.js';
+
 export async function loadAppData() {
     try {
         const [typeDataResponse, pokedexResponse] = await Promise.all([
@@ -31,16 +33,47 @@ export async function fetchPokemonDetails(id) {
         if (!response.ok) throw new Error('Pokemon not found');
         const data = await response.json();
 
-        // Fetch ability descriptions
+        // Fetch ability descriptions and localized names
         const abilityPromises = data.abilities.map(async (entry) => {
             try {
                 const abilityRes = await fetch(entry.ability.url);
                 const abilityData = await abilityRes.json();
-                const englishEntry = abilityData.effect_entries.find(e => e.language.name === 'en');
-                // Prefer short_effect, fallback to effect, fallback to "No description available."
-                entry.description = englishEntry ? (englishEntry.short_effect || englishEntry.effect) : 'No description available.';
+                const currentLang = i18n.currentLang;
+
+                // 1. Localize Name
+                // PokeAPI names array: [{ name: "Stench", language: { name: "en" } }, ...]
+                const nameEntry = abilityData.names.find(n => n.language.name === currentLang);
+                if (nameEntry) {
+                    entry.ability.name = nameEntry.name; // Override name with localized version
+                }
+
+                // 2. Localize Description
+                // Try flavor_text first (usually better for UI), then effect_entries
+                // We prefer entries from the latest generation if possible, but finding *any* in the language is priority
+                let descEntry = abilityData.flavor_text_entries
+                    .filter(f => f.language.name === currentLang)
+                    .pop(); // Take the last one (usually most recent gen)
+
+                if (!descEntry && abilityData.effect_entries) {
+                    descEntry = abilityData.effect_entries.find(e => e.language.name === currentLang);
+                }
+
+                // Fallback to English if no entry in current language found
+                if (!descEntry) {
+                    descEntry = abilityData.flavor_text_entries.find(f => f.language.name === 'en') || 
+                                abilityData.effect_entries.find(e => e.language.name === 'en');
+                }
+
+                if (descEntry) {
+                    // flavor_text often has \n or \f characters, clean them up
+                    let text = descEntry.flavor_text || descEntry.short_effect || descEntry.effect;
+                    entry.description = text.replace(/[\n\f]/g, ' ');
+                } else {
+                    entry.description = 'No description available.';
+                }
+
             } catch (err) {
-                console.error(`Failed to fetch description for ${entry.ability.name}`, err);
+                console.error(`Failed to fetch details for ${entry.ability.name}`, err);
                 entry.description = 'Description unavailable.';
             }
             return entry;
