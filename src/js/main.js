@@ -245,6 +245,49 @@ function setupEventListeners() {
             });
         });
     }
+
+    // Share Button Logic
+    const shareBtn = document.getElementById('share-btn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', async () => {
+            const url = window.location.href;
+            const title = "PokeTypes Analysis";
+            const text = "Check out this Pokemon type analysis!";
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({ title, text, url });
+                } catch (err) {
+                    console.log('Share canceled or failed:', err);
+                }
+            } else {
+                // Fallback: Copy to clipboard
+                try {
+                    await navigator.clipboard.writeText(url);
+                    
+                    // Visual feedback
+                    const originalContent = shareBtn.innerHTML;
+                    const originalClass = shareBtn.className;
+                    
+                    shareBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    `;
+                    shareBtn.classList.remove('text-indigo-600', 'bg-indigo-50', 'dark:text-indigo-400', 'dark:bg-indigo-900/30');
+                    shareBtn.classList.add('text-green-600', 'bg-green-100', 'dark:text-green-400', 'dark:bg-green-900/30');
+                    
+                    setTimeout(() => {
+                        shareBtn.innerHTML = originalContent;
+                        shareBtn.className = originalClass;
+                    }, 2000);
+                    
+                } catch (err) {
+                    console.error('Failed to copy URL:', err);
+                }
+            }
+        });
+    }
 }
 
 function displayAnalysis(t1, t2) {
@@ -262,6 +305,7 @@ function displayAnalysis(t1, t2) {
         section.classList.add('hidden');
         document.getElementById('tactical-advice').innerHTML = ''; // Clear advice
         document.getElementById('tactical-advice').classList.add('hidden');
+        document.getElementById('share-btn').classList.add('hidden'); // Hide share button
         return;
     }
 
@@ -269,6 +313,18 @@ function displayAnalysis(t1, t2) {
     
     // Treat same type selection as monotype
     if (t1 === t2) t2 = '';
+
+    // Show share button
+    const shareBtn = document.getElementById('share-btn');
+    shareBtn.classList.remove('hidden');
+    // Reset visual feedback if any
+    shareBtn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+        </svg>
+    `;
+    shareBtn.classList.remove('text-green-600', 'bg-green-100');
+    shareBtn.classList.add('text-indigo-600', 'bg-indigo-50');
 
     // Render Title Pills
     nameSpan.innerHTML = ui.createTypePill(t1, appData.contrast);
