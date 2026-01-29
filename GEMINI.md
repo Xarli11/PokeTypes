@@ -119,8 +119,9 @@ The project follows a strict **Gitflow** strategy combined with **Conventional C
     *   Switch to `develop`: `git checkout develop`.
     *   Merge with a commit: `git merge --no-ff feature/my-cool-feature`.
     *   **Agent Responsibility:** The agent must always provide a clear merge commit message to avoid interactive blocks.
+    *   *Important:* Continue working on the feature until it is fully complete. Do not merge to `main` or create a release just for testing purposes. Verify everything on `develop` or the feature branch first.
     *   Push to remote: `git push origin develop`.
-4.  **Release Process:**
+4.  **Release Process (Only when feature is 100% ready):**
     *   Create a release branch from `develop`: `git checkout -b release/vX.Y.Z`.
     *   Run the release script: `npm run release X.Y.Z`.
         *   *This script updates `package.json`, `sw.js`, `index.html`, commits changes, and tags the commit.*
@@ -131,6 +132,8 @@ The project follows a strict **Gitflow** strategy combined with **Conventional C
         *   `git checkout develop`
         *   `git merge --no-ff release/vX.Y.Z`
     *   Push everything: `git push origin main develop --tags`.
+    *   **Publish GitHub Release:**
+        *   Run: `gh release create vX.Y.Z --title "vX.Y.Z" --notes "Description of changes"`.
 
 **Note on Branch Management:** Do not delete feature or release branches after merging. Keep them to maintain a full historical record of the development process.
 
