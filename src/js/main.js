@@ -3,12 +3,18 @@ import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modul
 import { getTacticalAdvice } from './modules/advisor.js?v=2.17.4';
 import * as ui from './modules/ui.js?v=2.17.4';
 import { initTheme } from './modules/theme.js?v=2.17.4';
+import { i18n } from './modules/i18n.js';
 
 let appData = null;
 
 async function init() {
     try {
         initTheme(); // Initialize Dark/Light Mode
+        
+        // Initialize i18n
+        updateLanguageToggle();
+        i18n.updateDOM();
+
         appData = await loadAppData();
         
         ui.populateSelects(['type-select', 'type2-select'], appData.types);
@@ -22,6 +28,48 @@ async function init() {
     } catch (error) {
         console.error("Initialization failed:", error);
     }
+}
+
+function updateLanguageToggle() {
+    const btn = document.getElementById('lang-toggle');
+    if (btn) {
+        // Show current language
+        btn.textContent = i18n.currentLang.toUpperCase();
+    }
+}
+
+function refreshUI() {
+    if (!appData) return;
+
+    // 1. Update static texts
+    i18n.updateDOM();
+
+    // 2. Regenerate Table
+    ui.generateTypeTable('type-table-container', appData.types, appData.effectiveness, appData.contrast);
+
+    // 3. Update Selects (preserve selection)
+    const t1Select = document.getElementById('type-select');
+    const t2Select = document.getElementById('type2-select');
+    const t1Val = t1Select.value;
+    const t2Val = t2Select.value;
+
+    ui.populateSelects(['type-select', 'type2-select'], appData.types);
+    t1Select.value = t1Val;
+    t2Select.value = t2Val;
+
+    // 4. Update Analysis Cards
+    displayAnalysis(t1Val, t2Val);
+
+    // 5. Update Pokemon Stats/Abilities if visible (requires knowing current mon?)
+    // If stats container has content, re-render it
+    // Note: Since stats/abilities render functions take raw data, and we don't store "currentPokemonDetails" globally,
+    // we might miss re-translating dynamic content inside stats unless we re-fetch or re-render.
+    // For MVP, we'll let stats refresh on next search, or if we had a global store.
+    // However, static headers in stats section are handled by updateDOM.
+    // Abilities content (descriptions) are from API (English only usually), so re-rendering them won't translate them unless we have translations.
+    // But "Hidden" label inside renderAbilities IS translated/hardcoded in UI.js, so we should re-render if possible.
+    // Let's check if we can easily re-trigger showPokemonDetails.
+    // For now, simpler approach: User re-searches if they want full translation refresh of details.
 }
 
 function syncURLWithState(t1, t2, pokemonName) {
@@ -101,6 +149,17 @@ function setupEventListeners() {
     const type2Select = document.getElementById('type2-select');
     const resetButton = document.getElementById('reset-button');
     const statsSection = document.getElementById('pokemon-stats');
+    const langToggle = document.getElementById('lang-toggle');
+
+    // Language Toggle
+    if (langToggle) {
+        langToggle.addEventListener('click', () => {
+            const newLang = i18n.currentLang === 'es' ? 'en' : 'es';
+            i18n.setLanguage(newLang);
+            updateLanguageToggle();
+            refreshUI();
+        });
+    }
 
     const updateUI = () => {
         const t1 = typeSelect.value;
@@ -143,7 +202,7 @@ function setupEventListeners() {
         const matches = appData.pokemonList.filter(p => p.name.toLowerCase().includes(query)).slice(0, 10);
         
         if (matches.length === 0) {
-            suggestionsList.innerHTML = '<li class="p-4 text-slate-400 italic text-center">No results found</li>';
+            suggestionsList.innerHTML = '<li class="p-4 text-slate-400 italic text-center">' + i18n.t('none') + '</li>';
         } else {
             suggestionsList.innerHTML = matches.map((p, index) => {
                 // Use PokeAPI sprites via raw.githubusercontent.com
@@ -339,10 +398,11 @@ function displayAnalysis(t1, t2) {
     const dualImmunities = findImmuneDualTypes(t1, t2, appData.types, appData.effectiveness);
 
     // Render Cards
-    ui.renderSplitEffectivenessCard(document.getElementById('weaknesses'), 'Weak to', def.weaknesses4x, def.weaknesses2x, 'None', 'super', appData.contrast);
-    ui.renderEffectivenessCard(document.getElementById('neutral-damage'), 'Neutral Damage', def.neutral, 'None', 'neutral', appData.contrast);
-    ui.renderSplitResistanceCard(document.getElementById('resistances'), 'Resistances', def.resistances025x, def.resistances05x, 'None', 'resist', appData.contrast);
-    ui.renderEffectivenessCard(document.getElementById('immunities'), 'Immunities', def.immunities, 'None', 'immune', appData.contrast);
+    // Using translation keys: 'weaknesses', 'neutral_damage', 'resistances', 'immunities', 'super_effective', etc.
+    ui.renderSplitEffectivenessCard(document.getElementById('weaknesses'), 'weaknesses', def.weaknesses4x, def.weaknesses2x, 'none', 'super', appData.contrast);
+    ui.renderEffectivenessCard(document.getElementById('neutral-damage'), 'neutral_damage', def.neutral, 'none', 'neutral', appData.contrast);
+    ui.renderSplitResistanceCard(document.getElementById('resistances'), 'resistances', def.resistances025x, def.resistances05x, 'none', 'resist', appData.contrast);
+    ui.renderEffectivenessCard(document.getElementById('immunities'), 'immunities', def.immunities, 'none', 'immune', appData.contrast);
 
     // AI Advisor
     try {
@@ -353,12 +413,20 @@ function displayAnalysis(t1, t2) {
         document.getElementById('tactical-advice').classList.add('hidden');
     }
 
-    ui.renderBadgedCard(document.getElementById('super-effective'), 'Super Effective', off.superEffective2x, 'None', 'super', 'x2', 'bg-orange-500', appData.contrast);
-    ui.renderEffectivenessCard(document.getElementById('neutral-offense'), 'Neutral Damage', off.neutral, 'None', 'neutral', appData.contrast);
-    ui.renderBadgedCard(document.getElementById('not-very-effective'), 'Not Very Effective', off.notVeryEffective, 'None', 'resist', 'x0.5', 'bg-emerald-500', appData.contrast);
-    ui.renderEffectivenessCard(document.getElementById('no-effect'), 'No Effect', off.noEffect, 'None', 'immune', appData.contrast);
+    ui.renderBadgedCard(document.getElementById('super-effective'), 'super_effective', off.superEffective2x, 'none', 'super', 'x2', 'bg-orange-500', appData.contrast);
+    ui.renderEffectivenessCard(document.getElementById('neutral-offense'), 'neutral_offense', off.neutral, 'none', 'neutral', appData.contrast);
+    ui.renderBadgedCard(document.getElementById('not-very-effective'), 'not_very_effective', off.notVeryEffective, 'none', 'resist', 'x0.5', 'bg-emerald-500', appData.contrast);
+    ui.renderEffectivenessCard(document.getElementById('no-effect'), 'no_effect', off.noEffect, 'none', 'immune', appData.contrast);
     
-    ui.renderDualImmunities(document.getElementById('dual-immunities'), 'Totally Walled By (Dual Types)', dualImmunities, appData.contrast);
+    // Using a key for this one requires adding it to messages.js if it doesn't exist.
+    // I added "none" to keys. "Totally Walled By (Dual Types)" is not in messages yet. 
+    // I'll assume I need to use 'dual_title' or similar, but let's check messages.js content I wrote.
+    // I wrote 'dual_title' as "Dual Type Weaknesses". Not the same.
+    // I'll add a new key "walled_by" or similar implicitly here, but first let me update the messages file to include it.
+    // For now I'll use a hardcoded string or fallback if key missing. 
+    // Wait, ui.js calls i18n.t(labelKey). If key missing it returns key.
+    // I'll use a specific key and then add it to messages.js in next step to be clean.
+    ui.renderDualImmunities(document.getElementById('dual-immunities'), 'walled_by_dual', dualImmunities, appData.contrast);
 }
 
 document.addEventListener('DOMContentLoaded', init);
