@@ -31,7 +31,6 @@ console.log('✅ Updated package.json');
 // 2. Update Service Worker (sw.js)
 const swPath = path.join(rootDir, 'sw.js');
 let swContent = fs.readFileSync(swPath, 'utf8');
-// Replace: const CACHE_NAME = 'poketypes-vX.Y.Z';
 swContent = swContent.replace(
     /const CACHE_NAME = 'poketypes-v\d+\.\d+\.\d+';/,
     `const CACHE_NAME = 'poketypes-v${newVersion}';`
@@ -42,12 +41,10 @@ console.log('✅ Updated sw.js cache version');
 // 3. Update index.html (Cache Busting)
 const indexPath = path.join(rootDir, 'index.html');
 let indexContent = fs.readFileSync(indexPath, 'utf8');
-// Replace styles.css?v=...
 indexContent = indexContent.replace(
     /href="styles\.css\?v=[\w\.-]+"/,
     `href="styles.css?v=${newVersion}"`
 );
-// Replace main.js?v=...
 indexContent = indexContent.replace(
     /src="src\/js\/main\.js\?v=[\w\.-]+"/,
     `src="src/js/main.js?v=${newVersion}"`
@@ -55,20 +52,65 @@ indexContent = indexContent.replace(
 fs.writeFileSync(indexPath, indexContent);
 console.log('✅ Updated index.html asset versions');
 
-// 3.1 Update main.js internal imports (Module Cache Busting)
-const mainJsPath = path.join(rootDir, 'src', 'js', 'main.js');
-let mainJsContent = fs.readFileSync(mainJsPath, 'utf8');
-mainJsContent = mainJsContent.replace(
-    /from '\.\/modules\/([\w\.-]+)\.js\?v=[\w\.-]+'/g,
-    `from './modules/$1.js?v=${newVersion}'`
-);
-fs.writeFileSync(mainJsPath, mainJsContent);
-console.log('✅ Updated main.js internal module versions');
+// 3.1 Helper function to recursively get all JS files in src/js
+function getAllJsFiles(dirPath, arrayOfFiles) {
+    const files = fs.readdirSync(dirPath);
+    arrayOfFiles = arrayOfFiles || [];
+
+    files.forEach(function(file) {
+        if (fs.statSync(dirPath + "/" + file).isDirectory()) {
+            arrayOfFiles = getAllJsFiles(dirPath + "/" + file, arrayOfFiles);
+        } else {
+            if (file.endsWith('.js')) {
+                arrayOfFiles.push(path.join(dirPath, "/", file));
+            }
+        }
+    });
+
+    return arrayOfFiles;
+}
+
+// 3.2 Update ALL JS internal imports (Module Cache Busting)
+const srcJsPath = path.join(rootDir, 'src', 'js');
+const allJsFiles = getAllJsFiles(srcJsPath);
+const filesToCommit = ['package.json', 'sw.js', 'index.html'];
+
+console.log(`🔍 Scanning ${allJsFiles.length} JS files for imports...`);
+
+allJsFiles.forEach(filePath => {
+    let content = fs.readFileSync(filePath, 'utf8');
+    let updated = false;
+
+    // Regex explanation:
+    // from '   -> match start of import path
+    // ([^']+  -> match the file path (group 1)
+    // \.js     -> match .js extension
+    // (?: \?v=[\w\.-]+ )? -> optionally match existing version param (non-capturing)
+    // '
+    // Matches: from './modules/ui.js' AND from './modules/ui.js?v=1.0.0'
+    const importRegex = /from '([^']+)\.js(?:\?v=[\w\.-]+)?'/g;
+
+    if (importRegex.test(content)) {
+        content = content.replace(importRegex, `from '$1.js?v=${newVersion}'`);
+        fs.writeFileSync(filePath, content);
+        updated = true;
+    }
+
+    if (updated) {
+        // Add relative path for git
+        const relativePath = path.relative(rootDir, filePath);
+        filesToCommit.push(relativePath);
+        console.log(`   Updated imports in: ${path.basename(filePath)}`);
+    }
+});
+console.log('✅ Updated internal module versions globally');
 
 // 4. Git Commands
 try {
     console.log('📦 Committing changes...');
-    execSync(`git add package.json sw.js index.html src/js/main.js`);
+    // Join file paths with spaces
+    const filesString = filesToCommit.join(' ');
+    execSync(`git add ${filesString}`);
     execSync(`git commit -m "chore: release v${newVersion}"`);
     
     console.log('🏷️  Tagging version...');
