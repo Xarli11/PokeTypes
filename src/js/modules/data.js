@@ -58,15 +58,19 @@ export async function fetchPokemonDetails(id) {
                 }
 
                 // NEW: Check manual translation in messages.js if API fails for current lang
-                // Use the original English name (from entry.ability.name before override, or just assume abilityData.name)
-                // abilityData.name is usually "quark-drive". We need to match key format "quark drive_desc"
-                const originalName = abilityData.name.replace(/-/g, ' ');
-                const manualDescKey = `${originalName}_desc`;
-                const manualDesc = i18n.t(manualDescKey);
+                // Try both hyphenated and space versions
+                const rawName = abilityData.name.toLowerCase();
+                const spacedName = rawName.replace(/-/g, ' ');
                 
-                // If manualDesc is different from key, it means a translation exists
-                if (!descEntry && manualDesc !== manualDescKey) {
-                    entry.description = manualDesc;
+                const manualDesc = i18n.t(`${rawName}_desc`);
+                const manualDescSpaced = i18n.t(`${spacedName}_desc`);
+                
+                let finalManualDesc = null;
+                if (manualDesc !== `${rawName}_desc`) finalManualDesc = manualDesc;
+                else if (manualDescSpaced !== `${spacedName}_desc`) finalManualDesc = manualDescSpaced;
+
+                if (!descEntry && finalManualDesc) {
+                    entry.description = finalManualDesc;
                 } else if (descEntry) {
                     let text = descEntry.flavor_text || descEntry.short_effect || descEntry.effect;
                     entry.description = text.replace(/[\n\f]/g, ' ');
