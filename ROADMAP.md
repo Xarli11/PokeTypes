@@ -4,18 +4,18 @@ This document outlines the planned features, improvements, and future vision for
 
 ## 📋 Upcoming Features
 
-### 1. PokeAnalyzer (Pokemon Details) 🔍
+### 1. Move Effectiveness Calculator ⚔️
+Input a specific move (e.g., Earthquake) and see how it performs against different type combinations.
+
+### 2. PokeAnalyzer (Pokemon Details) 🔍
 Expand the application from a type calculator to a quick-reference tool for competitive and casual play.
 
 *   **Phase 3: Learnsets (Long-term)**
     *   Display moves learned by leveling up, TMs, and Egg moves.
     *   *Note: This requires significant data optimization.*
 
-### 2. Team Coverage Tool 🛡️
+### 3. Team Coverage Tool 🛡️
 Analyze a full team of up to 6 Pokemon to identify shared weaknesses and type coverage gaps.
-
-### 3. Move Effectiveness Calculator ⚔️
-Input a specific move and see how it performs against different type combinations.
 
 ## 🛠️ Technical Improvements
 
@@ -28,6 +28,7 @@ Input a specific move and see how it performs against different type combination
 
 ## ✅ Recently Completed
 
+*   **Export Analysis (v2.17.3):** Added ability to download high-quality PNG images of the analysis for sharing.
 *   **Share Button (v2.17.2):** Added native Web Share API integration for one-click analysis sharing on mobile and desktop.
 *   **UI Consistency (v2.17.1):** Standardized multipliers to decimals (x0.5, x0.25) and unified badge styling across Defense and Offense cards.
 *   **Dual Resistances Fix (v2.17.0):** Correctly distinguished between 0.5x (Resist) and 0.25x (Double Resist) damage modifiers in the UI.
