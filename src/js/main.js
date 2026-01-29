@@ -1,8 +1,9 @@
-import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.17.2';
-import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.17.2';
-import { getTacticalAdvice } from './modules/advisor.js?v=2.17.2';
-import * as ui from './modules/ui.js?v=2.17.2';
-import { initTheme } from './modules/theme.js?v=2.17.2';
+import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.17.3';
+import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.17.3';
+import { getTacticalAdvice } from './modules/advisor.js?v=2.17.3';
+import * as ui from './modules/ui.js?v=2.17.3';
+import { initTheme } from './modules/theme.js?v=2.17.3';
+import html2canvas from './libs/html2canvas.js';
 
 let appData = null;
 
@@ -288,6 +289,43 @@ function setupEventListeners() {
             }
         });
     }
+
+    // Download Image Logic
+    const downloadBtn = document.getElementById('download-btn');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', async () => {
+            const element = document.getElementById('type-details');
+            if (!element) return;
+
+            // Hide buttons for capture
+            shareBtn.classList.add('hidden');
+            downloadBtn.classList.add('hidden');
+
+            try {
+                const backgroundColor = window.getComputedStyle(document.body).backgroundColor;
+                
+                const canvas = await html2canvas(element, {
+                    backgroundColor: backgroundColor,
+                    scale: 2, // High resolution
+                    useCORS: true, // For cross-origin images (pokemon sprites)
+                    logging: false
+                });
+
+                const link = document.createElement('a');
+                link.download = 'poketypes-analysis.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+
+            } catch (err) {
+                console.error('Screenshot failed:', err);
+                alert('Failed to generate image. Please try again.');
+            } finally {
+                // Restore buttons
+                shareBtn.classList.remove('hidden');
+                downloadBtn.classList.remove('hidden');
+            }
+        });
+    }
 }
 
 function displayAnalysis(t1, t2) {
@@ -306,6 +344,7 @@ function displayAnalysis(t1, t2) {
         document.getElementById('tactical-advice').innerHTML = ''; // Clear advice
         document.getElementById('tactical-advice').classList.add('hidden');
         document.getElementById('share-btn').classList.add('hidden'); // Hide share button
+        document.getElementById('download-btn').classList.add('hidden'); // Hide download button
         return;
     }
 
@@ -314,9 +353,12 @@ function displayAnalysis(t1, t2) {
     // Treat same type selection as monotype
     if (t1 === t2) t2 = '';
 
-    // Show share button
+    // Show share & download buttons
     const shareBtn = document.getElementById('share-btn');
     shareBtn.classList.remove('hidden');
+    const downloadBtn = document.getElementById('download-btn');
+    downloadBtn.classList.remove('hidden');
+
     // Reset visual feedback if any
     shareBtn.innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
