@@ -1,4 +1,4 @@
-import { messages } from '../lang/messages.js?v=2.18.3';
+import { messages } from '../lang/messages.js?v=2.18.4';
 
 class I18n {
     constructor() {
