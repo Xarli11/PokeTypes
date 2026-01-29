@@ -25,11 +25,18 @@ class I18n {
         document.documentElement.lang = lang;
     }
 
-    t(key) {
+    t(key, replacements = {}) {
         // Handle nested keys if needed (for now flat structure is fine)
         // Also fallback to English if key missing in ES
-        const text = messages[this.currentLang][key] || messages['en'][key];
-        return text || key; 
+        let text = messages[this.currentLang][key] || messages['en'][key] || key;
+        
+        // Simple interpolation: replace {placeholder} with value
+        Object.keys(replacements).forEach(placeholder => {
+            const regex = new RegExp(`{${placeholder}}`, 'g');
+            text = text.replace(regex, replacements[placeholder]);
+        });
+
+        return text;
     }
 
     // Method to translate type names specifically (case insensitive fallback)
