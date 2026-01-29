@@ -1,0 +1,144 @@
+export const messages = {
+    en: {
+        // UI Headers & Labels
+        title: "PokeTypes",
+        subtitle: "Quickly analyze type coverage, weaknesses, and resistances for any Pokemon or type combination.",
+        search_placeholder: "Search Pokemon...",
+        reset_btn: "Reset",
+        type_1: "Type 1",
+        type_2: "Type 2",
+        active_analysis: "Active Analysis",
+        
+        // Cards - Defense
+        defense_breakdown: "Defense Breakdown",
+        weaknesses: "Weaknesses",
+        resistances: "Resistances",
+        immunities: "Immunities",
+        neutral_damage: "Neutral Damage",
+        
+        // Cards - Offense
+        offense_breakdown: "Offense Breakdown",
+        super_effective: "Super Effective",
+        not_very_effective: "Not Very Effective",
+        no_effect: "No Effect",
+        neutral_offense: "Neutral Offense",
+        walled_by_dual: "Totally Walled By (Dual Types)",
+        
+        // Stats & Abilities
+        base_stats: "Base Stats",
+        abilities: "Abilities",
+        
+        // Type Chart
+        global_chart: "Global Type Chart",
+        
+        // Footer & Info
+        mastering_chart: "Mastering the Pokemon Type Chart",
+        chart_desc: "Understanding type effectiveness is crucial for any Pokemon trainer. Our tool helps you instantly find weaknesses, resistances, and immunities.",
+        effectiveness_title: "How Effectiveness Works",
+        effectiveness_desc: "Every attack has a type modifier. Standard is 1x. Super Effective is 2x. Not Very Effective is 0.5x. Immunities are 0x.",
+        dual_title: "Dual Type Weaknesses",
+        dual_desc: "Weaknesses stack! If both types are weak to the same element, damage is 4x. Resistances can cancel out weaknesses.",
+        
+        // Empty States
+        none: "None",
+        select_types: "Select a type or Pokemon to begin analysis",
+        
+        // Types
+        normal: "Normal",
+        fire: "Fire",
+        water: "Water",
+        grass: "Grass",
+        electric: "Electric",
+        ice: "Ice",
+        fighting: "Fighting",
+        poison: "Poison",
+        ground: "Ground",
+        flying: "Flying",
+        psychic: "Psychic",
+        bug: "Bug",
+        rock: "Rock",
+        ghost: "Ghost",
+        dragon: "Dragon",
+        steel: "Steel",
+        dark: "Dark",
+        fairy: "Fairy",
+
+        // Feedback
+        suggestions_title: "Got suggestions or feedback?",
+        suggestions_desc: "I'm always looking to improve PokeTypes. Whether it's a feature request or a bug report, I'd love to hear from you!",
+        email_btn: "Email Me",
+        footer_copyright: "Data up to Gen 9",
+        created_by: "Created by"
+    },
+    es: {
+        // UI Headers & Labels
+        title: "PokeTypes",
+        subtitle: "Analiza rápidamente coberturas, debilidades y resistencias para cualquier Pokémon o combinación de tipos.",
+        search_placeholder: "Buscar Pokémon...",
+        reset_btn: "Reiniciar",
+        type_1: "Tipo 1",
+        type_2: "Tipo 2",
+        active_analysis: "Análisis Activo",
+        
+        // Cards - Defense
+        defense_breakdown: "Defensa",
+        weaknesses: "Debilidades",
+        resistances: "Resistencias",
+        immunities: "Inmunidades",
+        neutral_damage: "Daño Neutro",
+        
+        // Cards - Offense
+        offense_breakdown: "Ataque",
+        super_effective: "Super Eficaz",
+        not_very_effective: "No Muy Eficaz",
+        no_effect: "Sin Efecto",
+        neutral_offense: "Ataque Neutro",
+        walled_by_dual: "Totalmente Bloqueado Por (Tipos Duales)",
+        
+        // Stats & Abilities
+        base_stats: "Estadísticas Base",
+        abilities: "Habilidades",
+        
+        // Type Chart
+        global_chart: "Tabla de Tipos Global",
+        
+        // Footer & Info
+        mastering_chart: "Dominando la Tabla de Tipos",
+        chart_desc: "Entender la efectividad de tipos es crucial. Nuestra herramienta te ayuda a encontrar debilidades, resistencias e inmunidades al instante.",
+        effectiveness_title: "¿Cómo funciona la efectividad?",
+        effectiveness_desc: "Cada ataque tiene un modificador. Estándar es 1x. Super Eficaz es 2x. No muy eficaz es 0.5x. Las inmunidades son 0x.",
+        dual_title: "Debilidades de Tipo Dual",
+        dual_desc: "¡Las debilidades se acumulan! Si ambos tipos son débiles al mismo elemento, el daño es 4x. Las resistencias pueden cancelar debilidades.",
+        
+        // Empty States
+        none: "Ninguno",
+        select_types: "Selecciona un tipo o Pokémon para comenzar",
+        
+        // Types
+        normal: "Normal",
+        fire: "Fuego",
+        water: "Agua",
+        grass: "Planta",
+        electric: "Eléctrico",
+        ice: "Hielo",
+        fighting: "Lucha",
+        poison: "Veneno",
+        ground: "Tierra",
+        flying: "Volador",
+        psychic: "Psíquico",
+        bug: "Bicho",
+        rock: "Roca",
+        ghost: "Fantasma",
+        dragon: "Dragón",
+        steel: "Acero",
+        dark: "Siniestro",
+        fairy: "Hada",
+
+        // Feedback
+        suggestions_title: "¿Tienes sugerencias?",
+        suggestions_desc: "Siempre busco mejorar PokeTypes. Si tienes una idea o encuentras un error, ¡me encantaría escucharte!",
+        email_btn: "Envíame un Email",
+        footer_copyright: "Datos hasta Gen 9",
+        created_by: "Creado por"
+    }
+};

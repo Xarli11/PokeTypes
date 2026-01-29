@@ -1,9 +1,12 @@
 import { getEffectiveness, getAbilityModifiers } from './calculator.js';
+import { i18n } from './i18n.js';
 
 export function createTypePill(type, contrastData) {
     const textColorClass = contrastData[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
+    // Translate the type name for display
+    const translatedType = i18n.tType(type);
     return `<span class="type-pill bg-type-${type.toLowerCase()} ${textColorClass}">
-        ${type}
+        ${translatedType}
     </span>`;
 }
 
@@ -30,22 +33,22 @@ export function getEffectivenessIcon(type) {
     }
 }
 
-export function renderEffectivenessCard(cardElement, labelText, typeList, noContentText, iconType, contrastData) {
+export function renderEffectivenessCard(cardElement, labelKey, typeList, noContentKey, iconType, contrastData) {
     let contentHTML = `
-        <div class="label-group"> ${getEffectivenessIcon(iconType)} <span>${labelText}</span></div>
+        <div class="label-group"> ${getEffectivenessIcon(iconType)} <span>${i18n.t(labelKey)}</span></div>
         <div class="type-pills-container">
     `;
     if (typeList.length) {
         contentHTML += typeList.map(type => createTypePill(type, contrastData)).join('');
     } else {
-        contentHTML += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">${noContentText}</span>`;
+        contentHTML += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">${i18n.t(noContentKey || 'none')}</span>`;
     }
     contentHTML += `</div>`;
     cardElement.innerHTML = contentHTML;
 }
 
-export function renderSplitEffectivenessCard(cardElement, labelText, x4List, x2List, noContentText, iconType, contrastData) {
-    let contentHTML = `<div class="label-group">${getEffectivenessIcon(iconType)} <span>${labelText}</span></div>`;
+export function renderSplitEffectivenessCard(cardElement, labelKey, x4List, x2List, noContentKey, iconType, contrastData) {
+    let contentHTML = `<div class="label-group">${getEffectivenessIcon(iconType)} <span>${i18n.t(labelKey)}</span></div>`;
     contentHTML += `<div class="flex flex-col gap-4">`;
     
     if (x4List && x4List.length) {
@@ -63,15 +66,15 @@ export function renderSplitEffectivenessCard(cardElement, labelText, x4List, x2L
     }
     
     if ((!x4List || !x4List.length) && (!x2List || !x2List.length)) {
-        contentHTML += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">${noContentText}</span>`;
+        contentHTML += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">${i18n.t(noContentKey || 'none')}</span>`;
     }
     
     contentHTML += `</div>`;
     cardElement.innerHTML = contentHTML;
 }
 
-export function renderSplitResistanceCard(cardElement, labelText, x025List, x05List, noContentText, iconType, contrastData) {
-    let contentHTML = `<div class="label-group">${getEffectivenessIcon(iconType)} <span>${labelText}</span></div>`;
+export function renderSplitResistanceCard(cardElement, labelKey, x025List, x05List, noContentKey, iconType, contrastData) {
+    let contentHTML = `<div class="label-group">${getEffectivenessIcon(iconType)} <span>${i18n.t(labelKey)}</span></div>`;
     contentHTML += `<div class="flex flex-col gap-4">`;
     
     if (x025List && x025List.length) {
@@ -89,15 +92,15 @@ export function renderSplitResistanceCard(cardElement, labelText, x025List, x05L
     }
     
     if ((!x025List || !x025List.length) && (!x05List || !x05List.length)) {
-        contentHTML += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">${noContentText}</span>`;
+        contentHTML += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">${i18n.t(noContentKey || 'none')}</span>`;
     }
     
     contentHTML += `</div>`;
     cardElement.innerHTML = contentHTML;
 }
 
-export function renderBadgedCard(cardElement, labelText, typeList, noContentText, iconType, badgeText, badgeColorClass, contrastData) {
-    let contentHTML = `<div class="label-group">${getEffectivenessIcon(iconType)} <span>${labelText}</span></div>`;
+export function renderBadgedCard(cardElement, labelKey, typeList, noContentKey, iconType, badgeText, badgeColorClass, contrastData) {
+    let contentHTML = `<div class="label-group">${getEffectivenessIcon(iconType)} <span>${i18n.t(labelKey)}</span></div>`;
     contentHTML += `<div class="flex flex-col gap-4">`;
 
     if (typeList && typeList.length) {
@@ -106,14 +109,14 @@ export function renderBadgedCard(cardElement, labelText, typeList, noContentText
             <div class="type-pills-container">${typeList.map(t => createTypePill(t, contrastData)).join('')}</div>
         </div>`;
     } else {
-        contentHTML += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">${noContentText}</span>`;
+        contentHTML += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">${i18n.t(noContentKey || 'none')}</span>`;
     }
 
     contentHTML += `</div>`;
     cardElement.innerHTML = contentHTML;
 }
 
-export function renderDualImmunities(container, labelText, pairs, contrastData) {
+export function renderDualImmunities(container, labelKey, pairs, contrastData) {
     if (!pairs || pairs.length === 0) {
         container.classList.add('hidden');
         return;
@@ -124,7 +127,7 @@ export function renderDualImmunities(container, labelText, pairs, contrastData) 
         <svg class="label-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
         </svg>
-        <span>${labelText}</span>
+        <span>${i18n.t(labelKey)}</span>
     </div>`;
     
     contentHTML += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">`;
@@ -152,12 +155,15 @@ export function generateTypeTable(containerId, types, effectiveness, contrastDat
 
     types.forEach(type => {
         const textColorClass = contrastData[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
-        tableHTML += `<th class="bg-type-${type.toLowerCase()} ${textColorClass} !text-[10px] min-w-[40px]">${type.substring(0, 3)}</th>`;
+        // Translate table headers
+        const translatedType = i18n.tType(type);
+        tableHTML += `<th class="bg-type-${type.toLowerCase()} ${textColorClass} !text-[10px] min-w-[40px]">${translatedType.substring(0, 3)}</th>`;
     });
     tableHTML += '</tr></thead><tbody>';
 
     types.forEach(attackingType => {
-        tableHTML += `<tr><td class="font-bold text-slate-700 text-left pr-4">${attackingType}</td>`;
+        const translatedAttacking = i18n.tType(attackingType);
+        tableHTML += `<tr><td class="font-bold text-slate-700 text-left pr-4">${translatedAttacking}</td>`;
         types.forEach(defendingType => {
             const modifier = getEffectiveness(attackingType, defendingType, effectiveness);
             let cellClass = 'interaction-1x';
@@ -179,12 +185,14 @@ export function generateTypeTable(containerId, types, effectiveness, contrastDat
 export function populateSelects(ids, types) {
     ids.forEach(id => {
         const select = document.getElementById(id);
-        const originalFirstOption = select.options[0].text;
-        select.innerHTML = `<option value="">${originalFirstOption}</option>`;
+        const firstOptionKey = id === 'type-select' ? 'type_1' : 'type_2';
+        select.innerHTML = `<option value="" data-i18n="${firstOptionKey}">${i18n.t(firstOptionKey)}</option>`;
+        
         types.forEach(type => {
             const opt = document.createElement('option');
             opt.value = type;
-            opt.textContent = type;
+            // Translate the display text of options
+            opt.textContent = i18n.tType(type);
             select.appendChild(opt);
         });
     });
@@ -198,6 +206,7 @@ export function renderStats(container, stats) {
     }
 
     // Map PokeAPI stat names to shorter display names
+    // These are standard RPG terms, usually kept in English or very similar, but could be translated.
     const statNames = {
         'hp': 'HP',
         'attack': 'Atk',
@@ -262,8 +271,6 @@ export function capitalizeWords(str) {
 }
 
 export function renderAbilityAlerts(container, abilities) {
-    console.log('renderAbilityAlerts called with:', abilities);
-
     if (!abilities || !abilities.length) {
         container.innerHTML = '';
         container.classList.add('hidden');
@@ -277,8 +284,6 @@ export function renderAbilityAlerts(container, abilities) {
         const name = entry.ability.name;
         const modifiers = getAbilityModifiers(name);
         
-        console.log(`Checking ability "${name}":`, modifiers);
-
         modifiers.forEach(mod => {
             // Simple key for deduplication
             const key = `${mod.type}-${mod.modifier}-${name}`;
@@ -293,8 +298,6 @@ export function renderAbilityAlerts(container, abilities) {
             }
         });
     });
-
-    console.log('Alerts to render:', alertsToRender.length);
 
     if (alertsToRender.length === 0) {
         container.innerHTML = '';
@@ -326,7 +329,6 @@ export function renderAbilityAlerts(container, abilities) {
 
     contentHTML += `</div>`;
     container.innerHTML = contentHTML;
-    console.log('HTML updated');
 }
 
 export function renderTacticalAdvice(container, advice) {
@@ -338,7 +340,8 @@ export function renderTacticalAdvice(container, advice) {
 
     container.classList.remove('hidden');
 
-    const suggestedTypesHTML = advice.suggestedTypes.map(t => `<span class="font-bold text-slate-700 dark:text-slate-200">${t}</span>`).join(' or ');
+    // These could be translated in the future, currently keeping dynamic logic in English
+    const suggestedTypesHTML = advice.suggestedTypes.map(t => `<span class="font-bold text-slate-700 dark:text-slate-200">${i18n.tType(t)}</span>`).join(' or ');
     const suggestedMonsHTML = advice.suggestedPokemon.map(p => capitalizeWords(p.name)).join(', ');
 
     const contentHTML = `
@@ -359,7 +362,7 @@ export function renderTacticalAdvice(container, advice) {
                 </div>
 
                 <p class="text-sm md:text-base leading-relaxed font-medium text-white/95">
-                    Huge weakness to <span class="font-bold text-red-200 border-b border-red-200/50">${advice.threat}</span> detected! 
+                    Huge weakness to <span class="font-bold text-red-200 border-b border-red-200/50">${i18n.tType(advice.threat)}</span> detected! 
                     Consider adding a ${suggestedTypesHTML} partner.
                 </p>
                 
