@@ -1,4 +1,4 @@
-import { i18n } from './i18n.js?v=2.18.4';
+import { i18n } from './i18n.js?v=2.18.5';
 
 export async function loadAppData() {
     try {
@@ -49,27 +49,38 @@ export async function fetchPokemonDetails(id) {
 
                 // 2. Localize Description
                 // Try flavor_text first (usually better for UI), then effect_entries
-                // We prefer entries from the latest generation if possible, but finding *any* in the language is priority
                 let descEntry = abilityData.flavor_text_entries
                     .filter(f => f.language.name === currentLang)
-                    .pop(); // Take the last one (usually most recent gen)
+                    .pop();
 
                 if (!descEntry && abilityData.effect_entries) {
                     descEntry = abilityData.effect_entries.find(e => e.language.name === currentLang);
                 }
 
-                // Fallback to English if no entry in current language found
-                if (!descEntry) {
-                    descEntry = abilityData.flavor_text_entries.find(f => f.language.name === 'en') || 
-                                abilityData.effect_entries.find(e => e.language.name === 'en');
-                }
-
-                if (descEntry) {
-                    // flavor_text often has \n or \f characters, clean them up
+                // NEW: Check manual translation in messages.js if API fails for current lang
+                // Use the original English name (from entry.ability.name before override, or just assume abilityData.name)
+                // abilityData.name is usually "quark-drive". We need to match key format "quark drive_desc"
+                const originalName = abilityData.name.replace(/-/g, ' ');
+                const manualDescKey = `${originalName}_desc`;
+                const manualDesc = i18n.t(manualDescKey);
+                
+                // If manualDesc is different from key, it means a translation exists
+                if (!descEntry && manualDesc !== manualDescKey) {
+                    entry.description = manualDesc;
+                } else if (descEntry) {
                     let text = descEntry.flavor_text || descEntry.short_effect || descEntry.effect;
                     entry.description = text.replace(/[\n\f]/g, ' ');
                 } else {
-                    entry.description = 'No description available.';
+                    // Fallback to English API
+                    descEntry = abilityData.flavor_text_entries.find(f => f.language.name === 'en') || 
+                                abilityData.effect_entries.find(e => e.language.name === 'en');
+                    
+                    if (descEntry) {
+                        let text = descEntry.flavor_text || descEntry.short_effect || descEntry.effect;
+                        entry.description = text.replace(/[\n\f]/g, ' ');
+                    } else {
+                        entry.description = 'No description available.';
+                    }
                 }
 
             } catch (err) {
