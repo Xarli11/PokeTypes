@@ -1,4 +1,4 @@
-import { getEffectiveness, getAbilityModifiers } from './calculator.js';
+import { getEffectiveness, getAbilityModifiers } from './calculator.js?v=2.18.3';
 import { i18n } from './i18n.js?v=2.18.3';
 
 export function createTypePill(type, contrastData) {
