@@ -27,6 +27,7 @@ export const messages = {
         // Stats & Abilities
         base_stats: "Base Stats",
         abilities: "Abilities",
+        ability_considerations: "Ability Considerations",
         
         // Type Chart
         global_chart: "Global Type Chart",
@@ -98,6 +99,7 @@ export const messages = {
         // Stats & Abilities
         base_stats: "Estadísticas Base",
         abilities: "Habilidades",
+        ability_considerations: "Consideraciones de Habilidad",
         
         // Type Chart
         global_chart: "Tabla de Tipos Global",
