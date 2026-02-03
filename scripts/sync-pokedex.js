@@ -111,10 +111,19 @@ https.get(POKEDEX_URL, (res) => {
                 if (entry.name === 'Nidoran-M') apiName = 'nidoran-m';
                 if (entry.name === 'Nidoran-F') apiName = 'nidoran-f';
 
+                // Generate PokemonDB-friendly sprite slug
+                let spriteSlug = apiName;
+                if (spriteSlug.endsWith('-gmax')) spriteSlug = spriteSlug.replace('-gmax', '-gigantamax');
+                if (spriteSlug.includes('-alola')) spriteSlug = spriteSlug.replace('-alola', '-alolan');
+                if (spriteSlug.includes('-galar')) spriteSlug = spriteSlug.replace('-galar', '-galarian');
+                if (spriteSlug.includes('-hisui')) spriteSlug = spriteSlug.replace('-hisui', '-hisuian');
+                if (spriteSlug.includes('-paldea')) spriteSlug = spriteSlug.replace('-paldea', '-paldean');
+
                 cleanDex.push({
                     id: entry.num,
                     name: formatName(entry.name),
                     apiName: apiName,
+                    spriteSlug: spriteSlug,
                     types: entry.types,
                     bst: bst
                 });
