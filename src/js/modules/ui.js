@@ -342,8 +342,6 @@ export function renderTacticalAdvice(container, advice) {
     container.classList.remove('hidden');
 
     // Prepare interpolated values
-    // Join types with " or " (translated "or" would be ideal but "/" is neutral enough for now, or just space)
-    // Actually, let's just stick to the current list.
     const suggestedTypesHTML = advice.suggestedTypes.map(t => `<span class="font-bold text-slate-700 dark:text-slate-200">${i18n.tType(t)}</span>`).join('/');
     const suggestedMonsHTML = advice.suggestedPokemon.map(p => capitalizeWords(p.name)).join(', ');
 
