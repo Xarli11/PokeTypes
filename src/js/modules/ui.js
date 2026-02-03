@@ -1,5 +1,5 @@
-import { getEffectiveness, getAbilityModifiers } from './calculator.js?v=2.18.5';
-import { i18n } from './i18n.js?v=2.18.5';
+import { getEffectiveness, getAbilityModifiers } from './calculator.js?v=2.18.7';
+import { i18n } from './i18n.js?v=2.18.7';
 
 export function createTypePill(type, contrastData) {
     const textColorClass = contrastData[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
@@ -246,7 +246,7 @@ export function renderAbilities(container, abilities) {
     }
 
     const contentHTML = abilities.map(entry => {
-        const name = capitalizeWords(entry.ability.name);
+        const name = entry.ability.displayName || capitalizeWords(entry.ability.name);
         const isHidden = entry.is_hidden;
         const description = entry.description || 'Loading description...';
         
@@ -282,6 +282,7 @@ export function renderAbilityAlerts(container, abilities) {
 
     abilities.forEach(entry => {
         const name = entry.ability.name;
+        const displayName = entry.ability.displayName || capitalizeWords(name);
         const modifiers = getAbilityModifiers(name);
         
         modifiers.forEach(mod => {
@@ -290,7 +291,7 @@ export function renderAbilityAlerts(container, abilities) {
             if (!seenKeys.has(key)) {
                 seenKeys.add(key);
                 alertsToRender.push({
-                    abilityName: capitalizeWords(name),
+                    abilityName: displayName,
                     description: mod.description,
                     type: mod.type,
                     modifier: mod.modifier

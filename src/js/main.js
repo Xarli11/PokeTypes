@@ -1,9 +1,9 @@
-import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.18.5';
-import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.18.5';
-import { getTacticalAdvice } from './modules/advisor.js?v=2.18.5';
-import * as ui from './modules/ui.js?v=2.18.5';
-import { initTheme } from './modules/theme.js?v=2.18.5';
-import { i18n } from './modules/i18n.js?v=2.18.5';
+import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.18.7';
+import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.18.7';
+import { getTacticalAdvice } from './modules/advisor.js?v=2.18.7';
+import * as ui from './modules/ui.js?v=2.18.7';
+import { initTheme } from './modules/theme.js?v=2.18.7';
+import { i18n } from './modules/i18n.js?v=2.18.7';
 
 let appData = null;
 
@@ -128,7 +128,7 @@ async function showPokemonDetails(pokemon) {
         document.getElementById('abilities-container').innerHTML = '';
         statsSection.classList.remove('hidden');
 
-        const details = await fetchPokemonDetails(pokemon.id);
+        const details = await fetchPokemonDetails(pokemon.apiName || pokemon.id);
         if (details) {
             ui.renderStats(document.getElementById('stats-container'), details.stats);
             ui.renderAbilities(document.getElementById('abilities-container'), details.abilities);

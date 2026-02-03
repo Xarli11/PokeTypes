@@ -1,4 +1,4 @@
-import { i18n } from './i18n.js?v=2.18.5';
+import { i18n } from './i18n.js?v=2.18.7';
 
 export async function loadAppData() {
     try {
@@ -26,10 +26,10 @@ export async function loadAppData() {
     }
 }
 
-export async function fetchPokemonDetails(id) {
-    if (!id) return null;
+export async function fetchPokemonDetails(identifier) {
+    if (!identifier) return null;
     try {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${identifier}`);
         if (!response.ok) throw new Error('Pokemon not found');
         const data = await response.json();
 
@@ -44,7 +44,9 @@ export async function fetchPokemonDetails(id) {
                 // PokeAPI names array: [{ name: "Stench", language: { name: "en" } }, ...]
                 const nameEntry = abilityData.names.find(n => n.language.name === currentLang);
                 if (nameEntry) {
-                    entry.ability.name = nameEntry.name; // Override name with localized version
+                    entry.ability.displayName = nameEntry.name; // Store localized name separately
+                } else {
+                    entry.ability.displayName = capitalizeWords(entry.ability.name); // Fallback
                 }
 
                 // 2. Localize Description
@@ -58,15 +60,19 @@ export async function fetchPokemonDetails(id) {
                 }
 
                 // NEW: Check manual translation in messages.js if API fails for current lang
-                // Use the original English name (from entry.ability.name before override, or just assume abilityData.name)
-                // abilityData.name is usually "quark-drive". We need to match key format "quark drive_desc"
-                const originalName = abilityData.name.replace(/-/g, ' ');
-                const manualDescKey = `${originalName}_desc`;
-                const manualDesc = i18n.t(manualDescKey);
+                // Try both hyphenated and space versions
+                const rawName = abilityData.name.toLowerCase();
+                const spacedName = rawName.replace(/-/g, ' ');
                 
-                // If manualDesc is different from key, it means a translation exists
-                if (!descEntry && manualDesc !== manualDescKey) {
-                    entry.description = manualDesc;
+                const manualDesc = i18n.t(`${rawName}_desc`);
+                const manualDescSpaced = i18n.t(`${spacedName}_desc`);
+                
+                let finalManualDesc = null;
+                if (manualDesc !== `${rawName}_desc`) finalManualDesc = manualDesc;
+                else if (manualDescSpaced !== `${spacedName}_desc`) finalManualDesc = manualDescSpaced;
+
+                if (!descEntry && finalManualDesc) {
+                    entry.description = finalManualDesc;
                 } else if (descEntry) {
                     let text = descEntry.flavor_text || descEntry.short_effect || descEntry.effect;
                     entry.description = text.replace(/[\n\f]/g, ' ');
@@ -97,4 +103,8 @@ export async function fetchPokemonDetails(id) {
         console.error('Error fetching Pokemon details:', error);
         return null;
     }
+}
+
+function capitalizeWords(str) {
+    return str.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 }

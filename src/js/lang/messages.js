@@ -203,10 +203,15 @@ export const messages = {
 
         // Manual Ability Descriptions
         "hadron engine_desc": "Crea un Campo Eléctrico al entrar en combate. Si hay Campo Eléctrico, aumenta su At. Esp.",
+        "hadron-engine_desc": "Crea un Campo Eléctrico al entrar en combate. Si hay Campo Eléctrico, aumenta su At. Esp.",
         "quark drive_desc": "Aumenta la característica más alta en Campo Eléctrico o con Energía Potenciadora.",
+        "quark-drive_desc": "Aumenta la característica más alta en Campo Eléctrico o con Energía Potenciadora.",
         "orichalcum pulse_desc": "Pone día soleado al entrar en combate. Si hace sol, aumenta su Ataque.",
+        "orichalcum-pulse_desc": "Pone día soleado al entrar en combate. Si hace sol, aumenta su Ataque.",
         "protosynthesis_desc": "Aumenta la característica más alta con sol o con Energía Potenciadora.",
+        "protosynthesis-desc": "Aumenta la característica más alta con sol o con Energía Potenciadora.",
         "supreme overlord_desc": "Aumenta el Ataque y At. Esp. por cada aliado derrotado.",
+        "supreme-overlord_desc": "Aumenta el Ataque y At. Esp. por cada aliado derrotado.",
         "purifying salt_desc": "Protege de problemas de estado y reduce el daño de tipo Fantasma a la mitad.",
         "earth eater_desc": "Recupera PS al recibir un ataque de tipo Tierra en lugar de sufrir daño.",
         "well-baked body_desc": "Sube mucho la Defensa al recibir un ataque de tipo Fuego en lugar de sufrir daño."
