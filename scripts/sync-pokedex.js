@@ -82,10 +82,34 @@ https.get(POKEDEX_URL, (res) => {
                 // Toxtricity Low-Key shares Electric/Poison.
                 const isCosmeticToxtricity = name.includes('Toxtricity-Low-Key');
 
+                // Additional Cosmetic Forms (Fix for empty data entries)
+                const isCosmeticBurmy = name === 'Burmy-Sandy' || name === 'Burmy-Trash'; // Wormadam is functional, Burmy is not
+                const isCosmeticShellos = name.includes('Shellos-East');
+                const isCosmeticGastrodon = name.includes('Gastrodon-East');
+                const isCosmeticDeerling = name.startsWith('Deerling-') && name !== 'Deerling';
+                const isCosmeticSawsbuck = name.startsWith('Sawsbuck-') && name !== 'Sawsbuck';
+                const isCosmeticBasculin = name === 'Basculin-Blue-Striped'; // White-Striped is functional (Hisui)
+                const isCosmeticMagearna = name === 'Magearna-Original';
+                const isCosmeticSinistea = name.includes('Antique');
+                const isCosmeticPolteageist = name.includes('Antique');
+                const isCosmeticMaushold = name.includes('Family-of-Three'); // Four is base
+                const isCosmeticDudunsparce = name.includes('Three-Segment'); // Two is base
+                const isCosmeticKeldeo = name === 'Keldeo-Resolute'; // Same stats/type, just moves
+                const isCosmeticZarude = name === 'Zarude-Dada';
+                const isCosmeticPoltchageist = name.includes('Artisan');
+                const isCosmeticSinistcha = name.includes('Masterpiece');
+                const isCosmeticXerneas = name === 'Xerneas-Neutral'; // Active mode is cosmetic
+
                 // Exclude specific cosmetic forms
                 if (isCosmeticPikachu || isCosmeticVivillon || isCosmeticAlcremie || isCosmeticMinior || 
                     isCosmeticFurfrou || isCosmeticFloette || isCosmeticTatsugiri || 
-                    isCosmeticSquawkabilly || isCosmeticLycanroc || isCosmeticToxtricity) {
+                    isCosmeticSquawkabilly || isCosmeticLycanroc || isCosmeticToxtricity ||
+                    isCosmeticBurmy || isCosmeticShellos || isCosmeticGastrodon || 
+                    isCosmeticDeerling || isCosmeticSawsbuck || isCosmeticBasculin ||
+                    isCosmeticMagearna || isCosmeticSinistea || isCosmeticPolteageist ||
+                    isCosmeticMaushold || isCosmeticDudunsparce || isCosmeticKeldeo ||
+                    isCosmeticZarude || isCosmeticPoltchageist || isCosmeticSinistcha ||
+                    isCosmeticXerneas) {
                     continue;
                 }
 

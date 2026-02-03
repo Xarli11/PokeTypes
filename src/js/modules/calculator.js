@@ -128,6 +128,7 @@ export const ABILITY_EFFECTIVENESS = {
     'wonder-guard': [{ type: 'All', modifier: 0, description: 'Immune to all non-Super Effective damage.' }],
     'multiscale': [{ type: 'All', modifier: 0.5, description: 'Halves damage when HP is full.' }],
     'shadow-shield': [{ type: 'All', modifier: 0.5, description: 'Halves damage when HP is full.' }],
+    'tera-shell': [{ type: 'All', modifier: 0.5, description: 'All moves are Not Very Effective when HP is full.' }],
     'delta-stream': [{ type: 'Flying', modifier: 1, description: 'Removes weaknesses of Flying-type Pokemon.' }],
     'desolate-land': [{ type: 'Water', modifier: 0, description: 'Grants immunity to Water-type moves.' }],
     'primordial-sea': [{ type: 'Fire', modifier: 0, description: 'Grants immunity to Fire-type moves.' }],
