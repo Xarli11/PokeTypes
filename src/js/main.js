@@ -1,9 +1,9 @@
-import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.18.8';
-import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.18.8';
-import { getTacticalAdvice } from './modules/advisor.js?v=2.18.8';
-import * as ui from './modules/ui.js?v=2.18.8';
-import { initTheme } from './modules/theme.js?v=2.18.8';
-import { i18n } from './modules/i18n.js?v=2.18.8';
+import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.18.9';
+import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.18.9';
+import { getTacticalAdvice } from './modules/advisor.js?v=2.18.9';
+import * as ui from './modules/ui.js?v=2.18.9';
+import { initTheme } from './modules/theme.js?v=2.18.9';
+import { i18n } from './modules/i18n.js?v=2.18.9';
 
 let appData = null;
 
@@ -232,8 +232,8 @@ function setupEventListeners() {
         } else {
             suggestionsList.innerHTML = topMatches.map((p, index) => {
                 // Use PokemonDB for form support (Megas, etc) using the slug
-                const imageUrl = p.apiName 
-                    ? `https://img.pokemondb.net/sprites/home/normal/${p.apiName}.png`
+                const imageUrl = (p.spriteSlug || p.apiName) 
+                    ? `https://img.pokemondb.net/sprites/home/normal/${p.spriteSlug || p.apiName}.png`
                     : (p.id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png` : 'pokeball.png');
 
                 const typePills = p.types.map(t => ui.createTypePill(t, appData.contrast)).join('');
