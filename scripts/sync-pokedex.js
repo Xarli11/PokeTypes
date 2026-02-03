@@ -95,9 +95,26 @@ https.get(POKEDEX_URL, (res) => {
                 const stats = entry.baseStats;
                 const bst = stats ? (stats.hp + stats.atk + stats.def + stats.spa + stats.spd + stats.spe) : 0;
 
+                // Generate PokeAPI-friendly slug
+                let apiName = entry.name.toLowerCase()
+                    .replace(/ /g, '-')
+                    .replace(/[\.\']/g, '') // Remove dots and apostrophes (Mr. Mime -> mr-mime, Farfetch'd -> farfetchd)
+                    .replace(/[^a-z0-9-]/g, ''); // Remove any other special chars just in case
+
+                // Handle specific edge cases if needed
+                if (apiName === 'mimikyu-busted') apiName = 'mimikyu-busted'; // PokeAPI: mimikyu-busted
+                if (apiName === 'mimikyu') apiName = 'mimikyu-disguised'; // PokeAPI: mimikyu-disguised (often default)
+                // Actually PokeAPI uses 'mimikyu-disguised' as default form usually, but 'mimikyu' might redirect or be valid.
+                // Let's stick to simple slugification first. Showdown 'Mimikyu' -> 'mimikyu'.
+                
+                // Specific fix for "Nidoran M" and "Nidoran F" if Showdown uses symbols
+                if (entry.name === 'Nidoran-M') apiName = 'nidoran-m';
+                if (entry.name === 'Nidoran-F') apiName = 'nidoran-f';
+
                 cleanDex.push({
                     id: entry.num,
                     name: formatName(entry.name),
+                    apiName: apiName,
                     types: entry.types,
                     bst: bst
                 });

@@ -26,10 +26,10 @@ export async function loadAppData() {
     }
 }
 
-export async function fetchPokemonDetails(id) {
-    if (!id) return null;
+export async function fetchPokemonDetails(identifier) {
+    if (!identifier) return null;
     try {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${identifier}`);
         if (!response.ok) throw new Error('Pokemon not found');
         const data = await response.json();
 
@@ -44,7 +44,9 @@ export async function fetchPokemonDetails(id) {
                 // PokeAPI names array: [{ name: "Stench", language: { name: "en" } }, ...]
                 const nameEntry = abilityData.names.find(n => n.language.name === currentLang);
                 if (nameEntry) {
-                    entry.ability.name = nameEntry.name; // Override name with localized version
+                    entry.ability.displayName = nameEntry.name; // Store localized name separately
+                } else {
+                    entry.ability.displayName = capitalizeWords(entry.ability.name); // Fallback
                 }
 
                 // 2. Localize Description
@@ -101,4 +103,8 @@ export async function fetchPokemonDetails(id) {
         console.error('Error fetching Pokemon details:', error);
         return null;
     }
+}
+
+function capitalizeWords(str) {
+    return str.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 }

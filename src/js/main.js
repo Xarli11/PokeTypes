@@ -128,7 +128,7 @@ async function showPokemonDetails(pokemon) {
         document.getElementById('abilities-container').innerHTML = '';
         statsSection.classList.remove('hidden');
 
-        const details = await fetchPokemonDetails(pokemon.id);
+        const details = await fetchPokemonDetails(pokemon.apiName || pokemon.id);
         if (details) {
             ui.renderStats(document.getElementById('stats-container'), details.stats);
             ui.renderAbilities(document.getElementById('abilities-container'), details.abilities);
