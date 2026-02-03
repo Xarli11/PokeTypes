@@ -5609,18 +5609,6 @@
     "bst": 224
   },
   {
-    "name": "Burmy-Sandy",
-    "apiName": "burmy-sandy",
-    "spriteSlug": "burmy-sandy",
-    "bst": 0
-  },
-  {
-    "name": "Burmy-Trash",
-    "apiName": "burmy-trash",
-    "spriteSlug": "burmy-trash",
-    "bst": 0
-  },
-  {
     "id": 413,
     "name": "Wormadam",
     "apiName": "wormadam",
@@ -5757,12 +5745,6 @@
     "bst": 325
   },
   {
-    "name": "Shellos-East",
-    "apiName": "shellos-east",
-    "spriteSlug": "shellos-east",
-    "bst": 0
-  },
-  {
     "id": 423,
     "name": "Gastrodon",
     "apiName": "gastrodon",
@@ -5772,12 +5754,6 @@
       "Ground"
     ],
     "bst": 475
-  },
-  {
-    "name": "Gastrodon-East",
-    "apiName": "gastrodon-east",
-    "spriteSlug": "gastrodon-east",
-    "bst": 0
   },
   {
     "id": 424,
@@ -7549,16 +7525,6 @@
   },
   {
     "id": 550,
-    "name": "Basculin-Blue-Striped",
-    "apiName": "basculin-blue-striped",
-    "spriteSlug": "basculin-blue-striped",
-    "types": [
-      "Water"
-    ],
-    "bst": 460
-  },
-  {
-    "id": 550,
     "name": "Basculin-White-Striped",
     "apiName": "basculin-white-striped",
     "spriteSlug": "basculin-white-striped",
@@ -8027,24 +7993,6 @@
       "Grass"
     ],
     "bst": 335
-  },
-  {
-    "name": "Deerling-Summer",
-    "apiName": "deerling-summer",
-    "spriteSlug": "deerling-summer",
-    "bst": 0
-  },
-  {
-    "name": "Deerling-Autumn",
-    "apiName": "deerling-autumn",
-    "spriteSlug": "deerling-autumn",
-    "bst": 0
-  },
-  {
-    "name": "Deerling-Winter",
-    "apiName": "deerling-winter",
-    "spriteSlug": "deerling-winter",
-    "bst": 0
   },
   {
     "id": 586,
@@ -8806,17 +8754,6 @@
     "name": "Keldeo",
     "apiName": "keldeo",
     "spriteSlug": "keldeo",
-    "types": [
-      "Water",
-      "Fighting"
-    ],
-    "bst": 580
-  },
-  {
-    "id": 647,
-    "name": "Keldeo-Resolute",
-    "apiName": "keldeo-resolute",
-    "spriteSlug": "keldeo-resolute",
     "types": [
       "Water",
       "Fighting"
@@ -9861,16 +9798,6 @@
     "name": "Xerneas",
     "apiName": "xerneas",
     "spriteSlug": "xerneas",
-    "types": [
-      "Fairy"
-    ],
-    "bst": 680
-  },
-  {
-    "id": 716,
-    "name": "Xerneas-Neutral",
-    "apiName": "xerneas-neutral",
-    "spriteSlug": "xerneas-neutral",
     "types": [
       "Fairy"
     ],
@@ -11269,17 +11196,6 @@
   },
   {
     "id": 801,
-    "name": "Magearna-Original",
-    "apiName": "magearna-original",
-    "spriteSlug": "magearna-original",
-    "types": [
-      "Steel",
-      "Fairy"
-    ],
-    "bst": 600
-  },
-  {
-    "id": 801,
     "name": "Mega Magearna",
     "apiName": "magearna-mega",
     "spriteSlug": "magearna-mega",
@@ -12019,30 +11935,10 @@
     "bst": 308
   },
   {
-    "id": 854,
-    "name": "Sinistea-Antique",
-    "apiName": "sinistea-antique",
-    "spriteSlug": "sinistea-antique",
-    "types": [
-      "Ghost"
-    ],
-    "bst": 308
-  },
-  {
     "id": 855,
     "name": "Polteageist",
     "apiName": "polteageist",
     "spriteSlug": "polteageist",
-    "types": [
-      "Ghost"
-    ],
-    "bst": 508
-  },
-  {
-    "id": 855,
-    "name": "Polteageist-Antique",
-    "apiName": "polteageist-antique",
-    "spriteSlug": "polteageist-antique",
     "types": [
       "Ghost"
     ],
@@ -12605,17 +12501,6 @@
     "name": "Zarude",
     "apiName": "zarude",
     "spriteSlug": "zarude",
-    "types": [
-      "Dark",
-      "Grass"
-    ],
-    "bst": 600
-  },
-  {
-    "id": 893,
-    "name": "Zarude-Dada",
-    "apiName": "zarude-dada",
-    "spriteSlug": "zarude-dada",
     "types": [
       "Dark",
       "Grass"
@@ -13665,16 +13550,6 @@
     "bst": 520
   },
   {
-    "id": 982,
-    "name": "Dudunsparce-Three-Segment",
-    "apiName": "dudunsparce-three-segment",
-    "spriteSlug": "dudunsparce-three-segment",
-    "types": [
-      "Normal"
-    ],
-    "bst": 520
-  },
-  {
     "id": 983,
     "name": "Kingambit",
     "apiName": "kingambit",
@@ -14025,32 +13900,10 @@
     "bst": 308
   },
   {
-    "id": 1012,
-    "name": "Poltchageist-Artisan",
-    "apiName": "poltchageist-artisan",
-    "spriteSlug": "poltchageist-artisan",
-    "types": [
-      "Grass",
-      "Ghost"
-    ],
-    "bst": 308
-  },
-  {
     "id": 1013,
     "name": "Sinistcha",
     "apiName": "sinistcha",
     "spriteSlug": "sinistcha",
-    "types": [
-      "Grass",
-      "Ghost"
-    ],
-    "bst": 508
-  },
-  {
-    "id": 1013,
-    "name": "Sinistcha-Masterpiece",
-    "apiName": "sinistcha-masterpiece",
-    "spriteSlug": "sinistcha-masterpiece",
     "types": [
       "Grass",
       "Ghost"
