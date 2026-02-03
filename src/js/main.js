@@ -1,9 +1,9 @@
-import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.18.7';
-import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.18.7';
-import { getTacticalAdvice } from './modules/advisor.js?v=2.18.7';
-import * as ui from './modules/ui.js?v=2.18.7';
-import { initTheme } from './modules/theme.js?v=2.18.7';
-import { i18n } from './modules/i18n.js?v=2.18.7';
+import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.18.8';
+import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.18.8';
+import { getTacticalAdvice } from './modules/advisor.js?v=2.18.8';
+import * as ui from './modules/ui.js?v=2.18.8';
+import { initTheme } from './modules/theme.js?v=2.18.8';
+import { i18n } from './modules/i18n.js?v=2.18.8';
 
 let appData = null;
 
@@ -231,9 +231,10 @@ function setupEventListeners() {
             suggestionsList.innerHTML = '<li class="p-4 text-slate-400 italic text-center">' + i18n.t('none') + '</li>';
         } else {
             suggestionsList.innerHTML = topMatches.map((p, index) => {
-                const imageUrl = p.id 
-                    ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png`
-                    : 'pokeball.png';
+                // Use PokemonDB for form support (Megas, etc) using the slug
+                const imageUrl = p.apiName 
+                    ? `https://img.pokemondb.net/sprites/home/normal/${p.apiName}.png`
+                    : (p.id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png` : 'pokeball.png');
 
                 const typePills = p.types.map(t => ui.createTypePill(t, appData.contrast)).join('');
                 
@@ -243,7 +244,7 @@ function setupEventListeners() {
                              alt="${p.displayName}" 
                              loading="lazy"
                              class="w-10 h-10 object-contain flex-shrink-0"
-                             onerror="this.onerror=null; this.src='pokeball.png';">
+                             onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png';">
                         <span class="flex-1 font-bold text-slate-700 dark:text-slate-200">${p.displayName}</span>
                         <div class="flex gap-1 scale-90 origin-right">
                             ${typePills}

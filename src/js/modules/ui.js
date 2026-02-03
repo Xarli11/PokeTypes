@@ -1,5 +1,5 @@
-import { getEffectiveness, getAbilityModifiers } from './calculator.js?v=2.18.7';
-import { i18n } from './i18n.js?v=2.18.7';
+import { getEffectiveness, getAbilityModifiers } from './calculator.js?v=2.18.8';
+import { i18n } from './i18n.js?v=2.18.8';
 
 export function createTypePill(type, contrastData) {
     const textColorClass = contrastData[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
