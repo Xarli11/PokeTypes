@@ -211,25 +211,25 @@ export function renderPokemonHero(container, pokemon, contrastData) {
         return;
     }
 
-    const imageUrl = getPokemonImageUrl(pokemon);
+    // Use Official Artwork for the hero image (High Quality)
+    // Fallback to standard sprite if ID is missing (unlikely for main mons)
+    const imageUrl = pokemon.id 
+        ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`
+        : getPokemonImageUrl(pokemon);
+
     const displayName = i18n.t(pokemon.name.toLowerCase()) !== pokemon.name.toLowerCase() 
                         ? i18n.t(pokemon.name.toLowerCase()) 
                         : capitalizeWords(pokemon.name);
     
-    // Type Pills with slightly larger styling if possible, or reused standard ones
     const typePills = pokemon.types.map(t => createTypePill(t, contrastData)).join('');
 
-    // Background decoration based on primary type
-    const primaryType = pokemon.types[0].toLowerCase();
-    
     const contentHTML = `
-        <div class="absolute inset-0 opacity-10 bg-type-${primaryType} z-0 pointer-events-none transform scale-150 rotate-12 blur-xl"></div>
-        <div class="relative z-10 flex flex-col items-center gap-6 py-4">
+        <div class="relative z-10 flex flex-col items-center gap-6 py-8">
             <div class="relative group">
-                <div class="absolute inset-0 bg-white/20 dark:bg-black/20 rounded-full blur-2xl transform scale-75 group-hover:scale-90 transition-transform duration-500"></div>
+                <div class="absolute inset-0 bg-indigo-500/20 dark:bg-indigo-400/10 rounded-full blur-3xl transform scale-75 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                 <img src="${imageUrl}" 
                      alt="${displayName}" 
-                     class="w-48 h-48 md:w-56 md:h-56 object-contain drop-shadow-lg transform transition-transform duration-500 hover:scale-105 filter"
+                     class="w-56 h-56 md:w-64 md:h-64 object-contain drop-shadow-xl transform transition-transform duration-500 hover:scale-110 filter"
                      onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png';">
             </div>
             
