@@ -211,9 +211,13 @@ export function renderPokemonHero(container, pokemon, contrastData) {
         return;
     }
 
-    // Use centralized image logic which handles forms correctly (Mega, Gmax, Regional)
-    // PokemonDB Home sprites are high quality enough for this size and cover all forms
-    const imageUrl = getPokemonImageUrl(pokemon);
+    // Try to get the Official Artwork (2D Sugimori Style) via PokemonDB using the slug
+    // This supports forms like 'charizard-mega-x' unlike the PokeAPI ID-based endpoint
+    const slug = pokemon.spriteSlug || pokemon.apiName;
+    const artworkUrl = `https://img.pokemondb.net/artwork/large/${slug}.jpg`;
+    
+    // Fallback URL (Home Render) in case artwork doesn't exist
+    const fallbackUrl = getPokemonImageUrl(pokemon);
 
     const displayName = i18n.t(pokemon.name.toLowerCase()) !== pokemon.name.toLowerCase() 
                         ? i18n.t(pokemon.name.toLowerCase()) 
@@ -225,10 +229,10 @@ export function renderPokemonHero(container, pokemon, contrastData) {
         <div class="relative z-10 flex flex-col items-center gap-6 py-8">
             <div class="relative group">
                 <div class="absolute inset-0 bg-indigo-500/20 dark:bg-indigo-400/10 rounded-full blur-3xl transform scale-75 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                <img src="${imageUrl}" 
+                <img src="${artworkUrl}" 
                      alt="${displayName}" 
                      class="w-56 h-56 md:w-64 md:h-64 object-contain drop-shadow-xl transform transition-transform duration-500 hover:scale-110 filter"
-                     onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png';">
+                     onerror="this.onerror=null; this.src='${fallbackUrl}';">
             </div>
             
             <div class="text-center">
