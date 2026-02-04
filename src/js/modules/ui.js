@@ -211,11 +211,9 @@ export function renderPokemonHero(container, pokemon, contrastData) {
         return;
     }
 
-    // Use Official Artwork for the hero image (High Quality)
-    // Fallback to standard sprite if ID is missing (unlikely for main mons)
-    const imageUrl = pokemon.id 
-        ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`
-        : getPokemonImageUrl(pokemon);
+    // Use centralized image logic which handles forms correctly (Mega, Gmax, Regional)
+    // PokemonDB Home sprites are high quality enough for this size and cover all forms
+    const imageUrl = getPokemonImageUrl(pokemon);
 
     const displayName = i18n.t(pokemon.name.toLowerCase()) !== pokemon.name.toLowerCase() 
                         ? i18n.t(pokemon.name.toLowerCase()) 
