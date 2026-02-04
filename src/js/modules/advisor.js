@@ -1,5 +1,5 @@
-import { getEffectiveness } from './calculator.js?v=2.19.0';
-import { capitalizeWords } from './ui.js?v=2.19.0';
+import { getEffectiveness } from './calculator.js?v=2.20.0';
+import { capitalizeWords } from './ui.js?v=2.20.0';
 
 export function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiveness, pokemonList) {
     // 1. Identify the biggest threat
