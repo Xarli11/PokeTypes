@@ -121,6 +121,9 @@ async function showPokemonDetails(pokemon) {
         document.getElementById('abilities-container').innerHTML = '';
         statsSection.classList.remove('hidden');
 
+        // Render Hero Card immediately (data is available)
+        ui.renderPokemonHero(document.getElementById('pokemon-hero'), pokemon, appData.contrast);
+
         const details = await fetchPokemonDetails(pokemon.apiName || pokemon.id);
         if (details) {
             ui.renderStats(document.getElementById('stats-container'), details.stats);
@@ -224,10 +227,8 @@ function setupEventListeners() {
             suggestionsList.innerHTML = '<li class="p-4 text-slate-400 italic text-center">' + i18n.t('none') + '</li>';
         } else {
             suggestionsList.innerHTML = topMatches.map((p, index) => {
-                // Use PokemonDB for form support (Megas, etc) using the slug
-                const imageUrl = (p.spriteSlug || p.apiName) 
-                    ? `https://img.pokemondb.net/sprites/home/normal/${p.spriteSlug || p.apiName}.png`
-                    : (p.id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png` : 'pokeball.png');
+                // Use centralized image URL logic
+                const imageUrl = ui.getPokemonImageUrl(p);
 
                 const typePills = p.types.map(t => ui.createTypePill(t, appData.contrast)).join('');
                 
