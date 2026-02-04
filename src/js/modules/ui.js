@@ -199,6 +199,52 @@ export function populateSelects(ids, types) {
 }
 
 
+export function getPokemonImageUrl(p) {
+    return (p.spriteSlug || p.apiName)
+        ? `https://img.pokemondb.net/sprites/home/normal/${p.spriteSlug || p.apiName}.png`
+        : (p.id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png` : 'pokeball.png');
+}
+
+export function renderPokemonHero(container, pokemon, contrastData) {
+    if (!pokemon) {
+        container.innerHTML = '';
+        return;
+    }
+
+    const imageUrl = getPokemonImageUrl(pokemon);
+    const displayName = i18n.t(pokemon.name.toLowerCase()) !== pokemon.name.toLowerCase() 
+                        ? i18n.t(pokemon.name.toLowerCase()) 
+                        : capitalizeWords(pokemon.name);
+    
+    // Type Pills with slightly larger styling if possible, or reused standard ones
+    const typePills = pokemon.types.map(t => createTypePill(t, contrastData)).join('');
+
+    // Background decoration based on primary type
+    const primaryType = pokemon.types[0].toLowerCase();
+    
+    const contentHTML = `
+        <div class="absolute inset-0 opacity-10 bg-type-${primaryType} z-0 pointer-events-none transform scale-150 rotate-12 blur-xl"></div>
+        <div class="relative z-10 flex flex-col items-center gap-6 py-4">
+            <div class="relative group">
+                <div class="absolute inset-0 bg-white/20 dark:bg-black/20 rounded-full blur-2xl transform scale-75 group-hover:scale-90 transition-transform duration-500"></div>
+                <img src="${imageUrl}" 
+                     alt="${displayName}" 
+                     class="w-48 h-48 md:w-56 md:h-56 object-contain drop-shadow-lg transform transition-transform duration-500 hover:scale-105 filter"
+                     onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png';">
+            </div>
+            
+            <div class="text-center">
+                <h3 class="text-3xl font-black text-slate-800 dark:text-white mb-3 tracking-tight">${displayName}</h3>
+                <div class="flex items-center justify-center gap-2 scale-110">
+                    ${typePills}
+                </div>
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = contentHTML;
+}
+
 export function renderStats(container, stats) {
     if (!stats || !stats.length) {
         container.innerHTML = '';
