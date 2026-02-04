@@ -1,5 +1,5 @@
-import { getEffectiveness, getAbilityModifiers } from './calculator.js?v=2.18.10';
-import { i18n } from './i18n.js?v=2.18.10';
+import { getEffectiveness, getAbilityModifiers } from './calculator.js?v=2.19.0';
+import { i18n } from './i18n.js?v=2.19.0';
 
 export function createTypePill(type, contrastData) {
     const textColorClass = contrastData[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
@@ -199,6 +199,57 @@ export function populateSelects(ids, types) {
 }
 
 
+export function getPokemonImageUrl(p) {
+    return (p.spriteSlug || p.apiName)
+        ? `https://img.pokemondb.net/sprites/home/normal/${p.spriteSlug || p.apiName}.png`
+        : (p.id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png` : 'pokeball.png');
+}
+
+export function renderPokemonHero(container, pokemon, contrastData) {
+    if (!pokemon) {
+        container.innerHTML = '';
+        return;
+    }
+
+    // Use Animated Sprites from Showdown (Transparent, Supports all forms by name)
+    // Adding a random query param to avoid aggressive caching issues if needed, but usually fine.
+    const slug = pokemon.spriteSlug || pokemon.apiName;
+    
+    // Primary: Animated GIF
+    const imageUrl = `https://play.pokemonshowdown.com/sprites/ani/${slug}.gif`;
+    
+    // Fallback: Static Sprite (PokemonDB Home render or Dex sprite)
+    const fallbackUrl = getPokemonImageUrl(pokemon);
+
+    const displayName = i18n.t(pokemon.name.toLowerCase()) !== pokemon.name.toLowerCase() 
+                        ? i18n.t(pokemon.name.toLowerCase()) 
+                        : capitalizeWords(pokemon.name);
+    
+    const typePills = pokemon.types.map(t => createTypePill(t, contrastData)).join('');
+
+    const contentHTML = `
+        <div class="relative z-10 flex flex-col items-center gap-6 py-8">
+            <div class="relative group">
+                <div class="absolute inset-0 bg-indigo-500/20 dark:bg-indigo-400/10 rounded-full blur-3xl transform scale-75 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                <img src="${imageUrl}" 
+                     alt="${displayName}" 
+                     style="image-rendering: pixelated;"
+                     class="w-32 h-32 md:w-48 md:h-48 object-contain drop-shadow-xl transform transition-transform duration-500 hover:scale-110 filter"
+                     onerror="this.onerror=null; this.src='${fallbackUrl}'; this.style.imageRendering='auto';">
+            </div>
+            
+            <div class="text-center">
+                <h3 class="text-3xl font-black text-slate-800 dark:text-white mb-3 tracking-tight">${displayName}</h3>
+                <div class="flex items-center justify-center gap-2 scale-110">
+                    ${typePills}
+                </div>
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = contentHTML;
+}
+
 export function renderStats(container, stats) {
     if (!stats || !stats.length) {
         container.innerHTML = '';
@@ -342,8 +393,6 @@ export function renderTacticalAdvice(container, advice) {
     container.classList.remove('hidden');
 
     // Prepare interpolated values
-    // Join types with " or " (translated "or" would be ideal but "/" is neutral enough for now, or just space)
-    // Actually, let's just stick to the current list.
     const suggestedTypesHTML = advice.suggestedTypes.map(t => `<span class="font-bold text-slate-700 dark:text-slate-200">${i18n.tType(t)}</span>`).join('/');
     const suggestedMonsHTML = advice.suggestedPokemon.map(p => capitalizeWords(p.name)).join(', ');
 

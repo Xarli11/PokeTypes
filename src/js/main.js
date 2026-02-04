@@ -1,9 +1,9 @@
-import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.18.10';
-import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.18.10';
-import { getTacticalAdvice } from './modules/advisor.js?v=2.18.10';
-import * as ui from './modules/ui.js?v=2.18.10';
-import { initTheme } from './modules/theme.js?v=2.18.10';
-import { i18n } from './modules/i18n.js?v=2.18.10';
+import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.19.0';
+import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.19.0';
+import { getTacticalAdvice } from './modules/advisor.js?v=2.19.0';
+import * as ui from './modules/ui.js?v=2.19.0';
+import { initTheme } from './modules/theme.js?v=2.19.0';
+import { i18n } from './modules/i18n.js?v=2.19.0';
 
 let appData = null;
 
@@ -61,14 +61,7 @@ function refreshUI() {
     displayAnalysis(t1Val, t2Val);
 
     // 5. Update Pokemon Stats/Abilities if visible (requires knowing current mon?)
-    // If stats container has content, re-render it
-    // Note: Since stats/abilities render functions take raw data, and we don't store "currentPokemonDetails" globally,
-    // we might miss re-translating dynamic content inside stats unless we re-fetch or re-render.
-    // For MVP, we'll let stats refresh on next search, or if we had a global store.
-    // However, static headers in stats section are handled by updateDOM.
-    // Abilities content (descriptions) are from API (English only usually), so re-rendering them won't translate them unless we have translations.
-    // But "Hidden" label inside renderAbilities IS translated/hardcoded in UI.js, so we should re-render if possible.
-    // Let's check if we can easily re-trigger showPokemonDetails.
+    // Ideally we would re-fetch or use a global store to re-render stats with new language.
     // For now, simpler approach: User re-searches if they want full translation refresh of details.
 }
 
@@ -127,6 +120,9 @@ async function showPokemonDetails(pokemon) {
         document.getElementById('stats-container').innerHTML = '<div class="text-center p-4 text-slate-400">Loading stats...</div>';
         document.getElementById('abilities-container').innerHTML = '';
         statsSection.classList.remove('hidden');
+
+        // Render Hero Card immediately (data is available)
+        ui.renderPokemonHero(document.getElementById('pokemon-hero'), pokemon, appData.contrast);
 
         const details = await fetchPokemonDetails(pokemon.apiName || pokemon.id);
         if (details) {
@@ -231,10 +227,8 @@ function setupEventListeners() {
             suggestionsList.innerHTML = '<li class="p-4 text-slate-400 italic text-center">' + i18n.t('none') + '</li>';
         } else {
             suggestionsList.innerHTML = topMatches.map((p, index) => {
-                // Use PokemonDB for form support (Megas, etc) using the slug
-                const imageUrl = (p.spriteSlug || p.apiName) 
-                    ? `https://img.pokemondb.net/sprites/home/normal/${p.spriteSlug || p.apiName}.png`
-                    : (p.id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png` : 'pokeball.png');
+                // Use centralized image URL logic
+                const imageUrl = ui.getPokemonImageUrl(p);
 
                 const typePills = p.types.map(t => ui.createTypePill(t, appData.contrast)).join('');
                 
@@ -446,14 +440,6 @@ function displayAnalysis(t1, t2) {
     ui.renderBadgedCard(document.getElementById('not-very-effective'), 'not_very_effective', off.notVeryEffective, 'none', 'resist', 'x0.5', 'bg-emerald-500', appData.contrast);
     ui.renderEffectivenessCard(document.getElementById('no-effect'), 'no_effect', off.noEffect, 'none', 'immune', appData.contrast);
     
-    // Using a key for this one requires adding it to messages.js if it doesn't exist.
-    // I added "none" to keys. "Totally Walled By (Dual Types)" is not in messages yet. 
-    // I'll assume I need to use 'dual_title' or similar, but let's check messages.js content I wrote.
-    // I wrote 'dual_title' as "Dual Type Weaknesses". Not the same.
-    // I'll add a new key "walled_by" or similar implicitly here, but first let me update the messages file to include it.
-    // For now I'll use a hardcoded string or fallback if key missing. 
-    // Wait, ui.js calls i18n.t(labelKey). If key missing it returns key.
-    // I'll use a specific key and then add it to messages.js in next step to be clean.
     ui.renderDualImmunities(document.getElementById('dual-immunities'), 'walled_by_dual', dualImmunities, appData.contrast);
 }
 
