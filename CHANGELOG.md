@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.22.1] - 2026-02-11
+
+### Fixed
+- **Localization:** Fixed an issue where ability names, descriptions, and stat labels would not update when switching languages.
+- **Localization:** Added missing Spanish translations for "Hidden Ability" and stat abbreviations (PS, Atq, etc.).
+- **User Experience:** The application now automatically refreshes the current Pokémon's details when the language is toggled.
+
 ## [2.22.0] - 2026-02-11
 
 ### Added
