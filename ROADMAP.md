@@ -20,6 +20,9 @@ Expand the application from a type calculator to a quick-reference tool for comp
 ### 4. Team Coverage Tool 🛡️
 Analyze a full team of up to 6 Pokemon to identify shared weaknesses and type coverage gaps.
 
+### 5. Format & Generation Selection 🎮
+Allow users to select a specific format (e.g., Gen 9 OU, National Dex) to filter Pokémon suggestions and adhere to specific banlists/mechanics.
+
 ## 🛠️ Technical Improvements
 
 *   **Data Optimization:** Split `pokedex.json` into smaller chunks or use a more efficient compression if it grows significantly with stats/moves.
@@ -27,7 +30,7 @@ Analyze a full team of up to 6 Pokemon to identify shared weaknesses and type co
 *   **Localization:** Support for Spanish, Japanese, and other languages for Pokemon names and UI elements.
 
 ---
-*Last updated: January 29, 2026*
+*Last updated: February 11, 2026*
 
 ## ✅ Recently Completed
 
