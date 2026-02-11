@@ -6,6 +6,7 @@ import { initTheme } from './modules/theme.js?v=2.22.0';
 import { i18n } from './modules/i18n.js?v=2.22.0';
 
 let appData = null;
+let currentPokemon = null;
 
 async function init() {
     try {
@@ -60,9 +61,12 @@ function refreshUI() {
     // 4. Update Analysis Cards
     displayAnalysis(t1Val, t2Val);
 
-    // 5. Update Pokemon Stats/Abilities if visible (requires knowing current mon?)
-    // Ideally we would re-fetch or use a global store to re-render stats with new language.
-    // For now, simpler approach: User re-searches if they want full translation refresh of details.
+    // 5. Update Pokemon Stats/Abilities if visible
+    const statsSection = document.getElementById('pokemon-stats');
+    if (currentPokemon && statsSection && !statsSection.classList.contains('hidden')) {
+        // Re-fetch details to get updated translations (handled by data.js using i18n.currentLang)
+        showPokemonDetails(currentPokemon);
+    }
 }
 
 function syncURLWithState(t1, t2, pokemonName) {
@@ -120,8 +124,10 @@ async function showPokemonDetails(pokemon) {
         return;
     }
 
+    currentPokemon = pokemon;
+
     try {
-        statsContainer.innerHTML = '<div class="text-center p-4 text-slate-400">Loading stats...</div>';
+        statsContainer.innerHTML = `<div class="text-center p-4 text-slate-400">${i18n.t('loading_stats')}</div>`;
         abilitiesContainer.innerHTML = '';
         if (alertsContainer) alertsContainer.innerHTML = '';
         

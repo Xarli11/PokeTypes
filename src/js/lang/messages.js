@@ -50,6 +50,17 @@ export const messages = {
         none: "None",
         select_types: "Select a type or Pokemon to begin analysis",
         stats_unavailable: "Stats unavailable.",
+        loading_desc: "Loading description...",
+        loading_stats: "Loading stats...",
+        hidden: "Hidden",
+
+        // Stats
+        stat_hp: "HP",
+        stat_atk: "Atk",
+        stat_def: "Def",
+        stat_spa: "SpA",
+        stat_spd: "SpD",
+        stat_spe: "Spe",
         
         // Types
         normal: "Normal",
@@ -152,6 +163,17 @@ export const messages = {
         none: "Ninguno",
         select_types: "Selecciona un tipo o Pokémon para comenzar",
         stats_unavailable: "Estadísticas no disponibles.",
+        loading_desc: "Cargando descripción...",
+        loading_stats: "Cargando estadísticas...",
+        hidden: "Oculta",
+
+        // Stats
+        stat_hp: "PS",
+        stat_atk: "Atq",
+        stat_def: "Def",
+        stat_spa: "AtEsp",
+        stat_spd: "DefEsp",
+        stat_spe: "Vel",
         
         // Types
         normal: "Normal",
