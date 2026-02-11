@@ -1,5 +1,8 @@
 import { i18n } from './i18n.js?v=2.21.2';
 
+const pokemonCache = new Map();
+const abilityCache = new Map();
+
 export async function loadAppData() {
     try {
         const [typeDataResponse, pokedexResponse] = await Promise.all([
@@ -28,6 +31,14 @@ export async function loadAppData() {
 
 export async function fetchPokemonDetails(identifier) {
     if (!identifier) return null;
+    
+    const currentLang = i18n.currentLang;
+    const cacheKey = `${identifier}-${currentLang}`;
+
+    if (pokemonCache.has(cacheKey)) {
+        return pokemonCache.get(cacheKey);
+    }
+
     try {
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${identifier}`);
         if (!response.ok) throw new Error('Pokemon not found');
@@ -36,9 +47,16 @@ export async function fetchPokemonDetails(identifier) {
         // Fetch ability descriptions and localized names
         const abilityPromises = data.abilities.map(async (entry) => {
             try {
-                const abilityRes = await fetch(entry.ability.url);
-                const abilityData = await abilityRes.json();
-                const currentLang = i18n.currentLang;
+                let abilityData;
+                const abilityUrl = entry.ability.url;
+
+                if (abilityCache.has(abilityUrl)) {
+                    abilityData = abilityCache.get(abilityUrl);
+                } else {
+                    const abilityRes = await fetch(abilityUrl);
+                    abilityData = await abilityRes.json();
+                    abilityCache.set(abilityUrl, abilityData);
+                }
 
                 // 1. Localize Name
                 // PokeAPI names array: [{ name: "Stench", language: { name: "en" } }, ...]
@@ -59,7 +77,7 @@ export async function fetchPokemonDetails(identifier) {
                     descEntry = abilityData.effect_entries.find(e => e.language.name === currentLang);
                 }
 
-                // NEW: Check manual translation in messages.js if API fails for current lang
+                // Check manual translation in messages.js if API fails for current lang
                 // Try both hyphenated and space versions
                 const rawName = abilityData.name.toLowerCase();
                 const spacedName = rawName.replace(/-/g, ' ');
@@ -97,6 +115,10 @@ export async function fetchPokemonDetails(identifier) {
         });
 
         await Promise.all(abilityPromises);
+        
+        // Cache the fully processed object
+        pokemonCache.set(cacheKey, data);
+        
         return data;
 
     } catch (error) {
