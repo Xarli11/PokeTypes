@@ -121,8 +121,11 @@ The project follows a strict **Gitflow** strategy combined with **Conventional C
     *   **Agent Responsibility:** The agent must always provide a clear merge commit message to avoid interactive blocks.
     *   *Important:* Continue working on the feature until it is fully complete. Do not merge to `main` or create a release just for testing purposes. Verify everything on `develop` or the feature branch first.
     *   Push to remote: `git push origin develop`.
-4.  **Release Process (Only when feature is 100% ready):**
+4.  **Release Process (Only when feature is 100% ready AND explicitly requested by user):**
+    *   **WAIT:** Do not start this process unless the user has explicitly asked for a release (e.g., "Create a release", "Deploy version X").
     *   Create a release branch from `develop`: `git checkout -b release/vX.Y.Z`.
+    *   **Update Changelog:** Add a new entry to `CHANGELOG.md` for version `vX.Y.Z` summarizing the changes (Added, Fixed, Changed).
+    *   Commit the changelog update: `git commit -am "docs: update changelog for vX.Y.Z"`.
     *   Run the release script: `npm run release X.Y.Z`.
         *   *This script updates `package.json`, `sw.js`, `index.html`, commits changes, and tags the commit.*
     *   Merge to `main`:
