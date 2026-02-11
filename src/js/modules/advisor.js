@@ -1,5 +1,5 @@
-import { getEffectiveness } from './calculator.js?v=2.21.0';
-import { capitalizeWords } from './ui.js?v=2.21.0';
+import { getEffectiveness } from './calculator.js?v=2.21.1';
+import { capitalizeWords } from './ui.js?v=2.21.1';
 
 export function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiveness, pokemonList) {
     // 1. Identify the biggest threat
@@ -70,6 +70,18 @@ export function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiv
             // Tier B: Decent (For weaker types like Bug/Pre-evos) - Last resort
             if (candidates.length === 0) {
                 candidates = pokemonList.filter(p => baseFilter(p) && (p.bst || 0) >= 400);
+            }
+
+            // FILTER: Verify that the candidate *actually* resists the threat with its specific dual typing.
+            // (e.g., Don't suggest Moltres-Galar (Dark/Flying) against Fighting, because Dark makes it neutral)
+            if (candidates.length > 0) {
+                candidates = candidates.filter(p => {
+                    let defenseMod = 1;
+                    p.types.forEach(defType => {
+                        defenseMod *= getEffectiveness(targetThreat, defType, effectiveness);
+                    });
+                    return defenseMod < 1;
+                });
             }
 
             if (candidates.length > 0) {
