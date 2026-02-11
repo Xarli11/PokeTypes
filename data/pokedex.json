@@ -10267,7 +10267,7 @@
   {
     "id": 746,
     "name": "Wishiwashi",
-    "apiName": "wishiwashi",
+    "apiName": "wishiwashi-solo",
     "spriteSlug": "wishiwashi",
     "types": [
       "Water"
@@ -13330,7 +13330,7 @@
   {
     "id": 964,
     "name": "Palafin",
-    "apiName": "palafin",
+    "apiName": "palafin-zero",
     "spriteSlug": "palafin",
     "types": [
       "Water"

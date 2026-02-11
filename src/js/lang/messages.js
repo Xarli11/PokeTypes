@@ -49,6 +49,7 @@ export const messages = {
         // Empty States
         none: "None",
         select_types: "Select a type or Pokemon to begin analysis",
+        stats_unavailable: "Stats unavailable.",
         
         // Types
         normal: "Normal",
@@ -150,6 +151,7 @@ export const messages = {
         // Empty States
         none: "Ninguno",
         select_types: "Selecciona un tipo o Pokémon para comenzar",
+        stats_unavailable: "Estadísticas no disponibles.",
         
         // Types
         normal: "Normal",
