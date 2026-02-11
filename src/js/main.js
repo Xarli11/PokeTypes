@@ -1,9 +1,9 @@
-import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.21.1';
-import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.21.1';
-import { getTacticalAdvice } from './modules/advisor.js?v=2.21.1';
-import * as ui from './modules/ui.js?v=2.21.1';
-import { initTheme } from './modules/theme.js?v=2.21.1';
-import { i18n } from './modules/i18n.js?v=2.21.1';
+import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.21.2';
+import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.21.2';
+import { getTacticalAdvice } from './modules/advisor.js?v=2.21.2';
+import * as ui from './modules/ui.js?v=2.21.2';
+import { initTheme } from './modules/theme.js?v=2.21.2';
+import { i18n } from './modules/i18n.js?v=2.21.2';
 
 let appData = null;
 
@@ -111,30 +111,40 @@ async function applyStateFromURL() {
 
 async function showPokemonDetails(pokemon) {
     const statsSection = document.getElementById('pokemon-stats');
+    const statsContainer = document.getElementById('stats-container');
+    const abilitiesContainer = document.getElementById('abilities-container');
+    const alertsContainer = document.getElementById('ability-alerts');
+
     if (!pokemon.id) {
         statsSection.classList.add('hidden');
         return;
     }
 
     try {
-        document.getElementById('stats-container').innerHTML = '<div class="text-center p-4 text-slate-400">Loading stats...</div>';
-        document.getElementById('abilities-container').innerHTML = '';
+        statsContainer.innerHTML = '<div class="text-center p-4 text-slate-400">Loading stats...</div>';
+        abilitiesContainer.innerHTML = '';
+        if (alertsContainer) alertsContainer.innerHTML = '';
+        
         statsSection.classList.remove('hidden');
 
-        // Render Hero Card immediately (data is available)
+        // Render Hero Card immediately (data is available locally)
         ui.renderPokemonHero(document.getElementById('pokemon-hero'), pokemon, appData.contrast);
 
         const details = await fetchPokemonDetails(pokemon.apiName || pokemon.id);
+        
         if (details) {
-            ui.renderStats(document.getElementById('stats-container'), details.stats);
-            ui.renderAbilities(document.getElementById('abilities-container'), details.abilities);
-            ui.renderAbilityAlerts(document.getElementById('ability-alerts'), details.abilities);
+            ui.renderStats(statsContainer, details.stats);
+            ui.renderAbilities(abilitiesContainer, details.abilities);
+            ui.renderAbilityAlerts(alertsContainer, details.abilities);
         } else {
-            statsSection.classList.add('hidden');
+            // If details fetch fails, keep Hero visible but show error in stats area
+            statsContainer.innerHTML = `<div class="text-center p-4 text-slate-400 text-sm italic">${i18n.t('stats_unavailable') || 'Stats unavailable'}</div>`;
+            abilitiesContainer.innerHTML = '';
         }
     } catch (err) {
         console.error('Error displaying details:', err);
-        statsSection.classList.add('hidden');
+        // Even on error, keep Hero visible if possible
+        statsContainer.innerHTML = `<div class="text-center p-4 text-slate-400 text-sm italic">${i18n.t('stats_unavailable') || 'Stats unavailable'}</div>`;
     }
 }
 

@@ -1,4 +1,4 @@
-import { i18n } from './i18n.js?v=2.21.1';
+import { i18n } from './i18n.js?v=2.21.2';
 
 export async function loadAppData() {
     try {
