@@ -72,6 +72,18 @@ export function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiv
                 candidates = pokemonList.filter(p => baseFilter(p) && (p.bst || 0) >= 400);
             }
 
+            // FILTER: Verify that the candidate *actually* resists the threat with its specific dual typing.
+            // (e.g., Don't suggest Moltres-Galar (Dark/Flying) against Fighting, because Dark makes it neutral)
+            if (candidates.length > 0) {
+                candidates = candidates.filter(p => {
+                    let defenseMod = 1;
+                    p.types.forEach(defType => {
+                        defenseMod *= getEffectiveness(targetThreat, defType, effectiveness);
+                    });
+                    return defenseMod < 1;
+                });
+            }
+
             if (candidates.length > 0) {
                 // Shuffle candidates to give variety (don't just pick the strongest of the tier every time)
                 const shuffled = candidates.sort(() => 0.5 - Math.random());
