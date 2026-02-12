@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.22.2] - 2026-02-11
+
+### Improved
+- **Tactical Advisor - Tiering:** Suggestions now respect the power level of the analyzed Pokémon.
+    - **High Tier (>570 BST):** Suggests Legendaries, Paradox, and Pseudo-Legendaries.
+    - **Mid Tier (420-570 BST):** Suggests fully evolved standard Pokémon.
+    - **Low Tier (<420 BST):** Suggests Little Cup or NFE Pokémon.
+- **Tactical Advisor - Coverage:** Recommended teammates are now scored based on how many *additional* weaknesses they resist, not just the primary threat.
+
 ## [2.22.1] - 2026-02-11
 
 ### Fixed
