@@ -2,74 +2,64 @@ import { messages } from '../lang/messages.js?v=2.22.8';
 
 class I18n {
     constructor() {
-        this.currentLang = this.getPreferredLanguage();
-        this.observers = [];
-    }
-
-    getPreferredLanguage() {
-        const stored = localStorage.getItem('poketypes-lang');
-        if (stored) return stored;
-        
-        const browserLang = navigator.language || navigator.userLanguage;
-        return browserLang.startsWith('es') ? 'es' : 'en';
+        this.currentLang = localStorage.getItem('poketypes_lang') || 'en';
+        this.abilityMap = {}; // Loaded dynamically
     }
 
     setLanguage(lang) {
-        if (!messages[lang]) return;
         this.currentLang = lang;
-        localStorage.setItem('poketypes-lang', lang);
-        this.updateDOM();
-        this.notifyObservers();
-        
-        // Update HTML lang attribute for accessibility/SEO
+        localStorage.setItem('poketypes_lang', lang);
         document.documentElement.lang = lang;
     }
 
-    t(key, replacements = {}) {
-        // Handle nested keys if needed (for now flat structure is fine)
-        // Also fallback to English if key missing in ES
-        let text = messages[this.currentLang][key] || messages['en'][key] || key;
-        
-        // Simple interpolation: replace {placeholder} with value
-        Object.keys(replacements).forEach(placeholder => {
-            const regex = new RegExp(`{${placeholder}}`, 'g');
-            text = text.replace(regex, replacements[placeholder]);
-        });
-
-        return text;
+    setAbilityMap(map) {
+        this.abilityMap = map;
     }
 
-    // Method to translate type names specifically (case insensitive fallback)
+    t(key) {
+        if (!key) return '';
+        const keys = key.split('.');
+        let value = messages[this.currentLang];
+        
+        for (const k of keys) {
+            if (value && value[k]) {
+                value = value[k];
+            } else {
+                return key; // Fallback to key if not found
+            }
+        }
+        return value;
+    }
+
     tType(type) {
         if (!type) return '';
+        // Types are keys in messages object
         const key = type.toLowerCase();
-        return this.t(key);
+        return this.t(key) !== key ? this.t(key) : type;
+    }
+
+    tAbility(slug) {
+        if (!slug) return '';
+        const normalized = slug.toLowerCase().replace(/ /g, '-');
+        const entry = this.abilityMap[normalized];
+        if (entry) {
+            return entry[this.currentLang] || entry['en'] || slug;
+        }
+        return slug;
     }
 
     updateDOM() {
-        const elements = document.querySelectorAll('[data-i18n]');
-        elements.forEach(el => {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
-            if (key) {
-                // If it's an input, update placeholder
-                if (el.tagName === 'INPUT' && el.getAttribute('placeholder')) {
-                    el.placeholder = this.t(key);
+            const translation = this.t(key);
+            if (translation !== key) {
+                if (el.tagName === 'INPUT') {
+                    el.placeholder = translation;
                 } else {
-                    el.textContent = this.t(key);
+                    el.textContent = translation;
                 }
             }
         });
-        
-        // Update select options (Type 1 / Type 2 placeholders)
-        // Note: Actual type options are dynamically generated, so they need re-generation
-    }
-
-    subscribe(callback) {
-        this.observers.push(callback);
-    }
-
-    notifyObservers() {
-        this.observers.forEach(cb => cb(this.currentLang));
     }
 }
 

@@ -19,6 +19,7 @@ async function init() {
         i18n.updateDOM();
 
         appData = await loadAppData();
+        i18n.setAbilityMap(appData.abilityMap);
         
         ui.populateSelects(['type-select', 'type2-select'], appData.types);
         ui.generateTypeTable('type-table-container', appData.types, appData.effectiveness, appData.contrast);

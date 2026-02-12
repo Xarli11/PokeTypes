@@ -9,9 +9,10 @@ export function loadAppData() {
 
     appDataPromise = (async () => {
         try {
-            const [typeDataResponse, pokedexResponse] = await Promise.all([
+            const [typeDataResponse, pokedexResponse, abilitiesResponse] = await Promise.all([
                 fetch('data/type-data.json'),
-                fetch('data/pokedex.json')
+                fetch('data/pokedex.json'),
+                fetch('data/abilities-i18n.json')
             ]);
 
             if (!typeDataResponse.ok || !pokedexResponse.ok) {
@@ -20,12 +21,14 @@ export function loadAppData() {
 
             const typeData = await typeDataResponse.json();
             const pokedex = await pokedexResponse.json();
+            const abilities = abilitiesResponse.ok ? await abilitiesResponse.json() : {};
 
             return {
                 pokemonList: pokedex,
                 types: typeData.types,
                 effectiveness: typeData.effectiveness,
-                contrast: typeData.contrast
+                contrast: typeData.contrast,
+                abilityMap: abilities
             };
         } catch (error) {
             console.error('Error loading data:', error);

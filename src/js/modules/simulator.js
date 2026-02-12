@@ -188,7 +188,7 @@ async function selectDefender(pokemon, appData) {
         const details = await fetchPokemonDetails(pokemon.apiName || pokemon.id);
         if (details && details.abilities) {
             abilitySelect.innerHTML = details.abilities.map(a => {
-                const name = a.ability.displayName || capitalizeWords(a.ability.name);
+                const name = i18n.tAbility(a.ability.name);
                 return `<option value="${a.ability.name}">${name}</option>`;
             }).join('');
             abilitySelect.disabled = false;
