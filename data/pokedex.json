@@ -47,7 +47,7 @@
     "id": 3,
     "name": "Venusaur-Gmax",
     "apiName": "venusaur-gmax",
-    "spriteSlug": "venusaur-gigantamax",
+    "spriteSlug": "venusaur-gmax",
     "types": [
       "Grass",
       "Poison"
@@ -111,7 +111,7 @@
     "id": 6,
     "name": "Charizard-Gmax",
     "apiName": "charizard-gmax",
-    "spriteSlug": "charizard-gigantamax",
+    "spriteSlug": "charizard-gmax",
     "types": [
       "Fire",
       "Flying"
@@ -162,7 +162,7 @@
     "id": 9,
     "name": "Blastoise-Gmax",
     "apiName": "blastoise-gmax",
-    "spriteSlug": "blastoise-gigantamax",
+    "spriteSlug": "blastoise-gmax",
     "types": [
       "Water"
     ],
@@ -203,7 +203,7 @@
     "id": 12,
     "name": "Butterfree-Gmax",
     "apiName": "butterfree-gmax",
-    "spriteSlug": "butterfree-gigantamax",
+    "spriteSlug": "butterfree-gmax",
     "types": [
       "Bug",
       "Flying"
@@ -312,7 +312,7 @@
     "id": 19,
     "name": "Alolan Rattata",
     "apiName": "rattata-alola",
-    "spriteSlug": "rattata-alolan",
+    "spriteSlug": "rattata-alola",
     "types": [
       "Dark",
       "Normal"
@@ -333,7 +333,7 @@
     "id": 20,
     "name": "Alolan Raticate",
     "apiName": "raticate-alola",
-    "spriteSlug": "raticate-alolan",
+    "spriteSlug": "raticate-alola",
     "types": [
       "Dark",
       "Normal"
@@ -343,8 +343,8 @@
   {
     "id": 20,
     "name": "Alolan Raticate-Totem",
-    "apiName": "raticate-alola-totem",
-    "spriteSlug": "raticate-alolan-totem",
+    "apiName": "raticate-alola",
+    "spriteSlug": "raticate-alola-totem",
     "types": [
       "Dark",
       "Normal"
@@ -405,9 +405,19 @@
   },
   {
     "id": 25,
+    "name": "Alolan Pikachu",
+    "apiName": "pikachu-alola-cap",
+    "spriteSlug": "pikachu-alola",
+    "types": [
+      "Electric"
+    ],
+    "bst": 320
+  },
+  {
+    "id": 25,
     "name": "Pikachu-Gmax",
     "apiName": "pikachu-gmax",
-    "spriteSlug": "pikachu-gigantamax",
+    "spriteSlug": "pikachu-gmax",
     "types": [
       "Electric"
     ],
@@ -427,7 +437,7 @@
     "id": 26,
     "name": "Alolan Raichu",
     "apiName": "raichu-alola",
-    "spriteSlug": "raichu-alolan",
+    "spriteSlug": "raichu-alola",
     "types": [
       "Electric",
       "Psychic"
@@ -468,7 +478,7 @@
     "id": 27,
     "name": "Alolan Sandshrew",
     "apiName": "sandshrew-alola",
-    "spriteSlug": "sandshrew-alolan",
+    "spriteSlug": "sandshrew-alola",
     "types": [
       "Ice",
       "Steel"
@@ -489,7 +499,7 @@
     "id": 28,
     "name": "Alolan Sandslash",
     "apiName": "sandslash-alola",
-    "spriteSlug": "sandslash-alolan",
+    "spriteSlug": "sandslash-alola",
     "types": [
       "Ice",
       "Steel"
@@ -603,7 +613,7 @@
     "id": 37,
     "name": "Alolan Vulpix",
     "apiName": "vulpix-alola",
-    "spriteSlug": "vulpix-alolan",
+    "spriteSlug": "vulpix-alola",
     "types": [
       "Ice"
     ],
@@ -623,7 +633,7 @@
     "id": 38,
     "name": "Alolan Ninetales",
     "apiName": "ninetales-alola",
-    "spriteSlug": "ninetales-alolan",
+    "spriteSlug": "ninetales-alola",
     "types": [
       "Ice",
       "Fairy"
@@ -765,7 +775,7 @@
     "id": 50,
     "name": "Alolan Diglett",
     "apiName": "diglett-alola",
-    "spriteSlug": "diglett-alolan",
+    "spriteSlug": "diglett-alola",
     "types": [
       "Ground",
       "Steel"
@@ -786,7 +796,7 @@
     "id": 51,
     "name": "Alolan Dugtrio",
     "apiName": "dugtrio-alola",
-    "spriteSlug": "dugtrio-alolan",
+    "spriteSlug": "dugtrio-alola",
     "types": [
       "Ground",
       "Steel"
@@ -807,7 +817,7 @@
     "id": 52,
     "name": "Alolan Meowth",
     "apiName": "meowth-alola",
-    "spriteSlug": "meowth-alolan",
+    "spriteSlug": "meowth-alola",
     "types": [
       "Dark"
     ],
@@ -817,7 +827,7 @@
     "id": 52,
     "name": "Galarian Meowth",
     "apiName": "meowth-galar",
-    "spriteSlug": "meowth-galarian",
+    "spriteSlug": "meowth-galar",
     "types": [
       "Steel"
     ],
@@ -827,7 +837,7 @@
     "id": 52,
     "name": "Meowth-Gmax",
     "apiName": "meowth-gmax",
-    "spriteSlug": "meowth-gigantamax",
+    "spriteSlug": "meowth-gmax",
     "types": [
       "Normal"
     ],
@@ -847,7 +857,7 @@
     "id": 53,
     "name": "Alolan Persian",
     "apiName": "persian-alola",
-    "spriteSlug": "persian-alolan",
+    "spriteSlug": "persian-alola",
     "types": [
       "Dark"
     ],
@@ -907,7 +917,7 @@
     "id": 58,
     "name": "Hisuian Growlithe",
     "apiName": "growlithe-hisui",
-    "spriteSlug": "growlithe-hisuian",
+    "spriteSlug": "growlithe-hisui",
     "types": [
       "Fire",
       "Rock"
@@ -928,7 +938,7 @@
     "id": 59,
     "name": "Hisuian Arcanine",
     "apiName": "arcanine-hisui",
-    "spriteSlug": "arcanine-hisuian",
+    "spriteSlug": "arcanine-hisui",
     "types": [
       "Fire",
       "Rock"
@@ -1040,7 +1050,7 @@
     "id": 68,
     "name": "Machamp-Gmax",
     "apiName": "machamp-gmax",
-    "spriteSlug": "machamp-gigantamax",
+    "spriteSlug": "machamp-gmax",
     "types": [
       "Fighting"
     ],
@@ -1127,7 +1137,7 @@
     "id": 74,
     "name": "Alolan Geodude",
     "apiName": "geodude-alola",
-    "spriteSlug": "geodude-alolan",
+    "spriteSlug": "geodude-alola",
     "types": [
       "Rock",
       "Electric"
@@ -1149,7 +1159,7 @@
     "id": 75,
     "name": "Alolan Graveler",
     "apiName": "graveler-alola",
-    "spriteSlug": "graveler-alolan",
+    "spriteSlug": "graveler-alola",
     "types": [
       "Rock",
       "Electric"
@@ -1171,7 +1181,7 @@
     "id": 76,
     "name": "Alolan Golem",
     "apiName": "golem-alola",
-    "spriteSlug": "golem-alolan",
+    "spriteSlug": "golem-alola",
     "types": [
       "Rock",
       "Electric"
@@ -1192,7 +1202,7 @@
     "id": 77,
     "name": "Galarian Ponyta",
     "apiName": "ponyta-galar",
-    "spriteSlug": "ponyta-galarian",
+    "spriteSlug": "ponyta-galar",
     "types": [
       "Psychic"
     ],
@@ -1212,7 +1222,7 @@
     "id": 78,
     "name": "Galarian Rapidash",
     "apiName": "rapidash-galar",
-    "spriteSlug": "rapidash-galarian",
+    "spriteSlug": "rapidash-galar",
     "types": [
       "Psychic",
       "Fairy"
@@ -1234,7 +1244,7 @@
     "id": 79,
     "name": "Galarian Slowpoke",
     "apiName": "slowpoke-galar",
-    "spriteSlug": "slowpoke-galarian",
+    "spriteSlug": "slowpoke-galar",
     "types": [
       "Psychic"
     ],
@@ -1266,7 +1276,7 @@
     "id": 80,
     "name": "Galarian Slowbro",
     "apiName": "slowbro-galar",
-    "spriteSlug": "slowbro-galarian",
+    "spriteSlug": "slowbro-galar",
     "types": [
       "Poison",
       "Psychic"
@@ -1310,7 +1320,7 @@
     "id": 83,
     "name": "Galarian Farfetch’d",
     "apiName": "farfetchd-galar",
-    "spriteSlug": "farfetchd-galarian",
+    "spriteSlug": "farfetchd-galar",
     "types": [
       "Fighting"
     ],
@@ -1373,7 +1383,7 @@
     "id": 88,
     "name": "Alolan Grimer",
     "apiName": "grimer-alola",
-    "spriteSlug": "grimer-alolan",
+    "spriteSlug": "grimer-alola",
     "types": [
       "Poison",
       "Dark"
@@ -1394,7 +1404,7 @@
     "id": 89,
     "name": "Alolan Muk",
     "apiName": "muk-alola",
-    "spriteSlug": "muk-alolan",
+    "spriteSlug": "muk-alola",
     "types": [
       "Poison",
       "Dark"
@@ -1470,7 +1480,7 @@
     "id": 94,
     "name": "Gengar-Gmax",
     "apiName": "gengar-gmax",
-    "spriteSlug": "gengar-gigantamax",
+    "spriteSlug": "gengar-gmax",
     "types": [
       "Ghost",
       "Poison"
@@ -1532,7 +1542,7 @@
     "id": 99,
     "name": "Kingler-Gmax",
     "apiName": "kingler-gmax",
-    "spriteSlug": "kingler-gigantamax",
+    "spriteSlug": "kingler-gmax",
     "types": [
       "Water"
     ],
@@ -1552,7 +1562,7 @@
     "id": 100,
     "name": "Hisuian Voltorb",
     "apiName": "voltorb-hisui",
-    "spriteSlug": "voltorb-hisuian",
+    "spriteSlug": "voltorb-hisui",
     "types": [
       "Electric",
       "Grass"
@@ -1573,7 +1583,7 @@
     "id": 101,
     "name": "Hisuian Electrode",
     "apiName": "electrode-hisui",
-    "spriteSlug": "electrode-hisuian",
+    "spriteSlug": "electrode-hisui",
     "types": [
       "Electric",
       "Grass"
@@ -1606,7 +1616,7 @@
     "id": 103,
     "name": "Alolan Exeggutor",
     "apiName": "exeggutor-alola",
-    "spriteSlug": "exeggutor-alolan",
+    "spriteSlug": "exeggutor-alola",
     "types": [
       "Grass",
       "Dragon"
@@ -1637,7 +1647,7 @@
     "id": 105,
     "name": "Alolan Marowak",
     "apiName": "marowak-alola",
-    "spriteSlug": "marowak-alolan",
+    "spriteSlug": "marowak-alola",
     "types": [
       "Fire",
       "Ghost"
@@ -1647,8 +1657,8 @@
   {
     "id": 105,
     "name": "Alolan Marowak-Totem",
-    "apiName": "marowak-alola-totem",
-    "spriteSlug": "marowak-alolan-totem",
+    "apiName": "marowak-alola",
+    "spriteSlug": "marowak-alola-totem",
     "types": [
       "Fire",
       "Ghost"
@@ -1709,7 +1719,7 @@
     "id": 110,
     "name": "Galarian Weezing",
     "apiName": "weezing-galar",
-    "spriteSlug": "weezing-galarian",
+    "spriteSlug": "weezing-galar",
     "types": [
       "Poison",
       "Fairy"
@@ -1865,7 +1875,7 @@
     "id": 122,
     "name": "Galarian Mr. Mime",
     "apiName": "mr-mime-galar",
-    "spriteSlug": "mr-mime-galarian",
+    "spriteSlug": "mr-mime-galar",
     "types": [
       "Ice",
       "Psychic"
@@ -1948,8 +1958,8 @@
   {
     "id": 128,
     "name": "Paldean Tauros-Combat",
-    "apiName": "tauros-paldea-combat",
-    "spriteSlug": "tauros-paldean-combat",
+    "apiName": "tauros-paldea-combat-breed",
+    "spriteSlug": "tauros-paldea-combat",
     "types": [
       "Fighting"
     ],
@@ -1958,8 +1968,8 @@
   {
     "id": 128,
     "name": "Paldean Tauros (Blaze)",
-    "apiName": "tauros-paldea-blaze",
-    "spriteSlug": "tauros-paldean-blaze",
+    "apiName": "tauros-paldea-blaze-breed",
+    "spriteSlug": "tauros-paldea-blaze",
     "types": [
       "Fighting",
       "Fire"
@@ -1969,8 +1979,8 @@
   {
     "id": 128,
     "name": "Paldean Tauros (Aqua)",
-    "apiName": "tauros-paldea-aqua",
-    "spriteSlug": "tauros-paldean-aqua",
+    "apiName": "tauros-paldea-aqua-breed",
+    "spriteSlug": "tauros-paldea-aqua",
     "types": [
       "Fighting",
       "Water"
@@ -2024,7 +2034,7 @@
     "id": 131,
     "name": "Lapras-Gmax",
     "apiName": "lapras-gmax",
-    "spriteSlug": "lapras-gigantamax",
+    "spriteSlug": "lapras-gmax",
     "types": [
       "Water",
       "Ice"
@@ -2065,7 +2075,7 @@
     "id": 133,
     "name": "Eevee-Gmax",
     "apiName": "eevee-gmax",
-    "spriteSlug": "eevee-gigantamax",
+    "spriteSlug": "eevee-gmax",
     "types": [
       "Normal"
     ],
@@ -2191,7 +2201,7 @@
     "id": 143,
     "name": "Snorlax-Gmax",
     "apiName": "snorlax-gmax",
-    "spriteSlug": "snorlax-gigantamax",
+    "spriteSlug": "snorlax-gmax",
     "types": [
       "Normal"
     ],
@@ -2212,7 +2222,7 @@
     "id": 144,
     "name": "Galarian Articuno",
     "apiName": "articuno-galar",
-    "spriteSlug": "articuno-galarian",
+    "spriteSlug": "articuno-galar",
     "types": [
       "Psychic",
       "Flying"
@@ -2234,7 +2244,7 @@
     "id": 145,
     "name": "Galarian Zapdos",
     "apiName": "zapdos-galar",
-    "spriteSlug": "zapdos-galarian",
+    "spriteSlug": "zapdos-galar",
     "types": [
       "Fighting",
       "Flying"
@@ -2256,7 +2266,7 @@
     "id": 146,
     "name": "Galarian Moltres",
     "apiName": "moltres-galar",
-    "spriteSlug": "moltres-galarian",
+    "spriteSlug": "moltres-galar",
     "types": [
       "Dark",
       "Flying"
@@ -2421,7 +2431,7 @@
     "id": 157,
     "name": "Hisuian Typhlosion",
     "apiName": "typhlosion-hisui",
-    "spriteSlug": "typhlosion-hisuian",
+    "spriteSlug": "typhlosion-hisui",
     "types": [
       "Fire",
       "Ghost"
@@ -2601,7 +2611,7 @@
   {
     "id": 172,
     "name": "Pichu-Spiky-eared",
-    "apiName": "pichu-spiky-eared",
+    "apiName": "pichu",
     "spriteSlug": "pichu-spiky-eared",
     "types": [
       "Electric"
@@ -2854,7 +2864,7 @@
     "id": 194,
     "name": "Paldean Wooper",
     "apiName": "wooper-paldea",
-    "spriteSlug": "wooper-paldean",
+    "spriteSlug": "wooper-paldea",
     "types": [
       "Poison",
       "Ground"
@@ -2918,7 +2928,7 @@
     "id": 199,
     "name": "Galarian Slowking",
     "apiName": "slowking-galar",
-    "spriteSlug": "slowking-galarian",
+    "spriteSlug": "slowking-galar",
     "types": [
       "Poison",
       "Psychic"
@@ -3065,7 +3075,7 @@
     "id": 211,
     "name": "Hisuian Qwilfish",
     "apiName": "qwilfish-hisui",
-    "spriteSlug": "qwilfish-hisuian",
+    "spriteSlug": "qwilfish-hisui",
     "types": [
       "Dark",
       "Poison"
@@ -3142,7 +3152,7 @@
     "id": 215,
     "name": "Hisuian Sneasel",
     "apiName": "sneasel-hisui",
-    "spriteSlug": "sneasel-hisuian",
+    "spriteSlug": "sneasel-hisui",
     "types": [
       "Fighting",
       "Poison"
@@ -3227,7 +3237,7 @@
     "id": 222,
     "name": "Galarian Corsola",
     "apiName": "corsola-galar",
-    "spriteSlug": "corsola-galarian",
+    "spriteSlug": "corsola-galar",
     "types": [
       "Ghost"
     ],
@@ -3730,7 +3740,7 @@
     "id": 263,
     "name": "Galarian Zigzagoon",
     "apiName": "zigzagoon-galar",
-    "spriteSlug": "zigzagoon-galarian",
+    "spriteSlug": "zigzagoon-galar",
     "types": [
       "Dark",
       "Normal"
@@ -3751,7 +3761,7 @@
     "id": 264,
     "name": "Galarian Linoone",
     "apiName": "linoone-galar",
-    "spriteSlug": "linoone-galarian",
+    "spriteSlug": "linoone-galar",
     "types": [
       "Dark",
       "Normal"
@@ -5288,7 +5298,7 @@
   {
     "id": 386,
     "name": "Deoxys",
-    "apiName": "deoxys",
+    "apiName": "deoxys-normal",
     "spriteSlug": "deoxys",
     "types": [
       "Psychic"
@@ -5611,7 +5621,7 @@
   {
     "id": 413,
     "name": "Wormadam",
-    "apiName": "wormadam",
+    "apiName": "wormadam-plant",
     "spriteSlug": "wormadam",
     "types": [
       "Bug",
@@ -5727,7 +5737,7 @@
   {
     "id": 421,
     "name": "Cherrim-Sunshine",
-    "apiName": "cherrim-sunshine",
+    "apiName": "cherrim",
     "spriteSlug": "cherrim-sunshine",
     "types": [
       "Grass"
@@ -6598,7 +6608,7 @@
   {
     "id": 487,
     "name": "Giratina",
-    "apiName": "giratina",
+    "apiName": "giratina-altered",
     "spriteSlug": "giratina",
     "types": [
       "Ghost",
@@ -6670,7 +6680,7 @@
   {
     "id": 492,
     "name": "Shaymin",
-    "apiName": "shaymin",
+    "apiName": "shaymin-land",
     "spriteSlug": "shaymin",
     "types": [
       "Grass"
@@ -6701,7 +6711,7 @@
   {
     "id": 493,
     "name": "Arceus-Bug",
-    "apiName": "arceus-bug",
+    "apiName": "arceus",
     "spriteSlug": "arceus-bug",
     "types": [
       "Bug"
@@ -6711,7 +6721,7 @@
   {
     "id": 493,
     "name": "Arceus-Dark",
-    "apiName": "arceus-dark",
+    "apiName": "arceus",
     "spriteSlug": "arceus-dark",
     "types": [
       "Dark"
@@ -6721,7 +6731,7 @@
   {
     "id": 493,
     "name": "Arceus-Dragon",
-    "apiName": "arceus-dragon",
+    "apiName": "arceus",
     "spriteSlug": "arceus-dragon",
     "types": [
       "Dragon"
@@ -6731,7 +6741,7 @@
   {
     "id": 493,
     "name": "Arceus-Electric",
-    "apiName": "arceus-electric",
+    "apiName": "arceus",
     "spriteSlug": "arceus-electric",
     "types": [
       "Electric"
@@ -6741,7 +6751,7 @@
   {
     "id": 493,
     "name": "Arceus-Fairy",
-    "apiName": "arceus-fairy",
+    "apiName": "arceus",
     "spriteSlug": "arceus-fairy",
     "types": [
       "Fairy"
@@ -6751,7 +6761,7 @@
   {
     "id": 493,
     "name": "Arceus-Fighting",
-    "apiName": "arceus-fighting",
+    "apiName": "arceus",
     "spriteSlug": "arceus-fighting",
     "types": [
       "Fighting"
@@ -6761,7 +6771,7 @@
   {
     "id": 493,
     "name": "Arceus-Fire",
-    "apiName": "arceus-fire",
+    "apiName": "arceus",
     "spriteSlug": "arceus-fire",
     "types": [
       "Fire"
@@ -6771,7 +6781,7 @@
   {
     "id": 493,
     "name": "Arceus-Flying",
-    "apiName": "arceus-flying",
+    "apiName": "arceus",
     "spriteSlug": "arceus-flying",
     "types": [
       "Flying"
@@ -6781,7 +6791,7 @@
   {
     "id": 493,
     "name": "Arceus-Ghost",
-    "apiName": "arceus-ghost",
+    "apiName": "arceus",
     "spriteSlug": "arceus-ghost",
     "types": [
       "Ghost"
@@ -6791,7 +6801,7 @@
   {
     "id": 493,
     "name": "Arceus-Grass",
-    "apiName": "arceus-grass",
+    "apiName": "arceus",
     "spriteSlug": "arceus-grass",
     "types": [
       "Grass"
@@ -6801,7 +6811,7 @@
   {
     "id": 493,
     "name": "Arceus-Ground",
-    "apiName": "arceus-ground",
+    "apiName": "arceus",
     "spriteSlug": "arceus-ground",
     "types": [
       "Ground"
@@ -6811,7 +6821,7 @@
   {
     "id": 493,
     "name": "Arceus-Ice",
-    "apiName": "arceus-ice",
+    "apiName": "arceus",
     "spriteSlug": "arceus-ice",
     "types": [
       "Ice"
@@ -6821,7 +6831,7 @@
   {
     "id": 493,
     "name": "Arceus-Poison",
-    "apiName": "arceus-poison",
+    "apiName": "arceus",
     "spriteSlug": "arceus-poison",
     "types": [
       "Poison"
@@ -6831,7 +6841,7 @@
   {
     "id": 493,
     "name": "Arceus-Psychic",
-    "apiName": "arceus-psychic",
+    "apiName": "arceus",
     "spriteSlug": "arceus-psychic",
     "types": [
       "Psychic"
@@ -6841,7 +6851,7 @@
   {
     "id": 493,
     "name": "Arceus-Rock",
-    "apiName": "arceus-rock",
+    "apiName": "arceus",
     "spriteSlug": "arceus-rock",
     "types": [
       "Rock"
@@ -6851,7 +6861,7 @@
   {
     "id": 493,
     "name": "Arceus-Steel",
-    "apiName": "arceus-steel",
+    "apiName": "arceus",
     "spriteSlug": "arceus-steel",
     "types": [
       "Steel"
@@ -6861,7 +6871,7 @@
   {
     "id": 493,
     "name": "Arceus-Water",
-    "apiName": "arceus-water",
+    "apiName": "arceus",
     "spriteSlug": "arceus-water",
     "types": [
       "Water"
@@ -6986,7 +6996,7 @@
     "id": 503,
     "name": "Hisuian Samurott",
     "apiName": "samurott-hisui",
-    "spriteSlug": "samurott-hisuian",
+    "spriteSlug": "samurott-hisui",
     "types": [
       "Water",
       "Dark"
@@ -7506,7 +7516,7 @@
     "id": 549,
     "name": "Hisuian Lilligant",
     "apiName": "lilligant-hisui",
-    "spriteSlug": "lilligant-hisuian",
+    "spriteSlug": "lilligant-hisui",
     "types": [
       "Grass",
       "Fighting"
@@ -7516,8 +7526,18 @@
   {
     "id": 550,
     "name": "Basculin",
-    "apiName": "basculin",
+    "apiName": "basculin-red-striped",
     "spriteSlug": "basculin",
+    "types": [
+      "Water"
+    ],
+    "bst": 460
+  },
+  {
+    "id": 550,
+    "name": "Basculin-Blue-Striped",
+    "apiName": "basculin-blue-striped",
+    "spriteSlug": "basculin-blue-striped",
     "types": [
       "Water"
     ],
@@ -7580,7 +7600,7 @@
     "id": 554,
     "name": "Galarian Darumaka",
     "apiName": "darumaka-galar",
-    "spriteSlug": "darumaka-galarian",
+    "spriteSlug": "darumaka-galar",
     "types": [
       "Ice"
     ],
@@ -7589,7 +7609,7 @@
   {
     "id": 555,
     "name": "Darmanitan",
-    "apiName": "darmanitan",
+    "apiName": "darmanitan-standard",
     "spriteSlug": "darmanitan",
     "types": [
       "Fire"
@@ -7610,8 +7630,8 @@
   {
     "id": 555,
     "name": "Galarian Darmanitan",
-    "apiName": "darmanitan-galar",
-    "spriteSlug": "darmanitan-galarian",
+    "apiName": "darmanitan-galar-standard",
+    "spriteSlug": "darmanitan-galar",
     "types": [
       "Ice"
     ],
@@ -7621,7 +7641,7 @@
     "id": 555,
     "name": "Galarian Darmanitan-Zen",
     "apiName": "darmanitan-galar-zen",
-    "spriteSlug": "darmanitan-galarian-zen",
+    "spriteSlug": "darmanitan-galar-zen",
     "types": [
       "Ice",
       "Fire"
@@ -7718,7 +7738,7 @@
     "id": 562,
     "name": "Galarian Yamask",
     "apiName": "yamask-galar",
-    "spriteSlug": "yamask-galarian",
+    "spriteSlug": "yamask-galar",
     "types": [
       "Ground",
       "Ghost"
@@ -7803,7 +7823,7 @@
     "id": 569,
     "name": "Garbodor-Gmax",
     "apiName": "garbodor-gmax",
-    "spriteSlug": "garbodor-gigantamax",
+    "spriteSlug": "garbodor-gmax",
     "types": [
       "Poison"
     ],
@@ -7823,7 +7843,7 @@
     "id": 570,
     "name": "Hisuian Zorua",
     "apiName": "zorua-hisui",
-    "spriteSlug": "zorua-hisuian",
+    "spriteSlug": "zorua-hisui",
     "types": [
       "Normal",
       "Ghost"
@@ -7844,7 +7864,7 @@
     "id": 571,
     "name": "Hisuian Zoroark",
     "apiName": "zoroark-hisui",
-    "spriteSlug": "zoroark-hisuian",
+    "spriteSlug": "zoroark-hisui",
     "types": [
       "Normal",
       "Ghost"
@@ -8364,7 +8384,7 @@
     "id": 618,
     "name": "Galarian Stunfisk",
     "apiName": "stunfisk-galar",
-    "spriteSlug": "stunfisk-galarian",
+    "spriteSlug": "stunfisk-galar",
     "types": [
       "Ground",
       "Steel"
@@ -8492,7 +8512,7 @@
     "id": 628,
     "name": "Hisuian Braviary",
     "apiName": "braviary-hisui",
-    "spriteSlug": "braviary-hisuian",
+    "spriteSlug": "braviary-hisui",
     "types": [
       "Psychic",
       "Flying"
@@ -8633,7 +8653,7 @@
   {
     "id": 641,
     "name": "Tornadus",
-    "apiName": "tornadus",
+    "apiName": "tornadus-incarnate",
     "spriteSlug": "tornadus",
     "types": [
       "Flying"
@@ -8653,7 +8673,7 @@
   {
     "id": 642,
     "name": "Thundurus",
-    "apiName": "thundurus",
+    "apiName": "thundurus-incarnate",
     "spriteSlug": "thundurus",
     "types": [
       "Electric",
@@ -8697,7 +8717,7 @@
   {
     "id": 645,
     "name": "Landorus",
-    "apiName": "landorus",
+    "apiName": "landorus-incarnate",
     "spriteSlug": "landorus",
     "types": [
       "Ground",
@@ -8752,7 +8772,7 @@
   {
     "id": 647,
     "name": "Keldeo",
-    "apiName": "keldeo",
+    "apiName": "keldeo-ordinary",
     "spriteSlug": "keldeo",
     "types": [
       "Water",
@@ -8763,7 +8783,7 @@
   {
     "id": 648,
     "name": "Meloetta",
-    "apiName": "meloetta",
+    "apiName": "meloetta-aria",
     "spriteSlug": "meloetta",
     "types": [
       "Normal",
@@ -8796,7 +8816,7 @@
   {
     "id": 649,
     "name": "Genesect-Douse",
-    "apiName": "genesect-douse",
+    "apiName": "genesect",
     "spriteSlug": "genesect-douse",
     "types": [
       "Bug",
@@ -8807,7 +8827,7 @@
   {
     "id": 649,
     "name": "Genesect-Shock",
-    "apiName": "genesect-shock",
+    "apiName": "genesect",
     "spriteSlug": "genesect-shock",
     "types": [
       "Bug",
@@ -8818,7 +8838,7 @@
   {
     "id": 649,
     "name": "Genesect-Burn",
-    "apiName": "genesect-burn",
+    "apiName": "genesect",
     "spriteSlug": "genesect-burn",
     "types": [
       "Bug",
@@ -8829,7 +8849,7 @@
   {
     "id": 649,
     "name": "Genesect-Chill",
-    "apiName": "genesect-chill",
+    "apiName": "genesect",
     "spriteSlug": "genesect-chill",
     "types": [
       "Bug",
@@ -8955,7 +8975,7 @@
   {
     "id": 658,
     "name": "Greninja-Bond",
-    "apiName": "greninja-bond",
+    "apiName": "greninja-battle-bond",
     "spriteSlug": "greninja-bond",
     "types": [
       "Water",
@@ -9125,13 +9145,13 @@
   },
   {
     "id": 670,
-    "name": "Mega Floette",
-    "apiName": "floette-mega",
-    "spriteSlug": "floette-mega",
+    "name": "Floette-Eternal",
+    "apiName": "floette-eternal",
+    "spriteSlug": "floette-eternal",
     "types": [
       "Fairy"
     ],
-    "bst": 651
+    "bst": 551
   },
   {
     "id": 671,
@@ -9207,7 +9227,7 @@
   {
     "id": 678,
     "name": "Meowstic",
-    "apiName": "meowstic",
+    "apiName": "meowstic-male",
     "spriteSlug": "meowstic",
     "types": [
       "Psychic"
@@ -9217,7 +9237,7 @@
   {
     "id": 678,
     "name": "Meowstic-F",
-    "apiName": "meowstic-f",
+    "apiName": "meowstic-female",
     "spriteSlug": "meowstic-f",
     "types": [
       "Psychic"
@@ -9227,7 +9247,7 @@
   {
     "id": 678,
     "name": "Mega Meowstic-M",
-    "apiName": "meowstic-m-mega",
+    "apiName": "meowstic-male",
     "spriteSlug": "meowstic-m-mega",
     "types": [
       "Psychic"
@@ -9237,7 +9257,7 @@
   {
     "id": 678,
     "name": "Mega Meowstic-F",
-    "apiName": "meowstic-f-mega",
+    "apiName": "meowstic-female",
     "spriteSlug": "meowstic-f-mega",
     "types": [
       "Psychic"
@@ -9269,7 +9289,7 @@
   {
     "id": 681,
     "name": "Aegislash",
-    "apiName": "aegislash",
+    "apiName": "aegislash-shield",
     "spriteSlug": "aegislash",
     "types": [
       "Steel",
@@ -9591,7 +9611,7 @@
     "id": 705,
     "name": "Hisuian Sliggoo",
     "apiName": "sliggoo-hisui",
-    "spriteSlug": "sliggoo-hisuian",
+    "spriteSlug": "sliggoo-hisui",
     "types": [
       "Steel",
       "Dragon"
@@ -9612,7 +9632,7 @@
     "id": 706,
     "name": "Hisuian Goodra",
     "apiName": "goodra-hisui",
-    "spriteSlug": "goodra-hisuian",
+    "spriteSlug": "goodra-hisui",
     "types": [
       "Steel",
       "Dragon"
@@ -9655,7 +9675,7 @@
   {
     "id": 710,
     "name": "Pumpkaboo",
-    "apiName": "pumpkaboo",
+    "apiName": "pumpkaboo-average",
     "spriteSlug": "pumpkaboo",
     "types": [
       "Ghost",
@@ -9699,7 +9719,7 @@
   {
     "id": 711,
     "name": "Gourgeist",
-    "apiName": "gourgeist",
+    "apiName": "gourgeist-average",
     "spriteSlug": "gourgeist",
     "types": [
       "Ghost",
@@ -9764,7 +9784,7 @@
     "id": 713,
     "name": "Hisuian Avalugg",
     "apiName": "avalugg-hisui",
-    "spriteSlug": "avalugg-hisuian",
+    "spriteSlug": "avalugg-hisui",
     "types": [
       "Ice",
       "Rock"
@@ -9817,7 +9837,7 @@
   {
     "id": 718,
     "name": "Zygarde",
-    "apiName": "zygarde",
+    "apiName": "zygarde-50",
     "spriteSlug": "zygarde",
     "types": [
       "Dragon",
@@ -9950,7 +9970,7 @@
     "id": 724,
     "name": "Hisuian Decidueye",
     "apiName": "decidueye-hisui",
-    "spriteSlug": "decidueye-hisuian",
+    "spriteSlug": "decidueye-hisui",
     "types": [
       "Grass",
       "Fighting"
@@ -10075,7 +10095,7 @@
   {
     "id": 735,
     "name": "Gumshoos-Totem",
-    "apiName": "gumshoos-totem",
+    "apiName": "gumshoos",
     "spriteSlug": "gumshoos-totem",
     "types": [
       "Normal"
@@ -10117,7 +10137,7 @@
   {
     "id": 738,
     "name": "Vikavolt-Totem",
-    "apiName": "vikavolt-totem",
+    "apiName": "vikavolt",
     "spriteSlug": "vikavolt-totem",
     "types": [
       "Bug",
@@ -10160,7 +10180,7 @@
   {
     "id": 741,
     "name": "Oricorio",
-    "apiName": "oricorio",
+    "apiName": "oricorio-baile",
     "spriteSlug": "oricorio",
     "types": [
       "Fire",
@@ -10226,7 +10246,7 @@
   {
     "id": 743,
     "name": "Ribombee-Totem",
-    "apiName": "ribombee-totem",
+    "apiName": "ribombee",
     "spriteSlug": "ribombee-totem",
     "types": [
       "Bug",
@@ -10247,7 +10267,7 @@
   {
     "id": 744,
     "name": "Rockruff-Dusk",
-    "apiName": "rockruff-dusk",
+    "apiName": "rockruff-own-tempo",
     "spriteSlug": "rockruff-dusk",
     "types": [
       "Rock"
@@ -10257,8 +10277,28 @@
   {
     "id": 745,
     "name": "Lycanroc",
-    "apiName": "lycanroc",
+    "apiName": "lycanroc-midday",
     "spriteSlug": "lycanroc",
+    "types": [
+      "Rock"
+    ],
+    "bst": 487
+  },
+  {
+    "id": 745,
+    "name": "Lycanroc-Midnight",
+    "apiName": "lycanroc-midnight",
+    "spriteSlug": "lycanroc-midnight",
+    "types": [
+      "Rock"
+    ],
+    "bst": 487
+  },
+  {
+    "id": 745,
+    "name": "Lycanroc-Dusk",
+    "apiName": "lycanroc-dusk",
+    "spriteSlug": "lycanroc-dusk",
     "types": [
       "Rock"
     ],
@@ -10351,7 +10391,7 @@
   {
     "id": 752,
     "name": "Araquanid-Totem",
-    "apiName": "araquanid-totem",
+    "apiName": "araquanid",
     "spriteSlug": "araquanid-totem",
     "types": [
       "Water",
@@ -10382,7 +10422,7 @@
   {
     "id": 754,
     "name": "Lurantis-Totem",
-    "apiName": "lurantis-totem",
+    "apiName": "lurantis",
     "spriteSlug": "lurantis-totem",
     "types": [
       "Grass"
@@ -10436,7 +10476,7 @@
   {
     "id": 758,
     "name": "Salazzle-Totem",
-    "apiName": "salazzle-totem",
+    "apiName": "salazzle",
     "spriteSlug": "salazzle-totem",
     "types": [
       "Poison",
@@ -10615,7 +10655,7 @@
   {
     "id": 773,
     "name": "Silvally-Bug",
-    "apiName": "silvally-bug",
+    "apiName": "silvally",
     "spriteSlug": "silvally-bug",
     "types": [
       "Bug"
@@ -10625,7 +10665,7 @@
   {
     "id": 773,
     "name": "Silvally-Dark",
-    "apiName": "silvally-dark",
+    "apiName": "silvally",
     "spriteSlug": "silvally-dark",
     "types": [
       "Dark"
@@ -10635,7 +10675,7 @@
   {
     "id": 773,
     "name": "Silvally-Dragon",
-    "apiName": "silvally-dragon",
+    "apiName": "silvally",
     "spriteSlug": "silvally-dragon",
     "types": [
       "Dragon"
@@ -10645,7 +10685,7 @@
   {
     "id": 773,
     "name": "Silvally-Electric",
-    "apiName": "silvally-electric",
+    "apiName": "silvally",
     "spriteSlug": "silvally-electric",
     "types": [
       "Electric"
@@ -10655,7 +10695,7 @@
   {
     "id": 773,
     "name": "Silvally-Fairy",
-    "apiName": "silvally-fairy",
+    "apiName": "silvally",
     "spriteSlug": "silvally-fairy",
     "types": [
       "Fairy"
@@ -10665,7 +10705,7 @@
   {
     "id": 773,
     "name": "Silvally-Fighting",
-    "apiName": "silvally-fighting",
+    "apiName": "silvally",
     "spriteSlug": "silvally-fighting",
     "types": [
       "Fighting"
@@ -10675,7 +10715,7 @@
   {
     "id": 773,
     "name": "Silvally-Fire",
-    "apiName": "silvally-fire",
+    "apiName": "silvally",
     "spriteSlug": "silvally-fire",
     "types": [
       "Fire"
@@ -10685,7 +10725,7 @@
   {
     "id": 773,
     "name": "Silvally-Flying",
-    "apiName": "silvally-flying",
+    "apiName": "silvally",
     "spriteSlug": "silvally-flying",
     "types": [
       "Flying"
@@ -10695,7 +10735,7 @@
   {
     "id": 773,
     "name": "Silvally-Ghost",
-    "apiName": "silvally-ghost",
+    "apiName": "silvally",
     "spriteSlug": "silvally-ghost",
     "types": [
       "Ghost"
@@ -10705,7 +10745,7 @@
   {
     "id": 773,
     "name": "Silvally-Grass",
-    "apiName": "silvally-grass",
+    "apiName": "silvally",
     "spriteSlug": "silvally-grass",
     "types": [
       "Grass"
@@ -10715,7 +10755,7 @@
   {
     "id": 773,
     "name": "Silvally-Ground",
-    "apiName": "silvally-ground",
+    "apiName": "silvally",
     "spriteSlug": "silvally-ground",
     "types": [
       "Ground"
@@ -10725,7 +10765,7 @@
   {
     "id": 773,
     "name": "Silvally-Ice",
-    "apiName": "silvally-ice",
+    "apiName": "silvally",
     "spriteSlug": "silvally-ice",
     "types": [
       "Ice"
@@ -10735,7 +10775,7 @@
   {
     "id": 773,
     "name": "Silvally-Poison",
-    "apiName": "silvally-poison",
+    "apiName": "silvally",
     "spriteSlug": "silvally-poison",
     "types": [
       "Poison"
@@ -10745,7 +10785,7 @@
   {
     "id": 773,
     "name": "Silvally-Psychic",
-    "apiName": "silvally-psychic",
+    "apiName": "silvally",
     "spriteSlug": "silvally-psychic",
     "types": [
       "Psychic"
@@ -10755,7 +10795,7 @@
   {
     "id": 773,
     "name": "Silvally-Rock",
-    "apiName": "silvally-rock",
+    "apiName": "silvally",
     "spriteSlug": "silvally-rock",
     "types": [
       "Rock"
@@ -10765,7 +10805,7 @@
   {
     "id": 773,
     "name": "Silvally-Steel",
-    "apiName": "silvally-steel",
+    "apiName": "silvally",
     "spriteSlug": "silvally-steel",
     "types": [
       "Steel"
@@ -10775,7 +10815,7 @@
   {
     "id": 773,
     "name": "Silvally-Water",
-    "apiName": "silvally-water",
+    "apiName": "silvally",
     "spriteSlug": "silvally-water",
     "types": [
       "Water"
@@ -10785,7 +10825,7 @@
   {
     "id": 774,
     "name": "Minior",
-    "apiName": "minior",
+    "apiName": "minior-red-meteor",
     "spriteSlug": "minior",
     "types": [
       "Rock",
@@ -10796,7 +10836,7 @@
   {
     "id": 774,
     "name": "Minior-Meteor",
-    "apiName": "minior-meteor",
+    "apiName": "minior-red-meteor",
     "spriteSlug": "minior-meteor",
     "types": [
       "Rock",
@@ -10839,7 +10879,7 @@
   {
     "id": 777,
     "name": "Togedemaru-Totem",
-    "apiName": "togedemaru-totem",
+    "apiName": "togedemaru",
     "spriteSlug": "togedemaru-totem",
     "types": [
       "Electric",
@@ -10851,7 +10891,7 @@
     "id": 778,
     "name": "Mimikyu",
     "apiName": "mimikyu-disguised",
-    "spriteSlug": "mimikyu-disguised",
+    "spriteSlug": "mimikyu",
     "types": [
       "Ghost",
       "Fairy"
@@ -10872,7 +10912,7 @@
   {
     "id": 778,
     "name": "Mimikyu-Totem",
-    "apiName": "mimikyu-totem",
+    "apiName": "mimikyu-totem-disguised",
     "spriteSlug": "mimikyu-totem",
     "types": [
       "Ghost",
@@ -10883,7 +10923,7 @@
   {
     "id": 778,
     "name": "Mimikyu-Busted-Totem",
-    "apiName": "mimikyu-busted-totem",
+    "apiName": "mimikyu-busted",
     "spriteSlug": "mimikyu-busted-totem",
     "types": [
       "Ghost",
@@ -10970,7 +11010,7 @@
   {
     "id": 784,
     "name": "Kommo-o-Totem",
-    "apiName": "kommo-o-totem",
+    "apiName": "kommo-o",
     "spriteSlug": "kommo-o-totem",
     "types": [
       "Dragon",
@@ -11153,7 +11193,7 @@
   {
     "id": 800,
     "name": "Necrozma-Dusk-Mane",
-    "apiName": "necrozma-dusk-mane",
+    "apiName": "necrozma-dusk",
     "spriteSlug": "necrozma-dusk-mane",
     "types": [
       "Psychic",
@@ -11164,7 +11204,7 @@
   {
     "id": 800,
     "name": "Necrozma-Dawn-Wings",
-    "apiName": "necrozma-dawn-wings",
+    "apiName": "necrozma-dawn",
     "spriteSlug": "necrozma-dawn-wings",
     "types": [
       "Psychic",
@@ -11314,7 +11354,7 @@
     "id": 809,
     "name": "Melmetal-Gmax",
     "apiName": "melmetal-gmax",
-    "spriteSlug": "melmetal-gigantamax",
+    "spriteSlug": "melmetal-gmax",
     "types": [
       "Steel"
     ],
@@ -11354,7 +11394,7 @@
     "id": 812,
     "name": "Rillaboom-Gmax",
     "apiName": "rillaboom-gmax",
-    "spriteSlug": "rillaboom-gigantamax",
+    "spriteSlug": "rillaboom-gmax",
     "types": [
       "Grass"
     ],
@@ -11394,7 +11434,7 @@
     "id": 815,
     "name": "Cinderace-Gmax",
     "apiName": "cinderace-gmax",
-    "spriteSlug": "cinderace-gigantamax",
+    "spriteSlug": "cinderace-gmax",
     "types": [
       "Fire"
     ],
@@ -11434,7 +11474,7 @@
     "id": 818,
     "name": "Inteleon-Gmax",
     "apiName": "inteleon-gmax",
-    "spriteSlug": "inteleon-gigantamax",
+    "spriteSlug": "inteleon-gmax",
     "types": [
       "Water"
     ],
@@ -11495,7 +11535,7 @@
     "id": 823,
     "name": "Corviknight-Gmax",
     "apiName": "corviknight-gmax",
-    "spriteSlug": "corviknight-gigantamax",
+    "spriteSlug": "corviknight-gmax",
     "types": [
       "Flying",
       "Steel"
@@ -11538,7 +11578,7 @@
     "id": 826,
     "name": "Orbeetle-Gmax",
     "apiName": "orbeetle-gmax",
-    "spriteSlug": "orbeetle-gigantamax",
+    "spriteSlug": "orbeetle-gmax",
     "types": [
       "Bug",
       "Psychic"
@@ -11630,7 +11670,7 @@
     "id": 834,
     "name": "Drednaw-Gmax",
     "apiName": "drednaw-gmax",
-    "spriteSlug": "drednaw-gigantamax",
+    "spriteSlug": "drednaw-gmax",
     "types": [
       "Water",
       "Rock"
@@ -11693,7 +11733,7 @@
     "id": 839,
     "name": "Coalossal-Gmax",
     "apiName": "coalossal-gmax",
-    "spriteSlug": "coalossal-gigantamax",
+    "spriteSlug": "coalossal-gmax",
     "types": [
       "Rock",
       "Fire"
@@ -11726,7 +11766,7 @@
     "id": 841,
     "name": "Flapple-Gmax",
     "apiName": "flapple-gmax",
-    "spriteSlug": "flapple-gigantamax",
+    "spriteSlug": "flapple-gmax",
     "types": [
       "Grass",
       "Dragon"
@@ -11748,7 +11788,7 @@
     "id": 842,
     "name": "Appletun-Gmax",
     "apiName": "appletun-gmax",
-    "spriteSlug": "appletun-gigantamax",
+    "spriteSlug": "appletun-gmax",
     "types": [
       "Grass",
       "Dragon"
@@ -11779,7 +11819,7 @@
     "id": 844,
     "name": "Sandaconda-Gmax",
     "apiName": "sandaconda-gmax",
-    "spriteSlug": "sandaconda-gigantamax",
+    "spriteSlug": "sandaconda-gmax",
     "types": [
       "Ground"
     ],
@@ -11790,28 +11830,6 @@
     "name": "Cramorant",
     "apiName": "cramorant",
     "spriteSlug": "cramorant",
-    "types": [
-      "Flying",
-      "Water"
-    ],
-    "bst": 475
-  },
-  {
-    "id": 845,
-    "name": "Cramorant-Gulping",
-    "apiName": "cramorant-gulping",
-    "spriteSlug": "cramorant-gulping",
-    "types": [
-      "Flying",
-      "Water"
-    ],
-    "bst": 475
-  },
-  {
-    "id": 845,
-    "name": "Cramorant-Gorging",
-    "apiName": "cramorant-gorging",
-    "spriteSlug": "cramorant-gorging",
     "types": [
       "Flying",
       "Water"
@@ -11852,7 +11870,7 @@
   {
     "id": 849,
     "name": "Toxtricity",
-    "apiName": "toxtricity",
+    "apiName": "toxtricity-amped",
     "spriteSlug": "toxtricity",
     "types": [
       "Electric",
@@ -11862,9 +11880,31 @@
   },
   {
     "id": 849,
+    "name": "Toxtricity-Low-Key",
+    "apiName": "toxtricity-low-key",
+    "spriteSlug": "toxtricity-low-key",
+    "types": [
+      "Electric",
+      "Poison"
+    ],
+    "bst": 502
+  },
+  {
+    "id": 849,
     "name": "Toxtricity-Gmax",
-    "apiName": "toxtricity-gmax",
-    "spriteSlug": "toxtricity-gigantamax",
+    "apiName": "toxtricity-amped-gmax",
+    "spriteSlug": "toxtricity-gmax",
+    "types": [
+      "Electric",
+      "Poison"
+    ],
+    "bst": 502
+  },
+  {
+    "id": 849,
+    "name": "Toxtricity-Low-Key-Gmax",
+    "apiName": "toxtricity-low-key-gmax",
+    "spriteSlug": "toxtricity-low-key-gmax",
     "types": [
       "Electric",
       "Poison"
@@ -11897,7 +11937,7 @@
     "id": 851,
     "name": "Centiskorch-Gmax",
     "apiName": "centiskorch-gmax",
-    "spriteSlug": "centiskorch-gigantamax",
+    "spriteSlug": "centiskorch-gmax",
     "types": [
       "Fire",
       "Bug"
@@ -11979,7 +12019,7 @@
     "id": 858,
     "name": "Hatterene-Gmax",
     "apiName": "hatterene-gmax",
-    "spriteSlug": "hatterene-gigantamax",
+    "spriteSlug": "hatterene-gmax",
     "types": [
       "Psychic",
       "Fairy"
@@ -12023,7 +12063,7 @@
     "id": 861,
     "name": "Grimmsnarl-Gmax",
     "apiName": "grimmsnarl-gmax",
-    "spriteSlug": "grimmsnarl-gigantamax",
+    "spriteSlug": "grimmsnarl-gmax",
     "types": [
       "Dark",
       "Fairy"
@@ -12117,7 +12157,7 @@
     "id": 869,
     "name": "Alcremie-Gmax",
     "apiName": "alcremie-gmax",
-    "spriteSlug": "alcremie-gigantamax",
+    "spriteSlug": "alcremie-gmax",
     "types": [
       "Fairy"
     ],
@@ -12188,18 +12228,8 @@
   {
     "id": 875,
     "name": "Eiscue",
-    "apiName": "eiscue",
+    "apiName": "eiscue-ice",
     "spriteSlug": "eiscue",
-    "types": [
-      "Ice"
-    ],
-    "bst": 470
-  },
-  {
-    "id": 875,
-    "name": "Eiscue-Noice",
-    "apiName": "eiscue-noice",
-    "spriteSlug": "eiscue-noice",
     "types": [
       "Ice"
     ],
@@ -12208,7 +12238,7 @@
   {
     "id": 876,
     "name": "Indeedee",
-    "apiName": "indeedee",
+    "apiName": "indeedee-male",
     "spriteSlug": "indeedee",
     "types": [
       "Psychic",
@@ -12219,7 +12249,7 @@
   {
     "id": 876,
     "name": "Indeedee-F",
-    "apiName": "indeedee-f",
+    "apiName": "indeedee-female",
     "spriteSlug": "indeedee-f",
     "types": [
       "Psychic",
@@ -12230,19 +12260,8 @@
   {
     "id": 877,
     "name": "Morpeko",
-    "apiName": "morpeko",
+    "apiName": "morpeko-full-belly",
     "spriteSlug": "morpeko",
-    "types": [
-      "Electric",
-      "Dark"
-    ],
-    "bst": 436
-  },
-  {
-    "id": 877,
-    "name": "Morpeko-Hangry",
-    "apiName": "morpeko-hangry",
-    "spriteSlug": "morpeko-hangry",
     "types": [
       "Electric",
       "Dark"
@@ -12273,7 +12292,7 @@
     "id": 879,
     "name": "Copperajah-Gmax",
     "apiName": "copperajah-gmax",
-    "spriteSlug": "copperajah-gigantamax",
+    "spriteSlug": "copperajah-gmax",
     "types": [
       "Steel"
     ],
@@ -12338,7 +12357,7 @@
     "id": 884,
     "name": "Duraludon-Gmax",
     "apiName": "duraludon-gmax",
-    "spriteSlug": "duraludon-gigantamax",
+    "spriteSlug": "duraludon-gmax",
     "types": [
       "Steel",
       "Dragon"
@@ -12455,7 +12474,7 @@
   {
     "id": 892,
     "name": "Urshifu",
-    "apiName": "urshifu",
+    "apiName": "urshifu-single-strike",
     "spriteSlug": "urshifu",
     "types": [
       "Fighting",
@@ -12477,8 +12496,8 @@
   {
     "id": 892,
     "name": "Urshifu-Gmax",
-    "apiName": "urshifu-gmax",
-    "spriteSlug": "urshifu-gigantamax",
+    "apiName": "urshifu-single-strike-gmax",
+    "spriteSlug": "urshifu-gmax",
     "types": [
       "Fighting",
       "Dark"
@@ -12489,7 +12508,7 @@
     "id": 892,
     "name": "Urshifu-Rapid-Strike-Gmax",
     "apiName": "urshifu-rapid-strike-gmax",
-    "spriteSlug": "urshifu-rapid-strike-gigantamax",
+    "spriteSlug": "urshifu-rapid-strike-gmax",
     "types": [
       "Fighting",
       "Water"
@@ -12627,7 +12646,7 @@
   {
     "id": 902,
     "name": "Basculegion",
-    "apiName": "basculegion",
+    "apiName": "basculegion-male",
     "spriteSlug": "basculegion",
     "types": [
       "Water",
@@ -12638,7 +12657,7 @@
   {
     "id": 902,
     "name": "Basculegion-F",
-    "apiName": "basculegion-f",
+    "apiName": "basculegion-female",
     "spriteSlug": "basculegion-f",
     "types": [
       "Water",
@@ -12671,7 +12690,7 @@
   {
     "id": 905,
     "name": "Enamorus",
-    "apiName": "enamorus",
+    "apiName": "enamorus-incarnate",
     "spriteSlug": "enamorus",
     "types": [
       "Fairy",
@@ -12796,7 +12815,7 @@
   {
     "id": 916,
     "name": "Oinkologne",
-    "apiName": "oinkologne",
+    "apiName": "oinkologne-male",
     "spriteSlug": "oinkologne",
     "types": [
       "Normal"
@@ -12806,7 +12825,7 @@
   {
     "id": 916,
     "name": "Oinkologne-F",
-    "apiName": "oinkologne-f",
+    "apiName": "oinkologne-female",
     "spriteSlug": "oinkologne-f",
     "types": [
       "Normal"
@@ -12907,16 +12926,6 @@
     "bst": 470
   },
   {
-    "id": 925,
-    "name": "Maushold-Four",
-    "apiName": "maushold-family-of-four",
-    "spriteSlug": "maushold-four",
-    "types": [
-      "Normal"
-    ],
-    "bst": 470
-  },
-  {
     "id": 926,
     "name": "Fidough",
     "apiName": "fidough",
@@ -12972,7 +12981,7 @@
   {
     "id": 931,
     "name": "Squawkabilly",
-    "apiName": "squawkabilly",
+    "apiName": "squawkabilly-green-plumage",
     "spriteSlug": "squawkabilly",
     "types": [
       "Normal",
@@ -13498,7 +13507,7 @@
   {
     "id": 978,
     "name": "Tatsugiri",
-    "apiName": "tatsugiri",
+    "apiName": "tatsugiri-curly",
     "spriteSlug": "tatsugiri",
     "types": [
       "Dragon",
@@ -13542,7 +13551,7 @@
   {
     "id": 982,
     "name": "Dudunsparce",
-    "apiName": "dudunsparce",
+    "apiName": "dudunsparce-two-segment",
     "spriteSlug": "dudunsparce",
     "types": [
       "Normal"
@@ -13956,7 +13965,7 @@
   {
     "id": 1017,
     "name": "Ogerpon-Wellspring",
-    "apiName": "ogerpon-wellspring",
+    "apiName": "ogerpon-wellspring-mask",
     "spriteSlug": "ogerpon-wellspring",
     "types": [
       "Grass",
@@ -13967,7 +13976,7 @@
   {
     "id": 1017,
     "name": "Ogerpon-Hearthflame",
-    "apiName": "ogerpon-hearthflame",
+    "apiName": "ogerpon-hearthflame-mask",
     "spriteSlug": "ogerpon-hearthflame",
     "types": [
       "Grass",
@@ -13978,7 +13987,7 @@
   {
     "id": 1017,
     "name": "Ogerpon-Cornerstone",
-    "apiName": "ogerpon-cornerstone",
+    "apiName": "ogerpon-cornerstone-mask",
     "spriteSlug": "ogerpon-cornerstone",
     "types": [
       "Grass",
@@ -13989,7 +13998,7 @@
   {
     "id": 1017,
     "name": "Ogerpon-Teal-Tera",
-    "apiName": "ogerpon-teal-tera",
+    "apiName": "ogerpon",
     "spriteSlug": "ogerpon-teal-tera",
     "types": [
       "Grass"
@@ -13999,7 +14008,7 @@
   {
     "id": 1017,
     "name": "Ogerpon-Wellspring-Tera",
-    "apiName": "ogerpon-wellspring-tera",
+    "apiName": "ogerpon-wellspring-mask",
     "spriteSlug": "ogerpon-wellspring-tera",
     "types": [
       "Grass",
@@ -14010,7 +14019,7 @@
   {
     "id": 1017,
     "name": "Ogerpon-Hearthflame-Tera",
-    "apiName": "ogerpon-hearthflame-tera",
+    "apiName": "ogerpon-hearthflame-mask",
     "spriteSlug": "ogerpon-hearthflame-tera",
     "types": [
       "Grass",
@@ -14021,7 +14030,7 @@
   {
     "id": 1017,
     "name": "Ogerpon-Cornerstone-Tera",
-    "apiName": "ogerpon-cornerstone-tera",
+    "apiName": "ogerpon-cornerstone-mask",
     "spriteSlug": "ogerpon-cornerstone-tera",
     "types": [
       "Grass",
