@@ -444,7 +444,15 @@ function displayAnalysis(t1, t2) {
 
     // AI Advisor
     try {
-        const advice = getTacticalAdvice(def.weaknesses4x, def.weaknesses2x, appData.types, appData.effectiveness, appData.pokemonList);
+        // Use currentPokemon for context-aware suggestions (Tiering)
+        // If analysis is just types (no pokemon selected), currentPokemon might be null or mismatch, 
+        // but displayAnalysis logic ensures we use what we have or null.
+        const relevantPokemon = (currentPokemon && 
+                                (currentPokemon.types.includes(ui.capitalizeWords(t1)) || 
+                                 (t2 && currentPokemon.types.includes(ui.capitalizeWords(t2))))) 
+                                ? currentPokemon : null;
+
+        const advice = getTacticalAdvice(def.weaknesses4x, def.weaknesses2x, appData.types, appData.effectiveness, appData.pokemonList, relevantPokemon);
         ui.renderTacticalAdvice(document.getElementById('tactical-advice'), advice);
     } catch (error) {
         console.error("AI Advisor error:", error);
