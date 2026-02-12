@@ -53,12 +53,69 @@ export async function fetchPokemonDetails(identifier) {
         return pokemonCache.get(cacheKey);
     }
 
+    let data;
+    let isFallback = false;
+
     try {
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${identifier}`);
         if (!response.ok) throw new Error('Pokemon not found');
-        const data = await response.json();
+        data = await response.json();
+    } catch (apiError) {
+        // Fallback to local data
+        const appData = await loadAppData();
+        const localPokemon = appData.pokemonList.find(p => p.apiName === identifier || p.id == identifier);
+        
+        if (!localPokemon) return null;
 
-        // Fetch ability descriptions and localized names
+        isFallback = true;
+        
+        // Construct partial data object
+        data = {
+            id: localPokemon.id,
+            name: localPokemon.name, // Display name usually
+            types: localPokemon.types.map(t => ({ type: { name: t.toLowerCase() } })),
+            stats: localPokemon.stats ? [
+                { base_stat: localPokemon.stats.hp, stat: { name: 'hp' } },
+                { base_stat: localPokemon.stats.atk, stat: { name: 'attack' } },
+                { base_stat: localPokemon.stats.def, stat: { name: 'defense' } },
+                { base_stat: localPokemon.stats.spa, stat: { name: 'special-attack' } },
+                { base_stat: localPokemon.stats.spd, stat: { name: 'special-defense' } },
+                { base_stat: localPokemon.stats.spe, stat: { name: 'speed' } }
+            ] : [],
+            abilities: []
+        };
+
+        if (localPokemon.abilities) {
+            Object.entries(localPokemon.abilities).forEach(([key, abilityName]) => {
+                data.abilities.push({
+                    is_hidden: key === 'H',
+                    ability: {
+                        name: abilityName.toLowerCase().replace(/ /g, '-'), // slug for i18n lookup
+                        url: null, // Signal that we can't fetch details
+                        displayName: i18n.tAbility(abilityName) // Use local translation
+                    }
+                });
+            });
+        }
+    }
+
+    if (isFallback) {
+        // Process fallback abilities (just add description placeholder)
+        data.abilities.forEach(entry => {
+            // Try to find description in messages if manual
+            const rawName = entry.ability.name;
+            const spacedName = rawName.replace(/-/g, ' ');
+            const manualDesc = i18n.t(`${rawName}_desc`);
+            
+            entry.description = manualDesc !== `${rawName}_desc` ? manualDesc : i18n.t('stats_unavailable');
+        });
+        
+        pokemonCache.set(cacheKey, data);
+        return data;
+    }
+
+    // Standard API Processing
+    try {
         const abilityPromises = data.abilities.map(async (entry) => {
             try {
                 let abilityData;
@@ -73,16 +130,14 @@ export async function fetchPokemonDetails(identifier) {
                 }
 
                 // 1. Localize Name
-                // PokeAPI names array: [{ name: "Stench", language: { name: "en" } }, ...]
                 const nameEntry = abilityData.names.find(n => n.language.name === currentLang);
                 if (nameEntry) {
-                    entry.ability.displayName = nameEntry.name; // Store localized name separately
+                    entry.ability.displayName = nameEntry.name;
                 } else {
-                    entry.ability.displayName = capitalizeWords(entry.ability.name); // Fallback
+                    entry.ability.displayName = capitalizeWords(entry.ability.name);
                 }
 
                 // 2. Localize Description
-                // Try flavor_text first (usually better for UI), then effect_entries
                 let descEntry = abilityData.flavor_text_entries
                     .filter(f => f.language.name === currentLang)
                     .pop();
@@ -91,8 +146,7 @@ export async function fetchPokemonDetails(identifier) {
                     descEntry = abilityData.effect_entries.find(e => e.language.name === currentLang);
                 }
 
-                // Check manual translation in messages.js if API fails for current lang
-                // Try both hyphenated and space versions
+                // Manual Override Check
                 const rawName = abilityData.name.toLowerCase();
                 const spacedName = rawName.replace(/-/g, ' ');
                 
@@ -107,15 +161,17 @@ export async function fetchPokemonDetails(identifier) {
                     entry.description = finalManualDesc;
                 } else if (descEntry) {
                     let text = descEntry.flavor_text || descEntry.short_effect || descEntry.effect;
-                    entry.description = text.replace(/[\n\f]/g, ' ');
+                    entry.description = text.replace(/[
+]/g, ' ');
                 } else {
-                    // Fallback to English API
+                    // English Fallback
                     descEntry = abilityData.flavor_text_entries.find(f => f.language.name === 'en') || 
                                 abilityData.effect_entries.find(e => e.language.name === 'en');
                     
                     if (descEntry) {
                         let text = descEntry.flavor_text || descEntry.short_effect || descEntry.effect;
-                        entry.description = text.replace(/[\n\f]/g, ' ');
+                        entry.description = text.replace(/[
+]/g, ' ');
                     } else {
                         entry.description = 'No description available.';
                     }
@@ -130,13 +186,11 @@ export async function fetchPokemonDetails(identifier) {
 
         await Promise.all(abilityPromises);
         
-        // Cache the fully processed object
         pokemonCache.set(cacheKey, data);
-        
         return data;
 
     } catch (error) {
-        console.error('Error fetching Pokemon details:', error);
+        console.error('Error processing Pokemon details:', error);
         return null;
     }
 }
