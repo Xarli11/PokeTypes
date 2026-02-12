@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.22.5] - 2026-02-11
+
+### Improved
+- **UI:** Updated stat labels to be more professional and clear (e.g., "Sp. Atk" instead of "SpA", "Def. Esp" instead of "DefEsp").
+- **UI:** Adjusted layout to accommodate longer stat names without truncation.
+
 ## [2.22.4] - 2026-02-11
 
 ### Fixed
