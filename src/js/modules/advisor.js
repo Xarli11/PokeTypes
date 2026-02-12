@@ -1,5 +1,5 @@
-import { getEffectiveness } from './calculator.js?v=2.22.2';
-import { capitalizeWords } from './ui.js?v=2.22.2';
+import { getEffectiveness } from './calculator.js?v=2.22.3';
+import { capitalizeWords } from './ui.js?v=2.22.3';
 
 export function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiveness, pokemonList, activePokemon = null) {
     // 1. Identify the biggest threat
@@ -74,13 +74,31 @@ export function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiv
         activeWeaknesses = [...(weaknesses4x || []), ...(weaknesses2x || [])];
     } 
 
+    // Exclude battle-only forms, Megas, and other non-standard forms
+    const EXCLUDED_FORMS = [
+        '-Mega', '-Gmax', '-Eternamax', 
+        '-Zen', '-Pirouette', '-Resolute', '-Sunshine', '-Rainy', '-Snowy', 
+        '-Sunny', '-Castform', '-Primal', '-Origin', '-Therian', '-Sky',
+        '-School', '-Complete', '-Ash', '-Hero', '-Blade'
+    ];
+    // Note: Some forms like 'Therian', 'Origin', 'Sky' might be competitive standard.
+    // However, 'Zen' is definitely battle-only. 
+    // Let's be specific to avoid excluding valid forms like Landorus-Therian if possible.
+    // For now, let's target the problematic ones reported: Zen.
+    
+    const STRICT_EXCLUSIONS = [
+        '-Mega', '-Gmax', '-Eternamax', 
+        '-Zen', '-Pirouette', '-School', '-Complete', '-Ash', 
+        '-Meteor', '-Busted', '-Gulping', '-Gorging'
+    ];
+
     if (pokemonList && Array.isArray(pokemonList)) {
         topTypes.forEach(type => {
             // Base filter: Type match, basic form validity
             const baseFilter = p => 
                 p.types && p.types.includes(type) && 
-                p.name && !p.name.includes('Gmax') &&
-                !p.name.includes('Mega'); // Exclude Megas from auto-suggestions unless specifically requested
+                p.name && 
+                !STRICT_EXCLUSIONS.some(ex => p.name.includes(ex));
 
             // Helper to get candidates by tier
             const getByTier = (tier) => {
