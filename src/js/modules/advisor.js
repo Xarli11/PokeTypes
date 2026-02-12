@@ -1,7 +1,7 @@
 import { getEffectiveness } from './calculator.js';
 import { capitalizeWords } from './ui.js';
 
-export function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiveness, pokemonList) {
+export function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiveness, pokemonList, activePokemon = null) {
     // 1. Identify the biggest threat
     let targetThreat = null;
     let threatMultiplier = 0;
@@ -47,37 +47,117 @@ export function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiv
     // Pick top 2 candidate types
     const topTypes = candidates.slice(0, 2).map(c => c.type);
 
-    // 3. Find Example Pokemon (High Stats)
+    // 3. Find Example Pokemon with Smart Scoring
     const suggestions = [];
     
+    // Define Tiers (Adjusted for better quality)
+    const TIERS = {
+        HIGH: { min: 560, label: 'High' }, // Legends, Paradox, Pseudos
+        MID: { min: 450, max: 560, label: 'Mid' }, // Strong Standards (Starters, etc.)
+        LOW: { max: 450, label: 'Low' } // Niche, NFE, LC
+    };
+
+    // Determine Active Tier
+    let activeTier = 'MID'; 
+    let activeWeaknesses = [];
+    
+    if (activePokemon) {
+        if (activePokemon.bst) {
+            if (activePokemon.bst >= TIERS.HIGH.min) activeTier = 'HIGH';
+            else if (activePokemon.bst <= TIERS.LOW.max) activeTier = 'LOW';
+            else activeTier = 'MID';
+        }
+        
+        // Calculate Active Pokemon's weaknesses for penalty logic
+        // We need to know what the active pokemon is weak to, to check for shared weaknesses
+        // We can infer this from the passed `weaknesses4x` and `weaknesses2x` lists
+        activeWeaknesses = [...(weaknesses4x || []), ...(weaknesses2x || [])];
+    } 
+
     if (pokemonList && Array.isArray(pokemonList)) {
         topTypes.forEach(type => {
-            // Filter for strong candidates (BST >= 485 is a good baseline for fully evolved/competitive)
-            let potentialPartners = pokemonList.filter(p => 
+            // Base filter: Type match, basic form validity
+            const baseFilter = p => 
                 p.types && p.types.includes(type) && 
-                p.name && !p.name.includes('Mega') && 
-                !p.name.includes('Gmax') &&
-                (p.bst || 0) >= 485 
-            );
-            
-            // Fallback: If no strong pokemon found (e.g. Bug type has few high BST), lower the bar
-            if (potentialPartners.length === 0) {
-                potentialPartners = pokemonList.filter(p => 
-                    p.types && p.types.includes(type) && 
-                    !p.name.includes('Mega') && !p.name.includes('Gmax') &&
-                    (p.bst || 0) >= 400
-                );
+                p.name && !p.name.includes('Gmax') &&
+                !p.name.includes('Mega'); // Exclude Megas from auto-suggestions unless specifically requested
+
+            // Helper to get candidates by tier
+            const getByTier = (tier) => {
+                return pokemonList.filter(p => {
+                    if (!baseFilter(p)) return false;
+                    const bst = p.bst || 0;
+                    if (tier === 'HIGH') return bst >= TIERS.HIGH.min;
+                    if (tier === 'MID') return bst >= TIERS.MID.min && bst < TIERS.MID.max;
+                    if (tier === 'LOW') return bst < TIERS.LOW.max;
+                    return false;
+                });
+            };
+
+            // 1. Get Candidates (Try Same Tier -> Fallback)
+            let candidates = getByTier(activeTier);
+            if (candidates.length === 0) {
+                if (activeTier === 'HIGH') candidates = getByTier('MID');
+                else if (activeTier === 'MID') candidates = [...getByTier('HIGH'), ...getByTier('LOW')];
+                else if (activeTier === 'LOW') candidates = getByTier('MID');
             }
 
-            if (potentialPartners.length > 0) {
-                // Sort by BST descending (strongest first)
-                potentialPartners.sort((a, b) => b.bst - a.bst);
+            // 2. SMART SCORING ALGORITHM
+            if (candidates.length > 0) {
+                const secondaryThreats = activeWeaknesses.filter(t => t !== targetThreat);
                 
-                // Pick one from the top 5 to add variety but keep quality
-                const topSelection = potentialPartners.slice(0, 5);
-                const randomChoice = topSelection[Math.floor(Math.random() * topSelection.length)];
-                
-                suggestions.push(randomChoice);
+                const scoredCandidates = candidates.map(p => {
+                    let score = 0;
+                    
+                    // A. Main Threat Resistance (Mandatory Check, Weighted)
+                    let mainDef = 1;
+                    p.types.forEach(t => mainDef *= getEffectiveness(targetThreat, t, effectiveness));
+                    
+                    if (mainDef >= 1) return null; // Discard if doesn't resist main threat
+                    
+                    score += 100; // Base score for being a counter
+                    if (mainDef <= 0.25) score += 20; // Bonus for x4 resistance/immunity
+
+                    // B. Coverage Bonus (Resisting other weaknesses of the active mon)
+                    secondaryThreats.forEach(secThreat => {
+                        let secDef = 1;
+                        p.types.forEach(t => secDef *= getEffectiveness(secThreat, t, effectiveness));
+                        if (secDef < 1) score += 20;
+                        if (secDef <= 0.25) score += 5; // Slight bonus for hard resist
+                    });
+
+                    // C. Stat Weight (BST)
+                    // 600 BST -> +120 pts
+                    // 400 BST -> +80 pts
+                    // Difference of 40 pts helps break ties between Magcargo and Heatran
+                    score += ((p.bst || 400) / 5);
+
+                    // D. Shared Weakness Penalty (Synergy Check)
+                    // If the candidate is ALSO weak to what the Active mon is weak to, that's bad.
+                    if (activePokemon) {
+                        activeWeaknesses.forEach(weakness => {
+                            let candidateDef = 1;
+                            p.types.forEach(t => candidateDef *= getEffectiveness(weakness, t, effectiveness));
+                            
+                            if (candidateDef > 1) {
+                                score -= 20; // Shared weakness penalty
+                                if (candidateDef >= 4) score -= 30; // Shared x4 weakness is VERY bad
+                            }
+                        });
+                    }
+
+                    return { pokemon: p, score: score };
+                }).filter(c => c !== null);
+
+                // Sort by Score DESC
+                candidates = scoredCandidates
+                    .sort((a, b) => b.score - a.score)
+                    .map(c => c.pokemon);
+            }
+
+            if (candidates.length > 0) {
+                // Pick the absolute best match
+                suggestions.push(candidates[0]);
             }
         });
     }
