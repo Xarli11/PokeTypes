@@ -196,30 +196,53 @@ export function populateSelects(ids, types) {
 }
 
 
-export function getPokemonImageUrl(p) {
+export function getPokemonImageUrl(p, imageFixes = {}) {
+    const apiName = p.apiName || p.name?.toLowerCase();
+    const fix = imageFixes[apiName];
+
+    if (fix) {
+        if (fix.type === 'slug') {
+            return `https://img.pokemondb.net/sprites/home/normal/${fix.value}.png`;
+        } else if (fix.type === 'url') {
+            return fix.value;
+        }
+    }
+
     return (p.spriteSlug || p.apiName)
         ? `https://img.pokemondb.net/sprites/home/normal/${p.spriteSlug || p.apiName}.png`
         : (p.id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png` : 'pokeball.png');
 }
 
-export function renderPokemonHero(container, pokemon, contrastData) {
+export function renderPokemonHero(container, pokemon, contrastData, imageFixes = {}) {
     if (!pokemon) {
         container.innerHTML = '';
         return;
     }
 
     const slug = pokemon.spriteSlug || pokemon.apiName;
+    const fix = imageFixes[pokemon.apiName];
+    
     const localizedName = i18n.t(pokemon.name.toLowerCase());
     const displayName = localizedName !== pokemon.name.toLowerCase() ? localizedName : capitalizeWords(pokemon.name);
     
     const typePills = pokemon.types.map(t => createTypePill(t, contrastData)).join('');
 
     // Image Sources Strategy
+    let primaryUrl = `https://play.pokemonshowdown.com/sprites/ani/${slug}.gif`;
+    
+    if (fix) {
+        if (fix.type === 'slug') {
+            primaryUrl = `https://img.pokemondb.net/sprites/home/normal/${fix.value}.png`;
+        } else {
+            primaryUrl = fix.value;
+        }
+    }
+
     const sources = [
-        `https://play.pokemonshowdown.com/sprites/ani/${slug}.gif`,       // 1. Animated (Best)
-        `https://img.pokemondb.net/sprites/home/normal/${slug}.png`,      // 2. High Res Static
-        `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`, // 3. Low Res Static (Reliable)
-        'pokeball.png'                                                    // 4. Fallback
+        primaryUrl,
+        `https://img.pokemondb.net/sprites/home/normal/${slug}.png`,
+        `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`,
+        'pokeball.png'
     ];
 
     const contentHTML = `

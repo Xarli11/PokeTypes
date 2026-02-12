@@ -127,7 +127,7 @@ function setupEventListeners(appData) {
         if (matches.length > 0) {
             suggestions.innerHTML = matches.map(p => `
                 <li data-name="${p.name}" class="cursor-pointer px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-3 border-b border-slate-100 dark:border-slate-700 last:border-0">
-                    <img src="${getPokemonImageUrl(p)}" class="w-8 h-8 object-contain">
+                    <img src="${getPokemonImageUrl(p, appData.imageFixes)}" class="w-8 h-8 object-contain">
                     <span class="text-sm font-bold dark:text-white">${p.displayName}</span>
                 </li>
             `).join('');
@@ -175,7 +175,7 @@ async function selectDefender(pokemon, appData) {
     // UI Update
     document.getElementById('sim-defender-input').classList.add('hidden');
     document.getElementById('sim-defender-display').classList.remove('hidden');
-    document.getElementById('sim-defender-img').src = getPokemonImageUrl(pokemon);
+    document.getElementById('sim-defender-img').src = getPokemonImageUrl(pokemon, appData.imageFixes);
     document.getElementById('sim-defender-name').textContent = capitalizeWords(pokemon.name); // Or localized name
     document.getElementById('sim-defender-types').innerHTML = pokemon.types.map(t => createTypePill(t, appData.contrast)).join('');
 

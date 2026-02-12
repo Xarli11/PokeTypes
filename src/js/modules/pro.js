@@ -99,7 +99,7 @@ function renderTeamGrid() {
                 <span class="mt-2 text-xs font-bold text-slate-400 group-hover:text-indigo-500">${i18n.t('pro_add_pokemon')}</span>
             </div>`;
         } else {
-            const imageUrl = getPokemonImageUrl(member);
+            const imageUrl = getPokemonImageUrl(member, appData?.imageFixes || {});
             const typePills = member.types.map(t => createTypePill(t, contrastData)).join('');
             
             // Ability Dropdown Logic
@@ -385,7 +385,7 @@ function setupSearchModal() {
             resultsContainer.innerHTML = `<div class="py-12 text-center text-slate-400 text-sm">${i18n.t('none')}</div>`;
         } else {
             resultsContainer.innerHTML = topMatches.map((p) => {
-                const imageUrl = getPokemonImageUrl(p);
+                const imageUrl = getPokemonImageUrl(p, appData?.imageFixes || {});
                 const typePills = p.types.map(t => createTypePill(t, contrastData)).join('');
                 
                 return `
