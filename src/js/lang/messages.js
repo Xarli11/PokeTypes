@@ -62,6 +62,31 @@ export const messages = {
         stat_spd: "Sp. Def",
         stat_spe: "Speed",
         
+        // Pro Mode
+        pro_team_title: "Your Team",
+        pro_add_pokemon: "Add Pokemon",
+        pro_team_analysis: "Team Analysis",
+        pro_analysis_placeholder: "Add Pokemon to your team to see detailed coverage analysis, weakness alerts, and offensive gaps.",
+        pro_defense_coverage: "Defense Coverage",
+        pro_weak: "Weak",
+        pro_resist: "Resist",
+        pro_immune: "Immune",
+        alert_weakness: "{count} teammates are weak to {type}",
+        alert_no_resist: "No resistances to {type}",
+        confirm_delete_title: "Remove Pokemon?",
+        confirm_delete_msg: "Are you sure you want to remove this Pokemon from your team?",
+        btn_cancel: "Cancel",
+        btn_remove: "Remove",
+        
+        // Pro Roles
+        pro_roles_title: "Team Roles (Based on Stats)",
+        role_phys_sweeper: "Phys. Attacker",
+        role_spec_sweeper: "Spec. Attacker",
+        role_phys_wall: "Phys. Wall",
+        role_spec_wall: "Spec. Wall",
+        role_mixed_wall: "Mixed Wall",
+        role_speedster: "Speedster",
+        
         // Types
         normal: "Normal",
         fire: "Fire",
@@ -174,6 +199,31 @@ export const messages = {
         stat_spa: "At. Esp",
         stat_spd: "Def. Esp",
         stat_spe: "Velocidad",
+        
+        // Pro Mode
+        pro_team_title: "Tu Equipo",
+        pro_add_pokemon: "Añadir Pokémon",
+        pro_team_analysis: "Análisis de Equipo",
+        pro_analysis_placeholder: "Añade Pokémon para ver el análisis de cobertura, alertas de debilidades y roles del equipo.",
+        pro_defense_coverage: "Cobertura Defensiva",
+        pro_weak: "Débil",
+        pro_resist: "Resiste",
+        pro_immune: "Inmune",
+        alert_weakness: "{count} compañeros son débiles a {type}",
+        alert_no_resist: "Sin resistencias a {type}",
+        confirm_delete_title: "¿Eliminar Pokémon?",
+        confirm_delete_msg: "¿Seguro que quieres eliminar a este Pokémon de tu equipo?",
+        btn_cancel: "Cancelar",
+        btn_remove: "Eliminar",
+        
+        // Pro Roles
+        pro_roles_title: "Roles del Equipo (Estadísticas)",
+        role_phys_sweeper: "Atacante Físico",
+        role_spec_sweeper: "Atacante Esp.",
+        role_phys_wall: "Muro Físico",
+        role_spec_wall: "Muro Especial",
+        role_mixed_wall: "Muro Mixto",
+        role_speedster: "Velocista",
         
         // Types
         normal: "Normal",

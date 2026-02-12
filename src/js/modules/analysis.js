@@ -2,33 +2,27 @@
 import { calculateDefense } from './calculator.js?v=2.22.8';
 
 export function analyzeTeamDefense(team, allTypes, effectiveness) {
-    // Initialize counters for all 18 types
     const defenseMatrix = {};
     
     allTypes.forEach(type => {
         defenseMatrix[type] = {
-            weak: 0, // x2 or x4
-            resist: 0, // x0.5 or x0.25
-            immune: 0, // x0
-            pokemonWeak: [],   // Names of weak pokemon
-            pokemonResist: [], // Names of resistant pokemon
-            pokemonImmune: []  // Names of immune pokemon
+            weak: 0,
+            resist: 0,
+            immune: 0,
+            pokemonWeak: [],
+            pokemonResist: [],
+            pokemonImmune: []
         };
     });
 
     const activeMembers = team.filter(p => p !== null);
 
     activeMembers.forEach(pokemon => {
-        // Calculate defense for this pokemon
         const t1 = pokemon.types[0];
         const t2 = pokemon.types[1] || null;
         
-        // TODO: Handle Tera Type override logic here later
-        // If pokemon.teraActive && pokemon.teraType -> use just teraType
-        
         const def = calculateDefense(t1, t2, allTypes, effectiveness);
 
-        // Process Weaknesses (x4 and x2)
         [...def.weaknesses4x, ...def.weaknesses2x].forEach(type => {
             if (defenseMatrix[type]) {
                 defenseMatrix[type].weak++;
@@ -36,7 +30,6 @@ export function analyzeTeamDefense(team, allTypes, effectiveness) {
             }
         });
 
-        // Process Resistances (x0.25 and x0.5)
         [...def.resistances025x, ...def.resistances05x].forEach(type => {
             if (defenseMatrix[type]) {
                 defenseMatrix[type].resist++;
@@ -44,7 +37,6 @@ export function analyzeTeamDefense(team, allTypes, effectiveness) {
             }
         });
 
-        // Process Immunities (x0)
         def.immunities.forEach(type => {
             if (defenseMatrix[type]) {
                 defenseMatrix[type].immune++;
@@ -65,11 +57,9 @@ export function getThreatAlerts(analysis) {
 
     if (teamSize === 0) return alerts;
 
-    // Thresholds
-    const HIGH_WEAKNESS_COUNT = Math.ceil(teamSize / 2); // e.g. 3 for team of 6
+    const HIGH_WEAKNESS_COUNT = Math.max(3, Math.ceil(teamSize / 2));
 
     Object.entries(matrix).forEach(([type, data]) => {
-        // Alert: Major shared weakness
         if (data.weak >= HIGH_WEAKNESS_COUNT) {
             alerts.push({
                 type: 'danger',
@@ -79,8 +69,6 @@ export function getThreatAlerts(analysis) {
             });
         }
         
-        // Alert: Unresisted type (No resist, no immune, at least 1 weak?)
-        // Or simply "No switch-in for X" (No resist/immune)
         if (data.resist === 0 && data.immune === 0 && data.weak > 0) {
             alerts.push({
                 type: 'warning',
@@ -92,4 +80,34 @@ export function getThreatAlerts(analysis) {
     });
 
     return alerts;
+}
+
+export function analyzeTeamRoles(team, pokemonList) {
+    const roles = {
+        role_phys_sweeper: 0,
+        role_spec_sweeper: 0,
+        role_phys_wall: 0,
+        role_spec_wall: 0,
+        role_speedster: 0
+    };
+
+    team.filter(p => p).forEach(member => {
+        const data = pokemonList.find(p => p.id === member.id && p.name === member.name);
+        if (!data || !data.stats) return;
+        
+        const s = data.stats;
+        // Simple heuristics based on base stats thresholds
+        // Speedster: Fast
+        if (s.spe >= 100) roles.role_speedster++;
+        
+        // Attackers: High offensive stat
+        if (s.atk >= 100 && s.atk >= s.spa) roles.role_phys_sweeper++;
+        if (s.spa >= 100 && s.spa >= s.atk) roles.role_spec_sweeper++;
+        
+        // Walls: High defensive stat
+        if (s.def >= 100 && s.def >= s.spd) roles.role_phys_wall++;
+        if (s.spd >= 100 && s.spd >= s.def) roles.role_spec_wall++;
+    });
+    
+    return roles;
 }
