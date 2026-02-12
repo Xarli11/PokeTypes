@@ -1,4 +1,4 @@
-import { i18n } from './i18n.js?v=2.22.7';
+import { i18n } from './i18n.js?v=2.22.8';
 
 const pokemonCache = new Map();
 const abilityCache = new Map();

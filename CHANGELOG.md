@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.22.8] - 2026-02-12
+
+### Fixed
+- **Data:** Refactored `scripts/sync-pokedex.js` to correctly map Showdown names to PokeAPI endpoints (e.g. `arceus-bug` -> `arceus`, `venusaur-gmax` support).
+- **Data:** Updated `data/pokedex.json` with correct `apiName` fields, resolving 98+ API 404 errors.
+
 ## [2.22.7] - 2026-02-11
 
 ### Fixed
