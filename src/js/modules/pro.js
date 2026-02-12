@@ -145,7 +145,7 @@ function renderTeamGrid() {
 }
 
 function renderTeamAnalysis(team) {
-    const analysisSection = document.querySelector('#view-pro section:last-child');
+    const analysisSection = document.getElementById('pro-analysis-section');
     if (!analysisSection) return;
 
     if (team.every(p => p === null)) {
