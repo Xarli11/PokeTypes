@@ -211,6 +211,7 @@ https.get(POKEDEX_URL, (res) => {
                     spriteSlug: toSlug(originalName), // For local sprites or other sources that match Showdown
                     types: entry.types,
                     stats: entry.baseStats, // Include full stats for analysis
+                    abilities: entry.abilities, // Include abilities for dropdown (Optimization)
                     bst: bst
                 });
             }

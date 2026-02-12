@@ -8,11 +8,9 @@ export function loadTeam() {
     if (saved) {
         try {
             const parsed = JSON.parse(saved);
-            // Ensure fixed size and valid array
             if (Array.isArray(parsed) && parsed.length === TEAM_SIZE) {
                 team = parsed;
             } else {
-                // Migrate or reset if format is wrong
                 team = new Array(TEAM_SIZE).fill(null);
             }
         } catch (e) {
@@ -30,15 +28,22 @@ export function saveTeam() {
 export function addPokemonToSlot(index, pokemonData) {
     if (index < 0 || index >= TEAM_SIZE) return false;
 
-    // Minimal data structure for the team member
+    // Get default ability (first one available)
+    let defaultAbility = null;
+    if (pokemonData.abilities) {
+        defaultAbility = pokemonData.abilities['0'] || Object.values(pokemonData.abilities)[0];
+    }
+
     team[index] = {
         id: pokemonData.id,
-        name: pokemonData.name, // Display name
-        apiName: pokemonData.apiName, // For API calls
-        types: pokemonData.types, // Array of strings
-        spriteSlug: pokemonData.spriteSlug, // For images
-        teraType: pokemonData.types[0], // Default Tera to primary type
-        ability: null, // Placeholder for future ability selector
+        name: pokemonData.name,
+        apiName: pokemonData.apiName,
+        types: pokemonData.types,
+        spriteSlug: pokemonData.spriteSlug,
+        stats: pokemonData.stats, // Save stats for easier analysis
+        abilities: pokemonData.abilities, // Save potential abilities list
+        teraType: pokemonData.types[0],
+        ability: defaultAbility, // Selected ability
         nature: null,
         item: null
     };
@@ -63,6 +68,13 @@ export function getTeam() {
 export function setTeraType(index, type) {
     if (team[index]) {
         team[index].teraType = type;
+        saveTeam();
+    }
+}
+
+export function setAbility(index, ability) {
+    if (team[index]) {
+        team[index].ability = ability;
         saveTeam();
     }
 }

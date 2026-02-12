@@ -1,4 +1,4 @@
-import { loadTeam, addPokemonToSlot, removePokemonFromSlot } from './team.js?v=2.22.8';
+import { loadTeam, addPokemonToSlot, removePokemonFromSlot, setAbility } from './team.js?v=2.22.8';
 import { loadAppData } from './data.js?v=2.22.8';
 import { analyzeTeamDefense, getThreatAlerts, analyzeTeamRoles } from './analysis.js?v=2.22.8';
 import { createTypePill, getPokemonImageUrl, capitalizeWords } from './ui.js?v=2.22.8';
@@ -27,6 +27,10 @@ export async function initProMode() {
 
     setupSearchModal();
     setupDeleteModal();
+}
+
+export function refreshProView() {
+    renderTeamGrid();
 }
 
 function setupModeToggling() {
@@ -86,7 +90,7 @@ function renderTeamGrid() {
     container.innerHTML = team.map((member, index) => {
         if (!member) {
             return `
-            <div onclick="window.openSearchModal(${index})" class="team-slot-empty cursor-pointer bento-card dark:bg-slate-800 dark:border-slate-700 border-dashed border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 flex flex-col items-center justify-center h-40 md:h-48 transition-all group relative">
+            <div onclick="window.openSearchModal(${index})" class="team-slot-empty cursor-pointer bento-card dark:bg-slate-800 dark:border-slate-700 border-dashed border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 flex flex-col items-center justify-center h-48 md:h-56 transition-all group relative">
                 <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400 group-hover:text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -98,21 +102,37 @@ function renderTeamGrid() {
             const imageUrl = getPokemonImageUrl(member);
             const typePills = member.types.map(t => createTypePill(t, contrastData)).join('');
             
+            // Ability Dropdown Logic
+            let abilitySelectHTML = '';
+            if (member.abilities) {
+                const options = Object.values(member.abilities).map(ability => {
+                    const selected = member.ability === ability ? 'selected' : '';
+                    return `<option value="${ability}" ${selected}>${ability}</option>`;
+                }).join('');
+                
+                abilitySelectHTML = `
+                    <select onchange="window.updateTeamAbility(${index}, this.value)" class="mt-2 w-full text-xs p-1 rounded bg-slate-100 dark:bg-slate-700 border-none focus:ring-0 text-slate-700 dark:text-slate-300 truncate cursor-pointer">
+                        ${options}
+                    </select>
+                `;
+            }
+
             return `
-            <div class="team-slot-filled relative bento-card dark:bg-slate-800 dark:border-slate-700 p-2 flex flex-col items-center h-40 md:h-48 group">
+            <div class="team-slot-filled relative bento-card dark:bg-slate-800 dark:border-slate-700 p-3 flex flex-col items-center h-48 md:h-56 group">
                 <button onclick="window.openDeleteModal(event, ${index})" class="absolute -top-2 -right-2 p-1.5 rounded-full bg-white dark:bg-slate-700 shadow-md text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-all z-10" title="${i18n.t('btn_remove')}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
                 
-                <img src="${imageUrl}" class="w-20 h-20 object-contain mt-2 mb-1" loading="lazy" alt="${member.name}">
+                <img src="${imageUrl}" class="w-20 h-20 object-contain mt-1 mb-1" loading="lazy" alt="${member.name}">
                 
-                <div class="text-center w-full">
+                <div class="text-center w-full flex-1 flex flex-col">
                     <div class="font-bold text-slate-800 dark:text-white text-sm truncate px-1">${member.name}</div>
-                    <div class="flex justify-center gap-1 mt-1 flex-wrap scale-75 origin-top">
+                    <div class="flex justify-center gap-1 mt-1 flex-wrap scale-75 origin-top mb-auto">
                         ${typePills}
                     </div>
+                    ${abilitySelectHTML}
                 </div>
             </div>`;
         }
@@ -243,6 +263,13 @@ function renderRoleCard(key, count, colorClass) {
 }
 
 // Global functions for onclick handlers
+window.updateTeamAbility = (index, ability) => {
+    setAbility(index, ability);
+    // No need to re-render grid, just maybe analysis?
+    // But analysis currently doesn't use ability yet (that's complex).
+    // Just keeping state consistent.
+};
+
 window.openSearchModal = (index) => {
     activeSlotIndex = index;
     const modal = document.getElementById('search-modal');
