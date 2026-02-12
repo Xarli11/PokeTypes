@@ -134,6 +134,10 @@ https.get(POKEDEX_URL, (res) => {
                 // Specific fix for "Nidoran M" and "Nidoran F" if Showdown uses symbols
                 if (entry.name === 'Nidoran-M') apiName = 'nidoran-m';
                 if (entry.name === 'Nidoran-F') apiName = 'nidoran-f';
+                
+                // Fix for Maushold (PokeAPI uses 'maushold-family-of-four')
+                if (apiName === 'maushold') apiName = 'maushold-family-of-four';
+                if (apiName === 'maushold-four') apiName = 'maushold-family-of-four';
 
                 // Generate PokemonDB-friendly sprite slug
                 let spriteSlug = apiName;

@@ -12899,7 +12899,7 @@
   {
     "id": 925,
     "name": "Maushold",
-    "apiName": "maushold",
+    "apiName": "maushold-family-of-four",
     "spriteSlug": "maushold",
     "types": [
       "Normal"
@@ -12909,7 +12909,7 @@
   {
     "id": 925,
     "name": "Maushold-Four",
-    "apiName": "maushold-four",
+    "apiName": "maushold-family-of-four",
     "spriteSlug": "maushold-four",
     "types": [
       "Normal"
