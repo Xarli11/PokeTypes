@@ -161,8 +161,7 @@ export async function fetchPokemonDetails(identifier) {
                     entry.description = finalManualDesc;
                 } else if (descEntry) {
                     let text = descEntry.flavor_text || descEntry.short_effect || descEntry.effect;
-                    entry.description = text.replace(/[
-]/g, ' ');
+                    entry.description = text.replace(/[\n\f]/g, ' ');
                 } else {
                     // English Fallback
                     descEntry = abilityData.flavor_text_entries.find(f => f.language.name === 'en') || 
@@ -170,8 +169,7 @@ export async function fetchPokemonDetails(identifier) {
                     
                     if (descEntry) {
                         let text = descEntry.flavor_text || descEntry.short_effect || descEntry.effect;
-                        entry.description = text.replace(/[
-]/g, ' ');
+                        entry.description = text.replace(/[\n\f]/g, ' ');
                     } else {
                         entry.description = 'No description available.';
                     }
