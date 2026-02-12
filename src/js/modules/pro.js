@@ -90,7 +90,7 @@ function renderTeamGrid() {
     container.innerHTML = team.map((member, index) => {
         if (!member) {
             return `
-            <div onclick="window.openSearchModal(${index})" class="team-slot-empty cursor-pointer bento-card dark:bg-slate-800 dark:border-slate-700 border-dashed border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 flex flex-col items-center justify-center h-52 md:h-60 transition-all group relative">
+            <div onclick="window.openSearchModal(${index})" class="team-slot-empty cursor-pointer bento-card dark:bg-slate-800 dark:border-slate-700 border-dashed border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 flex flex-col items-center justify-center h-64 transition-all group relative">
                 <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400 group-hover:text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -112,8 +112,8 @@ function renderTeamGrid() {
                 }).join('');
                 
                 abilitySelectHTML = `
-                    <div class="mt-auto pt-3 w-full px-1">
-                        <select onchange="window.updateTeamAbility(${index}, this.value)" class="w-full text-[10px] uppercase font-bold tracking-wider py-1.5 px-2 rounded-lg bg-slate-100 dark:bg-slate-700/50 border-none focus:ring-0 text-slate-500 dark:text-slate-400 truncate cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors appearance-none text-center">
+                    <div class="mt-auto pt-2 w-full px-1">
+                        <select onchange="window.updateTeamAbility(${index}, this.value)" class="w-full text-[10px] uppercase font-bold tracking-wider py-1.5 px-2 rounded-lg bg-slate-100 dark:bg-slate-700/50 border-none focus:ring-2 focus:ring-indigo-500/50 focus:bg-white dark:focus:bg-slate-700 text-slate-500 dark:text-slate-400 truncate cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-600 transition-all appearance-none text-center outline-none">
                             ${options}
                         </select>
                     </div>
@@ -121,7 +121,7 @@ function renderTeamGrid() {
             }
 
             return `
-            <div class="team-slot-filled relative bento-card dark:bg-slate-800 dark:border-slate-700 p-4 flex flex-col items-center h-52 md:h-60 group">
+            <div class="team-slot-filled relative bento-card dark:bg-slate-800 dark:border-slate-700 p-3 flex flex-col items-center h-64 transition-all group">
                 <button onclick="window.openDeleteModal(event, ${index})" class="absolute -top-2 -right-2 p-1.5 rounded-full bg-white dark:bg-slate-700 shadow-md text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-all z-10" title="${i18n.t('btn_remove')}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

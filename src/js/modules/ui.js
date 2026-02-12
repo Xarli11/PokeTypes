@@ -3,7 +3,6 @@ import { i18n } from './i18n.js?v=2.22.8';
 
 export function createTypePill(type, contrastData) {
     const textColorClass = contrastData[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
-    // Translate the type name for display
     const translatedType = i18n.tType(type);
     return `<span class="type-pill bg-type-${type.toLowerCase()} ${textColorClass}">
         ${translatedType}
@@ -155,7 +154,6 @@ export function generateTypeTable(containerId, types, effectiveness, contrastDat
 
     types.forEach(type => {
         const textColorClass = contrastData[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
-        // Translate table headers
         const translatedType = i18n.tType(type);
         tableHTML += `<th class="bg-type-${type.toLowerCase()} ${textColorClass} !text-[10px] min-w-[40px]">${translatedType.substring(0, 3)}</th>`;
     });
@@ -191,7 +189,6 @@ export function populateSelects(ids, types) {
         types.forEach(type => {
             const opt = document.createElement('option');
             opt.value = type;
-            // Translate the display text of options
             opt.textContent = i18n.tType(type);
             select.appendChild(opt);
         });
@@ -212,9 +209,8 @@ export function renderPokemonHero(container, pokemon, contrastData) {
     }
 
     const slug = pokemon.spriteSlug || pokemon.apiName;
-    const displayName = i18n.t(pokemon.name.toLowerCase()) !== pokemon.name.toLowerCase() 
-                        ? i18n.t(pokemon.name.toLowerCase()) 
-                        : capitalizeWords(pokemon.name);
+    const localizedName = i18n.t(pokemon.name.toLowerCase());
+    const displayName = localizedName !== pokemon.name.toLowerCase() ? localizedName : capitalizeWords(pokemon.name);
     
     const typePills = pokemon.types.map(t => createTypePill(t, contrastData)).join('');
 
@@ -248,14 +244,12 @@ export function renderPokemonHero(container, pokemon, contrastData) {
 
     container.innerHTML = contentHTML;
 
-    // Attach robust error handling
     const img = container.querySelector('#pokemon-hero-img');
     let currentSourceIndex = 0;
 
     const tryNextSource = () => {
         currentSourceIndex++;
         if (currentSourceIndex < sources.length) {
-            // If falling back to static images, remove pixelated rendering (looks bad on smooth PNGs)
             if (currentSourceIndex > 0) {
                 img.style.imageRendering = 'auto';
             }
@@ -272,7 +266,6 @@ export function renderStats(container, stats) {
         return;
     }
 
-    // Map PokeAPI stat names to translated names
     const statNames = {
         'hp': i18n.t('stat_hp'),
         'attack': i18n.t('stat_atk'),
@@ -352,7 +345,6 @@ export function renderAbilityAlerts(container, abilities) {
         const modifiers = getAbilityModifiers(name);
         
         modifiers.forEach(mod => {
-            // Simple key for deduplication
             const key = `${mod.type}-${mod.modifier}-${name}`;
             if (!seenKeys.has(key)) {
                 seenKeys.add(key);
@@ -374,7 +366,6 @@ export function renderAbilityAlerts(container, abilities) {
 
     container.classList.remove('hidden');
     
-    // Header
     let contentHTML = `
         <div class="mb-2 flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -407,7 +398,6 @@ export function renderTacticalAdvice(container, advice) {
 
     container.classList.remove('hidden');
 
-    // Prepare interpolated values
     const suggestedTypesHTML = advice.suggestedTypes.map(t => `<span class="font-bold text-slate-700 dark:text-slate-200">${i18n.tType(t)}</span>`).join('/');
     const suggestedMonsHTML = advice.suggestedPokemon.map(p => capitalizeWords(p.name)).join(', ');
 
@@ -415,7 +405,6 @@ export function renderTacticalAdvice(container, advice) {
 
     const contentHTML = `
         <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-700 p-6 text-white shadow-lg">
-            <!-- Background Decoration -->
             <svg class="absolute -right-4 -bottom-8 w-32 h-32 text-white/10" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
             </svg>
