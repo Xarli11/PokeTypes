@@ -293,7 +293,7 @@ export function renderStats(container, stats) {
 
         return `
             <div class="flex items-center gap-3 text-sm">
-                <span class="w-20 font-bold text-slate-500 dark:text-slate-400 text-right uppercase text-xs tracking-wider">${statNames[stat.stat.name] || stat.stat.name}</span>
+                <span class="w-20 font-bold text-slate-500 dark:text-slate-400 text-right uppercase text-xs tracking-wider whitespace-nowrap">${statNames[stat.stat.name] || stat.stat.name}</span>
                 <span class="w-8 font-bold text-slate-800 dark:text-slate-200 text-right">${val}</span>
                 <div class="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div class="h-full rounded-full ${colorClass} transition-all duration-500 ease-out" style="width: ${width}%"></div>
