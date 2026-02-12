@@ -2,31 +2,39 @@ import { i18n } from './i18n.js?v=2.22.8';
 
 const pokemonCache = new Map();
 const abilityCache = new Map();
+let appDataPromise = null;
 
-export async function loadAppData() {
-    try {
-        const [typeDataResponse, pokedexResponse] = await Promise.all([
-            fetch('data/type-data.json'),
-            fetch('data/pokedex.json')
-        ]);
+export function loadAppData() {
+    if (appDataPromise) return appDataPromise;
 
-        if (!typeDataResponse.ok || !pokedexResponse.ok) {
-            throw new Error('Failed to load data files');
+    appDataPromise = (async () => {
+        try {
+            const [typeDataResponse, pokedexResponse] = await Promise.all([
+                fetch('data/type-data.json'),
+                fetch('data/pokedex.json')
+            ]);
+
+            if (!typeDataResponse.ok || !pokedexResponse.ok) {
+                throw new Error('Failed to load data files');
+            }
+
+            const typeData = await typeDataResponse.json();
+            const pokedex = await pokedexResponse.json();
+
+            return {
+                pokemonList: pokedex,
+                types: typeData.types,
+                effectiveness: typeData.effectiveness,
+                contrast: typeData.contrast
+            };
+        } catch (error) {
+            console.error('Error loading data:', error);
+            appDataPromise = null; // Reset on error so we can retry
+            throw error;
         }
+    })();
 
-        const typeData = await typeDataResponse.json();
-        const pokedex = await pokedexResponse.json();
-
-        return {
-            pokemonList: pokedex,
-            types: typeData.types,
-            effectiveness: typeData.effectiveness,
-            contrast: typeData.contrast
-        };
-    } catch (error) {
-        console.error('Error loading data:', error);
-        throw error;
-    }
+    return appDataPromise;
 }
 
 export async function fetchPokemonDetails(identifier) {

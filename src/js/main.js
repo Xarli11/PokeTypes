@@ -3,6 +3,7 @@ import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modul
 import { getTacticalAdvice } from './modules/advisor.js?v=2.22.8';
 import * as ui from './modules/ui.js?v=2.22.8';
 import { initTheme } from './modules/theme.js?v=2.22.8';
+import { initProMode } from './modules/pro.js?v=2.22.8';
 import { i18n } from './modules/i18n.js?v=2.22.8';
 
 let appData = null;
@@ -11,6 +12,7 @@ let currentPokemon = null;
 async function init() {
     try {
         initTheme(); // Initialize Dark/Light Mode
+        initProMode(); // Initialize Pro Mode Switcher
         
         // Initialize i18n
         updateLanguageToggle();

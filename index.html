@@ -86,15 +86,27 @@
         </div>
 
         <!-- Header Section -->
-        <header class="text-center mb-16">
+        <header class="text-center mb-8">
             <h1 class="bento-title dark:text-white" data-i18n="title">Poketypes</h1>
             <p class="text-slate-400 text-lg font-medium max-w-xl mx-auto" data-i18n="subtitle">
                 Quickly analyze type coverage, weaknesses, and resistances for any Pokemon or type combination.
             </p>
         </header>
 
-        <!-- Main Bento Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <!-- Mode Switcher -->
+        <div class="flex justify-center mb-10">
+            <div class="bg-slate-100 dark:bg-slate-800 p-1 rounded-xl flex shadow-inner">
+                <button id="toggle-simple" class="px-6 py-2 rounded-lg text-sm font-bold transition-all bg-white text-slate-900 shadow-sm">
+                    Calculator
+                </button>
+                <button id="toggle-pro" class="px-6 py-2 rounded-lg text-sm font-bold transition-all text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
+                    Team Builder
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW: SIMPLE (Calculator) -->
+        <div id="view-simple" class="grid grid-cols-1 md:grid-cols-12 gap-6">
             
             <!-- Control Center (Search & Selects) -->
             <section class="md:col-span-12 bento-card dark:bg-slate-800 dark:border-slate-700 flex flex-col lg:flex-row items-center gap-6">
@@ -211,6 +223,47 @@
                     <div id="type-table-container"></div>
                 </div>
             </section>
+        </div>
+
+        <!-- VIEW: PRO (Team Builder) -->
+        <div id="view-pro" class="hidden grid grid-cols-1 md:grid-cols-12 gap-6 mb-12">
+            <!-- Team Builder Grid -->
+            <section class="md:col-span-12">
+                <div class="flex items-center justify-between mb-4 px-2">
+                    <h2 class="text-xl font-bold text-slate-800 dark:text-white">Your Team</h2>
+                    <span class="text-sm text-slate-500 dark:text-slate-400">0/6 Pokemon</span>
+                </div>
+                <div id="team-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <!-- Slots will be injected by JS -->
+                    <div class="team-slot-empty cursor-pointer bento-card dark:bg-slate-800 dark:border-slate-700 border-dashed border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 flex flex-col items-center justify-center h-40 md:h-48 transition-all group">
+                        <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400 group-hover:text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </div>
+                        <span class="mt-2 text-xs font-bold text-slate-400 group-hover:text-indigo-500">Add Pokemon</span>
+                    </div>
+                    <div class="team-slot-empty cursor-pointer bento-card dark:bg-slate-800 dark:border-slate-700 border-dashed border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 flex flex-col items-center justify-center h-40 md:h-48 transition-all group"><div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400 group-hover:text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg></div><span class="mt-2 text-xs font-bold text-slate-400 group-hover:text-indigo-500">Add Pokemon</span></div>
+                    <div class="team-slot-empty cursor-pointer bento-card dark:bg-slate-800 dark:border-slate-700 border-dashed border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 flex flex-col items-center justify-center h-40 md:h-48 transition-all group"><div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400 group-hover:text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg></div><span class="mt-2 text-xs font-bold text-slate-400 group-hover:text-indigo-500">Add Pokemon</span></div>
+                    <div class="team-slot-empty cursor-pointer bento-card dark:bg-slate-800 dark:border-slate-700 border-dashed border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 flex flex-col items-center justify-center h-40 md:h-48 transition-all group"><div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400 group-hover:text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg></div><span class="mt-2 text-xs font-bold text-slate-400 group-hover:text-indigo-500">Add Pokemon</span></div>
+                    <div class="team-slot-empty cursor-pointer bento-card dark:bg-slate-800 dark:border-slate-700 border-dashed border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 flex flex-col items-center justify-center h-40 md:h-48 transition-all group"><div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400 group-hover:text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg></div><span class="mt-2 text-xs font-bold text-slate-400 group-hover:text-indigo-500">Add Pokemon</span></div>
+                    <div class="team-slot-empty cursor-pointer bento-card dark:bg-slate-800 dark:border-slate-700 border-dashed border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 flex flex-col items-center justify-center h-40 md:h-48 transition-all group"><div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400 group-hover:text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg></div><span class="mt-2 text-xs font-bold text-slate-400 group-hover:text-indigo-500">Add Pokemon</span></div>
+                </div>
+            </section>
+
+            <!-- Analysis Placeholder -->
+            <section class="md:col-span-12 bento-card dark:bg-slate-800 dark:border-slate-700 text-center py-12">
+                <div class="flex flex-col items-center justify-center">
+                    <div class="p-4 rounded-full bg-indigo-50 dark:bg-indigo-900/30 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Team Analysis</h3>
+                    <p class="text-slate-500 dark:text-slate-400 max-w-md">Add Pokemon to your team to see detailed coverage analysis, weakness alerts, and offensive gaps.</p>
+                </div>
+            </section>
+        </div>
 
             <!-- SEO Content Section -->
             <section class="md:col-span-12 bento-card dark:bg-slate-800 dark:border-slate-700 !py-10 !px-8 md:!px-12">
@@ -325,6 +378,42 @@
             <p>&copy; 2026 Poketypes &bull; <span data-i18n="footer_copyright">Data up to Gen 9</span></p>
             <p class="mt-2"><span data-i18n="created_by">Created by</span> <span class="text-slate-900 dark:text-slate-400 font-bold">Xarli11</span></p>
         </footer>
+    </div>
+
+    <!-- Search Modal (Pro Mode) -->
+    <div id="search-modal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity opacity-0" id="search-backdrop"></div>
+
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-start justify-center p-4 text-center sm:p-0">
+                
+                <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-800 text-left shadow-2xl transition-all sm:my-20 sm:w-full sm:max-w-xl scale-95 opacity-0" id="search-panel">
+                    
+                    <!-- Search Header -->
+                    <div class="bg-slate-50 dark:bg-slate-900/50 px-4 py-4 sm:px-6 border-b border-slate-100 dark:border-slate-700 flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" id="pro-search-input" class="w-full bg-transparent border-none focus:ring-0 text-lg font-medium text-slate-800 dark:text-white placeholder-slate-400" placeholder="Search Pokemon..." autocomplete="off">
+                        <button id="close-search-modal" class="text-slate-400 hover:text-slate-500 dark:hover:text-slate-300">
+                            <span class="sr-only">Close</span>
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Results List -->
+                    <div class="max-h-[60vh] overflow-y-auto" id="pro-search-results">
+                        <!-- Initial State / Empty -->
+                        <div class="py-12 text-center text-slate-400 text-sm">
+                            Type to start searching...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Main script -->
