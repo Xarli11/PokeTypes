@@ -56,11 +56,11 @@ export const messages = {
 
         // Stats
         stat_hp: "HP",
-        stat_atk: "Atk",
-        stat_def: "Def",
-        stat_spa: "SpA",
-        stat_spd: "SpD",
-        stat_spe: "Spe",
+        stat_atk: "Attack",
+        stat_def: "Defense",
+        stat_spa: "Sp. Atk",
+        stat_spd: "Sp. Def",
+        stat_spe: "Speed",
         
         // Types
         normal: "Normal",
@@ -169,11 +169,11 @@ export const messages = {
 
         // Stats
         stat_hp: "PS",
-        stat_atk: "Atq",
-        stat_def: "Def",
-        stat_spa: "AtEsp",
-        stat_spd: "DefEsp",
-        stat_spe: "Vel",
+        stat_atk: "Ataque",
+        stat_def: "Defensa",
+        stat_spa: "At. Esp",
+        stat_spd: "Def. Esp",
+        stat_spe: "Velocidad",
         
         // Types
         normal: "Normal",
