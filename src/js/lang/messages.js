@@ -86,6 +86,11 @@ export const messages = {
         role_spec_wall: "Spec. Wall",
         role_mixed_wall: "Mixed Wall",
         role_speedster: "Speedster",
+
+        // Simulator
+        sim_title: "Ability Interaction Checker",
+        sim_attack_type: "Attacking Type",
+        sim_defender: "Defender",
         
         // Types
         normal: "Normal",
@@ -224,6 +229,11 @@ export const messages = {
         role_spec_wall: "Muro Especial",
         role_mixed_wall: "Muro Mixto",
         role_speedster: "Velocista",
+
+        // Simulator
+        sim_title: "Simulador de Habilidades",
+        sim_attack_type: "Tipo de Ataque",
+        sim_defender: "Defensor",
         
         // Types
         normal: "Normal",
