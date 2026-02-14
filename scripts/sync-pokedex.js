@@ -189,27 +189,48 @@ https.get(POKEDEX_URL, (res) => {
                     apiName = API_NAME_MAP[apiName];
                 } else {
                     // 3. Heuristic Fixes
-                    
-                    // Handle Totems (often 404, map to base regional or base)
                     if (apiName.includes('-totem')) {
                         apiName = apiName.replace('-totem', '');
                     }
-                    
-                    // Handle Gmax
-                    // Most are just -gmax in PokeAPI now (e.g. venusaur-gmax)
-                    // If previously I replaced with -gigantamax, revert that logic.
-                    // Just keep -gmax unless mapped explicitly.
+                    if (apiName.endsWith('-gmax')) {
+                        apiName = apiName.replace('-gmax', '-gmax'); // Keep as is unless specific override needed
+                    }
                 }
 
-                // 4. Final adjustments for inconsistencies found in audit
-                if (apiName === 'mimikyu-busted-totem') apiName = 'mimikyu-disguised'; // Fallback
+                // Generate PokemonDB-friendly sprite slug
+                let spriteSlug = apiName;
                 
+                // Fix Regional Forms suffixes for PokemonDB (alola -> alolan)
+                // Use a regex to replace only if it's a suffix or followed by something, but simple replace is usually safe for these specific strings
+                if (spriteSlug.includes('-alola') && !spriteSlug.includes('-alolan')) spriteSlug = spriteSlug.replace('-alola', '-alolan');
+                if (spriteSlug.includes('-galar') && !spriteSlug.includes('-galarian')) spriteSlug = spriteSlug.replace('-galar', '-galarian');
+                if (spriteSlug.includes('-hisui') && !spriteSlug.includes('-hisuian')) spriteSlug = spriteSlug.replace('-hisui', '-hisuian');
+                if (spriteSlug.includes('-paldea') && !spriteSlug.includes('-paldean')) spriteSlug = spriteSlug.replace('-paldea', '-paldean');
+
+                if (spriteSlug.endsWith('-gmax')) spriteSlug = spriteSlug.replace('-gmax', '-gigantamax');
+
+                // Specific Sprite Fixes
+                if (spriteSlug === 'mimikyu-disguised') spriteSlug = 'mimikyu'; // PokemonDB uses base for disguised
+                if (spriteSlug === 'eiscue-ice') spriteSlug = 'eiscue';
+                if (spriteSlug === 'morpeko-full-belly') spriteSlug = 'morpeko';
+                if (spriteSlug === 'wishiwashi-solo') spriteSlug = 'wishiwashi';
+                if (spriteSlug === 'minior-red-meteor') spriteSlug = 'minior-meteor'; // Check this one
+                if (spriteSlug.startsWith('pikachu-') && spriteSlug !== 'pikachu-alolan') spriteSlug = 'pikachu'; 
+                
+                // Ensure regional forms use adjectival form for PokemonDB (alola -> alolan)
+                if (spriteSlug.includes('-alola') && !spriteSlug.includes('-alolan')) spriteSlug = spriteSlug.replace('-alola', '-alolan');
+                if (spriteSlug.includes('-galar') && !spriteSlug.includes('-galarian')) spriteSlug = spriteSlug.replace('-galar', '-galarian');
+                if (spriteSlug.includes('-hisui') && !spriteSlug.includes('-hisuian')) spriteSlug = spriteSlug.replace('-hisui', '-hisuian');
+                if (spriteSlug.includes('-paldea') && !spriteSlug.includes('-paldean')) spriteSlug = spriteSlug.replace('-paldea', '-paldean');
+
                 cleanDex.push({
                     id: entry.num,
                     name: formatDisplayName(entry.name), // Prettier name for UI
                     apiName: apiName,
-                    spriteSlug: toSlug(originalName), // For local sprites or other sources that match Showdown
+                    spriteSlug: spriteSlug, // Use the processed slug!
                     types: entry.types,
+                    stats: entry.baseStats, // Include full stats for analysis
+                    abilities: entry.abilities, // Include abilities for dropdown (Optimization)
                     bst: bst
                 });
             }

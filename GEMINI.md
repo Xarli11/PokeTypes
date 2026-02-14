@@ -83,6 +83,11 @@ npm install
 *   **Error Handling:** Use **`try/catch`** blocks for asynchronous operations and critical logic to ensure robustness and facilitate debugging.
 *   **Frontend Philosophy:** Focus on functionality and performance; the project prioritizes interactive utility over complex frontend framework patterns.
 
+### Verification and Testing
+
+*   **Mandatory Test Cases:** For every code modification, the agent must provide the user with exact manual or automated test cases to verify the change.
+*   **Expected Results:** Each test case must include a clear description of the expected outcome to ensure the logic works as intended and no regressions were introduced.
+
 ## Data Maintenance
 
 The project includes utility scripts in the `scripts/` directory to manage data integrity:
