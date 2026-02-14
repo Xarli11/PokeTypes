@@ -1,4 +1,4 @@
-import { messages } from '../lang/messages.js?v=2.23.1';
+import { messages } from '../lang/messages.js?v=2.23.2';
 
 class I18n {
     constructor() {
@@ -16,7 +16,7 @@ class I18n {
         this.abilityMap = map;
     }
 
-    t(key) {
+    t(key, params = {}) {
         if (!key) return '';
         const keys = key.split('.');
         let value = messages[this.currentLang];
@@ -25,9 +25,19 @@ class I18n {
             if (value && value[k]) {
                 value = value[k];
             } else {
-                return key; // Fallback to key if not found
+                value = key; // Fallback to key if not found
+                break;
             }
         }
+
+        // Handle parameter replacement (e.g., "Hello {name}" -> "Hello Carlos")
+        if (typeof value === 'string' && Object.keys(params).length > 0) {
+            Object.keys(params).forEach(paramKey => {
+                const placeholder = `{${paramKey}}`;
+                value = value.replace(new RegExp(placeholder, 'g'), params[paramKey]);
+            });
+        }
+
         return value;
     }
 
