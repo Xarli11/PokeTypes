@@ -1,16 +1,37 @@
-import { getEffectiveness } from './calculator.js?v=2.22.8';
+import { getEffectiveness, getAbilityModifiers } from './calculator.js?v=2.22.8';
 import { capitalizeWords } from './ui.js?v=2.22.8';
 
 export function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiveness, pokemonList, activePokemon = null) {
+    // Filter weaknesses based on abilities (e.g. Levitate)
+    let relevantWeaknesses4x = [...(weaknesses4x || [])];
+    let relevantWeaknesses2x = [...(weaknesses2x || [])];
+
+    if (activePokemon && activePokemon.abilities) {
+        const abilities = Object.values(activePokemon.abilities);
+        const immuneTypes = new Set();
+
+        abilities.forEach(abilityName => {
+            const modifiers = getAbilityModifiers(abilityName);
+            modifiers.forEach(mod => {
+                if (mod.modifier === 0) {
+                    immuneTypes.add(mod.type);
+                }
+            });
+        });
+
+        relevantWeaknesses4x = relevantWeaknesses4x.filter(t => !immuneTypes.has(t));
+        relevantWeaknesses2x = relevantWeaknesses2x.filter(t => !immuneTypes.has(t));
+    }
+
     // 1. Identify the biggest threat
     let targetThreat = null;
     let threatMultiplier = 0;
 
-    if (weaknesses4x && weaknesses4x.length > 0) {
-        targetThreat = weaknesses4x[0]; // Focus on the first x4 weakness
+    if (relevantWeaknesses4x.length > 0) {
+        targetThreat = relevantWeaknesses4x[0]; // Focus on the first x4 weakness
         threatMultiplier = 4;
-    } else if (weaknesses2x && weaknesses2x.length > 0) {
-        targetThreat = weaknesses2x[0]; // Focus on the first x2 weakness
+    } else if (relevantWeaknesses2x.length > 0) {
+        targetThreat = relevantWeaknesses2x[0]; // Focus on the first x2 weakness
         threatMultiplier = 2;
     } else {
         return null; // No weaknesses? No advice needed (or you are Eelektross)
@@ -71,7 +92,8 @@ export function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiv
         // Calculate Active Pokemon's weaknesses for penalty logic
         // We need to know what the active pokemon is weak to, to check for shared weaknesses
         // We can infer this from the passed `weaknesses4x` and `weaknesses2x` lists
-        activeWeaknesses = [...(weaknesses4x || []), ...(weaknesses2x || [])];
+        // Note: Using filtered lists to avoid penalizing negated weaknesses
+        activeWeaknesses = [...(relevantWeaknesses4x || []), ...(relevantWeaknesses2x || [])];
     } 
 
     // Exclude battle-only forms, Megas, and other non-standard forms
@@ -87,18 +109,35 @@ export function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiv
     // For now, let's target the problematic ones reported: Zen.
     
     const STRICT_EXCLUSIONS = [
-        '-Mega', '-Gmax', '-Eternamax', 
+        '-Mega', 'Mega ', 
+        '-Gmax', 'Gmax ',
+        '-Eternamax', 
         '-Zen', '-Pirouette', '-School', '-Complete', '-Ash', 
-        '-Meteor', '-Busted', '-Gulping', '-Gorging'
+        '-Meteor', '-Busted', '-Gulping', '-Gorging',
+        'Primal ', '-Primal'
+    ];
+
+    const UBER_NAMES = [
+        'Arceus', 'Eternatus', 'Zacian', 'Zamazenta', 'Calyrex', 'Koraidon', 'Miraidon', 'Mewtwo', 
+        'Lugia', 'Ho-Oh', 'Rayquaza', 'Kyogre', 'Groudon', 'Dialga', 'Palkia', 'Giratina', 
+        'Reshiram', 'Zekrom', 'Kyurem', 'Xerneas', 'Yveltal', 'Solgaleo', 'Lunala', 'Necrozma'
     ];
 
     if (pokemonList && Array.isArray(pokemonList)) {
         topTypes.forEach(type => {
+            // Determine if active pokemon is Uber-tier (BST >= 670)
+            const isActiveUber = activePokemon && (activePokemon.bst || 0) >= 670;
+
             // Base filter: Type match, basic form validity
-            const baseFilter = p => 
-                p.types && p.types.includes(type) && 
-                p.name && 
-                !STRICT_EXCLUSIONS.some(ex => p.name.includes(ex));
+            const baseFilter = p => {
+                // Always exclude gimmicks
+                if (STRICT_EXCLUSIONS.some(ex => p.name.includes(ex))) return false;
+                
+                // If active is NOT Uber, exclude Uber candidates
+                if (!isActiveUber && UBER_NAMES.some(uber => p.name.includes(uber))) return false;
+
+                return p.types && p.types.includes(type) && p.name;
+            };
 
             // Helper to get candidates by tier
             const getByTier = (tier) => {
@@ -134,7 +173,10 @@ export function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiv
                     if (mainDef >= 1) return null; // Discard if doesn't resist main threat
                     
                     score += 100; // Base score for being a counter
-                    if (mainDef <= 0.25) score += 20; // Bonus for x4 resistance/immunity
+                    
+                    // Boost for hard counters (Immunity is King)
+                    if (mainDef === 0) score += 60; 
+                    else if (mainDef <= 0.25) score += 40; 
 
                     // B. Coverage Bonus (Resisting other weaknesses of the active mon)
                     secondaryThreats.forEach(secThreat => {
