@@ -1,9 +1,9 @@
-import { loadTeam, addPokemonToSlot, removePokemonFromSlot, setAbility } from './team.js?v=2.23.0';
-import { loadAppData } from './data.js?v=2.23.0';
-import { analyzeTeamDefense, getThreatAlerts, analyzeTeamRoles } from './analysis.js?v=2.23.0';
-import { createTypePill, getPokemonImageUrl, capitalizeWords } from './ui.js?v=2.23.0';
-import { i18n } from './i18n.js?v=2.23.0';
-import { initSimulator } from './simulator.js?v=2.23.0';
+import { loadTeam, addPokemonToSlot, removePokemonFromSlot, setAbility } from './team.js?v=2.23.1';
+import { loadAppData } from './data.js?v=2.23.1';
+import { analyzeTeamDefense, getThreatAlerts, analyzeTeamRoles } from './analysis.js?v=2.23.1';
+import { createTypePill, getPokemonImageUrl, capitalizeWords } from './ui.js?v=2.23.1';
+import { i18n } from './i18n.js?v=2.23.1';
+import { initSimulator } from './simulator.js?v=2.23.1';
 
 // State
 let activeSlotIndex = -1;
