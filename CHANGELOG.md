@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.23.0] - 2026-02-14
+
+### Added
+- **Pro Mode:** Introduced a new "Pro" view with a full 6-slot Team Builder.
+- **Team Analysis:** Added comprehensive defensive coverage analysis, role breakdown (Sweeper, Wall, etc.), and threat alerts for the team.
+- **Search:** Dedicated team builder search with instant results.
+
+### Improved
+- **Tactical Advisor:** Overhauled recommendation logic to account for Abilities (e.g., Levitate users are no longer flagged as weak to Ground).
+- **Tactical Advisor:** Implemented "Uber Tier" filtering. God-tier Pokémon (Arceus, Rayquaza, etc.) are only suggested if the user is analyzing another Uber.
+- **Scoring:** Adjusted the algorithm to heavily prioritize Immunities (x0) and 4x Resistances over raw Base Stats.
+
+### Fixed
+- **Advisor:** "Mega Rayquaza" and Primal forms no longer appear in standard recommendations due to improved exclusion filters.
+
 ## [2.22.8] - 2026-02-12
 
 ### Fixed
