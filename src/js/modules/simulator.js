@@ -1,8 +1,8 @@
 // src/js/modules/simulator.js
-import { getEffectiveness, getAbilityModifiers } from './calculator.js?v=2.23.0';
-import { loadAppData, fetchPokemonDetails } from './data.js?v=2.23.0';
-import { getPokemonImageUrl, createTypePill, capitalizeWords } from './ui.js?v=2.23.0';
-import { i18n } from './i18n.js?v=2.23.0';
+import { getEffectiveness, getAbilityModifiers } from './calculator.js?v=2.23.1';
+import { loadAppData, fetchPokemonDetails } from './data.js?v=2.23.1';
+import { getPokemonImageUrl, createTypePill, capitalizeWords } from './ui.js?v=2.23.1';
+import { i18n } from './i18n.js?v=2.23.1';
 
 export async function initSimulator() {
     const container = document.querySelector('#view-pro');
@@ -16,13 +16,13 @@ export async function initSimulator() {
             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
             </svg>
-            Ability Interaction Checker
+            ${i18n.t('sim_title')}
         </h2>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
             <!-- 1. Attacker -->
             <div class="space-y-2">
-                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Attacking Type</label>
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">${i18n.t('sim_attack_type')}</label>
                 <select id="sim-attack-type" class="bento-select w-full dark:bg-slate-900 dark:border-slate-700">
                     <!-- Populated by JS -->
                 </select>
@@ -30,8 +30,8 @@ export async function initSimulator() {
 
             <!-- 2. Defender -->
             <div class="space-y-2 relative">
-                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Defender</label>
-                <input type="text" id="sim-defender-input" placeholder="Search Pokemon..." class="search-input w-full dark:bg-slate-900 dark:border-slate-700 dark:placeholder-slate-500">
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">${i18n.t('sim_defender')}</label>
+                <input type="text" id="sim-defender-input" placeholder="${i18n.t('search_placeholder')}" class="search-input w-full dark:bg-slate-900 dark:border-slate-700 dark:placeholder-slate-500">
                 <ul id="sim-defender-suggestions" class="hidden absolute z-50 w-full mt-1 max-h-60 overflow-y-auto rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl"></ul>
                 
                 <!-- Active Defender Display -->

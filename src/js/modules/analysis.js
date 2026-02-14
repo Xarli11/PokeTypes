@@ -1,5 +1,5 @@
 // src/js/modules/analysis.js
-import { calculateDefense, getAbilityModifiers } from './calculator.js?v=2.23.0';
+import { calculateDefense, getAbilityModifiers } from './calculator.js?v=2.23.1';
 
 export function analyzeTeamDefense(team, allTypes, effectiveness) {
     const defenseMatrix = {};
