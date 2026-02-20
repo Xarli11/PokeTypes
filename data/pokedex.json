@@ -5699,27 +5699,6 @@
     "bst": 205
   },
   {
-    "id": 172,
-    "name": "Pichu-Spiky-eared",
-    "apiName": "pichu",
-    "spriteSlug": "pichu",
-    "types": [
-      "Electric"
-    ],
-    "stats": {
-      "hp": 20,
-      "atk": 40,
-      "def": 15,
-      "spa": 35,
-      "spd": 35,
-      "spe": 60
-    },
-    "abilities": {
-      "0": "Static"
-    },
-    "bst": 205
-  },
-  {
     "id": 173,
     "name": "Cleffa",
     "apiName": "cleffa",
@@ -19054,6 +19033,28 @@
     "bst": 580
   },
   {
+    "id": 647,
+    "name": "Keldeo-Resolute",
+    "apiName": "keldeo-resolute",
+    "spriteSlug": "keldeo-resolute",
+    "types": [
+      "Water",
+      "Fighting"
+    ],
+    "stats": {
+      "hp": 91,
+      "atk": 72,
+      "def": 90,
+      "spa": 129,
+      "spd": 90,
+      "spe": 108
+    },
+    "abilities": {
+      "0": "Justified"
+    },
+    "bst": 580
+  },
+  {
     "id": 648,
     "name": "Meloetta",
     "apiName": "meloetta-aria",
@@ -20998,78 +20999,6 @@
     "bst": 335
   },
   {
-    "id": 710,
-    "name": "Pumpkaboo-Small",
-    "apiName": "pumpkaboo-small",
-    "spriteSlug": "pumpkaboo-small",
-    "types": [
-      "Ghost",
-      "Grass"
-    ],
-    "stats": {
-      "hp": 44,
-      "atk": 66,
-      "def": 70,
-      "spa": 44,
-      "spd": 55,
-      "spe": 56
-    },
-    "abilities": {
-      "0": "Pickup",
-      "1": "Frisk",
-      "H": "Insomnia"
-    },
-    "bst": 335
-  },
-  {
-    "id": 710,
-    "name": "Pumpkaboo-Large",
-    "apiName": "pumpkaboo-large",
-    "spriteSlug": "pumpkaboo-large",
-    "types": [
-      "Ghost",
-      "Grass"
-    ],
-    "stats": {
-      "hp": 54,
-      "atk": 66,
-      "def": 70,
-      "spa": 44,
-      "spd": 55,
-      "spe": 46
-    },
-    "abilities": {
-      "0": "Pickup",
-      "1": "Frisk",
-      "H": "Insomnia"
-    },
-    "bst": 335
-  },
-  {
-    "id": 710,
-    "name": "Pumpkaboo-Super",
-    "apiName": "pumpkaboo-super",
-    "spriteSlug": "pumpkaboo-super",
-    "types": [
-      "Ghost",
-      "Grass"
-    ],
-    "stats": {
-      "hp": 59,
-      "atk": 66,
-      "def": 70,
-      "spa": 44,
-      "spd": 55,
-      "spe": 41
-    },
-    "abilities": {
-      "0": "Pickup",
-      "1": "Frisk",
-      "H": "Insomnia"
-    },
-    "bst": 335
-  },
-  {
     "id": 711,
     "name": "Gourgeist",
     "apiName": "gourgeist-average",
@@ -21085,78 +21014,6 @@
       "spa": 58,
       "spd": 75,
       "spe": 84
-    },
-    "abilities": {
-      "0": "Pickup",
-      "1": "Frisk",
-      "H": "Insomnia"
-    },
-    "bst": 494
-  },
-  {
-    "id": 711,
-    "name": "Gourgeist-Small",
-    "apiName": "gourgeist-small",
-    "spriteSlug": "gourgeist-small",
-    "types": [
-      "Ghost",
-      "Grass"
-    ],
-    "stats": {
-      "hp": 55,
-      "atk": 85,
-      "def": 122,
-      "spa": 58,
-      "spd": 75,
-      "spe": 99
-    },
-    "abilities": {
-      "0": "Pickup",
-      "1": "Frisk",
-      "H": "Insomnia"
-    },
-    "bst": 494
-  },
-  {
-    "id": 711,
-    "name": "Gourgeist-Large",
-    "apiName": "gourgeist-large",
-    "spriteSlug": "gourgeist-large",
-    "types": [
-      "Ghost",
-      "Grass"
-    ],
-    "stats": {
-      "hp": 75,
-      "atk": 95,
-      "def": 122,
-      "spa": 58,
-      "spd": 75,
-      "spe": 69
-    },
-    "abilities": {
-      "0": "Pickup",
-      "1": "Frisk",
-      "H": "Insomnia"
-    },
-    "bst": 494
-  },
-  {
-    "id": 711,
-    "name": "Gourgeist-Super",
-    "apiName": "gourgeist-super",
-    "spriteSlug": "gourgeist-super",
-    "types": [
-      "Ghost",
-      "Grass"
-    ],
-    "stats": {
-      "hp": 85,
-      "atk": 100,
-      "def": 122,
-      "spa": 58,
-      "spd": 75,
-      "spe": 54
     },
     "abilities": {
       "0": "Pickup",
@@ -24270,50 +24127,6 @@
       "0": "Soul-Heart"
     },
     "bst": 600
-  },
-  {
-    "id": 801,
-    "name": "Mega Magearna",
-    "apiName": "magearna-mega",
-    "spriteSlug": "magearna-mega",
-    "types": [
-      "Steel",
-      "Fairy"
-    ],
-    "stats": {
-      "hp": 80,
-      "atk": 125,
-      "def": 115,
-      "spa": 170,
-      "spd": 115,
-      "spe": 95
-    },
-    "abilities": {
-      "0": "Soul-Heart"
-    },
-    "bst": 700
-  },
-  {
-    "id": 801,
-    "name": "Mega Magearna-Original",
-    "apiName": "magearna-original-mega",
-    "spriteSlug": "magearna-original-mega",
-    "types": [
-      "Steel",
-      "Fairy"
-    ],
-    "stats": {
-      "hp": 80,
-      "atk": 125,
-      "def": 115,
-      "spa": 170,
-      "spd": 115,
-      "spe": 95
-    },
-    "abilities": {
-      "0": "Soul-Heart"
-    },
-    "bst": 700
   },
   {
     "id": 802,
