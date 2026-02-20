@@ -1,8 +1,8 @@
 // src/js/modules/simulator.js
-import { getEffectiveness, getAbilityModifiers } from './calculator.js?v=2.23.2';
-import { loadAppData, fetchPokemonDetails } from './data.js?v=2.23.2';
-import { getPokemonImageUrl, createTypePill, capitalizeWords } from './ui.js?v=2.23.2';
-import { i18n } from './i18n.js?v=2.23.2';
+import { getEffectiveness, getAbilityModifiers } from './calculator.js?v=2.24.0';
+import { loadAppData, fetchPokemonDetails } from './data.js?v=2.24.0';
+import { getPokemonImageUrl, createTypePill, capitalizeWords } from './ui.js?v=2.24.0';
+import { i18n } from './i18n.js?v=2.24.0';
 
 export async function initSimulator() {
     const container = document.querySelector('#view-pro');

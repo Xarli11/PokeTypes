@@ -276,14 +276,20 @@ function formatDisplayName(name) {
 
 function isCosmetic(name) {
     const n = name;
-    // Common cosmetic prefixes/suffixes
+    
+    // 1. Strictly Cosmetic Forms (No Stat/Type Changes)
     if (n.startsWith('Pikachu-') && !n.includes('Gmax') && n !== 'Pikachu-Alola') return true; 
-
+    // Note: Pikachu-Alola doesn't exist as a form, it's Raichu-Alola. Pikachu-Alola-Cap etc are cosmetic.
+    // Wait, Pikachu Gmax exists. Keep it? Yes.
+    
     if (n.startsWith('Vivillon-') && n !== 'Vivillon') return true;
     if (n.startsWith('Flabebe-') && n !== 'Flabebe') return true;
-    if (n.startsWith('Floette-') && n !== 'Floette-Eternal') return true; 
+    if (n.startsWith('Floette-') && n !== 'Floette-Eternal') return true; // Eternal has unique stats
     if (n.startsWith('Furfrou-') && n !== 'Furfrou') return true;
-    if (n.startsWith('Minior-') && !n.includes('Meteor')) return true; 
+    if (n.startsWith('Minior-') && !n.includes('Meteor')) return true; // Meteor forms (Red, Blue etc) are cosmetic. Minior-Meteor is the base for Shields Down?
+    // Actually Minior has "Minior" (Shields Up) and "Minior-Meteor" (Shields Down) ?? No, usually Base and Core.
+    // Showdown has Minior-Red, etc. We filter colors.
+    
     if (n.startsWith('Alcremie-') && !n.includes('Gmax')) return true;
     if (n.startsWith('Deerling-') && n !== 'Deerling') return true;
     if (n.startsWith('Sawsbuck-') && n !== 'Sawsbuck') return true;
@@ -292,24 +298,27 @@ function isCosmetic(name) {
     if (n.startsWith('Maushold-') && n !== 'Maushold') return true; 
     if (n.startsWith('Dudunsparce-') && n !== 'Dudunsparce') return true; 
     
-    // Zarude-Dada is cosmetic stat-wise
-    if (n === 'Zarude-Dada') return true;
-    if (n === 'Keldeo-Resolute') return true; 
-    if (n === 'Magearna-Original') return true;
+    // 2. Specific Bug Fixes / Non-Standard
+    if (n === 'Zarude-Dada') return true; // Cosmetic
     if (n.includes('Polteageist-Antique')) return true;
     if (n.includes('Sinistea-Antique')) return true;
     if (n.includes('Poltchageist-Artisan')) return true;
     if (n.includes('Sinistcha-Masterpiece')) return true;
-    if (n === 'Xerneas-Neutral') return true;
-    if (n === 'Cramorant-Gulping' || n === 'Cramorant-Gorging') return true; 
-    if (n === 'Morpeko-Hangry') return true; 
-    if (n === 'Eiscue-Noice') return true; 
-    if (n === 'Wishiwashi-School') return false; 
-    if (n === 'Wishiwashi') return false; 
-    
-    if (n.startsWith('Burmy-') && n !== 'Burmy') return true;
-    if (n === 'Shellos-East') return true;
-    if (n === 'Gastrodon-East') return true;
+    if (n === 'Xerneas-Neutral') return true; // Active mode is cosmetic
+    if (n.startsWith('Cramorant-') && n !== 'Cramorant') return true; // Gulping/Gorging are in-battle forms
+    if (n.startsWith('Morpeko-') && n !== 'Morpeko') return true; // Hangry is in-battle
+    if (n === 'Eiscue-Noice') return true; // Noice face is in-battle
+    if (n.startsWith('Burmy-') && n !== 'Burmy') return true; // Burmy forms are cosmetic (unlike Wormadam)
+    if (n.startsWith('Shellos-') && n !== 'Shellos') return true;
+    if (n.startsWith('Gastrodon-') && n !== 'Gastrodon') return true;
+    if (n.startsWith('Magearna-') && n !== 'Magearna') return true; // Magearna-Original is cosmetic. "Mega" is error.
+    if (n === 'Pichu-Spiky-eared') return true; // Non-standard
+
+    // 3. Keep Everything Else (Gmax, Totem, Deoxys, Kyurem, Keldeo, etc.)
+    // Pumpkaboo/Gourgeist sizes: User requested to REMOVE them (Small, Large, Super).
+    // Base form "Pumpkaboo" (Average) remains.
+    if (n.startsWith('Pumpkaboo-') && n !== 'Pumpkaboo') return true;
+    if (n.startsWith('Gourgeist-') && n !== 'Gourgeist') return true;
     
     return false;
 }
