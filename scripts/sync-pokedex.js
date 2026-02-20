@@ -182,23 +182,22 @@ https.get(POKEDEX_URL, (res) => {
                 const bst = stats ? (stats.hp + stats.atk + stats.def + stats.spa + stats.spd + stats.spe) : 0;
 
                 // 1. Generate Basic Slug
-                let apiName = toSlug(originalName);
+                const rawSlug = toSlug(originalName);
 
-                // 2. Apply explicit map
-                if (API_NAME_MAP[apiName]) {
-                    apiName = API_NAME_MAP[apiName];
+                // 2. Determine API Name (for data fetching)
+                let apiName = rawSlug;
+                if (API_NAME_MAP[rawSlug]) {
+                    apiName = API_NAME_MAP[rawSlug];
                 } else {
-                    // 3. Heuristic Fixes
+                    // 3. Heuristic Fixes for API Name
                     if (apiName.includes('-totem')) {
                         apiName = apiName.replace('-totem', '');
                     }
-                    if (apiName.endsWith('-gmax')) {
-                        apiName = apiName.replace('-gmax', '-gmax'); // Keep as is unless specific override needed
-                    }
+                    // Gmax usually stays as is or is mapped manually
                 }
 
-                // Generate PokemonDB-friendly sprite slug
-                let spriteSlug = apiName;
+                // 3. Determine Sprite Slug (for images) - Default to raw slug (specific form)
+                let spriteSlug = rawSlug;
                 
                 // Fix Regional Forms suffixes for PokemonDB (alola -> alolan)
                 // Use a regex to replace only if it's a suffix or followed by something, but simple replace is usually safe for these specific strings
@@ -209,19 +208,20 @@ https.get(POKEDEX_URL, (res) => {
 
                 if (spriteSlug.endsWith('-gmax')) spriteSlug = spriteSlug.replace('-gmax', '-gigantamax');
 
-                // Specific Sprite Fixes
+                // Specific Sprite Fixes (PokemonDB naming vs Showdown)
                 if (spriteSlug === 'mimikyu-disguised') spriteSlug = 'mimikyu'; // PokemonDB uses base for disguised
                 if (spriteSlug === 'eiscue-ice') spriteSlug = 'eiscue';
                 if (spriteSlug === 'morpeko-full-belly') spriteSlug = 'morpeko';
                 if (spriteSlug === 'wishiwashi-solo') spriteSlug = 'wishiwashi';
-                if (spriteSlug === 'minior-red-meteor') spriteSlug = 'minior-meteor'; // Check this one
-                if (spriteSlug.startsWith('pikachu-') && spriteSlug !== 'pikachu-alolan') spriteSlug = 'pikachu'; 
+                if (spriteSlug === 'minior-red-meteor') spriteSlug = 'minior-meteor'; 
+                if (spriteSlug.startsWith('pikachu-') && spriteSlug !== 'pikachu-alolan') spriteSlug = 'pikachu'; // Most caps share base sprite or use very specific names? No, caps have sprites. 
+                // Wait, user REMOVED cosmetic caps. So only Pikachu base remains. 
+                // But Gmax Pikachu is distinct.
                 
-                // Ensure regional forms use adjectival form for PokemonDB (alola -> alolan)
-                if (spriteSlug.includes('-alola') && !spriteSlug.includes('-alolan')) spriteSlug = spriteSlug.replace('-alola', '-alolan');
-                if (spriteSlug.includes('-galar') && !spriteSlug.includes('-galarian')) spriteSlug = spriteSlug.replace('-galar', '-galarian');
-                if (spriteSlug.includes('-hisui') && !spriteSlug.includes('-hisuian')) spriteSlug = spriteSlug.replace('-hisui', '-hisuian');
-                if (spriteSlug.includes('-paldea') && !spriteSlug.includes('-paldean')) spriteSlug = spriteSlug.replace('-paldea', '-paldean');
+                // Clean up specific mappings that were ONLY for API but hurt Sprites
+                // e.g. arceus-bug -> arceus (API) but arceus-bug (Sprite).
+                // The new logic handles this automatically because spriteSlug starts as rawSlug.
+
 
                 cleanDex.push({
                     id: entry.num,
