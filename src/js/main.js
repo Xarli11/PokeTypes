@@ -1,10 +1,10 @@
-import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.24.2';
-import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.24.2';
-import { getTacticalAdvice } from './modules/advisor.js?v=2.24.2';
-import * as ui from './modules/ui.js?v=2.24.2';
-import { initTheme } from './modules/theme.js?v=2.24.2';
-import { initProMode, refreshProView } from './modules/pro.js?v=2.24.2';
-import { i18n } from './modules/i18n.js?v=2.24.2';
+import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.24.3';
+import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.24.3';
+import { getTacticalAdvice } from './modules/advisor.js?v=2.24.3';
+import * as ui from './modules/ui.js?v=2.24.3';
+import { initTheme } from './modules/theme.js?v=2.24.3';
+import { initProMode, refreshProView } from './modules/pro.js?v=2.24.3';
+import { i18n } from './modules/i18n.js?v=2.24.3';
 
 let appData = null;
 let currentPokemon = null;

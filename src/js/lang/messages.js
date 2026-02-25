@@ -116,6 +116,7 @@ export const messages = {
         suggestions_title: "Got suggestions or feedback?",
         suggestions_desc: "I'm always looking to improve PokeTypes. Whether it's a feature request or a bug report, I'd love to hear from you!",
         email_btn: "Email Me",
+        bmc_btn: "Buy Me a Coffee",
         footer_copyright: "Data up to Gen 9",
         created_by: "Created by",
 
@@ -259,6 +260,7 @@ export const messages = {
         suggestions_title: "¿Tienes sugerencias?",
         suggestions_desc: "Siempre busco mejorar PokeTypes. Si tienes una idea o encuentras un error, ¡me encantaría escucharte!",
         email_btn: "Envíame un Email",
+        bmc_btn: "Cómprame un café",
         footer_copyright: "Datos hasta Gen 9",
         created_by: "Creado por",
 
