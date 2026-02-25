@@ -1,5 +1,5 @@
-import { getEffectiveness, getAbilityModifiers } from './calculator.js?v=2.24.3';
-import { capitalizeWords } from './ui.js?v=2.24.3';
+import { getEffectiveness, getAbilityModifiers } from './calculator.js?v=2.24.4';
+import { capitalizeWords } from './ui.js?v=2.24.4';
 
 export function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiveness, pokemonList, activePokemon = null) {
     // Filter weaknesses based on abilities (e.g. Levitate)
