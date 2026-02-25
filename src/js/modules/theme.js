@@ -1,10 +1,8 @@
 export function initTheme() {
-    // 1. Check local storage or system preference
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-    } else {
-        document.documentElement.classList.remove('dark');
-    }
+    // 1. Detection is already handled in index.html to prevent flashbang
+    // but we keep this here to ensure the UI stays in sync if called again.
+    const isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.classList.toggle('dark', isDark);
 
     // 2. Setup Toggle Button Logic
     const themeToggleBtn = document.getElementById('theme-toggle');

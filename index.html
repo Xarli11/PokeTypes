@@ -37,6 +37,16 @@
     <link rel="apple-touch-icon" href="/pokeball.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#6366f1">
+
+    <script>
+      // Apply theme as early as possible to prevent flicker
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
