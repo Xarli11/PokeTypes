@@ -95,7 +95,10 @@ async function applyStateFromURL() {
     const searchInput = document.getElementById('pokemon-search');
 
     if (p) {
-        const pokemon = appData.pokemonList.find(item => item.name.toLowerCase() === p.toLowerCase());
+        const pokemon = appData.pokemonList.find(item => 
+            item.name.toLowerCase() === p.toLowerCase() || 
+            (item.apiName && item.apiName.toLowerCase() === p.toLowerCase())
+        );
         if (pokemon) {
             searchInput.value = ui.capitalizeWords(pokemon.name);
             typeSelect.value = pokemon.types[0] || '';
