@@ -1,5 +1,5 @@
-import { getEffectiveness, getAbilityModifiers } from './calculator.js?v=2.24.4';
-import { i18n } from './i18n.js?v=2.24.4';
+import { getEffectiveness, getAbilityModifiers } from './calculator.js';
+import { i18n } from './i18n.js';
 
 export function createTypePill(type, contrastData) {
     const textColorClass = contrastData[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
@@ -210,7 +210,7 @@ export function getPokemonImageUrl(p, imageFixes = {}) {
 
     return (p.spriteSlug || p.apiName)
         ? `https://img.pokemondb.net/sprites/home/normal/${p.spriteSlug || p.apiName}.png`
-        : (p.id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png` : 'pokeball.png');
+        : (p.id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png` : '/pokeball.png');
 }
 
 export function renderPokemonHero(container, pokemon, contrastData, imageFixes = {}) {
@@ -242,7 +242,7 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
         primaryUrl,
         `https://img.pokemondb.net/sprites/home/normal/${slug}.png`,
         `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`,
-        'pokeball.png'
+        '/pokeball.png'
     ];
 
     const contentHTML = `

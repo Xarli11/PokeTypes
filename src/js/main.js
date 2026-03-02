@@ -1,10 +1,10 @@
-import { loadAppData, fetchPokemonDetails } from './modules/data.js?v=2.24.4';
-import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js?v=2.24.4';
-import { getTacticalAdvice } from './modules/advisor.js?v=2.24.4';
-import * as ui from './modules/ui.js?v=2.24.4';
-import { initTheme } from './modules/theme.js?v=2.24.4';
-import { initProMode, refreshProView } from './modules/pro.js?v=2.24.4';
-import { i18n } from './modules/i18n.js?v=2.24.4';
+import { loadAppData, fetchPokemonDetails } from './modules/data.js';
+import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js';
+import { getTacticalAdvice } from './modules/advisor.js';
+import * as ui from './modules/ui.js';
+import { initTheme } from './modules/theme.js';
+import { initProMode, refreshProView } from './modules/pro.js';
+import { i18n } from './modules/i18n.js';
 
 let appData = null;
 let currentPokemon = null;
@@ -77,27 +77,54 @@ function refreshUI() {
 
 function syncURLWithState(t1, t2, pokemonName) {
     const url = new URL(window.location);
-    if (t1) url.searchParams.set('t1', t1.toLowerCase()); else url.searchParams.delete('t1');
-    if (t2) url.searchParams.set('t2', t2.toLowerCase()); else url.searchParams.delete('t2');
-    if (pokemonName) url.searchParams.set('p', pokemonName.toLowerCase()); else url.searchParams.delete('p');
     
-    window.history.replaceState({}, '', url);
+    if (pokemonName) {
+        const slug = pokemonName.toLowerCase().replace(/\s+/g, '-');
+        url.pathname = `/pokemon/${slug}`;
+        url.search = '';
+    } else if (t1 || t2) {
+        const types = [t1, t2].filter(Boolean).map(t => t.toLowerCase());
+        url.pathname = `/tipo/${types.join('-')}`;
+        url.search = '';
+    } else {
+        url.pathname = '/';
+        url.search = '';
+    }
+    
+    window.history.pushState({}, '', url);
 }
 
 async function applyStateFromURL() {
     const params = new URLSearchParams(window.location.search);
-    const t1 = params.get('t1');
-    const t2 = params.get('t2');
-    const p = params.get('p');
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    
+    let p = params.get('p');
+    let t1 = params.get('t1');
+    let t2 = params.get('t2');
+
+    // Path-based detection
+    if (pathParts[0] === 'pokemon' && pathParts[1]) {
+        p = pathParts[1];
+    } else if (pathParts[0] === 'tipo' && pathParts[1]) {
+        const types = pathParts[1].split('-');
+        t1 = types[0];
+        t2 = types[1];
+    }
 
     const typeSelect = document.getElementById('type-select');
     const type2Select = document.getElementById('type2-select');
     const searchInput = document.getElementById('pokemon-search');
 
     if (p) {
-        const pokemon = appData.pokemonList.find(item => item.name.toLowerCase() === p.toLowerCase());
+        const pokemon = appData.pokemonList.find(item => 
+            item.name.toLowerCase() === p.toLowerCase() || 
+            (item.apiName && item.apiName.toLowerCase() === p.toLowerCase()) ||
+            (item.name.toLowerCase().replace(/\s+/g, '-') === p.toLowerCase())
+        );
         if (pokemon) {
-            searchInput.value = ui.capitalizeWords(pokemon.name);
+            const localizedName = i18n.t(pokemon.name.toLowerCase());
+            searchInput.value = localizedName !== pokemon.name.toLowerCase() ? localizedName : ui.capitalizeWords(pokemon.name);
+            
             typeSelect.value = pokemon.types[0] || '';
             type2Select.value = pokemon.types[1] || '';
             displayAnalysis(typeSelect.value, type2Select.value);
@@ -107,7 +134,6 @@ async function applyStateFromURL() {
     }
 
     if (t1 || t2) {
-        // Ensure types exist in appData (case insensitive match)
         const findType = (val) => appData.types.find(t => t.toLowerCase() === val?.toLowerCase());
         const validT1 = findType(t1);
         const validT2 = findType(t2);
