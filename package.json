@@ -2,13 +2,13 @@
   "name": "poketypes",
   "version": "2.24.4",
   "description": "**Poketypes** es una herramienta visual interactiva para explorar la efectividad de los tipos Pokémon, tanto en defensa como en ataque. Selecciona uno o dos tipos y descubre todas sus debilidades, resistencias, inmunidades y fortalezas de un vistazo.",
-  "main": "script.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "concurrently \"npm run dev:css\" \"live-server .\"",
-    "build": "npm run build:css",
-    "build:css": "tailwindcss -i ./src/input.css -o ./styles.css --minify",
-    "dev:css": "tailwindcss -i ./src/input.css -o ./styles.css --watch",
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
     "release": "node scripts/release.js"
   },
   "repository": {
@@ -18,17 +18,15 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/Xarli11/PokeTypes/issues"
   },
   "homepage": "https://github.com/Xarli11/PokeTypes#readme",
-  "devDependencies": {
-    "@tailwindcss/cli": "^4.1.18",
-    "autoprefixer": "^10.4.23",
-    "concurrently": "^9.2.1",
-    "live-server": "^1.2.2",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.18"
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.0",
+    "@astrojs/vercel": "^9.0.4",
+    "@tailwindcss/vite": "^4.0.0",
+    "astro": "^5.0.0",
+    "tailwindcss": "^4.0.0"
   }
 }

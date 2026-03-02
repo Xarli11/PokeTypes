@@ -1,0 +1,97 @@
+---
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+    description?: string;
+    image?: string;
+}
+
+const { 
+    title = "PokeTypes | Pokemon Type Calculator & Chart", 
+    description = "Instant Pokemon type calculator and effectiveness chart. Analyze weaknesses, resistances, and coverage for all Pokemon (Gen 9, Scarlet/Violet included).", 
+    image = "/pokeball.png" 
+} = Astro.props;
+
+const siteUrl = "https://poketypes.app";
+const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image.startsWith('/') ? '' : '/'}${image}`;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Google tag (gtag.js) -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-9D59NL7KTH"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-9D59NL7KTH');
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content={description}>
+    <meta name="keywords" content="Pokemon, type calculator, weakness chart, type effectiveness, Pokemon SV, Gen 9, dual type calculator, resistance checker">
+    <meta name="author" content="Xarli11">
+    <link rel="canonical" href={Astro.url}>
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content={Astro.url}>
+    <meta property="og:title" content={title}>
+    <meta property="og:description" content={description}>
+    <meta property="og:image" content={finalImageUrl}>
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:url" content={Astro.url}>
+    <meta property="twitter:title" content={title}>
+    <meta property="twitter:description" content={description}>
+    <meta property="twitter:image" content={finalImageUrl}>
+
+    <title>{title}</title>
+    
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" href="/pokeball.png">
+    <link rel="apple-touch-icon" href="/pokeball.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#6366f1">
+
+    <script is:inline>
+      // Apply theme as early as possible to prevent flicker
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script is:inline async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5778743399428042" crossorigin="anonymous"></script>
+    
+    <!-- Structured Data (Schema.org) -->
+    <script type="application/ld+json" is:inline>
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "PokeTypes",
+      "url": "https://poketypes.app/",
+      "description": "Advanced Pokemon type calculator and effectiveness chart for Gen 9 (Scarlet & Violet). Check weaknesses, resistances, and dual-type coverage instantly.",
+      "applicationCategory": "GameApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": "Dual type calculator, Team coverage analysis, Gen 9 support, Mobile friendly"
+    }
+    </script>
+</head>
+<body class="min-h-screen py-12 px-4 md:px-8 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+    <slot />
+</body>
+</html>

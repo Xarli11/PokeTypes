@@ -1,4 +1,4 @@
-import { i18n } from './i18n.js?v=2.24.4';
+import { i18n } from './i18n.js';
 
 const pokemonCache = new Map();
 const abilityCache = new Map();
@@ -10,10 +10,10 @@ export function loadAppData() {
     appDataPromise = (async () => {
         try {
             const [typeDataResponse, pokedexResponse, abilitiesResponse, fixesResponse] = await Promise.all([
-                fetch('data/type-data.json'),
-                fetch('data/pokedex.json'),
-                fetch('data/abilities-i18n.json'),
-                fetch('data/image-fixes.json')
+                fetch('/data/type-data.json'),
+                fetch('/data/pokedex.json'),
+                fetch('/data/abilities-i18n.json'),
+                fetch('/data/image-fixes.json')
             ]);
 
             if (!typeDataResponse.ok || !pokedexResponse.ok) {
