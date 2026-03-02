@@ -1,0 +1,246 @@
+{
+  "raichu-mega-x": {
+    "type": "slug",
+    "value": "raichu"
+  },
+  "raichu-mega-y": {
+    "type": "slug",
+    "value": "raichu"
+  },
+  "clefable-mega": {
+    "type": "slug",
+    "value": "clefable"
+  },
+  "victreebel-mega": {
+    "type": "slug",
+    "value": "victreebel"
+  },
+  "starmie-mega": {
+    "type": "slug",
+    "value": "starmie"
+  },
+  "tauros-paldea-combat-breed": {
+    "type": "slug",
+    "value": "tauros"
+  },
+  "tauros-paldea-blaze-breed": {
+    "type": "slug",
+    "value": "tauros"
+  },
+  "tauros-paldea-aqua-breed": {
+    "type": "slug",
+    "value": "tauros"
+  },
+  "eevee-starter": {
+    "type": "slug",
+    "value": "eevee"
+  },
+  "dragonite-mega": {
+    "type": "slug",
+    "value": "dragonite"
+  },
+  "meganium-mega": {
+    "type": "slug",
+    "value": "meganium"
+  },
+  "feraligatr-mega": {
+    "type": "slug",
+    "value": "feraligatr"
+  },
+  "skarmory-mega": {
+    "type": "slug",
+    "value": "skarmory"
+  },
+  "chimecho-mega": {
+    "type": "slug",
+    "value": "chimecho"
+  },
+  "absol-mega-z": {
+    "type": "slug",
+    "value": "absol"
+  },
+  "staraptor-mega": {
+    "type": "slug",
+    "value": "staraptor"
+  },
+  "garchomp-mega-z": {
+    "type": "slug",
+    "value": "garchomp"
+  },
+  "lucario-mega-z": {
+    "type": "slug",
+    "value": "lucario"
+  },
+  "froslass-mega": {
+    "type": "slug",
+    "value": "froslass"
+  },
+  "heatran-mega": {
+    "type": "slug",
+    "value": "heatran"
+  },
+  "darkrai-mega": {
+    "type": "slug",
+    "value": "darkrai"
+  },
+  "emboar-mega": {
+    "type": "slug",
+    "value": "emboar"
+  },
+  "excadrill-mega": {
+    "type": "slug",
+    "value": "excadrill"
+  },
+  "scolipede-mega": {
+    "type": "slug",
+    "value": "scolipede"
+  },
+  "scrafty-mega": {
+    "type": "slug",
+    "value": "scrafty"
+  },
+  "eelektross-mega": {
+    "type": "slug",
+    "value": "eelektross"
+  },
+  "chandelure-mega": {
+    "type": "slug",
+    "value": "chandelure"
+  },
+  "golurk-mega": {
+    "type": "slug",
+    "value": "golurk"
+  },
+  "chesnaught-mega": {
+    "type": "slug",
+    "value": "chesnaught"
+  },
+  "delphox-mega": {
+    "type": "slug",
+    "value": "delphox"
+  },
+  "greninja-battle-bond": {
+    "type": "slug",
+    "value": "greninja"
+  },
+  "greninja-mega": {
+    "type": "slug",
+    "value": "greninja"
+  },
+  "pyroar-mega": {
+    "type": "slug",
+    "value": "pyroar"
+  },
+  "floette-eternal": {
+    "type": "slug",
+    "value": "floette"
+  },
+  "malamar-mega": {
+    "type": "slug",
+    "value": "malamar"
+  },
+  "barbaracle-mega": {
+    "type": "slug",
+    "value": "barbaracle"
+  },
+  "dragalge-mega": {
+    "type": "slug",
+    "value": "dragalge"
+  },
+  "hawlucha-mega": {
+    "type": "slug",
+    "value": "hawlucha"
+  },
+  "zygarde-mega": {
+    "type": "slug",
+    "value": "zygarde"
+  },
+  "crabominable-mega": {
+    "type": "slug",
+    "value": "crabominable"
+  },
+  "golisopod-mega": {
+    "type": "slug",
+    "value": "golisopod"
+  },
+  "mimikyu-totem-disguised": {
+    "type": "slug",
+    "value": "mimikyu"
+  },
+  "drampa-mega": {
+    "type": "slug",
+    "value": "drampa"
+  },
+  "necrozma-dusk": {
+    "type": "slug",
+    "value": "necrozma"
+  },
+  "necrozma-dawn": {
+    "type": "slug",
+    "value": "necrozma"
+  },
+  "magearna-mega": {
+    "type": "slug",
+    "value": "magearna"
+  },
+  "magearna-original-mega": {
+    "type": "slug",
+    "value": "magearna"
+  },
+  "zeraora-mega": {
+    "type": "slug",
+    "value": "zeraora"
+  },
+  "toxtricity-amped-gmax": {
+    "type": "slug",
+    "value": "toxtricity"
+  },
+  "toxtricity-low-key-gmax": {
+    "type": "slug",
+    "value": "toxtricity"
+  },
+  "falinks-mega": {
+    "type": "slug",
+    "value": "falinks"
+  },
+  "calyrex-ice": {
+    "type": "slug",
+    "value": "calyrex"
+  },
+  "calyrex-shadow": {
+    "type": "slug",
+    "value": "calyrex"
+  },
+  "maushold-family-of-four": {
+    "type": "slug",
+    "value": "maushold"
+  },
+  "squawkabilly-green-plumage": {
+    "type": "slug",
+    "value": "squawkabilly"
+  },
+  "scovillain-mega": {
+    "type": "slug",
+    "value": "scovillain"
+  },
+  "glimmora-mega": {
+    "type": "slug",
+    "value": "glimmora"
+  },
+  "baxcalibur-mega": {
+    "type": "slug",
+    "value": "baxcalibur"
+  },
+  "ogerpon-wellspring-mask": {
+    "type": "slug",
+    "value": "ogerpon"
+  },
+  "ogerpon-hearthflame-mask": {
+    "type": "slug",
+    "value": "ogerpon"
+  },
+  "ogerpon-cornerstone-mask": {
+    "type": "slug",
+    "value": "ogerpon"
+  }
+}

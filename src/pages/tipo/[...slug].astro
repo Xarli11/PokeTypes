@@ -1,0 +1,97 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import typeData from '../../data/type-data.json';
+
+const { slug } = Astro.params;
+const { types } = typeData;
+
+let t1 = null;
+let t2 = null;
+
+if (slug) {
+    const parts = slug.split('-');
+    const findType = (s) => types.find(t => t.toLowerCase() === s.toLowerCase());
+    
+    t1 = findType(parts[0]);
+    t2 = parts[1] ? findType(parts[1]) : null;
+}
+
+if (!t1 && !t2) {
+    return Astro.redirect('/404');
+}
+
+const typeName = t2 ? `${t1}/${t2}` : t1;
+const title = `Debilidades y Resistencias de tipo ${typeName} | PokeTypes`;
+const description = `Calculadora de efectividad para el tipo ${typeName}. Analiza vulnerabilidades x4, x2 y resistencias para mejorar tu estrategia competitiva en Pokémon Escarlata y Púrpura.`;
+---
+
+<Layout title={title} description={description}>
+    <div class="max-w-7xl mx-auto relative">
+        <div class="absolute top-0 right-0 z-50 flex items-center gap-2">
+            <button id="lang-toggle" class="p-2 rounded-lg bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm transition-all font-bold text-sm tracking-wide">
+                ES
+            </button>
+            <button id="theme-toggle" class="p-2 rounded-lg bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm transition-all">
+                <svg class="w-6 h-6 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                <svg class="w-6 h-6 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+            </button>
+        </div>
+
+        <header class="text-center mb-8">
+            <a href="/" class="inline-block">
+                <h1 class="bento-title dark:text-white">Poketypes</h1>
+            </a>
+            <p class="text-slate-400 text-lg font-medium max-w-xl mx-auto">
+                Análisis de efectividad para el tipo <span class="text-indigo-500 font-bold">{typeName}</span>
+            </p>
+        </header>
+
+        <div id="view-simple" class="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <section class="md:col-span-12 bento-card dark:bg-slate-800 dark:border-slate-700 flex flex-col lg:flex-row items-center gap-6">
+                <div class="relative w-full lg:flex-1">
+                    <input id="pokemon-search" type="text" placeholder="Search Pokemon..." class="search-input dark:bg-slate-900 dark:text-white dark:border-slate-700 dark:placeholder-slate-500">
+                    <ul id="suggestions" class="hidden dark:bg-slate-800 dark:border-slate-700"></ul>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
+                    <div class="relative w-full sm:w-48">
+                        <select id="type-select" class="bento-select dark:bg-slate-900 dark:text-white dark:border-slate-700">
+                            <option value="">Type 1</option>
+                        </select>
+                    </div>
+                    <div class="relative w-full sm:w-48">
+                        <select id="type2-select" class="bento-select dark:bg-slate-900 dark:text-white dark:border-slate-700">
+                            <option value="">Type 2</option>
+                        </select>
+                    </div>
+                    <button id="reset-button" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-slate-900 text-white font-bold hover:bg-indigo-600 transition-colors duration-200 dark:bg-indigo-600 dark:hover:bg-indigo-500">
+                        Reset
+                    </button>
+                </div>
+            </section>
+
+            <section id="pokemon-stats" class="md:col-span-12 grid grid-cols-1 lg:grid-cols-12 gap-6 hidden"></section>
+
+            <section id="type-details" class="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="md:col-span-2 bento-card dark:bg-slate-800 dark:border-slate-700 !py-6 !px-10 flex flex-wrap items-center justify-between gap-4">
+                    <h2 class="text-xl font-bold text-slate-400 uppercase tracking-widest">Análisis Activo</h2>
+                    <div id="selected-type-name" class="flex items-center gap-2"></div>
+                </div>
+                <div class="flex flex-col gap-6">
+                    <div class="bento-card dark:bg-slate-800 dark:border-slate-700">
+                        <div id="weaknesses" class="effectiveness-card dark:border-slate-700"></div>
+                        <div id="neutral-damage" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
+                        <div id="resistances" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
+                        <div id="immunities" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
+                    </div>
+                </div>
+                <div class="bento-card dark:bg-slate-800 dark:border-slate-700">
+                    <div id="super-effective" class="effectiveness-card dark:border-slate-700"></div>
+                    <div id="neutral-offense" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
+                    <div id="not-very-effective" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
+                    <div id="no-effect" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <script src="../../js/main.js"></script>
+</Layout>
