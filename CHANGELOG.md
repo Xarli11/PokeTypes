@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.25.0] - 2026-03-02
+
+### Added
+- **Astro SSR:** Migrated the entire application to Astro with Server-Side Rendering (SSR) for massive SEO improvement.
+- **Dynamic Routing:** 1334+ individual Pokémon pages and 171+ type combination pages are now indexable by Google.
+- **Sitemap:** Automatic generation of `sitemap-index.xml` via `@astrojs/sitemap`.
+- **Clean URLs:** Transitioned from query parameters to human-readable paths (e.g., `/pokemon/lucario`, `/tipo/fire-dragon`).
+- **Dynamic Meta Tags:** Personalized titles and descriptions for every Pokémon and type combination to maximize CTR.
+
+### Changed
+- **Architecture:** Replaced Vanilla SPA with a Multi-Page Application (MPA) model using the Vercel adapter.
+- **Tech Stack:** Integrated Tailwind CSS v4 via `@tailwindcss/vite` for faster builds and modern CSS features.
+- **Data Loading:** Optimized JSON data fetching with absolute paths for better compatibility with deep routing.
+- **Release Workflow:** Updated the release script to be compatible with Astro's structure and public asset management.
+
+### Fixed
+- **SEO Visibility:** Resolved the "single door" problem, allowing search engines to discover and index the entire Pokédex.
+
 ## [2.24.3] - 2026-02-25
 
 ### Added

@@ -17,9 +17,10 @@ const { name, id } = pokemon;
 
 const title = `Debilidades de ${name} | Calculadora PokeTypes`;
 const description = `Analiza las debilidades, resistencias y efectividad de tipos para ${name} en la novena generación. Datos actualizados de Pokémon Escarlata y Púrpura.`;
+const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} image={imageUrl}>
     <div class="max-w-7xl mx-auto relative">
         <div class="absolute top-0 right-0 z-50 flex items-center gap-2">
             <button id="lang-toggle" class="p-2 rounded-lg bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm transition-all font-bold text-sm tracking-wide">
