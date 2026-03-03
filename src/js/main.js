@@ -195,6 +195,17 @@ function setupEventListeners() {
     const statsSection = document.getElementById('pokemon-stats');
     const langToggle = document.getElementById('lang-toggle');
 
+    // Global Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+        if (e.key === '/' || ((e.metaKey || e.ctrlKey) && e.key === 'k')) {
+            if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                searchInput.focus();
+                searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    });
+
     // Language Toggle
     if (langToggle) {
         langToggle.addEventListener('click', () => {
