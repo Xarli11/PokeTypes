@@ -327,14 +327,17 @@ function renderRoleCard(key, count, colorClass) {
 // Global functions for onclick handlers
 window.updateTeamAbility = (index, ability) => {
     setAbility(index, ability);
+    renderTeamAnalysis(loadTeam());
 };
 
 window.updateTeamNature = (index, nature) => {
     setNature(index, nature);
+    renderTeamAnalysis(loadTeam());
 };
 
 window.updateTeamItem = (index, item) => {
     setItem(index, item);
+    renderTeamAnalysis(loadTeam());
 };
 
 window.openSearchModal = (index) => {

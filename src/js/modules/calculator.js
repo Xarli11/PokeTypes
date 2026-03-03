@@ -137,6 +137,18 @@ export const ABILITY_EFFECTIVENESS = {
     'minds-eye': [{ type: 'Offensive', modifier: 1, description: 'Allows Normal and Fighting moves to hit Ghost types.' }]
 };
 
+export const ITEM_EFFECTIVENESS = {
+    'air-balloon': [{ type: 'Ground', modifier: 0, description: 'Grants immunity to Ground-type moves.' }],
+    'ring-target': [{ type: 'All', modifier: 1, description: 'Allows moves to hit even if the user is normally immune.' }]
+};
+
+export function getItemModifiers(itemName) {
+    if (!itemName) return [];
+    // Normalize item name (e.g. "Air Balloon" -> "air-balloon")
+    const slug = itemName.toLowerCase().replace(/ /g, '-');
+    return ITEM_EFFECTIVENESS[slug] || [];
+}
+
 export function getAbilityModifiers(abilityName) {
     if (!abilityName) return [];
     return ABILITY_EFFECTIVENESS[abilityName.toLowerCase()] || [];
