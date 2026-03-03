@@ -1,0 +1,738 @@
+{
+  "master-ball": {
+    "en": "Master Ball",
+    "es": "Master Ball"
+  },
+  "ultra-ball": {
+    "en": "Ultra Ball",
+    "es": "Ultra Ball"
+  },
+  "great-ball": {
+    "en": "Great Ball",
+    "es": "Super Ball"
+  },
+  "net-ball": {
+    "en": "Net Ball",
+    "es": "Malla Ball"
+  },
+  "dive-ball": {
+    "en": "Dive Ball",
+    "es": "Buceo Ball"
+  },
+  "timer-ball": {
+    "en": "Timer Ball",
+    "es": "Turno Ball"
+  },
+  "repeat-ball": {
+    "en": "Repeat Ball",
+    "es": "Acopio Ball"
+  },
+  "safari-ball": {
+    "en": "Safari Ball",
+    "es": "Safari Ball"
+  },
+  "poke-ball": {
+    "en": "Poké Ball",
+    "es": "Poké Ball"
+  },
+  "nest-ball": {
+    "en": "Nest Ball",
+    "es": "Nido Ball"
+  },
+  "premier-ball": {
+    "en": "Premier Ball",
+    "es": "Honor Ball"
+  },
+  "heal-ball": {
+    "en": "Heal Ball",
+    "es": "Sana Ball"
+  },
+  "antidote": {
+    "en": "Antidote",
+    "es": "Antídoto"
+  },
+  "potion": {
+    "en": "Potion",
+    "es": "Poción"
+  },
+  "cherish-ball": {
+    "en": "Cherish Ball",
+    "es": "Gloria Ball"
+  },
+  "ice-heal": {
+    "en": "Ice Heal",
+    "es": "Antihielo"
+  },
+  "quick-ball": {
+    "en": "Quick Ball",
+    "es": "Veloz Ball"
+  },
+  "burn-heal": {
+    "en": "Burn Heal",
+    "es": "Antiquemar"
+  },
+  "dusk-ball": {
+    "en": "Dusk Ball",
+    "es": "Ocaso Ball"
+  },
+  "luxury-ball": {
+    "en": "Luxury Ball",
+    "es": "Lujo Ball"
+  },
+  "awakening": {
+    "en": "Awakening",
+    "es": "Despertar"
+  },
+  "full-heal": {
+    "en": "Full Heal",
+    "es": "Cura Total"
+  },
+  "ether": {
+    "en": "Ether",
+    "es": "Éter"
+  },
+  "full-restore": {
+    "en": "Full Restore",
+    "es": "Restaurar Todo"
+  },
+  "lemonade": {
+    "en": "Lemonade",
+    "es": "Limonada"
+  },
+  "paralyze-heal": {
+    "en": "Paralyze Heal",
+    "es": "Antiparalizador"
+  },
+  "revive": {
+    "en": "Revive",
+    "es": "Revivir"
+  },
+  "moomoo-milk": {
+    "en": "Moomoo Milk",
+    "es": "Leche Mu-mu"
+  },
+  "max-ether": {
+    "en": "Max Ether",
+    "es": "Éter Máximo"
+  },
+  "revival-herb": {
+    "en": "Revival Herb",
+    "es": "Hierba Revivir"
+  },
+  "max-potion": {
+    "en": "Max Potion",
+    "es": "Poción Máxima"
+  },
+  "heal-powder": {
+    "en": "Heal Powder",
+    "es": "Polvo Curación"
+  },
+  "max-revive": {
+    "en": "Max Revive",
+    "es": "Revivir Máximo"
+  },
+  "soda-pop": {
+    "en": "Soda Pop",
+    "es": "Refresco"
+  },
+  "hyper-potion": {
+    "en": "Hyper Potion",
+    "es": "Hiperpoción"
+  },
+  "elixir": {
+    "en": "Elixir",
+    "es": "Elixir"
+  },
+  "fresh-water": {
+    "en": "Fresh Water",
+    "es": "Agua Fresca"
+  },
+  "energy-powder": {
+    "en": "Energy Powder",
+    "es": "Polvo Energía"
+  },
+  "super-potion": {
+    "en": "Super Potion",
+    "es": "Superpoción"
+  },
+  "energy-root": {
+    "en": "Energy Root",
+    "es": "Raíz Energía"
+  },
+  "max-elixir": {
+    "en": "Max Elixir",
+    "es": "Elixir Máximo"
+  },
+  "zinc": {
+    "en": "Zinc",
+    "es": "Zinc"
+  },
+  "pp-up": {
+    "en": "PP Up",
+    "es": "Más PP"
+  },
+  "rare-candy": {
+    "en": "Rare Candy",
+    "es": "Caramelo Raro"
+  },
+  "berry-juice": {
+    "en": "Berry Juice",
+    "es": "Zumo de Baya"
+  },
+  "x-accuracy": {
+    "en": "X Accuracy",
+    "es": "Precisión X"
+  },
+  "guard-spec": {
+    "en": "Guard Spec.",
+    "es": "Protección X"
+  },
+  "x-speed": {
+    "en": "X Speed",
+    "es": "Velocidad X"
+  },
+  "protein": {
+    "en": "Protein",
+    "es": "Proteína"
+  },
+  "sacred-ash": {
+    "en": "Sacred Ash",
+    "es": "Ceniza Sagrada"
+  },
+  "carbos": {
+    "en": "Carbos",
+    "es": "Carburante"
+  },
+  "calcium": {
+    "en": "Calcium",
+    "es": "Calcio"
+  },
+  "pp-max": {
+    "en": "PP Max",
+    "es": "PP Máximos"
+  },
+  "old-gateau": {
+    "en": "Old Gateau",
+    "es": "Barrita Plus"
+  },
+  "iron": {
+    "en": "Iron",
+    "es": "Hierro"
+  },
+  "x-attack": {
+    "en": "X Attack",
+    "es": "Ataque X"
+  },
+  "x-defense": {
+    "en": "X Defense",
+    "es": "Defensa X"
+  },
+  "dire-hit": {
+    "en": "Dire Hit",
+    "es": "Crítico X"
+  },
+  "lava-cookie": {
+    "en": "Lava Cookie",
+    "es": "Galleta Lava"
+  },
+  "hp-up": {
+    "en": "HP Up",
+    "es": "Más PS"
+  },
+  "blue-flute": {
+    "en": "Blue Flute",
+    "es": "Flauta Azul"
+  },
+  "white-flute": {
+    "en": "White Flute",
+    "es": "Flauta Blanca"
+  },
+  "yellow-flute": {
+    "en": "Yellow Flute",
+    "es": "Flauta Amarilla"
+  },
+  "bright-powder": {
+    "en": "Bright Powder",
+    "es": "Polvo Brillo"
+  },
+  "red-flute": {
+    "en": "Red Flute",
+    "es": "Flauta Roja"
+  },
+  "lustrous-orb": {
+    "en": "Lustrous Orb",
+    "es": "Lustresfera"
+  },
+  "macho-brace": {
+    "en": "Macho Brace",
+    "es": "Brazal Firme"
+  },
+  "kings-rock": {
+    "en": "King’s Rock",
+    "es": "Roca del Rey"
+  },
+  "adamant-orb": {
+    "en": "Adamant Orb",
+    "es": "Diamansfera"
+  },
+  "poke-doll": {
+    "en": "Poké Doll",
+    "es": "Poké Muñeco"
+  },
+  "x-sp-atk": {
+    "en": "X Sp. Atk",
+    "es": "At. Especial X"
+  },
+  "exp-share": {
+    "en": "Exp. Share",
+    "es": "Repartir Exp"
+  },
+  "x-sp-def": {
+    "en": "X Sp. Def",
+    "es": "Def. Especial X"
+  },
+  "black-flute": {
+    "en": "Black Flute",
+    "es": "Flauta Negra"
+  },
+  "fluffy-tail": {
+    "en": "Fluffy Tail",
+    "es": "Cola Skitty"
+  },
+  "choice-band": {
+    "en": "Choice Band",
+    "es": "Cinta Elección"
+  },
+  "white-herb": {
+    "en": "White Herb",
+    "es": "Hierba Blanca"
+  },
+  "soothe-bell": {
+    "en": "Soothe Bell",
+    "es": "Cascabel Alivio"
+  },
+  "quick-claw": {
+    "en": "Quick Claw",
+    "es": "Garra Rápida"
+  },
+  "mental-herb": {
+    "en": "Mental Herb",
+    "es": "Hierba Mental"
+  },
+  "silver-powder": {
+    "en": "Silver Powder",
+    "es": "Polvo Plata"
+  },
+  "scope-lens": {
+    "en": "Scope Lens",
+    "es": "Periscopio"
+  },
+  "black-glasses": {
+    "en": "Black Glasses",
+    "es": "Gafas de Sol"
+  },
+  "deep-sea-tooth": {
+    "en": "Deep Sea Tooth",
+    "es": "Diente Marino"
+  },
+  "amulet-coin": {
+    "en": "Amulet Coin",
+    "es": "Moneda Amuleto"
+  },
+  "metal-coat": {
+    "en": "Metal Coat",
+    "es": "Revest. Metálico"
+  },
+  "miracle-seed": {
+    "en": "Miracle Seed",
+    "es": "Semilla Milagro"
+  },
+  "light-ball": {
+    "en": "Light Ball",
+    "es": "Bola Luminosa"
+  },
+  "black-belt": {
+    "en": "Black Belt",
+    "es": "Cinturón Negro"
+  },
+  "hard-stone": {
+    "en": "Hard Stone",
+    "es": "Piedra Dura"
+  },
+  "everstone": {
+    "en": "Everstone",
+    "es": "Piedra Eterna"
+  },
+  "soul-dew": {
+    "en": "Soul Dew",
+    "es": "Rocío Bondad"
+  },
+  "leftovers": {
+    "en": "Leftovers",
+    "es": "Restos"
+  },
+  "focus-band": {
+    "en": "Focus Band",
+    "es": "Cinta Focus"
+  },
+  "smoke-ball": {
+    "en": "Smoke Ball",
+    "es": "Bola de Humo"
+  },
+  "soft-sand": {
+    "en": "Soft Sand",
+    "es": "Arena Fina"
+  },
+  "cleanse-tag": {
+    "en": "Cleanse Tag",
+    "es": "Amuleto"
+  },
+  "magnet": {
+    "en": "Magnet",
+    "es": "Imán"
+  },
+  "deep-sea-scale": {
+    "en": "Deep Sea Scale",
+    "es": "Escama Marina"
+  },
+  "lucky-egg": {
+    "en": "Lucky Egg",
+    "es": "Huevo Suerte"
+  },
+  "expert-belt": {
+    "en": "Expert Belt",
+    "es": "Cinta Experto"
+  },
+  "lax-incense": {
+    "en": "Lax Incense",
+    "es": "Incienso Suave"
+  },
+  "twisted-spoon": {
+    "en": "Twisted Spoon",
+    "es": "Cuchara Torcida"
+  },
+  "thick-club": {
+    "en": "Thick Club",
+    "es": "Hueso Grueso"
+  },
+  "wise-glasses": {
+    "en": "Wise Glasses",
+    "es": "Gafas Especiales"
+  },
+  "never-melt-ice": {
+    "en": "Never-Melt Ice",
+    "es": "Antiderretir"
+  },
+  "shell-bell": {
+    "en": "Shell Bell",
+    "es": "Cascabel Concha"
+  },
+  "lucky-punch": {
+    "en": "Lucky Punch",
+    "es": "Puño Suerte"
+  },
+  "spell-tag": {
+    "en": "Spell Tag",
+    "es": "Hechizo"
+  },
+  "dragon-fang": {
+    "en": "Dragon Fang",
+    "es": "Colmillo Dragón"
+  },
+  "muscle-band": {
+    "en": "Muscle Band",
+    "es": "Cinta Fuerte"
+  },
+  "poison-barb": {
+    "en": "Poison Barb",
+    "es": "Flecha Venenosa"
+  },
+  "sea-incense": {
+    "en": "Sea Incense",
+    "es": "Incienso Marino"
+  },
+  "charcoal": {
+    "en": "Charcoal",
+    "es": "Carbón"
+  },
+  "sharp-beak": {
+    "en": "Sharp Beak",
+    "es": "Pico Afilado"
+  },
+  "wide-lens": {
+    "en": "Wide Lens",
+    "es": "Lupa"
+  },
+  "silk-scarf": {
+    "en": "Silk Scarf",
+    "es": "Pañuelo de Seda"
+  },
+  "stick": {
+    "en": "Leek",
+    "es": "Puerro"
+  },
+  "mystic-water": {
+    "en": "Mystic Water",
+    "es": "Agua Mística"
+  },
+  "metal-powder": {
+    "en": "Metal Powder",
+    "es": "Polvo Metálico"
+  },
+  "flame-orb": {
+    "en": "Flame Orb",
+    "es": "Llamasfera"
+  },
+  "power-herb": {
+    "en": "Power Herb",
+    "es": "Hierba Única"
+  },
+  "sticky-barb": {
+    "en": "Sticky Barb",
+    "es": "Toxiestrella"
+  },
+  "destiny-knot": {
+    "en": "Destiny Knot",
+    "es": "Lazo Destino"
+  },
+  "light-clay": {
+    "en": "Light Clay",
+    "es": "Refleluz"
+  },
+  "lagging-tail": {
+    "en": "Lagging Tail",
+    "es": "Cola Plúmbea"
+  },
+  "toxic-orb": {
+    "en": "Toxic Orb",
+    "es": "Toxisfera"
+  },
+  "iron-ball": {
+    "en": "Iron Ball",
+    "es": "Bola Férrea"
+  },
+  "grip-claw": {
+    "en": "Grip Claw",
+    "es": "Garra Garfio"
+  },
+  "smooth-rock": {
+    "en": "Smooth Rock",
+    "es": "Roca Suave"
+  },
+  "damp-rock": {
+    "en": "Damp Rock",
+    "es": "Roca Lluvia"
+  },
+  "life-orb": {
+    "en": "Life Orb",
+    "es": "Vidasfera"
+  },
+  "zoom-lens": {
+    "en": "Zoom Lens",
+    "es": "Telescopio"
+  },
+  "icy-rock": {
+    "en": "Icy Rock",
+    "es": "Roca Helada"
+  },
+  "quick-powder": {
+    "en": "Quick Powder",
+    "es": "Polvo Veloz"
+  },
+  "black-sludge": {
+    "en": "Black Sludge",
+    "es": "Lodo Negro"
+  },
+  "heat-rock": {
+    "en": "Heat Rock",
+    "es": "Roca Calor"
+  },
+  "choice-scarf": {
+    "en": "Choice Scarf",
+    "es": "Pañuelo Elección"
+  },
+  "metronome": {
+    "en": "Metronome",
+    "es": "Metrónomo"
+  },
+  "focus-sash": {
+    "en": "Focus Sash",
+    "es": "Banda Focus"
+  },
+  "mind-plate": {
+    "en": "Mind Plate",
+    "es": "Tabla Mental"
+  },
+  "icicle-plate": {
+    "en": "Icicle Plate",
+    "es": "Tabla Helada"
+  },
+  "power-anklet": {
+    "en": "Power Anklet",
+    "es": "Franja Recia"
+  },
+  "big-root": {
+    "en": "Big Root",
+    "es": "Raíz Grande"
+  },
+  "meadow-plate": {
+    "en": "Meadow Plate",
+    "es": "Tabla Pradal"
+  },
+  "power-bracer": {
+    "en": "Power Bracer",
+    "es": "Brazal Recio"
+  },
+  "splash-plate": {
+    "en": "Splash Plate",
+    "es": "Tabla Linfa"
+  },
+  "sky-plate": {
+    "en": "Sky Plate",
+    "es": "Tabla Cielo"
+  },
+  "power-weight": {
+    "en": "Power Weight",
+    "es": "Pesa Recia"
+  },
+  "toxic-plate": {
+    "en": "Toxic Plate",
+    "es": "Tabla Tóxica"
+  },
+  "zap-plate": {
+    "en": "Zap Plate",
+    "es": "Tabla Trueno"
+  },
+  "earth-plate": {
+    "en": "Earth Plate",
+    "es": "Tabla Terrax"
+  },
+  "insect-plate": {
+    "en": "Insect Plate",
+    "es": "Tabla Bicho"
+  },
+  "power-belt": {
+    "en": "Power Belt",
+    "es": "Cinto Recio"
+  },
+  "fist-plate": {
+    "en": "Fist Plate",
+    "es": "Tabla Fuerte"
+  },
+  "power-lens": {
+    "en": "Power Lens",
+    "es": "Lente Recia"
+  },
+  "flame-plate": {
+    "en": "Flame Plate",
+    "es": "Tabla Llama"
+  },
+  "power-band": {
+    "en": "Power Band",
+    "es": "Banda Recia"
+  },
+  "shed-shell": {
+    "en": "Shed Shell",
+    "es": "Muda Concha"
+  },
+  "choice-specs": {
+    "en": "Choice Specs",
+    "es": "Gafas Elección"
+  },
+  "draco-plate": {
+    "en": "Draco Plate",
+    "es": "Tabla Draco"
+  },
+  "pure-incense": {
+    "en": "Pure Incense",
+    "es": "Incienso Puro"
+  },
+  "wave-incense": {
+    "en": "Wave Incense",
+    "es": "Incienso Acua"
+  },
+  "rock-incense": {
+    "en": "Rock Incense",
+    "es": "Incienso Roca"
+  },
+  "rose-incense": {
+    "en": "Rose Incense",
+    "es": "Incienso Floral"
+  },
+  "full-incense": {
+    "en": "Full Incense",
+    "es": "Incienso Lento"
+  },
+  "stone-plate": {
+    "en": "Stone Plate",
+    "es": "Tabla Pétrea"
+  },
+  "luck-incense": {
+    "en": "Luck Incense",
+    "es": "Incienso Duplo"
+  },
+  "odd-incense": {
+    "en": "Odd Incense",
+    "es": "Incienso Raro"
+  },
+  "razor-fang": {
+    "en": "Razor Fang",
+    "es": "Colmillo Agudo"
+  },
+  "spooky-plate": {
+    "en": "Spooky Plate",
+    "es": "Tabla Terror"
+  },
+  "razor-claw": {
+    "en": "Razor Claw",
+    "es": "Garra Afilada"
+  },
+  "dread-plate": {
+    "en": "Dread Plate",
+    "es": "Tabla Oscura"
+  },
+  "iron-plate": {
+    "en": "Iron Plate",
+    "es": "Tabla Acero"
+  },
+  "linking-cord": {
+    "en": "Linking Cord",
+    "es": "Linking Cord"
+  },
+  "eviolite": {
+    "en": "Eviolite",
+    "es": "Mineral Evolutivo"
+  },
+  "booster-energy": {
+    "en": "Booster Energy",
+    "es": "Energía Potenciadora"
+  },
+  "rusty-sword": {
+    "en": "Rusty Sword",
+    "es": "Espada Oxidada"
+  },
+  "rusty-shield": {
+    "en": "Rusty Shield",
+    "es": "Escudo Oxidado"
+  },
+  "clear-amulet": {
+    "en": "Clear Amulet",
+    "es": "Amuleto Purificador"
+  },
+  "mirror-herb": {
+    "en": "Mirror Herb",
+    "es": "Hierba Copia"
+  },
+  "punching-glove": {
+    "en": "Punching Glove",
+    "es": "Guante de Boxeo"
+  },
+  "covert-cloak": {
+    "en": "Covert Cloak",
+    "es": "Capa Furtiva"
+  },
+  "loaded-dice": {
+    "en": "Loaded Dice",
+    "es": "Dado Trucado"
+  }
+}

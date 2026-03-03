@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.26.0] - 2026-03-03
+
+### Added
+- **Data Unification:** Centralized all JSON data in `src/data` and created Astro API endpoints (`/api/app-data.json`, `/api/pokedex.json`) to serve it.
+- **Search Optimization:** Implemented a lightweight `search-index.json` (~190KB) for near-instant search results.
+- **Pro Mode Enhancements:** 
+    - Full selector for all 179 holdable items from PokéAPI.
+    - Full selector for all 25 natures.
+    - Localized names for all items and abilities (EN/ES).
+    - Team analysis now factors in Ability and Item modifiers (e.g., Levitate, Air Balloon).
+    - Role analysis now factors in stat-modifying items (e.g., Assault Vest, Eviolite).
+- **Data-Driven Advisor:** Refactored Tactical Advisor to use `isUber` and `isGimmick` flags directly from the data instead of hardcoded lists.
+
+### Changed
+- **UI Refinement:** Redesigned Team Builder cards to be more compact and visually balanced.
+- **Performance:** Full Pokedex data is now loaded in the background, allowing the search to be usable immediately.
+
+### Fixed
+- **Data Consistency:** Removed duplicate data files from `public/data`.
+- **Translation:** Fixed missing translations for abilities and items in the Team Builder.
+
 ## [2.25.0] - 2026-03-02
 
 ### Added

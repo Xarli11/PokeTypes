@@ -3,44 +3,60 @@ import { i18n } from './i18n.js';
 const pokemonCache = new Map();
 const abilityCache = new Map();
 let appDataPromise = null;
+let pokedexPromise = null;
 
 export function loadAppData() {
     if (appDataPromise) return appDataPromise;
 
     appDataPromise = (async () => {
         try {
-            const [typeDataResponse, pokedexResponse, abilitiesResponse, fixesResponse] = await Promise.all([
-                fetch('/data/type-data.json'),
-                fetch('/data/pokedex.json'),
-                fetch('/data/abilities-i18n.json'),
-                fetch('/data/image-fixes.json')
-            ]);
+            const response = await fetch('/api/app-data.json');
+            if (!response.ok) throw new Error('Failed to load app data');
+            const data = await response.json();
 
-            if (!typeDataResponse.ok || !pokedexResponse.ok) {
-                throw new Error('Failed to load data files');
-            }
-
-            const typeData = await typeDataResponse.json();
-            const pokedex = await pokedexResponse.json();
-            const abilities = abilitiesResponse.ok ? await abilitiesResponse.json() : {};
-            const imageFixes = fixesResponse.ok ? await fixesResponse.json() : {};
+            // Start loading full pokedex in background
+            loadPokedex();
 
             return {
-                pokemonList: pokedex,
-                types: typeData.types,
-                effectiveness: typeData.effectiveness,
-                contrast: typeData.contrast,
-                abilityMap: abilities,
-                imageFixes: imageFixes
+                ...data,
+                // Fallback for code expecting pokemonList immediately (like search)
+                // Search will use searchIndex if available, otherwise will wait for pokedex
+                pokemonList: data.searchIndex || [] 
             };
         } catch (error) {
-            console.error('Error loading data:', error);
-            appDataPromise = null; // Reset on error so we can retry
+            console.error('Error loading app data:', error);
+            appDataPromise = null;
             throw error;
         }
     })();
 
     return appDataPromise;
+}
+
+export function loadPokedex() {
+    if (pokedexPromise) return pokedexPromise;
+
+    pokedexPromise = (async () => {
+        try {
+            const response = await fetch('/api/pokedex.json');
+            if (!response.ok) throw new Error('Failed to load pokedex');
+            const fullList = await response.json();
+            
+            // Update the appData cache if it exists
+            if (appDataPromise) {
+                const appData = await appDataPromise;
+                appData.pokemonList = fullList;
+            }
+            
+            return fullList;
+        } catch (error) {
+            console.error('Error loading pokedex:', error);
+            pokedexPromise = null;
+            throw error;
+        }
+    })();
+
+    return pokedexPromise;
 }
 
 export async function fetchPokemonDetails(identifier) {

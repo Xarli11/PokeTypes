@@ -1,4 +1,4 @@
-import { loadTeam, addPokemonToSlot, removePokemonFromSlot, setAbility } from './team.js';
+import { loadTeam, addPokemonToSlot, removePokemonFromSlot, setAbility, setNature, setItem } from './team.js';
 import { loadAppData } from './data.js';
 import { analyzeTeamDefense, getThreatAlerts, analyzeTeamRoles } from './analysis.js';
 import { createTypePill, getPokemonImageUrl, capitalizeWords } from './ui.js';
@@ -11,6 +11,14 @@ let deleteSlotIndex = -1;
 let allPokemon = [];
 let contrastData = {};
 let appData = null; 
+
+const NATURES = [
+    'hardy', 'lonely', 'brave', 'adamant', 'naughty',
+    'bold', 'docile', 'relaxed', 'impish', 'lax',
+    'timid', 'hasty', 'serious', 'jolly', 'naive',
+    'modest', 'mild', 'quiet', 'bashful', 'rash',
+    'calm', 'gentle', 'sassy', 'careful', 'quirky'
+];
 
 export async function initProMode() {
     setupModeToggling();
@@ -90,52 +98,102 @@ function renderTeamGrid() {
     container.innerHTML = team.map((member, index) => {
         if (!member) {
             return `
-            <div onclick="window.openSearchModal(${index})" class="team-slot-empty cursor-pointer bento-card dark:bg-slate-800 dark:border-slate-700 border-dashed border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 flex flex-col items-center justify-center h-64 transition-all group relative">
+            <div onclick="window.openSearchModal(${index})" class="team-slot-empty cursor-pointer bento-card dark:bg-slate-800 dark:border-slate-700 border-dashed border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-500 dark:hover:border-indigo-400 flex flex-col items-center justify-center h-72 transition-all group relative">
                 <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400 group-hover:text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
                 </div>
-                <span class="mt-2 text-xs font-bold text-slate-400 group-hover:text-indigo-500">${i18n.t('pro_add_pokemon')}</span>
+                <span class="mt-2 text-[10px] uppercase font-black tracking-wider text-slate-400 group-hover:text-indigo-500">${i18n.t('pro_add_pokemon')}</span>
             </div>`;
         } else {
             const imageUrl = getPokemonImageUrl(member, appData?.imageFixes || {});
             const typePills = member.types.map(t => createTypePill(t, contrastData)).join('');
             
-            // Ability Dropdown Logic
+            // Ability Dropdown
             let abilitySelectHTML = '';
             if (member.abilities) {
-                const options = Object.values(member.abilities).map(ability => {
-                    const selected = member.ability === ability ? 'selected' : '';
-                    const localizedAbility = i18n.tAbility(ability);
-                    return `<option value="${ability}" ${selected}>${localizedAbility}</option>`;
+                const options = Object.values(member.abilities).map(abilityName => {
+                    const selected = member.ability === abilityName ? 'selected' : '';
+                    const abilitySlug = abilityName.toLowerCase().replace(/ /g, '-');
+                    const localizedAbility = i18n.tAbility(abilitySlug);
+                    return `<option value="${abilityName}" ${selected}>${localizedAbility}</option>`;
                 }).join('');
                 
                 abilitySelectHTML = `
-                    <div class="mt-auto pt-2 w-full px-1">
-                        <select onchange="window.updateTeamAbility(${index}, this.value)" class="w-full text-[10px] uppercase font-bold tracking-wider py-1.5 px-2 rounded-lg bg-slate-100 dark:bg-slate-700/50 border-none focus:ring-2 focus:ring-indigo-500/50 focus:bg-white dark:focus:bg-slate-700 text-slate-500 dark:text-slate-400 truncate cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-600 transition-all appearance-none text-center outline-none">
+                    <div class="w-full">
+                        <label class="text-[8px] uppercase font-black text-slate-400 dark:text-slate-500 block mb-0.5 px-1">${i18n.t('abilities')}</label>
+                        <select onchange="window.updateTeamAbility(${index}, this.value)" class="w-full text-[10px] font-bold py-1 px-2 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/50 focus:ring-2 focus:ring-indigo-500/30 text-slate-600 dark:text-slate-300 truncate cursor-pointer hover:bg-white dark:hover:bg-slate-700 transition-all appearance-none outline-none">
                             ${options}
                         </select>
                     </div>
                 `;
             }
 
+            // Nature Dropdown
+            const natureOptions = NATURES.map(n => {
+                const selected = member.nature === n ? 'selected' : '';
+                return `<option value="${n}" ${selected}>${i18n.t('nature_' + n)}</option>`;
+            }).join('');
+
+            const natureSelectHTML = `
+                <div class="w-full">
+                    <label class="text-[8px] uppercase font-black text-slate-400 dark:text-slate-500 block mb-0.5 px-1">${i18n.t('pro_nature')}</label>
+                    <select onchange="window.updateTeamNature(${index}, this.value)" class="w-full text-[10px] font-bold py-1 px-2 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/50 focus:ring-2 focus:ring-indigo-500/30 text-slate-600 dark:text-slate-300 truncate cursor-pointer hover:bg-white dark:hover:bg-slate-700 transition-all appearance-none outline-none">
+                        <option value="" ${!member.nature ? 'selected' : ''}>---</option>
+                        ${natureOptions}
+                    </select>
+                </div>
+            `;
+
+            // Item Dropdown
+            const currentLang = i18n.currentLang;
+            const itemMap = appData?.items || {};
+            const itemEntries = Object.entries(itemMap).map(([slug, names]) => ({
+                slug,
+                name: names[currentLang] || names.en
+            }));
+            itemEntries.sort((a, b) => a.name.localeCompare(b.name));
+
+            const itemOptions = itemEntries.map(item => {
+                const selected = member.item === item.slug ? 'selected' : '';
+                return `<option value="${item.slug}" ${selected}>${item.name}</option>`;
+            }).join('');
+
+            const itemSelectHTML = `
+                <div class="w-full">
+                    <label class="text-[8px] uppercase font-black text-slate-400 dark:text-slate-500 block mb-0.5 px-1">${i18n.t('pro_item')}</label>
+                    <select onchange="window.updateTeamItem(${index}, this.value)" class="w-full text-[10px] font-bold py-1 px-2 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/50 focus:ring-2 focus:ring-indigo-500/30 text-slate-600 dark:text-slate-300 truncate cursor-pointer hover:bg-white dark:hover:bg-slate-700 transition-all appearance-none outline-none">
+                        <option value="" ${!member.item ? 'selected' : ''}>---</option>
+                        ${itemOptions}
+                    </select>
+                </div>
+            `;
+
             return `
-            <div class="team-slot-filled relative bento-card dark:bg-slate-800 dark:border-slate-700 p-3 flex flex-col items-center h-64 transition-all group">
-                <button onclick="window.openDeleteModal(event, ${index})" class="absolute -top-2 -right-2 p-1.5 rounded-full bg-white dark:bg-slate-700 shadow-md text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-all z-10" title="${i18n.t('btn_remove')}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="team-slot-filled relative bento-card dark:bg-slate-800 dark:border-slate-700 p-3 flex flex-col items-center h-72 transition-all group">
+                <button onclick="window.openDeleteModal(event, ${index})" class="absolute -top-1.5 -right-1.5 p-1 rounded-full bg-white dark:bg-slate-700 shadow-md text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-all z-10" title="${i18n.t('btn_remove')}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
                 
-                <img src="${imageUrl}" class="w-20 h-20 object-contain mt-1 mb-2" loading="lazy" alt="${member.name}">
-                
-                <div class="text-center w-full flex-1 flex flex-col">
-                    <div class="font-bold text-slate-800 dark:text-white text-sm truncate px-1">${member.name}</div>
-                    <div class="flex justify-center gap-1 mt-1 flex-wrap scale-75 origin-top">
-                        ${typePills}
+                <div class="flex items-center gap-2 w-full mb-2">
+                    <div class="w-10 h-10 flex-shrink-0 bg-slate-50 dark:bg-slate-900/30 rounded-lg p-1">
+                        <img src="${imageUrl}" class="w-full h-full object-contain" loading="lazy" alt="${member.name}">
                     </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-black text-slate-800 dark:text-white text-[11px] truncate leading-tight">${member.name}</div>
+                        <div class="flex gap-0.5 mt-0.5 scale-[0.65] origin-left">
+                            ${typePills}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="w-full flex-1 flex flex-col justify-between border-t border-slate-100 dark:border-slate-700/50 pt-2 gap-1.5">
                     ${abilitySelectHTML}
+                    ${natureSelectHTML}
+                    ${itemSelectHTML}
                 </div>
             </div>`;
         }
@@ -268,9 +326,17 @@ function renderRoleCard(key, count, colorClass) {
 // Global functions for onclick handlers
 window.updateTeamAbility = (index, ability) => {
     setAbility(index, ability);
-    // No need to re-render grid, just maybe analysis?
-    // But analysis currently doesn't use ability yet (that's complex).
-    // Just keeping state consistent.
+    renderTeamAnalysis(loadTeam());
+};
+
+window.updateTeamNature = (index, nature) => {
+    setNature(index, nature);
+    renderTeamAnalysis(loadTeam());
+};
+
+window.updateTeamItem = (index, item) => {
+    setItem(index, item);
+    renderTeamAnalysis(loadTeam());
 };
 
 window.openSearchModal = (index) => {
@@ -408,12 +474,17 @@ function setupSearchModal() {
         }
     });
 
-    resultsContainer.addEventListener('click', (e) => {
+    resultsContainer.addEventListener('click', async (e) => {
         const item = e.target.closest('[data-poke-name]');
         if (!item) return;
         
         const name = item.dataset.pokeName;
-        const pokemon = allPokemon.find(p => p.name === name);
+        
+        // Ensure we have the full pokedex data (with stats and abilities)
+        // before adding to the slot
+        const { loadPokedex } = await import('./data.js');
+        const fullDex = await loadPokedex();
+        const pokemon = fullDex.find(p => p.name === name);
         
         if (pokemon) {
             addPokemonToSlot(activeSlotIndex, pokemon);
