@@ -247,48 +247,75 @@ https.get(POKEDEX_URL, (res) => {
     });
 }).on('error', (err) => console.error('Error downloading data:', err));
 
-function downloadItems() {
-    // PokeAPI endpoint for items with the 'holdable' attribute
+async function downloadItems() {
     const POKEAPI_ITEMS_URL = 'https://pokeapi.co/api/v2/item-attribute/holdable/';
     
     console.log(`Downloading holdable items from PokeAPI...`);
-    https.get(POKEAPI_ITEMS_URL, (res) => {
-        let data = '';
-        res.on('data', (chunk) => data += chunk);
-        res.on('end', () => {
-            try {
-                const response = JSON.parse(data);
-                const cleanItems = [];
+    
+    try {
+        const response = await fetchJSON(POKEAPI_ITEMS_URL);
+        const itemEntries = response.items || [];
+        const translatedItems = {};
 
-                if (response.items && Array.isArray(response.items)) {
-                    response.items.forEach(item => {
-                        // Format the name: "choice-band" -> "Choice Band"
-                        const formattedName = item.name
-                            .split('-')
-                            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                            .join(' ');
-                        
-                        cleanItems.push(formattedName);
-                    });
+        console.log(`Fetching translations for ${itemEntries.length} items...`);
+        
+        // Process in chunks to avoid overwhelming the API
+        const chunkSize = 20;
+        for (let i = 0; i < itemEntries.length; i += chunkSize) {
+            const chunk = itemEntries.slice(i, i + chunkSize);
+            await Promise.all(chunk.map(async (item) => {
+                try {
+                    const detail = await fetchJSON(item.url);
+                    const enName = detail.names.find(n => n.language.name === 'en')?.name || item.name;
+                    const esName = detail.names.find(n => n.language.name === 'es')?.name || enName;
+                    
+                    translatedItems[item.name] = {
+                        en: enName,
+                        es: esName
+                    };
+                } catch (e) {
+                    console.error(`Failed to fetch details for ${item.name}`);
                 }
+            }));
+            console.log(`Progress: ${Math.min(i + chunkSize, itemEntries.length)}/${itemEntries.length}`);
+        }
 
-                // Add some specific competitive items that might not be strictly "holdable" in the base API
-                // but are crucial (like Mega Stones, Z-Crystals, or specific forms items if missing)
-                const extraItems = ['Eviolite', 'Booster Energy', 'Rusty Sword', 'Rusty Shield'];
-                extraItems.forEach(extra => {
-                    if (!cleanItems.includes(extra)) cleanItems.push(extra);
-                });
+        // Add some essential extra items manually if they are not in the 'holdable' attribute
+        const extras = {
+            'eviolite': { en: 'Eviolite', es: 'Mineral Evolutivo' },
+            'booster-energy': { en: 'Booster Energy', es: 'Energía Potenciadora' },
+            'rusty-sword': { en: 'Rusty Sword', es: 'Espada Oxidada' },
+            'rusty-shield': { en: 'Rusty Shield', es: 'Escudo Oxidado' },
+            'clear-amulet': { en: 'Clear Amulet', es: 'Amuleto Purificador' },
+            'mirror-herb': { en: 'Mirror Herb', es: 'Hierba Copia' },
+            'punching-glove': { en: 'Punching Glove', es: 'Guante de Boxeo' },
+            'covert-cloak': { en: 'Covert Cloak', es: 'Capa Furtiva' },
+            'loaded-dice': { en: 'Loaded Dice', es: 'Dado Trucado' }
+        };
 
-                // Sort alphabetically
-                cleanItems.sort((a, b) => a.localeCompare(b));
+        Object.assign(translatedItems, extras);
 
-                fs.writeFileSync(ITEMS_FILE, JSON.stringify(cleanItems, null, 2));
-                console.log(`Successfully updated ${ITEMS_FILE} (${cleanItems.length} entries).`);
-            } catch (error) {
-                console.error('Error parsing Items JSON from PokeAPI:', error);
-            }
-        });
-    }).on('error', (err) => console.error('Error downloading items:', err));
+        fs.writeFileSync(ITEMS_FILE, JSON.stringify(translatedItems, null, 2));
+        console.log(`Successfully updated ${ITEMS_FILE} with translations.`);
+    } catch (error) {
+        console.error('Error downloading items:', error);
+    }
+}
+
+function fetchJSON(url) {
+    return new Promise((resolve, reject) => {
+        https.get(url, (res) => {
+            let data = '';
+            res.on('data', (chunk) => data += chunk);
+            res.on('end', () => {
+                try {
+                    resolve(JSON.parse(data));
+                } catch (e) {
+                    reject(e);
+                }
+            });
+        }).on('error', reject);
+    });
 }
 
 function toSlug(name) {

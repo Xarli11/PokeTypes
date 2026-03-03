@@ -146,9 +146,19 @@ function renderTeamGrid() {
             `;
 
             // Item Dropdown
-            const itemOptions = (appData?.items || []).map(item => {
-                const selected = member.item === item ? 'selected' : '';
-                return `<option value="${item}" ${selected}>${item}</option>`;
+            const currentLang = i18n.currentLang;
+            const itemMap = appData?.items || {};
+            const itemEntries = Object.entries(itemMap).map(([slug, names]) => ({
+                slug,
+                name: names[currentLang] || names.en
+            }));
+
+            // Sort by translated name
+            itemEntries.sort((a, b) => a.name.localeCompare(b.name));
+
+            const itemOptions = itemEntries.map(item => {
+                const selected = member.item === item.slug ? 'selected' : '';
+                return `<option value="${item.slug}" ${selected}>${item.name}</option>`;
             }).join('');
 
             const itemSelectHTML = `
