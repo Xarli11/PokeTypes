@@ -113,10 +113,12 @@ function renderTeamGrid() {
             // Ability Dropdown
             let abilitySelectHTML = '';
             if (member.abilities) {
-                const options = Object.values(member.abilities).map(ability => {
-                    const selected = member.ability === ability ? 'selected' : '';
-                    const localizedAbility = i18n.tAbility(ability);
-                    return `<option value="${ability}" ${selected}>${localizedAbility}</option>`;
+                const options = Object.values(member.abilities).map(abilityName => {
+                    const selected = member.ability === abilityName ? 'selected' : '';
+                    // Normalize the name to a slug for the i18n lookup (e.g., "Overgrow" -> "overgrow")
+                    const abilitySlug = abilityName.toLowerCase().replace(/ /g, '-');
+                    const localizedAbility = i18n.tAbility(abilitySlug);
+                    return `<option value="${abilityName}" ${selected}>${localizedAbility}</option>`;
                 }).join('');
                 
                 abilitySelectHTML = `
