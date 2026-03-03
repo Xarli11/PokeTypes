@@ -3,20 +3,23 @@ const path = require('path');
 const https = require('https');
 
 const POKEDEX_URL = 'https://play.pokemonshowdown.com/data/pokedex.json';
-const OUTPUT_FILE = path.join(__dirname, '../data/pokedex.json');
+const ITEMS_URL = 'https://play.pokemonshowdown.com/data/items.json';
+const OUTPUT_FILE = path.join(__dirname, '../src/data/pokedex.json');
+const SEARCH_INDEX_FILE = path.join(__dirname, '../src/data/search-index.json');
+const ITEMS_FILE = path.join(__dirname, '../src/data/items.json');
 
-// Map Showdown names (or intermediate processed names) to valid PokeAPI IDs/Names
+// Map Showdown names to valid PokeAPI IDs/Names
 const API_NAME_MAP = {
-    // Gen 4
+    // ... (Keep existing map)
     'wormadam': 'wormadam-plant',
-    'cherrim-sunshine': 'cherrim', // Battle-only
-    'shellos': 'shellos', // West Sea is base
+    'cherrim-sunshine': 'cherrim',
+    'shellos': 'shellos',
     'shellos-west': 'shellos',
-    'gastrodon': 'gastrodon', // West Sea is base
+    'gastrodon': 'gastrodon',
     'gastrodon-west': 'gastrodon',
     'giratina': 'giratina-altered',
     'shaymin': 'shaymin-land',
-    'arceus': 'arceus', // Base
+    'arceus': 'arceus',
     'arceus-bug': 'arceus',
     'arceus-dark': 'arceus',
     'arceus-dragon': 'arceus',
@@ -34,11 +37,7 @@ const API_NAME_MAP = {
     'arceus-rock': 'arceus',
     'arceus-steel': 'arceus',
     'arceus-water': 'arceus',
-    
-    // Gen 3 / Deoxys
     'deoxys': 'deoxys-normal',
-    
-    // Gen 5
     'basculin': 'basculin-red-striped',
     'basculin-blue-striped': 'basculin-blue-striped',
     'darmanitan': 'darmanitan-standard',
@@ -55,22 +54,18 @@ const API_NAME_MAP = {
     'genesect-shock': 'genesect',
     'genesect-burn': 'genesect',
     'genesect-chill': 'genesect',
-    
-    // Gen 6
     'greninja-bond': 'greninja-battle-bond',
-    'flabebe': 'flabebe', // PokeAPI: flabebe (red flower?)
+    'flabebe': 'flabebe',
     'meowstic': 'meowstic-male',
     'meowstic-f': 'meowstic-female',
-    'meowstic-m-mega': 'meowstic-male', // Unofficial/Speculative
-    'meowstic-f-mega': 'meowstic-female', // Unofficial/Speculative
+    'meowstic-m-mega': 'meowstic-male',
+    'meowstic-f-mega': 'meowstic-female',
     'aegislash': 'aegislash-shield',
     'pumpkaboo': 'pumpkaboo-average',
     'gourgeist': 'gourgeist-average',
     'zygarde': 'zygarde-50',
-    
-    // Gen 7
     'pikachu-alola': 'pikachu-alola-cap',
-    'pichu-spiky-eared': 'pichu', // Not in API
+    'pichu-spiky-eared': 'pichu',
     'oricorio': 'oricorio-baile',
     'rockruff-dusk': 'rockruff-own-tempo',
     'lycanroc': 'lycanroc-midday',
@@ -93,18 +88,15 @@ const API_NAME_MAP = {
     'silvally-rock': 'silvally',
     'silvally-steel': 'silvally',
     'silvally-water': 'silvally',
-    
     'minior': 'minior-red-meteor',
     'minior-meteor': 'minior-red-meteor',
     'mimikyu': 'mimikyu-disguised',
-    'mimikyu-totem': 'mimikyu-totem-disguised', 
+    'mimikyu-totem': 'mimikyu-totem-disguised',
     'necrozma-dusk-mane': 'necrozma-dusk',
     'necrozma-dawn-wings': 'necrozma-dawn',
-    
-    // Gen 8
     'toxtricity': 'toxtricity-amped',
     'toxtricity-gmax': 'toxtricity-amped-gmax',
-    'toxtricity-low-key-gmax': 'toxtricity-low-key-gmax', // Ensure explicit map if needed, usually works
+    'toxtricity-low-key-gmax': 'toxtricity-low-key-gmax',
     'eiscue': 'eiscue-ice',
     'indeedee': 'indeedee-male',
     'indeedee-f': 'indeedee-female',
@@ -113,147 +105,194 @@ const API_NAME_MAP = {
     'urshifu-rapid-strike': 'urshifu-rapid-strike',
     'urshifu-gmax': 'urshifu-single-strike-gmax',
     'urshifu-rapid-strike-gmax': 'urshifu-rapid-strike-gmax',
-    
-    // Gen 9
     'basculegion': 'basculegion-male',
     'basculegion-f': 'basculegion-female',
     'enamorus': 'enamorus-incarnate',
     'oinkologne': 'oinkologne-male',
     'oinkologne-f': 'oinkologne-female',
     'maushold': 'maushold-family-of-four',
-    'maushold-four': 'maushold-family-of-four', 
+    'maushold-four': 'maushold-family-of-four',
     'squawkabilly': 'squawkabilly-green-plumage',
     'tatsugiri': 'tatsugiri-curly',
     'dudunsparce': 'dudunsparce-two-segment',
     'dudunsparce-three-segment': 'dudunsparce-three-segment',
-    'gimmighoul': 'gimmighoul', // Chest is base
+    'gimmighoul': 'gimmighoul',
     'gimmighoul-chest': 'gimmighoul',
     'palafin': 'palafin-zero',
-    'ogerpon': 'ogerpon', // Teal Mask is base
+    'ogerpon': 'ogerpon',
     'ogerpon-teal-mask': 'ogerpon',
-    'ogerpon-teal-tera': 'ogerpon', 
+    'ogerpon-teal-tera': 'ogerpon',
     'ogerpon-wellspring': 'ogerpon-wellspring-mask',
-    'ogerpon-wellspring-tera': 'ogerpon-wellspring-mask', // Tera usually shares base form/sprite or no specific endpoint
+    'ogerpon-wellspring-tera': 'ogerpon-wellspring-mask',
     'ogerpon-hearthflame': 'ogerpon-hearthflame-mask',
     'ogerpon-hearthflame-tera': 'ogerpon-hearthflame-mask',
     'ogerpon-cornerstone': 'ogerpon-cornerstone-mask',
     'ogerpon-cornerstone-tera': 'ogerpon-cornerstone-mask',
     'terapagos': 'terapagos',
     'terapagos-normal': 'terapagos',
-    
-    // Regional Forms (if base name + suffix doesn't work automatically)
     'tauros-paldea-combat': 'tauros-paldea-combat-breed',
     'tauros-paldea-blaze': 'tauros-paldea-blaze-breed',
     'tauros-paldea-aqua': 'tauros-paldea-aqua-breed',
-    
-    // Megas (usually handled by replacement, but exceptions)
-    'venusaur-mega': 'venusaur-mega', 
+    'venusaur-mega': 'venusaur-mega',
 };
+
+const UBER_NAMES = [
+    'Arceus', 'Eternatus', 'Zacian', 'Zamazenta', 'Calyrex', 'Koraidon', 'Miraidon', 'Mewtwo',
+    'Lugia', 'Ho-Oh', 'Rayquaza', 'Kyogre', 'Groudon', 'Dialga', 'Palkia', 'Giratina',
+    'Reshiram', 'Zekrom', 'Kyurem', 'Xerneas', 'Yveltal', 'Solgaleo', 'Lunala', 'Necrozma',
+    'Palafin-Hero'
+];
+
+const GIMMICK_FORMS = [
+    '-Mega', 'Mega ', '-Gmax', 'Gmax ', '-Eternamax', '-Zen', '-Pirouette',
+    '-School', '-Complete', '-Ash', '-Meteor', '-Busted', '-Gulping', '-Gorging',
+    'Primal ', '-Primal'
+];
 
 console.log(`Downloading data from ${POKEDEX_URL}...`);
 
 https.get(POKEDEX_URL, (res) => {
     let data = '';
-
-    res.on('data', (chunk) => {
-        data += chunk;
-    });
-
+    res.on('data', (chunk) => data += chunk);
     res.on('end', () => {
         try {
             const showdownDex = JSON.parse(data);
-            const cleanDex = [];
+            const fullDex = [];
+            const searchIndex = [];
 
             for (const key in showdownDex) {
                 const entry = showdownDex[key];
-
-                // Skip non-standard/placeholder
                 if (entry.num <= 0) continue;
-                
-                // Keep 'Past' (dexited mons) and 'Future' (if any)
-                // Filter CAP, Custom
-                if (entry.isNonstandard === 'CAP' || entry.isNonstandard === 'Custom') continue; 
-                
-                // Skip cosmetic forms that share types/stats (mostly)
+                if (entry.isNonstandard === 'CAP' || entry.isNonstandard === 'Custom') continue;
                 if (isCosmetic(entry.name)) continue;
 
-                const originalName = entry.name;
                 const stats = entry.baseStats;
                 const bst = stats ? (stats.hp + stats.atk + stats.def + stats.spa + stats.spd + stats.spe) : 0;
+                const rawSlug = toSlug(entry.name);
 
-                // 1. Generate Basic Slug
-                const rawSlug = toSlug(originalName);
-
-                // 2. Determine API Name (for data fetching)
+                // API Name
                 let apiName = rawSlug;
                 if (API_NAME_MAP[rawSlug]) {
                     apiName = API_NAME_MAP[rawSlug];
-                } else {
-                    // 3. Heuristic Fixes for API Name
-                    if (apiName.includes('-totem')) {
-                        apiName = apiName.replace('-totem', '');
-                    }
-                    // Gmax usually stays as is or is mapped manually
+                } else if (apiName.includes('-totem')) {
+                    apiName = apiName.replace('-totem', '');
                 }
 
-                // 3. Determine Sprite Slug (for images) - Default to raw slug (specific form)
+                // Sprite Slug
                 let spriteSlug = rawSlug;
-                
-                // Fix Regional Forms suffixes for PokemonDB (alola -> alolan)
-                // Use a regex to replace only if it's a suffix or followed by something, but simple replace is usually safe for these specific strings
                 if (spriteSlug.includes('-alola') && !spriteSlug.includes('-alolan')) spriteSlug = spriteSlug.replace('-alola', '-alolan');
                 if (spriteSlug.includes('-galar') && !spriteSlug.includes('-galarian')) spriteSlug = spriteSlug.replace('-galar', '-galarian');
                 if (spriteSlug.includes('-hisui') && !spriteSlug.includes('-hisuian')) spriteSlug = spriteSlug.replace('-hisui', '-hisuian');
                 if (spriteSlug.includes('-paldea') && !spriteSlug.includes('-paldean')) spriteSlug = spriteSlug.replace('-paldea', '-paldean');
-
                 if (spriteSlug.endsWith('-gmax')) spriteSlug = spriteSlug.replace('-gmax', '-gigantamax');
-
-                // Specific Sprite Fixes (PokemonDB naming vs Showdown)
-                if (spriteSlug === 'mimikyu-disguised') spriteSlug = 'mimikyu'; // PokemonDB uses base for disguised
+                if (spriteSlug === 'mimikyu-disguised') spriteSlug = 'mimikyu';
                 if (spriteSlug === 'eiscue-ice') spriteSlug = 'eiscue';
                 if (spriteSlug === 'morpeko-full-belly') spriteSlug = 'morpeko';
                 if (spriteSlug === 'wishiwashi-solo') spriteSlug = 'wishiwashi';
-                if (spriteSlug === 'minior-red-meteor') spriteSlug = 'minior-meteor'; 
-                if (spriteSlug.startsWith('pikachu-') && spriteSlug !== 'pikachu-alolan') spriteSlug = 'pikachu'; // Most caps share base sprite or use very specific names? No, caps have sprites. 
-                // Wait, user REMOVED cosmetic caps. So only Pikachu base remains. 
-                // But Gmax Pikachu is distinct.
-                
-                // Clean up specific mappings that were ONLY for API but hurt Sprites
-                // e.g. arceus-bug -> arceus (API) but arceus-bug (Sprite).
-                // The new logic handles this automatically because spriteSlug starts as rawSlug.
+                if (spriteSlug === 'minior-red-meteor') spriteSlug = 'minior-meteor';
+                if (spriteSlug.startsWith('pikachu-') && spriteSlug !== 'pikachu-alolan' && !spriteSlug.includes('gmax')) spriteSlug = 'pikachu';
 
+                // Tiers & Gimmicks
+                const isUber = UBER_NAMES.some(u => entry.name.includes(u)) || bst >= 670;
+                const isGimmick = GIMMICK_FORMS.some(g => entry.name.includes(g));
 
-                cleanDex.push({
+                const pokemonEntry = {
                     id: entry.num,
-                    name: formatDisplayName(entry.name), // Prettier name for UI
+                    name: formatDisplayName(entry.name),
+                    slug: rawSlug,
                     apiName: apiName,
-                    spriteSlug: spriteSlug, // Use the processed slug!
+                    spriteSlug: spriteSlug,
                     types: entry.types,
-                    stats: entry.baseStats, // Include full stats for analysis
-                    abilities: entry.abilities, // Include abilities for dropdown (Optimization)
-                    bst: bst
+                    stats: entry.baseStats,
+                    abilities: entry.abilities,
+                    bst: bst,
+                    isUber: isUber,
+                    isGimmick: isGimmick
+                };
+
+                fullDex.push(pokemonEntry);
+
+                // Lightweight search index
+                searchIndex.push({
+                    id: entry.num,
+                    name: pokemonEntry.name,
+                    slug: rawSlug,
+                    types: entry.types,
+                    spriteSlug: spriteSlug
                 });
             }
 
-            cleanDex.sort((a, b) => a.id - b.id);
+            fullDex.sort((a, b) => a.id - b.id);
+            searchIndex.sort((a, b) => a.id - b.id);
 
-            fs.writeFileSync(OUTPUT_FILE, JSON.stringify(cleanDex, null, 2));
-            console.log(`Successfully updated ${OUTPUT_FILE} with ${cleanDex.length} entries.`);
+            fs.writeFileSync(OUTPUT_FILE, JSON.stringify(fullDex, null, 2));
+            fs.writeFileSync(SEARCH_INDEX_FILE, JSON.stringify(searchIndex, null, 2));
+            
+            console.log(`Successfully updated ${OUTPUT_FILE} (${fullDex.length} entries).`);
+            console.log(`Successfully updated ${SEARCH_INDEX_FILE} (${searchIndex.length} entries).`);
+
+            // Clean up old public/data duplicates if they exist
+            const oldPublicData = path.join(__dirname, '../public/data/pokedex.json');
+            if (fs.existsSync(oldPublicData)) {
+                fs.unlinkSync(oldPublicData);
+                console.log(`Removed duplicate file: ${oldPublicData}`);
+            }
+
+            // Now download Items
+            downloadItems();
 
         } catch (error) {
             console.error('Error parsing JSON:', error);
         }
     });
+}).on('error', (err) => console.error('Error downloading data:', err));
 
-}).on('error', (err) => {
-    console.error('Error downloading data:', err);
-});
+function downloadItems() {
+    // PokeAPI endpoint for items with the 'holdable' attribute
+    const POKEAPI_ITEMS_URL = 'https://pokeapi.co/api/v2/item-attribute/holdable/';
+    
+    console.log(`Downloading holdable items from PokeAPI...`);
+    https.get(POKEAPI_ITEMS_URL, (res) => {
+        let data = '';
+        res.on('data', (chunk) => data += chunk);
+        res.on('end', () => {
+            try {
+                const response = JSON.parse(data);
+                const cleanItems = [];
+
+                if (response.items && Array.isArray(response.items)) {
+                    response.items.forEach(item => {
+                        // Format the name: "choice-band" -> "Choice Band"
+                        const formattedName = item.name
+                            .split('-')
+                            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                            .join(' ');
+                        
+                        cleanItems.push(formattedName);
+                    });
+                }
+
+                // Add some specific competitive items that might not be strictly "holdable" in the base API
+                // but are crucial (like Mega Stones, Z-Crystals, or specific forms items if missing)
+                const extraItems = ['Eviolite', 'Booster Energy', 'Rusty Sword', 'Rusty Shield'];
+                extraItems.forEach(extra => {
+                    if (!cleanItems.includes(extra)) cleanItems.push(extra);
+                });
+
+                // Sort alphabetically
+                cleanItems.sort((a, b) => a.localeCompare(b));
+
+                fs.writeFileSync(ITEMS_FILE, JSON.stringify(cleanItems, null, 2));
+                console.log(`Successfully updated ${ITEMS_FILE} (${cleanItems.length} entries).`);
+            } catch (error) {
+                console.error('Error parsing Items JSON from PokeAPI:', error);
+            }
+        });
+    }).on('error', (err) => console.error('Error downloading items:', err));
+}
 
 function toSlug(name) {
-    return name.toLowerCase()
-        .replace(/ /g, '-')
-        .replace(/[\."]/g, '')
-        .replace(/[^a-z0-9-]/g, '');
+    return name.toLowerCase().replace(/ /g, '-').replace(/[\."]/g, '').replace(/[^a-z0-9-]/g, '');
 }
 
 function formatDisplayName(name) {
@@ -276,49 +315,23 @@ function formatDisplayName(name) {
 
 function isCosmetic(name) {
     const n = name;
-    
-    // 1. Strictly Cosmetic Forms (No Stat/Type Changes)
-    if (n.startsWith('Pikachu-') && !n.includes('Gmax') && n !== 'Pikachu-Alola') return true; 
-    // Note: Pikachu-Alola doesn't exist as a form, it's Raichu-Alola. Pikachu-Alola-Cap etc are cosmetic.
-    // Wait, Pikachu Gmax exists. Keep it? Yes.
-    
+    if (n.startsWith('Pikachu-') && !n.includes('Gmax') && n !== 'Pikachu-Alola') return true;
     if (n.startsWith('Vivillon-') && n !== 'Vivillon') return true;
     if (n.startsWith('Flabebe-') && n !== 'Flabebe') return true;
-    if (n.startsWith('Floette-') && n !== 'Floette-Eternal') return true; // Eternal has unique stats
+    if (n.startsWith('Floette-') && n !== 'Floette-Eternal') return true;
     if (n.startsWith('Furfrou-') && n !== 'Furfrou') return true;
-    if (n.startsWith('Minior-') && !n.includes('Meteor')) return true; // Meteor forms (Red, Blue etc) are cosmetic. Minior-Meteor is the base for Shields Down?
-    // Actually Minior has "Minior" (Shields Up) and "Minior-Meteor" (Shields Down) ?? No, usually Base and Core.
-    // Showdown has Minior-Red, etc. We filter colors.
-    
+    if (n.startsWith('Minior-') && !n.includes('Meteor')) return true;
     if (n.startsWith('Alcremie-') && !n.includes('Gmax')) return true;
     if (n.startsWith('Deerling-') && n !== 'Deerling') return true;
     if (n.startsWith('Sawsbuck-') && n !== 'Sawsbuck') return true;
-    if (n.startsWith('Tatsugiri-') && n !== 'Tatsugiri') return true; 
+    if (n.startsWith('Tatsugiri-') && n !== 'Tatsugiri') return true;
     if (n.startsWith('Squawkabilly-') && n !== 'Squawkabilly') return true;
-    if (n.startsWith('Maushold-') && n !== 'Maushold') return true; 
-    if (n.startsWith('Dudunsparce-') && n !== 'Dudunsparce') return true; 
-    
-    // 2. Specific Bug Fixes / Non-Standard
-    if (n === 'Zarude-Dada') return true; // Cosmetic
-    if (n.includes('Polteageist-Antique')) return true;
-    if (n.includes('Sinistea-Antique')) return true;
-    if (n.includes('Poltchageist-Artisan')) return true;
-    if (n.includes('Sinistcha-Masterpiece')) return true;
-    if (n === 'Xerneas-Neutral') return true; // Active mode is cosmetic
-    if (n.startsWith('Cramorant-') && n !== 'Cramorant') return true; // Gulping/Gorging are in-battle forms
-    if (n.startsWith('Morpeko-') && n !== 'Morpeko') return true; // Hangry is in-battle
-    if (n === 'Eiscue-Noice') return true; // Noice face is in-battle
-    if (n.startsWith('Burmy-') && n !== 'Burmy') return true; // Burmy forms are cosmetic (unlike Wormadam)
-    if (n.startsWith('Shellos-') && n !== 'Shellos') return true;
-    if (n.startsWith('Gastrodon-') && n !== 'Gastrodon') return true;
-    if (n.startsWith('Magearna-') && n !== 'Magearna') return true; // Magearna-Original is cosmetic. "Mega" is error.
-    if (n === 'Pichu-Spiky-eared') return true; // Non-standard
-
-    // 3. Keep Everything Else (Gmax, Totem, Deoxys, Kyurem, Keldeo, etc.)
-    // Pumpkaboo/Gourgeist sizes: User requested to REMOVE them (Small, Large, Super).
-    // Base form "Pumpkaboo" (Average) remains.
+    if (n.startsWith('Maushold-') && n !== 'Maushold') return true;
+    if (n.startsWith('Dudunsparce-') && n !== 'Dudunsparce') return true;
+    if (n === 'Zarude-Dada' || n.includes('-Antique') || n.includes('-Artisan') || n.includes('-Masterpiece')) return true;
+    if (n === 'Xerneas-Neutral' || n.startsWith('Cramorant-') || n.startsWith('Morpeko-') || n === 'Eiscue-Noice') return true;
+    if (n.startsWith('Burmy-') || n.startsWith('Shellos-') || n.startsWith('Gastrodon-') || n.startsWith('Magearna-') || n === 'Pichu-Spiky-eared') return true;
     if (n.startsWith('Pumpkaboo-') && n !== 'Pumpkaboo') return true;
     if (n.startsWith('Gourgeist-') && n !== 'Gourgeist') return true;
-    
     return false;
 }

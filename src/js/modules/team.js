@@ -78,3 +78,17 @@ export function setAbility(index, ability) {
         saveTeam();
     }
 }
+
+export function setNature(index, nature) {
+    if (team[index]) {
+        team[index].nature = nature;
+        saveTeam();
+    }
+}
+
+export function setItem(index, item) {
+    if (team[index]) {
+        team[index].item = item;
+        saveTeam();
+    }
+}
