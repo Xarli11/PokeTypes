@@ -472,12 +472,17 @@ function setupSearchModal() {
         }
     });
 
-    resultsContainer.addEventListener('click', (e) => {
+    resultsContainer.addEventListener('click', async (e) => {
         const item = e.target.closest('[data-poke-name]');
         if (!item) return;
         
         const name = item.dataset.pokeName;
-        const pokemon = allPokemon.find(p => p.name === name);
+        
+        // Ensure we have the full pokedex data (with stats and abilities)
+        // before adding to the slot
+        const { loadPokedex } = await import('./data.js');
+        const fullDex = await loadPokedex();
+        const pokemon = fullDex.find(p => p.name === name);
         
         if (pokemon) {
             addPokemonToSlot(activeSlotIndex, pokemon);
