@@ -1,7 +1,8 @@
 export const messages = {
     en: {
         // UI Headers & Labels
-        title: "Poketypes: Pokemon Type Calculator",
+        brand_name: "Poketypes",
+        title_seo: ": Pokemon Type Calculator",
         subtitle: "Quickly analyze type coverage, weaknesses, and resistances for any Pokemon or type combination.",
         search_placeholder: "Search Pokemon...",
         reset_btn: "Reset",
@@ -185,7 +186,8 @@ export const messages = {
     },
     es: {
         // UI Headers & Labels
-        title: "Poketypes: Calculadora de Tipos Pokémon",
+        brand_name: "Poketypes",
+        title_seo: ": Calculadora de Tipos Pokémon",
         subtitle: "Analiza rápidamente coberturas, debilidades y resistencias para cualquier Pokémon o combinación de tipos.",
         search_placeholder: "Buscar Pokémon...",
         reset_btn: "Reiniciar",
