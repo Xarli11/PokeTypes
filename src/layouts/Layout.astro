@@ -78,16 +78,28 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image.star
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "PokeTypes",
+      "alternateName": "Poketypes Pokemon Type Calculator",
       "url": "https://poketypes.app/",
       "description": "Advanced Pokemon type calculator and effectiveness chart for Gen 9 (Scarlet & Violet). Check weaknesses, resistances, and dual-type coverage instantly.",
       "applicationCategory": "GameApplication",
+      "genre": "Pokemon strategy",
       "operatingSystem": "Any",
       "offers": {
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "USD"
       },
-      "featureList": "Dual type calculator, Team coverage analysis, Gen 9 support, Mobile friendly"
+      "featureList": [
+        "Dual type calculator", 
+        "Team coverage analysis", 
+        "Gen 9 (Scarlet & Violet) support", 
+        "Mobile friendly PWA",
+        "Interactive type chart"
+      ],
+      "author": {
+        "@type": "Person",
+        "name": "Xarli11"
+      }
     }
     </script>
 </head>

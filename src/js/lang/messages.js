@@ -1,13 +1,24 @@
 export const messages = {
     en: {
         // UI Headers & Labels
-        title: "PokeTypes",
+        title: "Poketypes: Pokemon Type Calculator",
         subtitle: "Quickly analyze type coverage, weaknesses, and resistances for any Pokemon or type combination.",
         search_placeholder: "Search Pokemon...",
         reset_btn: "Reset",
         type_1: "Type 1",
         type_2: "Type 2",
         active_analysis: "Active Analysis",
+        
+        // FAQ Section
+        faq_title: "Frequently Asked Questions",
+        faq_q1: "What is the best Pokemon type?",
+        faq_a1: "While it depends on the strategy, the **Steel** type is often considered the best defensive type due to its numerous resistances, while **Fairy** and **Dragon** are top-tier offensive types in Gen 9.",
+        faq_q2: "How to calculate dual type weaknesses?",
+        faq_a2: "To calculate dual type effectiveness, multiply the modifiers of both types. For example, if both types are weak to Water, the Pokemon takes 4x damage.",
+        faq_q3: "What are the new types in Gen 9?",
+        faq_a3: "Pokemon Scarlet and Violet (Gen 9) maintains the 18 standard types but introduces the **Terastal** phenomenon, allowing Pokemon to change their type mid-battle.",
+        faq_q4: "Is there a 0x damage type?",
+        faq_a4: "Yes, **Immunities** result in 0x damage. For example, Ghost types are immune to Normal and Fighting moves, and Ground types are immune to Electric attacks.",
         
         // Cards - Defense
         defense_breakdown: "Defense Breakdown",
@@ -174,13 +185,24 @@ export const messages = {
     },
     es: {
         // UI Headers & Labels
-        title: "PokeTypes",
+        title: "Poketypes: Calculadora de Tipos Pokémon",
         subtitle: "Analiza rápidamente coberturas, debilidades y resistencias para cualquier Pokémon o combinación de tipos.",
         search_placeholder: "Buscar Pokémon...",
         reset_btn: "Reiniciar",
         type_1: "Tipo 1",
         type_2: "Tipo 2",
         active_analysis: "Análisis Activo",
+
+        // Sección FAQ (SEO)
+        faq_title: "Preguntas Frecuentes",
+        faq_q1: "¿Cuál es el mejor tipo Pokémon?",
+        faq_a1: "Aunque depende de la estrategia, el tipo **Acero** suele considerarse el mejor defensivamente por sus múltiples resistencias, mientras que **Hada** y **Dragón** son tipos ofensivos de primer nivel en la Gen 9.",
+        faq_q2: "¿Cómo calcular debilidades de tipos duales?",
+        faq_a2: "Para calcular la efectividad dual, multiplica los modificadores de ambos tipos. Por ejemplo, si ambos tipos son débiles al Agua, el Pokémon recibe daño x4.",
+        faq_q3: "¿Cuáles son los nuevos tipos en la Gen 9?",
+        faq_a3: "Pokémon Escarlata y Púrpura (Gen 9) mantiene los 18 tipos estándar pero introduce el fenómeno **Teracristalización**, que permite a los Pokémon cambiar su tipo en combate.",
+        faq_q4: "¿Existe algún tipo con daño x0?",
+        faq_a4: "Sí, las **Inmunidades** resultan en daño x0. Por ejemplo, los tipos Fantasma son inmunes a ataques de tipo Normal y Lucha, y los tipo Tierra son inmunes al Eléctrico.",
         
         // Cards - Defense
         defense_breakdown: "Defensa",
