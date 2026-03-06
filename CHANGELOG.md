@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.27.0] - 2026-03-06
+
+### Added
+- **SEO Optimization:** Enhanced titles and meta tags for the Home page, targeting "Pokemon Type Calculator" and "Poketype".
+- **Dynamic SEO:** Improved titles and descriptions for all 1300+ Pokémon and type combinations to include "Weaknesses", "Resistances", and "Chart".
+- **FAQ Section:** Added a new static FAQ section on the Home page with high-value keywords to improve search engine rankings and trigger Rich Snippets.
+- **Structured Data:** Refined JSON-LD (Schema.org) to better categorize the site as a "GameApplication" and "Pokemon Strategy" tool.
+- **i18n:** Fully translated the new SEO and FAQ sections into Spanish.
+
+### Changed
+- **UI:** Updated the main H1 to be more descriptive for search engines while maintaining the brand identity.
+
 ## [2.26.0] - 2026-03-03
 
 ### Added
