@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout>
+<Layout title="PokeTypes | Pokemon Type Calculator & Effectiveness Chart" description="The most advanced Pokemon type calculator and effectiveness chart. Analyze weaknesses, resistances, and dual-type coverage for all Pokemon (Gen 9, Scarlet/Violet included).">
     <div class="max-w-7xl mx-auto relative">
         <!-- Top Controls (Language & Theme) -->
         <div class="absolute top-0 right-0 z-50 flex items-center gap-2">
@@ -26,7 +26,7 @@ import Layout from '../layouts/Layout.astro';
 
         <!-- Header Section -->
         <header class="text-center mb-8">
-            <h1 class="bento-title dark:text-white" data-i18n="title">Poketypes</h1>
+            <h1 class="bento-title dark:text-white" data-i18n="title">Poketypes: Pokemon Type Calculator</h1>
             <p class="text-slate-400 text-lg font-medium max-w-xl mx-auto" data-i18n="subtitle">
                 Quickly analyze type coverage, weaknesses, and resistances for any Pokemon or type combination.
             </p>
@@ -229,6 +229,29 @@ import Layout from '../layouts/Layout.astro';
                             If both types are weak to the same element (like Rock vs. Fire/Flying), the damage multiplier becomes <strong>4x</strong>. 
                             Conversely, resistances can cancel out weaknesses.
                         </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Section for SEO -->
+                <div class="mt-12 space-y-6">
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-white" data-i18n="faq_title">Frequently Asked Questions</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
+                            <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-2" data-i18n="faq_q1">What is the best Pokemon type?</h4>
+                            <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n="faq_a1">While it depends on the strategy, the **Steel** type is often considered the best defensive type due to its numerous resistances, while **Fairy** and **Dragon** are top-tier offensive types in Gen 9.</p>
+                        </div>
+                        <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
+                            <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-2" data-i18n="faq_q2">How to calculate dual type weaknesses?</h4>
+                            <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n="faq_a2">To calculate dual type effectiveness, multiply the modifiers of both types. For example, if both types are weak to Water, the Pokemon takes 4x damage.</p>
+                        </div>
+                        <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
+                            <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-2" data-i18n="faq_q3">What are the new types in Gen 9?</h4>
+                            <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n="faq_a3">Pokemon Scarlet and Violet (Gen 9) maintains the 18 standard types but introduces the **Terastal** phenomenon, allowing Pokemon to change their type mid-battle.</p>
+                        </div>
+                        <div class="border-b border-slate-100 dark:border-slate-700 pb-4">
+                            <h4 class="font-bold text-slate-700 dark:text-slate-200 mb-2" data-i18n="faq_q4">Is there a 0x damage type?</h4>
+                            <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n="faq_a4">Yes, **Immunities** result in 0x damage. For example, Ghost types are immune to Normal and Fighting moves, and Ground types are immune to Electric attacks.</p>
+                        </div>
                     </div>
                 </div>
             </div>
