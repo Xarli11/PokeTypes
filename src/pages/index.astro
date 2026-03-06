@@ -26,7 +26,10 @@ import Layout from '../layouts/Layout.astro';
 
         <!-- Header Section -->
         <header class="text-center mb-8">
-            <h1 class="bento-title dark:text-white" data-i18n="title">Poketypes: Pokemon Type Calculator</h1>
+            <h1 class="bento-title dark:text-white">
+                <span data-i18n="brand_name">Poketypes</span>
+                <span class="sr-only" data-i18n="title_seo">: Pokemon Type Calculator</span>
+            </h1>
             <p class="text-slate-400 text-lg font-medium max-w-xl mx-auto" data-i18n="subtitle">
                 Quickly analyze type coverage, weaknesses, and resistances for any Pokemon or type combination.
             </p>
