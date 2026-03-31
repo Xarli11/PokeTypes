@@ -246,7 +246,7 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
     ];
 
     const contentHTML = `
-        <div class="relative z-10 flex flex-col items-center gap-6 py-8">
+        <div class="relative z-10 flex flex-col items-center gap-6 py-8 animate-in fade-in zoom-in duration-500">
             <div class="relative group">
                 <div class="absolute inset-0 bg-indigo-500/20 dark:bg-indigo-400/10 rounded-full blur-3xl transform scale-75 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                 <img id="pokemon-hero-img" 
@@ -301,7 +301,7 @@ export function renderStats(container, stats) {
     const contentHTML = stats.map(stat => {
         const val = stat.base_stat;
         let colorClass = 'bg-red-500';
-        let width = Math.min((val / 255) * 100, 100);
+        let targetWidth = Math.min((val / 255) * 100, 100);
 
         if (val >= 120) colorClass = 'bg-purple-500';
         else if (val >= 90) colorClass = 'bg-green-500';
@@ -312,13 +312,22 @@ export function renderStats(container, stats) {
                 <span class="w-20 font-bold text-slate-500 dark:text-slate-400 text-right uppercase text-xs tracking-wider whitespace-nowrap">${statNames[stat.stat.name] || stat.stat.name}</span>
                 <span class="w-8 font-bold text-slate-800 dark:text-slate-200 text-right">${val}</span>
                 <div class="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                    <div class="h-full rounded-full ${colorClass} transition-all duration-500 ease-out" style="width: ${width}%"></div>
+                    <div class="h-full rounded-full ${colorClass} stat-bar" style="width: 0%" data-target-width="${targetWidth}%"></div>
                 </div>
             </div>
         `;
     }).join('');
 
     container.innerHTML = contentHTML;
+
+    // Trigger animation after a tiny delay to allow DOM to render
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            container.querySelectorAll('.stat-bar').forEach(bar => {
+                bar.style.width = bar.dataset.targetWidth;
+            });
+        }, 50);
+    });
 }
 
 export function renderAbilities(container, abilities) {
