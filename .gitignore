@@ -51,3 +51,10 @@ coverage
 dist/
 build/.astro/
 .vercel/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
