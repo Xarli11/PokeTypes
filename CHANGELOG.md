@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.28.1] - 2026-03-31
+
+### Changed
+- **Architecture:** Migrated from Vercel to Cloudflare Pages using the `@astrojs/cloudflare` adapter.
+- **Infrastructure:** Removed all Vercel-specific configurations and dependencies.
+
 ## [2.28.0] - 2026-03-06
 
 ### Changed
@@ -54,7 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Dynamic Meta Tags:** Personalized titles and descriptions for every Pokémon and type combination to maximize CTR.
 
 ### Changed
-- **Architecture:** Replaced Vanilla SPA with a Multi-Page Application (MPA) model using the Vercel adapter.
+- **Architecture:** Replaced Vanilla SPA with a Multi-Page Application (MPA) model.
 - **Tech Stack:** Integrated Tailwind CSS v4 via `@tailwindcss/vite` for faster builds and modern CSS features.
 - **Data Loading:** Optimized JSON data fetching with absolute paths for better compatibility with deep routing.
 - **Release Workflow:** Updated the release script to be compatible with Astro's structure and public asset management.

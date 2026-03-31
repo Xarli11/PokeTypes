@@ -50,4 +50,3 @@ coverage
 # Build output
 dist/
 build/.astro/
-.vercel/
