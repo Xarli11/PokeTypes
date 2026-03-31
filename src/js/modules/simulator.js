@@ -49,16 +49,16 @@ export async function initSimulator() {
 
             <!-- 3. Ability -->
             <div class="space-y-2">
-                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ability</label>
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">${i18n.t('abilities')}</label>
                 <select id="sim-ability-select" class="bento-select w-full dark:bg-slate-900 dark:border-slate-700 disabled:opacity-50" disabled>
-                    <option value="">Select Pokemon first</option>
+                    <option value="">${i18n.t('sim_select_pokemon')}</option>
                 </select>
             </div>
         </div>
 
         <!-- Result -->
         <div id="sim-result-container" class="mt-8 p-6 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700 hidden text-center">
-            <div class="text-slate-400 text-sm mb-2 font-medium uppercase tracking-widest">Effectiveness</div>
+            <div class="text-slate-400 text-sm mb-2 font-medium uppercase tracking-widest">${i18n.t('sim_effectiveness')}</div>
             <div id="sim-result-value" class="text-4xl md:text-5xl font-black mb-2 transition-all">1x</div>
             <div id="sim-result-text" class="text-slate-600 dark:text-slate-300 font-medium"></div>
         </div>
@@ -155,7 +155,7 @@ function setupEventListeners(appData) {
         document.getElementById('sim-defender-input').classList.remove('hidden');
         document.getElementById('sim-defender-input').focus();
         
-        abilitySelect.innerHTML = '<option value="">Select Pokemon first</option>';
+        abilitySelect.innerHTML = `<option value="">${i18n.t('sim_select_pokemon')}</option>`;
         abilitySelect.disabled = true;
         
         document.getElementById('sim-result-container').classList.add('hidden');
@@ -181,7 +181,7 @@ async function selectDefender(pokemon, appData) {
 
     // Fetch Abilities
     const abilitySelect = document.getElementById('sim-ability-select');
-    abilitySelect.innerHTML = '<option>Loading...</option>';
+    abilitySelect.innerHTML = `<option>${i18n.t('loading_stats')}</option>`;
     abilitySelect.disabled = true;
 
     try {
@@ -197,11 +197,11 @@ async function selectDefender(pokemon, appData) {
             const event = new Event('change');
             abilitySelect.dispatchEvent(event);
         } else {
-            abilitySelect.innerHTML = '<option value="">No abilities found</option>';
+            abilitySelect.innerHTML = `<option value="">${i18n.t('none')}</option>`;
         }
     } catch (e) {
         console.error(e);
-        abilitySelect.innerHTML = '<option value="">Error loading abilities</option>';
+        abilitySelect.innerHTML = `<option value="">Error</option>`;
     }
 }
 
@@ -251,6 +251,6 @@ function runSimulation(attackType, pokemon, abilityName, effectiveness) {
             <span class="font-bold">${capitalizeWords(abilityName.replace(/-/g, ' '))}</span>: ${abilityTriggered.description}
         `;
     } else {
-        resultText.textContent = "Standard type effectiveness.";
+        resultText.textContent = i18n.t('sim_standard_effectiveness');
     }
 }
