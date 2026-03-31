@@ -38,10 +38,10 @@ import Layout from '../layouts/Layout.astro';
         <!-- Mode Switcher -->
         <div class="flex justify-center mb-10">
             <div class="bg-slate-100 dark:bg-slate-800 p-1 rounded-xl flex shadow-inner">
-                <button id="toggle-simple" class="px-6 py-2 rounded-lg text-sm font-bold transition-all bg-white text-slate-900 shadow-sm">
+                <button id="toggle-simple" class="px-6 py-2 rounded-lg text-sm font-bold transition-all bg-white text-slate-900 shadow-sm" data-i18n="mode_calculator">
                     Calculator
                 </button>
-                <button id="toggle-pro" class="px-6 py-2 rounded-lg text-sm font-bold transition-all text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
+                <button id="toggle-pro" class="px-6 py-2 rounded-lg text-sm font-bold transition-all text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" data-i18n="mode_team_builder">
                     Team Builder
                 </button>
             </div>
@@ -172,7 +172,7 @@ import Layout from '../layouts/Layout.astro';
             <!-- Team Builder Grid -->
             <section class="md:col-span-12">
                 <div class="flex items-center justify-between mb-4 px-2">
-                    <h2 class="text-xl font-bold text-slate-800 dark:text-white">Your Team</h2>
+                    <h2 class="text-xl font-bold text-slate-800 dark:text-white" data-i18n="pro_team_title">Your Team</h2>
                     <span class="text-sm text-slate-500 dark:text-slate-400">0/6 Pokemon</span>
                 </div>
                 <div id="team-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -183,7 +183,7 @@ import Layout from '../layouts/Layout.astro';
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                             </svg>
                         </div>
-                        <span class="mt-2 text-xs font-bold text-slate-400 group-hover:text-indigo-500">Add Pokemon</span>
+                        <span class="mt-2 text-xs font-bold text-slate-400 group-hover:text-indigo-500" data-i18n="pro_add_pokemon">Add Pokemon</span>
                     </div>
                 </div>
             </section>

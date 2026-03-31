@@ -93,7 +93,10 @@ function renderTeamGrid() {
     // Update Counter
     const count = team.filter(p => p !== null).length;
     const counterEl = document.querySelector('#view-pro span.text-slate-500');
-    if (counterEl) counterEl.textContent = `${count}/6 Pokemon`;
+    if (counterEl) {
+        const pokemonLabel = i18n.t('stat_hp') === 'PS' ? 'Pokémon' : 'Pokemon'; 
+        counterEl.textContent = `${count}/6 ${pokemonLabel}`;
+    }
 
     container.innerHTML = team.map((member, index) => {
         if (!member) {
