@@ -9,6 +9,8 @@ export const messages = {
         type_1: "Type 1",
         type_2: "Type 2",
         active_analysis: "Active Analysis",
+        mode_calculator: "Calculator",
+        mode_team_builder: "Team Builder",
         
         // FAQ Section
         faq_title: "Frequently Asked Questions",
@@ -132,6 +134,9 @@ export const messages = {
         sim_title: "Ability Interaction Checker",
         sim_attack_type: "Attacking Type",
         sim_defender: "Defender",
+        sim_select_pokemon: "Select Pokemon first",
+        sim_effectiveness: "Effectiveness",
+        sim_standard_effectiveness: "Standard type effectiveness.",
         
         // Types
         normal: "Normal",
@@ -187,13 +192,15 @@ export const messages = {
     es: {
         // UI Headers & Labels
         brand_name: "Poketypes",
-        title_seo: ": Calculadora de Tipos Pokémon",
+        title_seo: ": Calculadora de tipos Pokémon",
         subtitle: "Analiza rápidamente coberturas, debilidades y resistencias para cualquier Pokémon o combinación de tipos.",
         search_placeholder: "Buscar Pokémon...",
         reset_btn: "Reiniciar",
         type_1: "Tipo 1",
         type_2: "Tipo 2",
         active_analysis: "Análisis Activo",
+        mode_calculator: "Calculadora",
+        mode_team_builder: "Equipo",
 
         // Sección FAQ (SEO)
         faq_title: "Preguntas Frecuentes",
@@ -317,6 +324,9 @@ export const messages = {
         sim_title: "Simulador de Habilidades",
         sim_attack_type: "Tipo de Ataque",
         sim_defender: "Defensor",
+        sim_select_pokemon: "Selecciona un Pokémon primero",
+        sim_effectiveness: "Efectividad",
+        sim_standard_effectiveness: "Efectividad de tipos estándar.",
         
         // Types
         normal: "Normal",
