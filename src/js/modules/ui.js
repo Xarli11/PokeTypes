@@ -201,25 +201,34 @@ export function populateSelects(ids, types) {
  */
 export function handleSearchImageError(img, id, name) {
     const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-    
-    // Stage 1: Try Official Artwork by ID (if not tried already)
+    const isVariety = slug.includes('-') && !['ho-oh', 'porygon-z', 'jangmo-o', 'hakamo-o', 'kommo-o', 'wo-chien', 'chien-pao', 'ting-lu', 'chi-yu'].includes(slug);
+
+    // Stage 1: If it's a variety, try Official Artwork by SLUG first
     if (!img.dataset.stage || img.dataset.stage === '0') {
         img.dataset.stage = '1';
-        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+        if (isVariety) {
+            img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${slug}.png`;
+        } else {
+            img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+        }
         return;
     }
     
-    // Stage 2: Try Official Artwork by Slug (forms/varieties)
+    // Stage 2: Try Home Sprites (3D HQ)
     if (img.dataset.stage === '1') {
         img.dataset.stage = '2';
-        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${slug}.png`;
+        img.src = `https://img.pokemondb.net/sprites/home/normal/${slug}.png`;
         return;
     }
     
-    // Stage 3: Try Home Sprites (3D HQ)
+    // Stage 3: Try Official Artwork by ID (if we tried slug first) or vice versa
     if (img.dataset.stage === '2') {
         img.dataset.stage = '3';
-        img.src = `https://img.pokemondb.net/sprites/home/normal/${slug}.png`;
+        if (isVariety) {
+            img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+        } else {
+            img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+        }
         return;
     }
     
@@ -251,17 +260,17 @@ export function getPokemonImageUrl(p, imageFixes = {}) {
     // Prepare slugs for lookups
     const baseSlug = (p.apiName || p.slug || p.name?.toLowerCase() || '').replace(/\s+/g, '-');
     const cleanSlug = baseSlug.replace(/[^a-z0-9-]/g, '');
-    const showdownSlug = cleanSlug.replace(/-/g, '');
+    const isVariety = cleanSlug.includes('-') && !['ho-oh', 'porygon-z', 'jangmo-o', 'hakamo-o', 'kommo-o', 'wo-chien', 'chien-pao', 'ting-lu', 'chi-yu'].includes(cleanSlug);
 
-    // Priority 2: Official Artwork (Standard or Variety)
-    if (p.id) {
-        // We use a multi-stage fallback in the <img> tag itself, but we return the best candidate here
-        return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png`;
+    // Priority 2: Official Artwork (Variety slug first if it's a variety)
+    if (isVariety) {
+        // Varieties often don't have official-artwork under the base ID, so we try slug-based home sprite as primary candidate
+        return `https://img.pokemondb.net/sprites/home/normal/${cleanSlug}.png`;
     }
 
-    // Priority 3: Showdown / Pokemondb for custom/new Megas
-    if (cleanSlug.includes('-mega') || cleanSlug.includes('-alola') || cleanSlug.includes('-galar') || cleanSlug.includes('-hisui')) {
-        return `https://img.pokemondb.net/sprites/home/normal/${cleanSlug}.png`;
+    // Priority 3: Official Artwork by ID for standard Pokemon
+    if (p.id) {
+        return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png`;
     }
 
     return '/pokeball.png';

@@ -191,46 +191,38 @@ export async function fetchPokemonDetails(identifier) {
                 }
 
                 // 2. Localize Description
-                let descEntry = abilityData.flavor_text_entries
-                    .filter(f => f.language.name === currentLang)
-                    .pop();
+                const findDesc = (lang) => {
+                    const flavor = abilityData.flavor_text_entries.find(f => f.language.name === lang);
+                    if (flavor) return flavor.flavor_text || flavor.text;
+                    const effect = abilityData.effect_entries.find(e => e.language.name === lang);
+                    if (effect) return effect.short_effect || effect.effect;
+                    return null;
+                };
 
-                if (!descEntry && abilityData.effect_entries) {
-                    descEntry = abilityData.effect_entries.find(e => e.language.name === currentLang);
-                }
-
+                let text = findDesc(currentLang);
+                
                 // Manual Override Check
                 const rawName = abilityData.name.toLowerCase();
-                const spacedName = rawName.replace(/-/g, ' ');
-                
                 const manualDesc = i18n.t(`${rawName}_desc`);
-                const manualDescSpaced = i18n.t(`${spacedName}_desc`);
-                
-                let finalManualDesc = null;
-                if (manualDesc !== `${rawName}_desc`) finalManualDesc = manualDesc;
-                else if (manualDescSpaced !== `${spacedName}_desc`) finalManualDesc = manualDescSpaced;
+                const finalManualDesc = manualDesc !== `${rawName}_desc` ? manualDesc : null;
 
-                if (!descEntry && finalManualDesc) {
+                if (finalManualDesc) {
                     entry.description = finalManualDesc;
-                } else if (descEntry) {
-                    let text = descEntry.flavor_text || descEntry.short_effect || descEntry.effect;
+                } else if (text) {
                     entry.description = text.replace(/[\n\f]/g, ' ');
                 } else {
                     // English Fallback
-                    descEntry = abilityData.flavor_text_entries.find(f => f.language.name === 'en') || 
-                                abilityData.effect_entries.find(e => e.language.name === 'en');
-                    
-                    if (descEntry) {
-                        let text = descEntry.flavor_text || descEntry.short_effect || descEntry.effect;
-                        entry.description = text.replace(/[\n\f]/g, ' ');
+                    const englishText = findDesc('en');
+                    if (englishText) {
+                        entry.description = englishText.replace(/[\n\f]/g, ' ');
                     } else {
-                        entry.description = 'No description available.';
+                        entry.description = i18n.t('stats_unavailable');
                     }
                 }
 
             } catch (err) {
                 console.error(`Failed to fetch details for ${entry.ability.name}`, err);
-                entry.description = 'Description unavailable.';
+                entry.description = i18n.t('stats_unavailable');
             }
             return entry;
         });
