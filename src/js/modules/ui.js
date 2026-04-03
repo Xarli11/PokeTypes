@@ -209,14 +209,23 @@ export function getPokemonImageUrl(p, imageFixes = {}) {
         }
     }
 
+    // Use name-based official-artwork for varieties if possible, as local IDs are base IDs
+    const slug = p.spriteSlug || p.apiName || p.slug || p.name?.toLowerCase().replace(/\s+/g, '-');
+    
+    // Check if it's likely a variety (has a hyphen and is not a base pokemon like Ho-Oh or Porygon-Z)
+    const isVariety = slug && slug.includes('-') && 
+                     !['ho-oh', 'porygon-z', 'jangmo-o', 'hakamo-o', 'kommo-o', 'wo-chien', 'chien-pao', 'ting-lu', 'chi-yu'].includes(slug);
+
+    if (isVariety) {
+        return `https://img.pokemondb.net/sprites/home/normal/${slug}.png`;
+    }
+
     // Prioritize official-artwork for HQ when we have a numeric ID
     if (p.id) {
         return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png`;
     }
 
-    return (p.spriteSlug || p.apiName)
-        ? `https://img.pokemondb.net/sprites/home/normal/${p.spriteSlug || p.apiName}.png`
-        : '/pokeball.png';
+    return '/pokeball.png';
 }
 
 export function renderPokemonHero(container, pokemon, contrastData, imageFixes = {}) {

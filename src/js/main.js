@@ -185,6 +185,29 @@ async function showPokemonDetails(pokemon) {
                     heroImg.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${details.id}.png`;
                 }
             }
+
+            // FALLBACK: If details has no abilities but compData has, use compData abilities
+            // This is common for custom Megas or non-standard forms
+            if ((!details.abilities || details.abilities.length === 0) && compData && compData.abilities) {
+                details.abilities = Object.entries(compData.abilities).map(([key, abilityName]) => {
+                    return {
+                        is_hidden: key === 'H',
+                        ability: {
+                            name: abilityName.toLowerCase().replace(/ /g, '-'),
+                            displayName: i18n.tAbility(abilityName)
+                        },
+                        description: i18n.t(`${abilityName.toLowerCase().replace(/ /g, '-')}_desc`) || i18n.t('stats_unavailable')
+                    };
+                });
+                
+                // If description lookup failed (returned the key), set a generic one
+                details.abilities.forEach(a => {
+                    if (a.description === `${a.ability.name}_desc`) {
+                        a.description = i18n.t('stats_unavailable');
+                    }
+                });
+            }
+
             ui.renderStats(statsContainer, details.stats);
             ui.renderAbilities(abilitiesContainer, details.abilities);
             ui.renderAbilityAlerts(alertsContainer, details.abilities);
@@ -308,7 +331,7 @@ function setupEventListeners() {
                              alt="${p.displayName}" 
                              loading="lazy"
                              class="w-10 h-10 object-contain flex-shrink-0"
-                             onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png';">
+                             onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png'; this.onerror=function(){this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png'; this.onerror=function(){this.src='/pokeball.png'; this.onerror=null;}}">
                         <span class="flex-1 font-bold text-slate-700 dark:text-slate-200">${p.displayName}</span>
                         <div class="flex gap-1 scale-90 origin-right">
                             ${typePills}

@@ -463,7 +463,7 @@ function setupSearchModal() {
                         <img src="${imageUrl}" 
                              loading="lazy" 
                              class="w-10 h-10 object-contain"
-                             onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png'; this.onerror=null;">
+                             onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png'; this.onerror=function(){this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png'; this.onerror=function(){this.src='/pokeball.png'; this.onerror=null;}}">
                         <div class="flex-1">
                             <div class="font-bold text-slate-800 dark:text-white">${p.displayName}</div>
                             <div class="text-xs text-slate-400">#${p.id}</div>
