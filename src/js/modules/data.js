@@ -59,6 +59,31 @@ export function loadPokedex() {
     return pokedexPromise;
 }
 
+let showdownPokedexPromise = null;
+
+export async function fetchCompetitiveData(pokemonName) {
+    if (!showdownPokedexPromise) {
+        showdownPokedexPromise = (async () => {
+            try {
+                const res = await fetch('https://play.pokemonshowdown.com/data/pokedex.json');
+                if (!res.ok) throw new Error('Failed to fetch Showdown Pokedex');
+                return await res.json();
+            } catch (e) {
+                console.error('Error loading competitive data:', e);
+                showdownPokedexPromise = null;
+                return null;
+            }
+        })();
+    }
+
+    const pokedex = await showdownPokedexPromise;
+    if (!pokedex) return null;
+
+    // Clean name for Showdown lookup (lowercase, no special chars)
+    const slug = pokemonName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return pokedex[slug] || null;
+}
+
 export async function fetchPokemonDetails(identifier) {
     if (!identifier) return null;
     
