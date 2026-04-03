@@ -149,35 +149,26 @@ export async function fetchPokemonDetails(identifier) {
 
         if (sourceAbilities) {
             Object.entries(sourceAbilities).forEach(([key, abilityName]) => {
+                const abilitySlug = abilityName.toLowerCase().replace(/ /g, '-');
                 data.abilities.push({
                     is_hidden: key === 'H',
                     ability: {
-                        name: abilityName.toLowerCase().replace(/ /g, '-'), // slug for i18n lookup
-                        url: null, // Signal that we can't fetch details
-                        displayName: i18n.tAbility(abilityName) // Use local translation
+                        name: abilitySlug,
+                        url: `https://pokeapi.co/api/v2/ability/${abilitySlug}`,
+                        displayName: i18n.tAbility(abilityName)
                     }
                 });
             });
         }
     }
 
-    if (isFallback) {
-        // Process fallback abilities (just add description placeholder)
-        data.abilities.forEach(entry => {
-            // Try to find description in messages if manual
-            const rawName = entry.ability.name;
-            const spacedName = rawName.replace(/-/g, ' ');
-            const manualDesc = i18n.t(`${rawName}_desc`);
-            
-            entry.description = manualDesc !== `${rawName}_desc` ? manualDesc : i18n.t('stats_unavailable');
-        });
-        
-        pokemonCache.set(cacheKey, data);
-        return data;
-    }
-
-    // Standard API Processing
+    // Standard API Processing (ALWAYS run if we have abilities, even in fallback mode)
     try {
+        if (!data.abilities || data.abilities.length === 0) {
+            pokemonCache.set(cacheKey, data);
+            return data;
+        }
+
         const abilityPromises = data.abilities.map(async (entry) => {
             try {
                 let abilityData;

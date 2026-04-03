@@ -195,6 +195,45 @@ export function populateSelects(ids, types) {
     });
 }
 
+/**
+ * Centralized error handler for search suggestion images.
+ * Provides a robust multi-stage fallback for HQ artwork.
+ */
+export function handleSearchImageError(img, id, name) {
+    const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    
+    // Stage 1: Try Official Artwork by ID (if not tried already)
+    if (!img.dataset.stage || img.dataset.stage === '0') {
+        img.dataset.stage = '1';
+        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+        return;
+    }
+    
+    // Stage 2: Try Official Artwork by Slug (forms/varieties)
+    if (img.dataset.stage === '1') {
+        img.dataset.stage = '2';
+        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${slug}.png`;
+        return;
+    }
+    
+    // Stage 3: Try Home Sprites (3D HQ)
+    if (img.dataset.stage === '2') {
+        img.dataset.stage = '3';
+        img.src = `https://img.pokemondb.net/sprites/home/normal/${slug}.png`;
+        return;
+    }
+    
+    // Stage 4: Try Standard PokeAPI Sprite
+    if (img.dataset.stage === '3') {
+        img.dataset.stage = '4';
+        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+        return;
+    }
+    
+    // Stage 5: Final Fallback to Pokeball
+    img.src = '/pokeball.png';
+    img.onerror = null;
+}
 
 export function getPokemonImageUrl(p, imageFixes = {}) {
     const apiName = p.apiName || p.name?.toLowerCase();

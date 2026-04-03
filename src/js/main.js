@@ -14,6 +14,9 @@ async function init() {
         initTheme(); // Initialize Dark/Light Mode
         initProMode(); // Initialize Pro Mode Switcher
         
+        // Expose centralized image error handler for inline use
+        window.handleSearchImageError = ui.handleSearchImageError;
+        
         // Initialize i18n
         updateLanguageToggle();
         i18n.updateDOM();
@@ -331,7 +334,7 @@ function setupEventListeners() {
                              alt="${p.displayName}" 
                              loading="lazy"
                              class="w-10 h-10 object-contain flex-shrink-0"
-                             onerror="const slug = '${p.name.toLowerCase().replace(/\s+/g, '-')}'; this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png'; this.onerror=function(){this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/' + slug + '.png'; this.onerror=function(){this.src='https://img.pokemondb.net/sprites/home/normal/' + slug + '.png'; this.onerror=function(){this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png'; this.onerror=function(){this.src='/pokeball.png'; this.onerror=null;}}}}}">
+                             onerror="handleSearchImageError(this, ${p.id}, '${p.name.replace(/'/g, "\\'")}')">
                         <span class="flex-1 font-bold text-slate-700 dark:text-slate-200">${p.displayName}</span>
                         <div class="flex gap-1 scale-90 origin-right">
                             ${typePills}
