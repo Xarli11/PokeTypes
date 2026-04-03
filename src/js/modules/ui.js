@@ -202,8 +202,8 @@ export function getPokemonImageUrl(p, imageFixes = {}) {
 
     if (fix) {
         if (fix.type === 'slug') {
-            // For slugs, we use pokemondb home sprites as a reliable fallback
-            return `https://img.pokemondb.net/sprites/home/normal/${fix.value}.png`;
+            // For slugs, try official artwork first, then pokemondb home sprites
+            return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${fix.value}.png`;
         } else if (fix.type === 'url') {
             return fix.value;
         }
@@ -217,6 +217,7 @@ export function getPokemonImageUrl(p, imageFixes = {}) {
                      !['ho-oh', 'porygon-z', 'jangmo-o', 'hakamo-o', 'kommo-o', 'wo-chien', 'chien-pao', 'ting-lu', 'chi-yu'].includes(slug);
 
     if (isVariety) {
+        // Many varieties are available in home sprites but not always in official-artwork
         return `https://img.pokemondb.net/sprites/home/normal/${slug}.png`;
     }
 

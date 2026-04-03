@@ -126,8 +126,12 @@ export async function fetchPokemonDetails(identifier) {
             abilities: []
         };
 
-        if (localPokemon.abilities) {
-            Object.entries(localPokemon.abilities).forEach(([key, abilityName]) => {
+        // Try to merge with Showdown data for abilities if missing
+        const showdownData = await fetchCompetitiveData(localPokemon.name);
+        const sourceAbilities = localPokemon.abilities || showdownData?.abilities;
+
+        if (sourceAbilities) {
+            Object.entries(sourceAbilities).forEach(([key, abilityName]) => {
                 data.abilities.push({
                     is_hidden: key === 'H',
                     ability: {
