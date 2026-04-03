@@ -202,15 +202,21 @@ export function getPokemonImageUrl(p, imageFixes = {}) {
 
     if (fix) {
         if (fix.type === 'slug') {
+            // For slugs, we use pokemondb home sprites as a reliable fallback
             return `https://img.pokemondb.net/sprites/home/normal/${fix.value}.png`;
         } else if (fix.type === 'url') {
             return fix.value;
         }
     }
 
+    // Prioritize official-artwork for HQ when we have a numeric ID
+    if (p.id) {
+        return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png`;
+    }
+
     return (p.spriteSlug || p.apiName)
         ? `https://img.pokemondb.net/sprites/home/normal/${p.spriteSlug || p.apiName}.png`
-        : (p.id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png` : '/pokeball.png');
+        : '/pokeball.png';
 }
 
 export function renderPokemonHero(container, pokemon, contrastData, imageFixes = {}) {
@@ -228,11 +234,14 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
     const typePills = pokemon.types.map(t => createTypePill(t, contrastData)).join('');
 
     // Image Sources Strategy
-    let primaryUrl = `https://play.pokemonshowdown.com/sprites/ani/${slug}.gif`;
+    const officialArt = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
+    const animatedGif = `https://play.pokemonshowdown.com/sprites/ani/${slug}.gif`;
+    
+    let primaryUrl = officialArt;
     
     if (fix) {
         if (fix.type === 'slug') {
-            primaryUrl = `https://img.pokemondb.net/sprites/home/normal/${fix.value}.png`;
+            primaryUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${fix.value}.png`;
         } else {
             primaryUrl = fix.value;
         }
@@ -240,8 +249,9 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
 
     const sources = [
         primaryUrl,
+        officialArt,
+        animatedGif,
         `https://img.pokemondb.net/sprites/home/normal/${slug}.png`,
-        `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`,
         '/pokeball.png'
     ];
 
@@ -252,8 +262,8 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
                 <img id="pokemon-hero-img" 
                      src="${sources[0]}" 
                      alt="${displayName}" 
-                     class="w-32 h-32 md:w-48 md:h-48 object-contain drop-shadow-xl transform transition-transform duration-500 hover:scale-110 filter"
-                     style="image-rendering: pixelated;">
+                     class="w-32 h-32 md:w-48 md:h-48 object-contain drop-shadow-xl transform transition-transform duration-500 hover:scale-110"
+                     onerror="this.src='${sources[1]}'; this.onerror=function(){this.src='${sources[2]}'; this.onerror=function(){this.src='${sources[3]}'; this.onerror=null;}}">
             </div>
             
             <div class="text-center">

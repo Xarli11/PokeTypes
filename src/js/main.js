@@ -169,10 +169,16 @@ async function showPokemonDetails(pokemon) {
         ui.renderPokemonHero(document.getElementById('pokemon-hero'), pokemon, appData.contrast, appData.imageFixes);
 
         const details = await fetchPokemonDetails(pokemon.apiName || pokemon.id);
-        
+
         if (details) {
-            ui.renderStats(statsContainer, details.stats);
-            ui.renderAbilities(abilitiesContainer, details.abilities);
+            // Update Hero image with correct variety ID if it differs from local data
+            if (details.id && details.id !== pokemon.id) {
+                const heroImg = document.getElementById('pokemon-hero-img');
+                if (heroImg) {
+                    heroImg.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${details.id}.png`;
+                }
+            }
+            ui.renderStats(statsContainer, details.stats);            ui.renderAbilities(abilitiesContainer, details.abilities);
             ui.renderAbilityAlerts(alertsContainer, details.abilities);
         } else {
             // If details fetch fails, keep Hero visible but show error in stats area
