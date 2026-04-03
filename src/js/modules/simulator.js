@@ -127,7 +127,8 @@ function setupEventListeners(appData) {
         if (matches.length > 0) {
             suggestions.innerHTML = matches.map(p => `
                 <li data-name="${p.name}" class="cursor-pointer px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-3 border-b border-slate-100 dark:border-slate-700 last:border-0">
-                    <img src="${getPokemonImageUrl(p, appData.imageFixes)}" class="w-8 h-8 object-contain" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png'; this.onerror=null;">
+                    <img src="${getPokemonImageUrl(p, appData.imageFixes)}" class="w-8 h-8 object-contain" 
+                         onerror="const slug = '${p.name.toLowerCase().replace(/\s+/g, '-')}'; this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png'; this.onerror=function(){this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/' + slug + '.png'; this.onerror=function(){this.src='https://img.pokemondb.net/sprites/home/normal/' + slug + '.png'; this.onerror=function(){this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png'; this.onerror=function(){this.src='/pokeball.png'; this.onerror=null;}}}}}">
                     <span class="text-sm font-bold dark:text-white">${p.displayName}</span>
                 </li>
             `).join('');

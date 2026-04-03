@@ -331,7 +331,7 @@ function setupEventListeners() {
                              alt="${p.displayName}" 
                              loading="lazy"
                              class="w-10 h-10 object-contain flex-shrink-0"
-                             onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png'; this.onerror=function(){this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png'; this.onerror=function(){this.src='/pokeball.png'; this.onerror=null;}}">
+                             onerror="const slug = '${p.name.toLowerCase().replace(/\s+/g, '-')}'; this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png'; this.onerror=function(){this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/' + slug + '.png'; this.onerror=function(){this.src='https://img.pokemondb.net/sprites/home/normal/' + slug + '.png'; this.onerror=function(){this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png'; this.onerror=function(){this.src='/pokeball.png'; this.onerror=null;}}}}}">
                         <span class="flex-1 font-bold text-slate-700 dark:text-slate-200">${p.displayName}</span>
                         <div class="flex gap-1 scale-90 origin-right">
                             ${typePills}

@@ -200,30 +200,29 @@ export function getPokemonImageUrl(p, imageFixes = {}) {
     const apiName = p.apiName || p.name?.toLowerCase();
     const fix = imageFixes[apiName];
 
+    // Priority 1: Custom Fixes (Manual URLs or slugs)
     if (fix) {
         if (fix.type === 'slug') {
-            // For slugs, try official artwork first, then pokemondb home sprites
             return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${fix.value}.png`;
         } else if (fix.type === 'url') {
             return fix.value;
         }
     }
 
-    // Use name-based official-artwork for varieties if possible, as local IDs are base IDs
-    const slug = p.spriteSlug || p.apiName || p.slug || p.name?.toLowerCase().replace(/\s+/g, '-');
-    
-    // Check if it's likely a variety (has a hyphen and is not a base pokemon like Ho-Oh or Porygon-Z)
-    const isVariety = slug && slug.includes('-') && 
-                     !['ho-oh', 'porygon-z', 'jangmo-o', 'hakamo-o', 'kommo-o', 'wo-chien', 'chien-pao', 'ting-lu', 'chi-yu'].includes(slug);
+    // Prepare slugs for lookups
+    const baseSlug = (p.apiName || p.slug || p.name?.toLowerCase() || '').replace(/\s+/g, '-');
+    const cleanSlug = baseSlug.replace(/[^a-z0-9-]/g, '');
+    const showdownSlug = cleanSlug.replace(/-/g, '');
 
-    if (isVariety) {
-        // Many varieties are available in home sprites but not always in official-artwork
-        return `https://img.pokemondb.net/sprites/home/normal/${slug}.png`;
+    // Priority 2: Official Artwork (Standard or Variety)
+    if (p.id) {
+        // We use a multi-stage fallback in the <img> tag itself, but we return the best candidate here
+        return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png`;
     }
 
-    // Prioritize official-artwork for HQ when we have a numeric ID
-    if (p.id) {
-        return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png`;
+    // Priority 3: Showdown / Pokemondb for custom/new Megas
+    if (cleanSlug.includes('-mega') || cleanSlug.includes('-alola') || cleanSlug.includes('-galar') || cleanSlug.includes('-hisui')) {
+        return `https://img.pokemondb.net/sprites/home/normal/${cleanSlug}.png`;
     }
 
     return '/pokeball.png';
@@ -243,11 +242,17 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
     
     const typePills = pokemon.types.map(t => createTypePill(t, contrastData)).join('');
 
+    const baseSlug = (pokemon.apiName || pokemon.slug || pokemon.name?.toLowerCase() || '').replace(/\s+/g, '-');
+    const cleanSlug = baseSlug.replace(/[^a-z0-0-]/g, '');
+    const showdownSlug = cleanSlug.replace(/-/g, '');
+
     // Image Sources Strategy
-    const officialArt = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
-    const animatedGif = `https://play.pokemonshowdown.com/sprites/ani/${slug}.gif`;
+    const officialArtById = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
+    const officialArtBySlug = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${cleanSlug}.png`;
+    const animatedGif = `https://play.pokemonshowdown.com/sprites/ani/${showdownSlug}.gif`;
+    const homeSprite = `https://img.pokemondb.net/sprites/home/normal/${cleanSlug}.png`;
     
-    let primaryUrl = officialArt;
+    let primaryUrl = officialArtById;
     
     if (fix) {
         if (fix.type === 'slug') {
@@ -259,9 +264,9 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
 
     const sources = [
         primaryUrl,
-        officialArt,
+        officialArtBySlug,
         animatedGif,
-        `https://img.pokemondb.net/sprites/home/normal/${slug}.png`,
+        homeSprite,
         '/pokeball.png'
     ];
 
@@ -273,7 +278,7 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
                      src="${sources[0]}" 
                      alt="${displayName}" 
                      class="w-32 h-32 md:w-48 md:h-48 object-contain drop-shadow-xl transform transition-transform duration-500 hover:scale-110"
-                     onerror="this.src='${sources[1]}'; this.onerror=function(){this.src='${sources[2]}'; this.onerror=function(){this.src='${sources[3]}'; this.onerror=null;}}">
+                     onerror="this.src='${sources[1]}'; this.onerror=function(){this.src='${sources[2]}'; this.onerror=function(){this.src='${sources[3]}'; this.onerror=function(){this.src='${sources[4]}'; this.onerror=null;}}}}">
             </div>
             
             <div class="text-center">

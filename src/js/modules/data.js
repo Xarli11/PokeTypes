@@ -79,9 +79,26 @@ export async function fetchCompetitiveData(pokemonName) {
     const pokedex = await showdownPokedexPromise;
     if (!pokedex) return null;
 
-    // Clean name for Showdown lookup (lowercase, no special chars)
-    const slug = pokemonName.toLowerCase().replace(/[^a-z0-9]/g, '');
-    return pokedex[slug] || null;
+    // Multi-strategy slugging for Showdown lookup
+    const strategies = [];
+    
+    // 1. Direct cleanup (e.g. "Mega Froslass" -> "megafroslass")
+    strategies.push(pokemonName.toLowerCase().replace(/[^a-z0-9]/g, ''));
+    
+    // 2. Species+Form strategy (e.g. "Mega Froslass" -> "froslassmega")
+    if (pokemonName.toLowerCase().includes('mega')) {
+        const species = pokemonName.toLowerCase().replace('mega', '').trim();
+        strategies.push(species + 'mega');
+    }
+    
+    // 3. Hyphenated strategy if pokemonName is actually an apiName (e.g. "froslass-mega" -> "froslassmega")
+    strategies.push(pokemonName.toLowerCase().replace(/-/g, '').replace(/[^a-z0-9]/g, ''));
+
+    for (const slug of strategies) {
+        if (pokedex[slug]) return pokedex[slug];
+    }
+
+    return null;
 }
 
 export async function fetchPokemonDetails(identifier) {
