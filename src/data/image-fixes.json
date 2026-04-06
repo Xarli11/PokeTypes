@@ -242,5 +242,781 @@
   "ogerpon-cornerstone-mask": {
     "type": "slug",
     "value": "ogerpon"
+  },
+  "venusaur-mega": {
+    "type": "id",
+    "value": 10033
+  },
+  "venusaur-gmax": {
+    "type": "id",
+    "value": 10195
+  },
+  "charizard-mega-x": {
+    "type": "id",
+    "value": 10034
+  },
+  "charizard-mega-y": {
+    "type": "id",
+    "value": 10035
+  },
+  "charizard-gmax": {
+    "type": "id",
+    "value": 10196
+  },
+  "blastoise-mega": {
+    "type": "id",
+    "value": 10036
+  },
+  "blastoise-gmax": {
+    "type": "id",
+    "value": 10197
+  },
+  "butterfree-gmax": {
+    "type": "id",
+    "value": 10198
+  },
+  "beedrill-mega": {
+    "type": "id",
+    "value": 10090
+  },
+  "pidgeot-mega": {
+    "type": "id",
+    "value": 10073
+  },
+  "rattata-alola": {
+    "type": "id",
+    "value": 10091
+  },
+  "raticate-alola": {
+    "type": "id",
+    "value": 10092
+  },
+  "pikachu-alola-cap": {
+    "type": "id",
+    "value": 10099
+  },
+  "pikachu-gmax": {
+    "type": "id",
+    "value": 10199
+  },
+  "raichu-alola": {
+    "type": "id",
+    "value": 10100
+  },
+  "sandshrew-alola": {
+    "type": "id",
+    "value": 10101
+  },
+  "sandslash-alola": {
+    "type": "id",
+    "value": 10102
+  },
+  "vulpix-alola": {
+    "type": "id",
+    "value": 10103
+  },
+  "ninetales-alola": {
+    "type": "id",
+    "value": 10104
+  },
+  "diglett-alola": {
+    "type": "id",
+    "value": 10105
+  },
+  "dugtrio-alola": {
+    "type": "id",
+    "value": 10106
+  },
+  "meowth-alola": {
+    "type": "id",
+    "value": 10107
+  },
+  "meowth-galar": {
+    "type": "id",
+    "value": 10161
+  },
+  "meowth-gmax": {
+    "type": "id",
+    "value": 10200
+  },
+  "persian-alola": {
+    "type": "id",
+    "value": 10108
+  },
+  "growlithe-hisui": {
+    "type": "id",
+    "value": 10229
+  },
+  "arcanine-hisui": {
+    "type": "id",
+    "value": 10230
+  },
+  "alakazam-mega": {
+    "type": "id",
+    "value": 10037
+  },
+  "machamp-gmax": {
+    "type": "id",
+    "value": 10201
+  },
+  "geodude-alola": {
+    "type": "id",
+    "value": 10109
+  },
+  "graveler-alola": {
+    "type": "id",
+    "value": 10110
+  },
+  "golem-alola": {
+    "type": "id",
+    "value": 10111
+  },
+  "ponyta-galar": {
+    "type": "id",
+    "value": 10162
+  },
+  "rapidash-galar": {
+    "type": "id",
+    "value": 10163
+  },
+  "slowpoke-galar": {
+    "type": "id",
+    "value": 10164
+  },
+  "slowbro-mega": {
+    "type": "id",
+    "value": 10071
+  },
+  "slowbro-galar": {
+    "type": "id",
+    "value": 10165
+  },
+  "farfetchd-galar": {
+    "type": "id",
+    "value": 10166
+  },
+  "grimer-alola": {
+    "type": "id",
+    "value": 10112
+  },
+  "muk-alola": {
+    "type": "id",
+    "value": 10113
+  },
+  "gengar-mega": {
+    "type": "id",
+    "value": 10038
+  },
+  "gengar-gmax": {
+    "type": "id",
+    "value": 10202
+  },
+  "kingler-gmax": {
+    "type": "id",
+    "value": 10203
+  },
+  "voltorb-hisui": {
+    "type": "id",
+    "value": 10231
+  },
+  "electrode-hisui": {
+    "type": "id",
+    "value": 10232
+  },
+  "exeggutor-alola": {
+    "type": "id",
+    "value": 10114
+  },
+  "marowak-alola": {
+    "type": "id",
+    "value": 10115
+  },
+  "weezing-galar": {
+    "type": "id",
+    "value": 10167
+  },
+  "kangaskhan-mega": {
+    "type": "id",
+    "value": 10039
+  },
+  "mr-mime-galar": {
+    "type": "id",
+    "value": 10168
+  },
+  "pinsir-mega": {
+    "type": "id",
+    "value": 10040
+  },
+  "gyarados-mega": {
+    "type": "id",
+    "value": 10041
+  },
+  "lapras-gmax": {
+    "type": "id",
+    "value": 10204
+  },
+  "eevee-gmax": {
+    "type": "id",
+    "value": 10205
+  },
+  "aerodactyl-mega": {
+    "type": "id",
+    "value": 10042
+  },
+  "snorlax-gmax": {
+    "type": "id",
+    "value": 10206
+  },
+  "articuno-galar": {
+    "type": "id",
+    "value": 10169
+  },
+  "zapdos-galar": {
+    "type": "id",
+    "value": 10170
+  },
+  "moltres-galar": {
+    "type": "id",
+    "value": 10171
+  },
+  "mewtwo-mega-x": {
+    "type": "id",
+    "value": 10043
+  },
+  "mewtwo-mega-y": {
+    "type": "id",
+    "value": 10044
+  },
+  "typhlosion-hisui": {
+    "type": "id",
+    "value": 10233
+  },
+  "ampharos-mega": {
+    "type": "id",
+    "value": 10045
+  },
+  "wooper-paldea": {
+    "type": "id",
+    "value": 10253
+  },
+  "slowking-galar": {
+    "type": "id",
+    "value": 10172
+  },
+  "steelix-mega": {
+    "type": "id",
+    "value": 10072
+  },
+  "qwilfish-hisui": {
+    "type": "id",
+    "value": 10234
+  },
+  "scizor-mega": {
+    "type": "id",
+    "value": 10046
+  },
+  "heracross-mega": {
+    "type": "id",
+    "value": 10047
+  },
+  "sneasel-hisui": {
+    "type": "id",
+    "value": 10235
+  },
+  "corsola-galar": {
+    "type": "id",
+    "value": 10173
+  },
+  "houndoom-mega": {
+    "type": "id",
+    "value": 10048
+  },
+  "tyranitar-mega": {
+    "type": "id",
+    "value": 10049
+  },
+  "sceptile-mega": {
+    "type": "id",
+    "value": 10065
+  },
+  "blaziken-mega": {
+    "type": "id",
+    "value": 10050
+  },
+  "swampert-mega": {
+    "type": "id",
+    "value": 10064
+  },
+  "zigzagoon-galar": {
+    "type": "id",
+    "value": 10174
+  },
+  "linoone-galar": {
+    "type": "id",
+    "value": 10175
+  },
+  "gardevoir-mega": {
+    "type": "id",
+    "value": 10051
+  },
+  "sableye-mega": {
+    "type": "id",
+    "value": 10066
+  },
+  "mawile-mega": {
+    "type": "id",
+    "value": 10052
+  },
+  "aggron-mega": {
+    "type": "id",
+    "value": 10053
+  },
+  "medicham-mega": {
+    "type": "id",
+    "value": 10054
+  },
+  "manectric-mega": {
+    "type": "id",
+    "value": 10055
+  },
+  "sharpedo-mega": {
+    "type": "id",
+    "value": 10070
+  },
+  "camerupt-mega": {
+    "type": "id",
+    "value": 10087
+  },
+  "altaria-mega": {
+    "type": "id",
+    "value": 10067
+  },
+  "castform-sunny": {
+    "type": "id",
+    "value": 10013
+  },
+  "castform-rainy": {
+    "type": "id",
+    "value": 10014
+  },
+  "castform-snowy": {
+    "type": "id",
+    "value": 10015
+  },
+  "banette-mega": {
+    "type": "id",
+    "value": 10056
+  },
+  "absol-mega": {
+    "type": "id",
+    "value": 10057
+  },
+  "glalie-mega": {
+    "type": "id",
+    "value": 10074
+  },
+  "salamence-mega": {
+    "type": "id",
+    "value": 10089
+  },
+  "metagross-mega": {
+    "type": "id",
+    "value": 10076
+  },
+  "latias-mega": {
+    "type": "id",
+    "value": 10062
+  },
+  "latios-mega": {
+    "type": "id",
+    "value": 10063
+  },
+  "kyogre-primal": {
+    "type": "id",
+    "value": 10077
+  },
+  "groudon-primal": {
+    "type": "id",
+    "value": 10078
+  },
+  "rayquaza-mega": {
+    "type": "id",
+    "value": 10079
+  },
+  "deoxys-attack": {
+    "type": "id",
+    "value": 10001
+  },
+  "deoxys-defense": {
+    "type": "id",
+    "value": 10002
+  },
+  "deoxys-speed": {
+    "type": "id",
+    "value": 10003
+  },
+  "wormadam-sandy": {
+    "type": "id",
+    "value": 10004
+  },
+  "wormadam-trash": {
+    "type": "id",
+    "value": 10005
+  },
+  "lopunny-mega": {
+    "type": "id",
+    "value": 10088
+  },
+  "garchomp-mega": {
+    "type": "id",
+    "value": 10058
+  },
+  "lucario-mega": {
+    "type": "id",
+    "value": 10059
+  },
+  "abomasnow-mega": {
+    "type": "id",
+    "value": 10060
+  },
+  "gallade-mega": {
+    "type": "id",
+    "value": 10068
+  },
+  "rotom-heat": {
+    "type": "id",
+    "value": 10008
+  },
+  "rotom-wash": {
+    "type": "id",
+    "value": 10009
+  },
+  "rotom-frost": {
+    "type": "id",
+    "value": 10010
+  },
+  "rotom-fan": {
+    "type": "id",
+    "value": 10011
+  },
+  "rotom-mow": {
+    "type": "id",
+    "value": 10012
+  },
+  "dialga-origin": {
+    "type": "id",
+    "value": 10245
+  },
+  "palkia-origin": {
+    "type": "id",
+    "value": 10246
+  },
+  "giratina-origin": {
+    "type": "id",
+    "value": 10007
+  },
+  "shaymin-sky": {
+    "type": "id",
+    "value": 10006
+  },
+  "samurott-hisui": {
+    "type": "id",
+    "value": 10236
+  },
+  "audino-mega": {
+    "type": "id",
+    "value": 10069
+  },
+  "lilligant-hisui": {
+    "type": "id",
+    "value": 10237
+  },
+  "basculin-blue-striped": {
+    "type": "id",
+    "value": 10016
+  },
+  "basculin-white-striped": {
+    "type": "id",
+    "value": 10247
+  },
+  "darumaka-galar": {
+    "type": "id",
+    "value": 10176
+  },
+  "darmanitan-zen": {
+    "type": "id",
+    "value": 10017
+  },
+  "darmanitan-galar-standard": {
+    "type": "id",
+    "value": 10177
+  },
+  "darmanitan-galar-zen": {
+    "type": "id",
+    "value": 10178
+  },
+  "yamask-galar": {
+    "type": "id",
+    "value": 10179
+  },
+  "garbodor-gmax": {
+    "type": "id",
+    "value": 10207
+  },
+  "zorua-hisui": {
+    "type": "id",
+    "value": 10238
+  },
+  "zoroark-hisui": {
+    "type": "id",
+    "value": 10239
+  },
+  "stunfisk-galar": {
+    "type": "id",
+    "value": 10180
+  },
+  "braviary-hisui": {
+    "type": "id",
+    "value": 10240
+  },
+  "tornadus-therian": {
+    "type": "id",
+    "value": 10019
+  },
+  "thundurus-therian": {
+    "type": "id",
+    "value": 10020
+  },
+  "landorus-therian": {
+    "type": "id",
+    "value": 10021
+  },
+  "kyurem-black": {
+    "type": "id",
+    "value": 10022
+  },
+  "kyurem-white": {
+    "type": "id",
+    "value": 10023
+  },
+  "keldeo-resolute": {
+    "type": "id",
+    "value": 10024
+  },
+  "meloetta-pirouette": {
+    "type": "id",
+    "value": 10018
+  },
+  "greninja-ash": {
+    "type": "id",
+    "value": 10117
+  },
+  "meowstic-female": {
+    "type": "id",
+    "value": 10025
+  },
+  "aegislash-blade": {
+    "type": "id",
+    "value": 10026
+  },
+  "sliggoo-hisui": {
+    "type": "id",
+    "value": 10241
+  },
+  "goodra-hisui": {
+    "type": "id",
+    "value": 10242
+  },
+  "avalugg-hisui": {
+    "type": "id",
+    "value": 10243
+  },
+  "zygarde-10": {
+    "type": "id",
+    "value": 10181
+  },
+  "zygarde-complete": {
+    "type": "id",
+    "value": 10120
+  },
+  "diancie-mega": {
+    "type": "id",
+    "value": 10075
+  },
+  "hoopa-unbound": {
+    "type": "id",
+    "value": 10086
+  },
+  "decidueye-hisui": {
+    "type": "id",
+    "value": 10244
+  },
+  "oricorio-pom-pom": {
+    "type": "id",
+    "value": 10123
+  },
+  "oricorio-pau": {
+    "type": "id",
+    "value": 10124
+  },
+  "oricorio-sensu": {
+    "type": "id",
+    "value": 10125
+  },
+  "rockruff-own-tempo": {
+    "type": "id",
+    "value": 10151
+  },
+  "lycanroc-midnight": {
+    "type": "id",
+    "value": 10126
+  },
+  "lycanroc-dusk": {
+    "type": "id",
+    "value": 10152
+  },
+  "wishiwashi-school": {
+    "type": "id",
+    "value": 10127
+  },
+  "mimikyu-busted": {
+    "type": "id",
+    "value": 10143
+  },
+  "necrozma-ultra": {
+    "type": "id",
+    "value": 10157
+  },
+  "melmetal-gmax": {
+    "type": "id",
+    "value": 10208
+  },
+  "rillaboom-gmax": {
+    "type": "id",
+    "value": 10209
+  },
+  "cinderace-gmax": {
+    "type": "id",
+    "value": 10210
+  },
+  "inteleon-gmax": {
+    "type": "id",
+    "value": 10211
+  },
+  "corviknight-gmax": {
+    "type": "id",
+    "value": 10212
+  },
+  "orbeetle-gmax": {
+    "type": "id",
+    "value": 10213
+  },
+  "drednaw-gmax": {
+    "type": "id",
+    "value": 10214
+  },
+  "coalossal-gmax": {
+    "type": "id",
+    "value": 10215
+  },
+  "flapple-gmax": {
+    "type": "id",
+    "value": 10216
+  },
+  "appletun-gmax": {
+    "type": "id",
+    "value": 10217
+  },
+  "sandaconda-gmax": {
+    "type": "id",
+    "value": 10218
+  },
+  "toxtricity-low-key": {
+    "type": "id",
+    "value": 10184
+  },
+  "centiskorch-gmax": {
+    "type": "id",
+    "value": 10220
+  },
+  "hatterene-gmax": {
+    "type": "id",
+    "value": 10221
+  },
+  "grimmsnarl-gmax": {
+    "type": "id",
+    "value": 10222
+  },
+  "alcremie-gmax": {
+    "type": "id",
+    "value": 10223
+  },
+  "indeedee-female": {
+    "type": "id",
+    "value": 10186
+  },
+  "copperajah-gmax": {
+    "type": "id",
+    "value": 10224
+  },
+  "duraludon-gmax": {
+    "type": "id",
+    "value": 10225
+  },
+  "zacian-crowned": {
+    "type": "id",
+    "value": 10188
+  },
+  "zamazenta-crowned": {
+    "type": "id",
+    "value": 10189
+  },
+  "eternatus-eternamax": {
+    "type": "id",
+    "value": 10190
+  },
+  "urshifu-rapid-strike": {
+    "type": "id",
+    "value": 10191
+  },
+  "urshifu-single-strike-gmax": {
+    "type": "id",
+    "value": 10226
+  },
+  "urshifu-rapid-strike-gmax": {
+    "type": "id",
+    "value": 10227
+  },
+  "ursaluna-bloodmoon": {
+    "type": "id",
+    "value": 10272
+  },
+  "basculegion-female": {
+    "type": "id",
+    "value": 10248
+  },
+  "enamorus-therian": {
+    "type": "id",
+    "value": 10249
+  },
+  "oinkologne-female": {
+    "type": "id",
+    "value": 10254
+  },
+  "palafin-hero": {
+    "type": "id",
+    "value": 10256
+  },
+  "gimmighoul-roaming": {
+    "type": "id",
+    "value": 10263
+  },
+  "terapagos-terastal": {
+    "type": "id",
+    "value": 10276
+  },
+  "terapagos-stellar": {
+    "type": "id",
+    "value": 10277
   }
 }

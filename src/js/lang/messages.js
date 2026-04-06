@@ -43,6 +43,15 @@ export const messages = {
         abilities: "Abilities",
         ability_considerations: "Ability Considerations",
         
+        // Competitive
+        comp_analysis: "Strategic Analysis",
+        comp_meta: "Meta Summary",
+        comp_meta_desc: "This Pokemon is ranked in {tier}. Its most effective abilities are: {abilities}.",
+        comp_smogon_link: "Open Smogon Strategy",
+        comp_no_data: "No competitive data found for this format.",
+        comp_usage: "Usage Classification",
+        comp_effects: "Competitive Effects",
+        
         // Type Chart
         global_chart: "Global Type Chart",
         
@@ -232,6 +241,15 @@ export const messages = {
         base_stats: "Estadísticas Base",
         abilities: "Habilidades",
         ability_considerations: "Consideraciones de Habilidad",
+        
+        // Competitive
+        comp_analysis: "Análisis Estratégico",
+        comp_meta: "Resumen de Meta",
+        comp_meta_desc: "Este Pokémon se sitúa en {tier}. Sus habilidades más efectivas son: {abilities}.",
+        comp_smogon_link: "Ver Estrategia en Smogon",
+        comp_no_data: "Sin datos competitivos en este formato.",
+        comp_usage: "Clasificación de Uso",
+        comp_effects: "Efectos Competitivos",
         
         // Type Chart
         global_chart: "Tabla de Tipos Global",

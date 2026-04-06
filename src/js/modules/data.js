@@ -59,6 +59,48 @@ export function loadPokedex() {
     return pokedexPromise;
 }
 
+let showdownPokedexPromise = null;
+
+export async function fetchCompetitiveData(pokemonName) {
+    if (!showdownPokedexPromise) {
+        showdownPokedexPromise = (async () => {
+            try {
+                const res = await fetch('https://play.pokemonshowdown.com/data/pokedex.json');
+                if (!res.ok) throw new Error('Failed to fetch Showdown Pokedex');
+                return await res.json();
+            } catch (e) {
+                console.error('Error loading competitive data:', e);
+                showdownPokedexPromise = null;
+                return null;
+            }
+        })();
+    }
+
+    const pokedex = await showdownPokedexPromise;
+    if (!pokedex) return null;
+
+    // Multi-strategy slugging for Showdown lookup
+    const strategies = [];
+    
+    // 1. Direct cleanup (e.g. "Mega Froslass" -> "megafroslass")
+    strategies.push(pokemonName.toLowerCase().replace(/[^a-z0-9]/g, ''));
+    
+    // 2. Species+Form strategy (e.g. "Mega Froslass" -> "froslassmega")
+    if (pokemonName.toLowerCase().includes('mega')) {
+        const species = pokemonName.toLowerCase().replace('mega', '').trim();
+        strategies.push(species + 'mega');
+    }
+    
+    // 3. Hyphenated strategy if pokemonName is actually an apiName (e.g. "froslass-mega" -> "froslassmega")
+    strategies.push(pokemonName.toLowerCase().replace(/-/g, '').replace(/[^a-z0-9]/g, ''));
+
+    for (const slug of strategies) {
+        if (pokedex[slug]) return pokedex[slug];
+    }
+
+    return null;
+}
+
 export async function fetchPokemonDetails(identifier) {
     if (!identifier) return null;
     
@@ -101,37 +143,32 @@ export async function fetchPokemonDetails(identifier) {
             abilities: []
         };
 
-        if (localPokemon.abilities) {
-            Object.entries(localPokemon.abilities).forEach(([key, abilityName]) => {
+        // Try to merge with Showdown data for abilities if missing
+        const showdownData = await fetchCompetitiveData(localPokemon.name);
+        const sourceAbilities = localPokemon.abilities || showdownData?.abilities;
+
+        if (sourceAbilities) {
+            Object.entries(sourceAbilities).forEach(([key, abilityName]) => {
+                const abilitySlug = abilityName.toLowerCase().replace(/ /g, '-');
                 data.abilities.push({
                     is_hidden: key === 'H',
                     ability: {
-                        name: abilityName.toLowerCase().replace(/ /g, '-'), // slug for i18n lookup
-                        url: null, // Signal that we can't fetch details
-                        displayName: i18n.tAbility(abilityName) // Use local translation
+                        name: abilitySlug,
+                        url: `https://pokeapi.co/api/v2/ability/${abilitySlug}`,
+                        displayName: i18n.tAbility(abilityName)
                     }
                 });
             });
         }
     }
 
-    if (isFallback) {
-        // Process fallback abilities (just add description placeholder)
-        data.abilities.forEach(entry => {
-            // Try to find description in messages if manual
-            const rawName = entry.ability.name;
-            const spacedName = rawName.replace(/-/g, ' ');
-            const manualDesc = i18n.t(`${rawName}_desc`);
-            
-            entry.description = manualDesc !== `${rawName}_desc` ? manualDesc : i18n.t('stats_unavailable');
-        });
-        
-        pokemonCache.set(cacheKey, data);
-        return data;
-    }
-
-    // Standard API Processing
+    // Standard API Processing (ALWAYS run if we have abilities, even in fallback mode)
     try {
+        if (!data.abilities || data.abilities.length === 0) {
+            pokemonCache.set(cacheKey, data);
+            return data;
+        }
+
         const abilityPromises = data.abilities.map(async (entry) => {
             try {
                 let abilityData;
@@ -154,46 +191,38 @@ export async function fetchPokemonDetails(identifier) {
                 }
 
                 // 2. Localize Description
-                let descEntry = abilityData.flavor_text_entries
-                    .filter(f => f.language.name === currentLang)
-                    .pop();
+                const findDesc = (lang) => {
+                    const flavor = abilityData.flavor_text_entries.find(f => f.language.name === lang);
+                    if (flavor) return flavor.flavor_text || flavor.text;
+                    const effect = abilityData.effect_entries.find(e => e.language.name === lang);
+                    if (effect) return effect.short_effect || effect.effect;
+                    return null;
+                };
 
-                if (!descEntry && abilityData.effect_entries) {
-                    descEntry = abilityData.effect_entries.find(e => e.language.name === currentLang);
-                }
-
+                let text = findDesc(currentLang);
+                
                 // Manual Override Check
                 const rawName = abilityData.name.toLowerCase();
-                const spacedName = rawName.replace(/-/g, ' ');
-                
                 const manualDesc = i18n.t(`${rawName}_desc`);
-                const manualDescSpaced = i18n.t(`${spacedName}_desc`);
-                
-                let finalManualDesc = null;
-                if (manualDesc !== `${rawName}_desc`) finalManualDesc = manualDesc;
-                else if (manualDescSpaced !== `${spacedName}_desc`) finalManualDesc = manualDescSpaced;
+                const finalManualDesc = manualDesc !== `${rawName}_desc` ? manualDesc : null;
 
-                if (!descEntry && finalManualDesc) {
+                if (finalManualDesc) {
                     entry.description = finalManualDesc;
-                } else if (descEntry) {
-                    let text = descEntry.flavor_text || descEntry.short_effect || descEntry.effect;
+                } else if (text) {
                     entry.description = text.replace(/[\n\f]/g, ' ');
                 } else {
                     // English Fallback
-                    descEntry = abilityData.flavor_text_entries.find(f => f.language.name === 'en') || 
-                                abilityData.effect_entries.find(e => e.language.name === 'en');
-                    
-                    if (descEntry) {
-                        let text = descEntry.flavor_text || descEntry.short_effect || descEntry.effect;
-                        entry.description = text.replace(/[\n\f]/g, ' ');
+                    const englishText = findDesc('en');
+                    if (englishText) {
+                        entry.description = englishText.replace(/[\n\f]/g, ' ');
                     } else {
-                        entry.description = 'No description available.';
+                        entry.description = i18n.t('stats_unavailable');
                     }
                 }
 
             } catch (err) {
                 console.error(`Failed to fetch details for ${entry.ability.name}`, err);
-                entry.description = 'Description unavailable.';
+                entry.description = i18n.t('stats_unavailable');
             }
             return entry;
         });
