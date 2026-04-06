@@ -236,7 +236,7 @@ export function getPokemonImageUrl(p, imageFixes = {}) {
 
     // Priority 1: Custom Fixes (Manual URLs or slugs)
     if (fix) {
-        if (fix.type === 'slug') {
+        if (fix.type === 'slug' || fix.type === 'id') {
             return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${fix.value}.png`;
         } else if (fix.type === 'url') {
             return fix.value;
@@ -280,7 +280,7 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
     let primaryUrl = officialArtById;
     
     if (fix) {
-        if (fix.type === 'slug') {
+        if (fix.type === 'slug' || fix.type === 'id') {
             primaryUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${fix.value}.png`;
         } else {
             primaryUrl = fix.value;
