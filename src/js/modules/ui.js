@@ -195,22 +195,65 @@ export function populateSelects(ids, types) {
     });
 }
 
+/**
+ * Centralized error handler for search suggestion images.
+ * Provides a robust multi-stage fallback for HQ artwork.
+ */
+export function handleSearchImageError(img, id, name) {
+    const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    const isVariety = slug.includes('-') && !['ho-oh', 'porygon-z', 'jangmo-o', 'hakamo-o', 'kommo-o', 'wo-chien', 'chien-pao', 'ting-lu', 'chi-yu'].includes(slug);
+
+    // Stage 1: Try Official Artwork by SLUG or ID depending on variety
+    if (!img.dataset.stage || img.dataset.stage === '0') {
+        img.dataset.stage = '1';
+        if (isVariety) {
+            img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${slug}.png`;
+        } else {
+            img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+        }
+        return;
+    }
+    
+    // Stage 2: Try the other one (ID or SLUG)
+    if (img.dataset.stage === '1') {
+        img.dataset.stage = '2';
+        if (isVariety) {
+            img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+        } else {
+            img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${slug}.png`;
+        }
+        return;
+    }
+    
+    // Stage 3: Final Fallback to Pokeball
+    img.src = '/pokeball.png';
+    img.onerror = null;
+}
 
 export function getPokemonImageUrl(p, imageFixes = {}) {
     const apiName = p.apiName || p.name?.toLowerCase();
     const fix = imageFixes[apiName];
 
+    // Priority 1: Custom Fixes (Manual URLs or slugs)
     if (fix) {
-        if (fix.type === 'slug') {
-            return `https://img.pokemondb.net/sprites/home/normal/${fix.value}.png`;
+        if (fix.type === 'slug' || fix.type === 'id') {
+            return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${fix.value}.png`;
         } else if (fix.type === 'url') {
             return fix.value;
         }
     }
 
-    return (p.spriteSlug || p.apiName)
-        ? `https://img.pokemondb.net/sprites/home/normal/${p.spriteSlug || p.apiName}.png`
-        : (p.id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png` : '/pokeball.png');
+    // Prepare slugs for lookups
+    const baseSlug = (p.apiName || p.slug || p.name?.toLowerCase() || '').replace(/\s+/g, '-');
+    const cleanSlug = baseSlug.replace(/[^a-z0-9-]/g, '');
+
+    // Priority 2: Official Artwork by ID
+    if (p.id) {
+        return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png`;
+    }
+
+    // Priority 3: Official Artwork by Slug
+    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${cleanSlug}.png`;
 }
 
 export function renderPokemonHero(container, pokemon, contrastData, imageFixes = {}) {
@@ -227,12 +270,18 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
     
     const typePills = pokemon.types.map(t => createTypePill(t, contrastData)).join('');
 
+    const baseSlug = (pokemon.apiName || pokemon.slug || pokemon.name?.toLowerCase() || '').replace(/\s+/g, '-');
+    const cleanSlug = baseSlug.replace(/[^a-z0-0-]/g, '');
+
     // Image Sources Strategy
-    let primaryUrl = `https://play.pokemonshowdown.com/sprites/ani/${slug}.gif`;
+    const officialArtById = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
+    const officialArtBySlug = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${cleanSlug}.png`;
+    
+    let primaryUrl = officialArtById;
     
     if (fix) {
-        if (fix.type === 'slug') {
-            primaryUrl = `https://img.pokemondb.net/sprites/home/normal/${fix.value}.png`;
+        if (fix.type === 'slug' || fix.type === 'id') {
+            primaryUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${fix.value}.png`;
         } else {
             primaryUrl = fix.value;
         }
@@ -240,8 +289,7 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
 
     const sources = [
         primaryUrl,
-        `https://img.pokemondb.net/sprites/home/normal/${slug}.png`,
-        `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`,
+        officialArtBySlug,
         '/pokeball.png'
     ];
 
@@ -252,8 +300,8 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
                 <img id="pokemon-hero-img" 
                      src="${sources[0]}" 
                      alt="${displayName}" 
-                     class="w-32 h-32 md:w-48 md:h-48 object-contain drop-shadow-xl transform transition-transform duration-500 hover:scale-110 filter"
-                     style="image-rendering: pixelated;">
+                     class="w-32 h-32 md:w-48 md:h-48 object-contain drop-shadow-xl transform transition-transform duration-500 hover:scale-110"
+                     onerror="this.src='${sources[1]}'; this.onerror=function(){this.src='${sources[2]}'; this.onerror=null;}">
             </div>
             
             <div class="text-center">
@@ -273,9 +321,6 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
     const tryNextSource = () => {
         currentSourceIndex++;
         if (currentSourceIndex < sources.length) {
-            if (currentSourceIndex > 0) {
-                img.style.imageRendering = 'auto';
-            }
             img.src = sources[currentSourceIndex];
         }
     };
@@ -336,25 +381,91 @@ export function renderAbilities(container, abilities) {
         return;
     }
 
-    const contentHTML = abilities.map(entry => {
-        const name = entry.ability.displayName || capitalizeWords(entry.ability.name);
-        const isHidden = entry.is_hidden;
-        const description = entry.description || i18n.t('loading_desc');
-        
-        return `
-            <div class="flex flex-col gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-700">
-                <div class="flex items-center justify-between">
-                    <span class="font-bold text-slate-700 dark:text-slate-200">${name}</span>
-                    ${isHidden 
-                        ? `<span class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded bg-slate-200 dark:bg-slate-600 text-slate-500 dark:text-slate-400">${i18n.t('hidden')}</span>`
-                        : ''}
-                </div>
-                <p class="text-sm text-slate-500 dark:text-slate-400 leading-snug">${description}</p>
-            </div>
-        `;
-    }).join('');
+    const contentHTML = `
+        <div class="flex items-center gap-2 mb-4 text-slate-400 dark:text-slate-500">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            <span class="text-xs font-black uppercase tracking-[0.2em]">${i18n.t('abilities')}</span>
+        </div>
+        <div class="grid grid-cols-1 gap-3">
+            ${abilities.map(entry => {
+                const name = entry.ability.displayName || capitalizeWords(entry.ability.name);
+                const isHidden = entry.is_hidden;
+                const description = entry.description || i18n.t('loading_desc');
+                
+                return `
+                    <div class="group flex flex-col gap-2 p-4 rounded-2xl bg-white dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-200 dark:hover:border-indigo-800 transition-colors shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="font-black text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">${name}</span>
+                            ${isHidden 
+                                ? `<span class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700">${i18n.t('hidden')}</span>`
+                                : ''}
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed italic font-medium">${description}</p>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
 
     container.innerHTML = contentHTML;
+}
+
+export function renderCompetitiveData(container, data, pokemonName) {
+    if (!data) {
+        container.innerHTML = `<div class="text-center py-8 text-slate-400 italic">${i18n.t('comp_no_data') || 'No competitive data found'}</div>`;
+        return;
+    }
+
+    const tier = data.tier || 'Untiered';
+    const abilities = data.abilities ? Object.values(data.abilities).join(', ') : '---';
+    const slug = pokemonName.toLowerCase().replace(/[^a-z0-0]/g, '');
+
+    const tierColors = {
+        'Uber': 'bg-red-500', 'OU': 'bg-emerald-500', 'UU': 'bg-blue-500',
+        'RU': 'bg-amber-500', 'NU': 'bg-violet-500', 'PU': 'bg-slate-500',
+        'LC': 'bg-pink-500', 'AG': 'bg-slate-900'
+    };
+
+    const tierColor = tierColors[tier] || 'bg-slate-400';
+
+    container.innerHTML = `
+        <div class="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-2xl text-indigo-600 dark:text-indigo-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">${i18n.t('comp_analysis') || 'Strategic Analysis'}</h3>
+                        <p class="text-xl font-black text-slate-900 dark:text-white">Smogon Tier & Meta</p>
+                    </div>
+                </div>
+                
+                <div class="inline-flex items-center gap-3 ${tierColor} px-4 py-2 rounded-xl text-white shadow-lg">
+                    <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+                    <span class="font-black tracking-tight text-lg">${tier}</span>
+                </div>
+            </div>
+
+            <div class="bg-indigo-50 dark:bg-indigo-950/20 p-6 rounded-3xl border border-indigo-100/50 dark:border-indigo-900/20">
+                <p class="text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-2">${i18n.t('comp_meta') || 'Meta Summary'}</p>
+                <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                    ${(i18n.t('comp_meta_desc') || 'This Pokemon is ranked in {tier}. Its most effective abilities are: {abilities}.')
+                        .replace('{tier}', `<strong>${tier}</strong>`)
+                        .replace('{abilities}', `<span class="text-indigo-600 dark:text-indigo-400 font-bold">${abilities}</span>`)}
+                </p>
+                
+                <a href="https://www.smogon.com/dex/sv/pokemon/${slug}" target="_blank" class="inline-flex items-center gap-2 mt-4 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl text-indigo-600 dark:text-indigo-400 font-bold text-xs shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all border border-indigo-100 dark:border-indigo-900/30">
+                    ${i18n.t('comp_smogon_link') || 'Smogon Strategy'}
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                </a>
+            </div>
+        </div>
+    `;
 }
 
 export function capitalizeWords(str) {

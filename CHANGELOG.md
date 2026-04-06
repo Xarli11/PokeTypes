@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.29.0] - 2026-04-07
+
+### Added
+- **Competitive Data:** Integrated Smogon/Showdown data to provide real competitive abilities, types, and stats, effectively managing Megas and custom forms.
+- **HQ Sprites:** Upgraded the entire UI (search, suggestions, simulator, and team builder) to exclusively use high-quality official artwork from PokeAPI.
+
+### Fixed
+- **Form Handling:** Fixed missing ability descriptions and broken images for alternative forms, Megas, and regional variants by resolving their real PokeAPI IDs.
+
 ## [2.28.1] - 2026-03-31
 
 ### Changed

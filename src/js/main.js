@@ -1,4 +1,4 @@
-import { loadAppData, fetchPokemonDetails } from './modules/data.js';
+import { loadAppData, fetchPokemonDetails, fetchCompetitiveData } from './modules/data.js';
 import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js';
 import { getTacticalAdvice } from './modules/advisor.js';
 import * as ui from './modules/ui.js';
@@ -13,6 +13,9 @@ async function init() {
     try {
         initTheme(); // Initialize Dark/Light Mode
         initProMode(); // Initialize Pro Mode Switcher
+        
+        // Expose centralized image error handler for inline use
+        window.handleSearchImageError = ui.handleSearchImageError;
         
         // Initialize i18n
         updateLanguageToggle();
@@ -150,9 +153,12 @@ async function showPokemonDetails(pokemon) {
     const statsContainer = document.getElementById('stats-container');
     const abilitiesContainer = document.getElementById('abilities-container');
     const alertsContainer = document.getElementById('ability-alerts');
+    const competitiveSection = document.getElementById('competitive-section');
+    const competitiveContainer = document.getElementById('competitive-container');
 
     if (!pokemon.id) {
         statsSection.classList.add('hidden');
+        if (competitiveSection) competitiveSection.classList.add('hidden');
         return;
     }
 
@@ -168,9 +174,43 @@ async function showPokemonDetails(pokemon) {
         // Render Hero Card immediately (data is available locally)
         ui.renderPokemonHero(document.getElementById('pokemon-hero'), pokemon, appData.contrast, appData.imageFixes);
 
-        const details = await fetchPokemonDetails(pokemon.apiName || pokemon.id);
-        
+        // Fetch both Pokemon details and competitive data
+        const [details, compData] = await Promise.all([
+            fetchPokemonDetails(pokemon.apiName || pokemon.id),
+            fetchCompetitiveData(pokemon.name)
+        ]);
+
         if (details) {
+            // Update Hero image with correct variety ID if it differs from local data
+            if (details.id && details.id !== pokemon.id) {
+                const heroImg = document.getElementById('pokemon-hero-img');
+                if (heroImg) {
+                    heroImg.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${details.id}.png`;
+                }
+            }
+
+            // FALLBACK: If details has no abilities but compData has, use compData abilities
+            // This is common for custom Megas or non-standard forms
+            if ((!details.abilities || details.abilities.length === 0) && compData && compData.abilities) {
+                details.abilities = Object.entries(compData.abilities).map(([key, abilityName]) => {
+                    return {
+                        is_hidden: key === 'H',
+                        ability: {
+                            name: abilityName.toLowerCase().replace(/ /g, '-'),
+                            displayName: i18n.tAbility(abilityName)
+                        },
+                        description: i18n.t(`${abilityName.toLowerCase().replace(/ /g, '-')}_desc`) || i18n.t('stats_unavailable')
+                    };
+                });
+                
+                // If description lookup failed (returned the key), set a generic one
+                details.abilities.forEach(a => {
+                    if (a.description === `${a.ability.name}_desc`) {
+                        a.description = i18n.t('stats_unavailable');
+                    }
+                });
+            }
+
             ui.renderStats(statsContainer, details.stats);
             ui.renderAbilities(abilitiesContainer, details.abilities);
             ui.renderAbilityAlerts(alertsContainer, details.abilities);
@@ -178,6 +218,16 @@ async function showPokemonDetails(pokemon) {
             // If details fetch fails, keep Hero visible but show error in stats area
             statsContainer.innerHTML = `<div class="text-center p-4 text-slate-400 text-sm italic">${i18n.t('stats_unavailable') || 'Stats unavailable'}</div>`;
             abilitiesContainer.innerHTML = '';
+        }
+
+        // Render competitive data if available
+        if (competitiveSection && competitiveContainer) {
+            if (compData) {
+                competitiveSection.classList.remove('hidden');
+                ui.renderCompetitiveData(competitiveContainer, compData, pokemon.name);
+            } else {
+                competitiveSection.classList.add('hidden');
+            }
         }
     } catch (err) {
         console.error('Error displaying details:', err);
@@ -284,7 +334,7 @@ function setupEventListeners() {
                              alt="${p.displayName}" 
                              loading="lazy"
                              class="w-10 h-10 object-contain flex-shrink-0"
-                             onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png';">
+                             onerror="handleSearchImageError(this, ${p.id}, '${p.name.replace(/'/g, "\\'")}')">
                         <span class="flex-1 font-bold text-slate-700 dark:text-slate-200">${p.displayName}</span>
                         <div class="flex gap-1 scale-90 origin-right">
                             ${typePills}

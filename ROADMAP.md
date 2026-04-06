@@ -4,10 +4,19 @@ This document outlines the planned features, improvements, and future vision for
 
 ## 📋 Upcoming Features
 
-### 1. Export Analysis as Image 📸 (Priority)
-Generate a high-quality PNG image of the current type analysis to easily share on social media (Discord, Twitter, etc.).
+### 1. 🛡️ Terastallization (Gen 9) 💎 (Priority)
+Add a "Tera Type" toggle to Pokemon profiles. Dynamically update the defensive analysis and apply a "crystal/diamond" visual effect to the UI.
 
-### 2. Move Effectiveness Calculator ⚔️
+### 2. 📊 Team Radar Chart 📈 (UI/Visual)
+Implement a high-tech hexagonal radar chart in the Team Builder to visualize balance (Phys. Offense, Spec. Offense, Speed, Bulk, Coverage).
+
+### 3. 📸 Infographic Generator 📸
+Generate a high-quality, shareable image of the current type analysis or team composition with elegant branding.
+
+### 4. ✨ Dynamic Glow Effects ✨ (Aesthetics)
+Add element-specific neon/glow shadows to type pills and cards (especially in Dark Mode) for a more futurist, high-end feel.
+
+### 5. Move Effectiveness Calculator ⚔️
 Input a specific move (e.g., Earthquake) and see how it performs against different type combinations.
 
 ### 3. PokeAnalyzer (Pokemon Details) 🔍
