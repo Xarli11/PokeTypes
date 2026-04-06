@@ -179,7 +179,7 @@ async function selectDefender(pokemon, appData) {
     const defenderImg = document.getElementById('sim-defender-img');
     defenderImg.src = getPokemonImageUrl(pokemon, appData.imageFixes);
     defenderImg.onerror = function() {
-        this.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
+        this.src = '/pokeball.png';
         this.onerror = null;
     };
     document.getElementById('sim-defender-name').textContent = capitalizeWords(pokemon.name); // Or localized name

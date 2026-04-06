@@ -203,7 +203,7 @@ export function handleSearchImageError(img, id, name) {
     const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
     const isVariety = slug.includes('-') && !['ho-oh', 'porygon-z', 'jangmo-o', 'hakamo-o', 'kommo-o', 'wo-chien', 'chien-pao', 'ting-lu', 'chi-yu'].includes(slug);
 
-    // Stage 1: If it's a variety, try Official Artwork by SLUG first
+    // Stage 1: Try Official Artwork by SLUG or ID depending on variety
     if (!img.dataset.stage || img.dataset.stage === '0') {
         img.dataset.stage = '1';
         if (isVariety) {
@@ -214,32 +214,18 @@ export function handleSearchImageError(img, id, name) {
         return;
     }
     
-    // Stage 2: Try Home Sprites (3D HQ)
+    // Stage 2: Try the other one (ID or SLUG)
     if (img.dataset.stage === '1') {
         img.dataset.stage = '2';
-        img.src = `https://img.pokemondb.net/sprites/home/normal/${slug}.png`;
-        return;
-    }
-    
-    // Stage 3: Try Official Artwork by ID (if we tried slug first) or vice versa
-    if (img.dataset.stage === '2') {
-        img.dataset.stage = '3';
         if (isVariety) {
             img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
         } else {
-            img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+            img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${slug}.png`;
         }
         return;
     }
     
-    // Stage 4: Try Standard PokeAPI Sprite
-    if (img.dataset.stage === '3') {
-        img.dataset.stage = '4';
-        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
-        return;
-    }
-    
-    // Stage 5: Final Fallback to Pokeball
+    // Stage 3: Final Fallback to Pokeball
     img.src = '/pokeball.png';
     img.onerror = null;
 }
@@ -260,20 +246,14 @@ export function getPokemonImageUrl(p, imageFixes = {}) {
     // Prepare slugs for lookups
     const baseSlug = (p.apiName || p.slug || p.name?.toLowerCase() || '').replace(/\s+/g, '-');
     const cleanSlug = baseSlug.replace(/[^a-z0-9-]/g, '');
-    const isVariety = cleanSlug.includes('-') && !['ho-oh', 'porygon-z', 'jangmo-o', 'hakamo-o', 'kommo-o', 'wo-chien', 'chien-pao', 'ting-lu', 'chi-yu'].includes(cleanSlug);
 
-    // Priority 2: Official Artwork (Variety slug first if it's a variety)
-    if (isVariety) {
-        // Varieties often don't have official-artwork under the base ID, so we try slug-based home sprite as primary candidate
-        return `https://img.pokemondb.net/sprites/home/normal/${cleanSlug}.png`;
-    }
-
-    // Priority 3: Official Artwork by ID for standard Pokemon
+    // Priority 2: Official Artwork by ID
     if (p.id) {
         return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png`;
     }
 
-    return '/pokeball.png';
+    // Priority 3: Official Artwork by Slug
+    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${cleanSlug}.png`;
 }
 
 export function renderPokemonHero(container, pokemon, contrastData, imageFixes = {}) {
@@ -292,13 +272,10 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
 
     const baseSlug = (pokemon.apiName || pokemon.slug || pokemon.name?.toLowerCase() || '').replace(/\s+/g, '-');
     const cleanSlug = baseSlug.replace(/[^a-z0-0-]/g, '');
-    const showdownSlug = cleanSlug.replace(/-/g, '');
 
     // Image Sources Strategy
     const officialArtById = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
     const officialArtBySlug = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${cleanSlug}.png`;
-    const animatedGif = `https://play.pokemonshowdown.com/sprites/ani/${showdownSlug}.gif`;
-    const homeSprite = `https://img.pokemondb.net/sprites/home/normal/${cleanSlug}.png`;
     
     let primaryUrl = officialArtById;
     
@@ -313,8 +290,6 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
     const sources = [
         primaryUrl,
         officialArtBySlug,
-        animatedGif,
-        homeSprite,
         '/pokeball.png'
     ];
 
@@ -326,7 +301,7 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
                      src="${sources[0]}" 
                      alt="${displayName}" 
                      class="w-32 h-32 md:w-48 md:h-48 object-contain drop-shadow-xl transform transition-transform duration-500 hover:scale-110"
-                     onerror="this.src='${sources[1]}'; this.onerror=function(){this.src='${sources[2]}'; this.onerror=function(){this.src='${sources[3]}'; this.onerror=function(){this.src='${sources[4]}'; this.onerror=null;}}}}">
+                     onerror="this.src='${sources[1]}'; this.onerror=function(){this.src='${sources[2]}'; this.onerror=null;}">
             </div>
             
             <div class="text-center">
@@ -346,9 +321,6 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
     const tryNextSource = () => {
         currentSourceIndex++;
         if (currentSourceIndex < sources.length) {
-            if (currentSourceIndex > 0) {
-                img.style.imageRendering = 'auto';
-            }
             img.src = sources[currentSourceIndex];
         }
     };
