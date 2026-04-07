@@ -1,13 +1,19 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'selector',
-  content: ["./index.html", "./src/**/*.js"],
+  content: ["./index.html", "./src/**/*.js", "./src/**/*.astro"],
   theme: {
     extend: {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
       },
       colors: {
+        cyber: {
+          neon: '#00FFA3', // Pure cyber green
+          dark: '#051119', // Very dark blue-green
+          glass: 'rgba(5, 17, 25, 0.65)',
+        },
         lightBg: '#F7F8FA',         // Main light background
         lightSurface: '#FFFFFF',     // Card and main element background
         lightTextPrimary: '#333333', // Dark primary text
@@ -55,9 +61,12 @@ module.exports = {
         'bento': '0 2px 8px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05)', 
         'fade-right': '5px 0 10px -5px rgba(0,0,0,0.2) inset', 
         'card-hover-effect': '0 6px 12px rgba(0,0,0,0.12), 0 3px 6px rgba(0,0,0,0.08)', 
-        'title-text': '0 5px 20px rgba(0, 100, 200, 0.6), 0 0 30px rgba(37, 117, 252, 0.6)', /* Increased shadow for "cool" effect */
+        'title-text': '0 5px 20px rgba(0, 100, 200, 0.6), 0 0 30px rgba(37, 117, 252, 0.6)', 
         'selector-card': '0 8px 16px rgba(0,0,0,0.15), 0 4px 8px rgba(0,0,0,0.1)', 
-        'bento-card-shadow': '0 4px 12px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.05)', 
+        'bento-card-shadow': '0 4px 12px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.05)',
+        'cyber-glow': '0 0 15px rgba(0, 255, 163, 0.4)',
+        'cyber-glow-lg': '0 0 25px rgba(0, 255, 163, 0.6)',
+        'glass': 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1)',
       }
     }
   },
