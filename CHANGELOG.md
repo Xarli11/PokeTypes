@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.30.0] - 2026-04-07
+
+### Added
+- **Cyber Green UI:** Implemented a new futuristic, "Cyber Green" theme for dark mode featuring glassmorphism, neon glows (`#00FFA3`), and monospace fonts (`JetBrains Mono`) for statistics to mimic a tactical terminal.
+
 ## [2.29.0] - 2026-04-07
 
 ### Added
