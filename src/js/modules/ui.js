@@ -296,7 +296,7 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
     const contentHTML = `
         <div class="relative z-10 flex flex-col items-center gap-6 py-8 animate-in fade-in zoom-in duration-500">
             <div class="relative group">
-                <div class="absolute inset-0 bg-indigo-500/20 dark:bg-indigo-400/10 rounded-full blur-3xl transform scale-75 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                <div class="absolute inset-0 bg-emerald-500/20 dark:bg-emerald-400/10 rounded-full blur-3xl transform scale-75 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                 <img id="pokemon-hero-img" 
                      src="${sources[0]}" 
                      alt="${displayName}" 
@@ -355,9 +355,9 @@ export function renderStats(container, stats) {
         return `
             <div class="flex items-center gap-3 text-sm">
                 <span class="w-20 font-bold text-slate-500 dark:text-slate-400 text-right uppercase text-xs tracking-wider whitespace-nowrap">${statNames[stat.stat.name] || stat.stat.name}</span>
-                <span class="w-8 font-bold text-slate-800 dark:text-slate-200 text-right">${val}</span>
-                <div class="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                    <div class="h-full rounded-full ${colorClass} stat-bar" style="width: 0%" data-target-width="${targetWidth}%"></div>
+                <span class="w-8 font-mono font-bold text-slate-800 dark:text-cyber-neon text-right drop-shadow-md">${val}</span>
+                <div class="flex-1 h-2 bg-slate-200 dark:bg-slate-700/50 rounded-full overflow-hidden shadow-inner">
+                    <div class="h-full rounded-full ${colorClass} stat-bar shadow-cyber-glow" style="width: 0%" data-target-width="${targetWidth}%"></div>
                 </div>
             </div>
         `;
@@ -395,9 +395,9 @@ export function renderAbilities(container, abilities) {
                 const description = entry.description || i18n.t('loading_desc');
                 
                 return `
-                    <div class="group flex flex-col gap-2 p-4 rounded-2xl bg-white dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700/50 hover:border-indigo-200 dark:hover:border-indigo-800 transition-colors shadow-sm">
+                    <div class="group flex flex-col gap-2 p-4 rounded-2xl bg-white dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700/50 hover:border-emerald-200 dark:hover:border-emerald-800 transition-colors shadow-sm">
                         <div class="flex items-center justify-between">
-                            <span class="font-black text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">${name}</span>
+                            <span class="font-black text-slate-800 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${name}</span>
                             ${isHidden 
                                 ? `<span class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700">${i18n.t('hidden')}</span>`
                                 : ''}
@@ -434,7 +434,7 @@ export function renderCompetitiveData(container, data, pokemonName) {
         <div class="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
-                    <div class="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-2xl text-indigo-600 dark:text-indigo-400">
+                    <div class="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl text-emerald-600 dark:text-emerald-400">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                         </svg>
@@ -451,15 +451,15 @@ export function renderCompetitiveData(container, data, pokemonName) {
                 </div>
             </div>
 
-            <div class="bg-indigo-50 dark:bg-indigo-950/20 p-6 rounded-3xl border border-indigo-100/50 dark:border-indigo-900/20">
-                <p class="text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-2">${i18n.t('comp_meta') || 'Meta Summary'}</p>
+            <div class="bg-emerald-50 dark:bg-emerald-950/20 p-6 rounded-3xl border border-emerald-100/50 dark:border-emerald-900/20">
+                <p class="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-2">${i18n.t('comp_meta') || 'Meta Summary'}</p>
                 <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
                     ${(i18n.t('comp_meta_desc') || 'This Pokemon is ranked in {tier}. Its most effective abilities are: {abilities}.')
                         .replace('{tier}', `<strong>${tier}</strong>`)
-                        .replace('{abilities}', `<span class="text-indigo-600 dark:text-indigo-400 font-bold">${abilities}</span>`)}
+                        .replace('{abilities}', `<span class="text-emerald-600 dark:text-emerald-400 font-bold">${abilities}</span>`)}
                 </p>
                 
-                <a href="https://www.smogon.com/dex/sv/pokemon/${slug}" target="_blank" class="inline-flex items-center gap-2 mt-4 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl text-indigo-600 dark:text-indigo-400 font-bold text-xs shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all border border-indigo-100 dark:border-indigo-900/30">
+                <a href="https://www.smogon.com/dex/sv/pokemon/${slug}" target="_blank" class="inline-flex items-center gap-2 mt-4 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl text-emerald-600 dark:text-emerald-400 font-bold text-xs shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all border border-emerald-100 dark:border-emerald-900/30">
                     ${i18n.t('comp_smogon_link') || 'Smogon Strategy'}
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                 </a>
@@ -510,7 +510,7 @@ export function renderAbilityAlerts(container, abilities) {
     container.classList.remove('hidden');
     
     let contentHTML = `
-        <div class="mb-2 flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+        <div class="mb-2 flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
@@ -522,8 +522,8 @@ export function renderAbilityAlerts(container, abilities) {
 
     alertsToRender.forEach(alert => {
         contentHTML += `
-            <div class="p-3 rounded-lg border border-indigo-100 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/30 text-sm text-slate-700 dark:text-slate-300">
-                <span class="font-bold text-indigo-700 dark:text-indigo-300">${alert.abilityName}</span>: ${alert.description}
+            <div class="p-3 rounded-lg border border-emerald-100 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/30 text-sm text-slate-700 dark:text-slate-300">
+                <span class="font-bold text-emerald-700 dark:text-emerald-300">${alert.abilityName}</span>: ${alert.description}
             </div>
         `;
     });
@@ -559,7 +559,7 @@ export function renderTacticalAdvice(container, advice) {
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                         </svg>
                     </span>
-                    <h3 class="font-bold uppercase tracking-wider text-xs text-indigo-100">${i18n.t('advisor_title')}</h3>
+                    <h3 class="font-bold uppercase tracking-wider text-xs text-emerald-100">${i18n.t('advisor_title')}</h3>
                 </div>
 
                 <p class="text-sm md:text-base leading-relaxed font-medium text-white/95">
@@ -567,7 +567,7 @@ export function renderTacticalAdvice(container, advice) {
                     ${i18n.t('advisor_suggestion', { type: suggestedTypesHTML })}
                 </p>
                 
-                <div class="mt-4 flex items-center gap-3 text-xs font-medium text-indigo-100 bg-black/20 p-3 rounded-lg backdrop-blur-sm border border-white/10">
+                <div class="mt-4 flex items-center gap-3 text-xs font-medium text-emerald-100 bg-black/20 p-3 rounded-lg backdrop-blur-sm border border-white/10">
                     <span class="uppercase tracking-wide opacity-70">${i18n.t('advisor_recommended')}</span>
                     <span class="text-white">${suggestedMonsHTML}</span>
                 </div>
