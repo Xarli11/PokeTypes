@@ -6,7 +6,7 @@ export function getEffectiveness(attackingType, defendingType, typeEffectiveness
     return 1;
 }
 
-export function calculateDefense(type1, type2, types, effectiveness) {
+export function calculateDefense(type1, type2, types, effectiveness, type3 = null) {
     const results = {
         weaknesses4x: [],
         weaknesses2x: [],
@@ -16,22 +16,29 @@ export function calculateDefense(type1, type2, types, effectiveness) {
         immunities: []
     };
 
+    // Extension for 8x weaknesses / 0.125x resistances with 3 types
+    results.weaknesses8x = [];
+    results.resistances0125x = [];
+
     types.forEach(attackingType => {
         let modifier = getEffectiveness(attackingType, type1, effectiveness);
         if (type2) modifier *= getEffectiveness(attackingType, type2, effectiveness);
+        if (type3) modifier *= getEffectiveness(attackingType, type3, effectiveness);
 
-        if (modifier === 4) results.weaknesses4x.push(attackingType);
+        if (modifier === 8) results.weaknesses8x.push(attackingType);
+        else if (modifier === 4) results.weaknesses4x.push(attackingType);
         else if (modifier === 2) results.weaknesses2x.push(attackingType);
         else if (modifier === 1) results.neutral.push(attackingType);
         else if (modifier === 0.5) results.resistances05x.push(attackingType);
         else if (modifier === 0.25) results.resistances025x.push(attackingType);
+        else if (modifier === 0.125) results.resistances0125x.push(attackingType);
         else if (modifier === 0) results.immunities.push(attackingType);
     });
 
     return results;
 }
 
-export function calculateOffense(type1, type2, types, effectiveness) {
+export function calculateOffense(type1, type2, types, effectiveness, type3 = null) {
     const results = {
         superEffective2x: [],
         neutral: [],
@@ -42,6 +49,7 @@ export function calculateOffense(type1, type2, types, effectiveness) {
     types.forEach(defendingType => {
         let modifier = getEffectiveness(type1, defendingType, effectiveness);
         if (type2) modifier = Math.max(modifier, getEffectiveness(type2, defendingType, effectiveness));
+        if (type3) modifier = Math.max(modifier, getEffectiveness(type3, defendingType, effectiveness));
 
         if (modifier >= 2) results.superEffective2x.push(defendingType);
         else if (modifier === 1) results.neutral.push(defendingType);

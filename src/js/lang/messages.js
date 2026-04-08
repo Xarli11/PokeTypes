@@ -207,6 +207,7 @@ export const messages = {
         reset_btn: "Reiniciar",
         type_1: "Tipo 1",
         type_2: "Tipo 2",
+        type_3: "Tipo Extra",
         active_analysis: "Análisis Activo",
         mode_calculator: "Calculadora",
         mode_team_builder: "Equipo",
