@@ -58,6 +58,12 @@ const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprit
                             <option value="">Type 2</option>
                         </select>
                     </div>
+                    <div class="relative w-full sm:w-48 group">
+                        <select id="type3-select" class="bento-select dark:bg-slate-900 dark:text-white dark:border-slate-700">
+                            <option value="" data-i18n="type_3">Extra Type</option>
+                        </select>
+                        <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-48 bg-slate-800 text-white text-xs p-2 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 text-center pointer-events-none shadow-xl" data-i18n="type3_tooltip">Simulates effects like Forest's Curse or Trick-or-Treat that add a 3rd typing.</div>
+                    </div>
                     <button id="reset-button" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-slate-900 text-white font-bold hover:bg-indigo-600 transition-colors duration-200 dark:bg-indigo-600 dark:hover:bg-indigo-500">
                         Reset
                     </button>

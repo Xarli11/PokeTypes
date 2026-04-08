@@ -24,7 +24,7 @@ async function init() {
         appData = await loadAppData();
         i18n.setAbilityMap(appData.abilityMap);
         
-        ui.populateSelects(['type-select', 'type2-select'], appData.types);
+        ui.populateSelects(['type-select', 'type2-select', 'type3-select'], appData.types);
         ui.generateTypeTable('type-table-container', appData.types, appData.effectiveness, appData.contrast);
         
         setupEventListeners();
@@ -57,15 +57,18 @@ function refreshUI() {
     // 3. Update Selects (preserve selection)
     const t1Select = document.getElementById('type-select');
     const t2Select = document.getElementById('type2-select');
+    const t3Select = document.getElementById('type3-select');
     const t1Val = t1Select.value;
     const t2Val = t2Select.value;
+    const t3Val = t3Select ? t3Select.value : '';
 
-    ui.populateSelects(['type-select', 'type2-select'], appData.types);
+    ui.populateSelects(['type-select', 'type2-select', 'type3-select'], appData.types);
     t1Select.value = t1Val;
     t2Select.value = t2Val;
+    if (t3Select) t3Select.value = t3Val;
 
     // 4. Update Analysis Cards
-    displayAnalysis(t1Val, t2Val);
+    displayAnalysis(t1Val, t2Val, t3Val);
 
     // 5. Update Pokemon Stats/Abilities if visible
     const statsSection = document.getElementById('pokemon-stats');
@@ -104,6 +107,7 @@ async function applyStateFromURL() {
     let p = params.get('p');
     let t1 = params.get('t1');
     let t2 = params.get('t2');
+    let t3 = params.get('t3');
 
     // Path-based detection
     if (pathParts[0] === 'pokemon' && pathParts[1]) {
@@ -112,10 +116,12 @@ async function applyStateFromURL() {
         const types = pathParts[1].split('-');
         t1 = types[0];
         t2 = types[1];
+        t3 = types[2];
     }
 
     const typeSelect = document.getElementById('type-select');
     const type2Select = document.getElementById('type2-select');
+    const type3Select = document.getElementById('type3-select');
     const searchInput = document.getElementById('pokemon-search');
 
     if (p) {
@@ -130,21 +136,24 @@ async function applyStateFromURL() {
             
             typeSelect.value = pokemon.types[0] || '';
             type2Select.value = pokemon.types[1] || '';
-            displayAnalysis(typeSelect.value, type2Select.value);
+            if (type3Select) type3Select.value = pokemon.types[2] || '';
+            displayAnalysis(typeSelect.value, type2Select.value, type3Select ? type3Select.value : null);
             await showPokemonDetails(pokemon);
             return;
         }
     }
 
-    if (t1 || t2) {
+    if (t1 || t2 || t3) {
         const findType = (val) => appData.types.find(t => t.toLowerCase() === val?.toLowerCase());
         const validT1 = findType(t1);
         const validT2 = findType(t2);
+        const validT3 = findType(t3);
 
         if (validT1) typeSelect.value = validT1;
         if (validT2) type2Select.value = validT2;
+        if (validT3 && type3Select) type3Select.value = validT3;
         
-        displayAnalysis(typeSelect.value, type2Select.value);
+        displayAnalysis(typeSelect.value, type2Select.value, type3Select ? type3Select.value : null);
     }
 }
 
@@ -241,6 +250,7 @@ function setupEventListeners() {
     const suggestionsList = document.getElementById('suggestions');
     const typeSelect = document.getElementById('type-select');
     const type2Select = document.getElementById('type2-select');
+    const type3Select = document.getElementById('type3-select');
     const resetButton = document.getElementById('reset-button');
     const statsSection = document.getElementById('pokemon-stats');
     const langToggle = document.getElementById('lang-toggle');
@@ -269,8 +279,9 @@ function setupEventListeners() {
     const updateUI = () => {
         const t1 = typeSelect.value;
         const t2 = type2Select.value;
-        displayAnalysis(t1, t2);
-        syncURLWithState(t1, t2, searchInput.value);
+        const t3 = type3Select ? type3Select.value : null;
+        displayAnalysis(t1, t2, t3);
+        syncURLWithState(t1, t2, t3, searchInput.value);
     };
 
     typeSelect.addEventListener('change', () => {
@@ -283,14 +294,21 @@ function setupEventListeners() {
         statsSection.classList.add('hidden');
         updateUI();
     });
+    if (type3Select) {
+        type3Select.addEventListener('change', () => {
+            // No borramos el searchInput ni ocultamos los stats si solo añadimos el tercer tipo
+            updateUI();
+        });
+    }
 
     resetButton.addEventListener('click', () => {
         typeSelect.value = '';
         type2Select.value = '';
+        if (type3Select) type3Select.value = '';
         searchInput.value = '';
         statsSection.classList.add('hidden');
-        displayAnalysis('', '');
-        syncURLWithState('', '', '');
+        displayAnalysis('', '', '');
+        syncURLWithState('', '', '', '');
     });
 
     // Search Logic
@@ -467,7 +485,7 @@ function setupEventListeners() {
     }
 }
 
-function displayAnalysis(t1, t2) {
+function displayAnalysis(t1, t2, t3 = null) {
     const section = document.getElementById('type-details');
     const nameSpan = document.getElementById('selected-type-name');
     const abilityAlerts = document.getElementById('ability-alerts');
@@ -478,7 +496,7 @@ function displayAnalysis(t1, t2) {
         abilityAlerts.classList.add('hidden');
     }
     
-    if (!t1 && !t2) {
+    if (!t1 && !t2 && !t3) {
         section.classList.add('hidden');
         document.getElementById('tactical-advice').innerHTML = ''; // Clear advice
         document.getElementById('tactical-advice').classList.add('hidden');
@@ -490,6 +508,13 @@ function displayAnalysis(t1, t2) {
     
     // Treat same type selection as monotype
     if (t1 === t2) t2 = '';
+    if (t1 === t3) t3 = '';
+    if (t2 === t3) t3 = '';
+
+    // If only t2 is selected but no t1
+    if (!t1 && t2) { t1 = t2; t2 = ''; }
+    if (!t1 && !t2 && t3) { t1 = t3; t3 = ''; }
+    if (!t2 && t3) { t2 = t3; t3 = ''; }
 
     // Show share button
     const shareBtn = document.getElementById('share-btn');
@@ -501,25 +526,30 @@ function displayAnalysis(t1, t2) {
         </svg>
     `;
     shareBtn.classList.remove('text-green-600', 'bg-green-100');
-    shareBtn.classList.add('text-indigo-600', 'bg-indigo-50');
+    shareBtn.classList.add('text-emerald-600', 'bg-emerald-50');
 
     // Render Title Pills
-    nameSpan.innerHTML = ui.createTypePill(t1, appData.contrast);
+    nameSpan.innerHTML = '';
+    if (t1) nameSpan.innerHTML += ui.createTypePill(t1, appData.contrast);
     if (t2) {
         nameSpan.innerHTML += `<span class="text-slate-300 font-bold px-2">+</span>`;
         nameSpan.innerHTML += ui.createTypePill(t2, appData.contrast);
     }
+    if (t3) {
+        nameSpan.innerHTML += `<span class="text-slate-300 font-bold px-2">+</span>`;
+        nameSpan.innerHTML += ui.createTypePill(t3, appData.contrast);
+    }
 
     // Calculations
-    const def = calculateDefense(t1, t2, appData.types, appData.effectiveness);
-    const off = calculateOffense(t1, t2, appData.types, appData.effectiveness);
+    const def = calculateDefense(t1, t2, appData.types, appData.effectiveness, t3);
+    const off = calculateOffense(t1, t2, appData.types, appData.effectiveness, t3);
     const dualImmunities = findImmuneDualTypes(t1, t2, appData.types, appData.effectiveness);
 
     // Render Cards
     // Using translation keys: 'weaknesses', 'neutral_damage', 'resistances', 'immunities', 'super_effective', etc.
-    ui.renderSplitEffectivenessCard(document.getElementById('weaknesses'), 'weaknesses', def.weaknesses4x, def.weaknesses2x, 'none', 'super', appData.contrast);
+    ui.renderSplitEffectivenessCard(document.getElementById('weaknesses'), 'weaknesses', def.weaknesses4x, def.weaknesses2x, 'none', 'super', appData.contrast, def.weaknesses8x);
     ui.renderEffectivenessCard(document.getElementById('neutral-damage'), 'neutral_damage', def.neutral, 'none', 'neutral', appData.contrast);
-    ui.renderSplitResistanceCard(document.getElementById('resistances'), 'resistances', def.resistances025x, def.resistances05x, 'none', 'resist', appData.contrast);
+    ui.renderSplitResistanceCard(document.getElementById('resistances'), 'resistances', def.resistances025x, def.resistances05x, 'none', 'resist', appData.contrast, def.resistances0125x);
     ui.renderEffectivenessCard(document.getElementById('immunities'), 'immunities', def.immunities, 'none', 'immune', appData.contrast);
 
     // AI Advisor
