@@ -72,9 +72,16 @@ export function renderSplitEffectivenessCard(cardElement, labelKey, x4List, x2Li
     cardElement.innerHTML = contentHTML;
 }
 
-export function renderSplitResistanceCard(cardElement, labelKey, x025List, x05List, noContentKey, iconType, contrastData) {
+export function renderSplitResistanceCard(cardElement, labelKey, x025List, x05List, noContentKey, iconType, contrastData, x0125List = null) {
     let contentHTML = `<div class="label-group">${getEffectivenessIcon(iconType)} <span>${i18n.t(labelKey)}</span></div>`;
     contentHTML += `<div class="flex flex-col gap-4">`;
+
+    if (x0125List && x0125List.length) {
+        contentHTML += `<div class="flex items-center gap-3">
+            <span class="px-2 h-8 min-w-[2rem] flex items-center justify-center rounded-lg bg-emerald-800 text-white font-black text-xs shadow-cyber-glow">x0.125</span>
+            <div class="type-pills-container">${x0125List.map(t => createTypePill(t, contrastData)).join('')}</div>
+        </div>`;
+    }
     
     if (x025List && x025List.length) {
         contentHTML += `<div class="flex items-center gap-3">
@@ -90,7 +97,7 @@ export function renderSplitResistanceCard(cardElement, labelKey, x025List, x05Li
         </div>`;
     }
     
-    if ((!x025List || !x025List.length) && (!x05List || !x05List.length)) {
+    if ((!x0125List || !x0125List.length) && (!x025List || !x025List.length) && (!x05List || !x05List.length)) {
         contentHTML += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">${i18n.t(noContentKey || 'none')}</span>`;
     }
     
@@ -183,9 +190,12 @@ export function generateTypeTable(containerId, types, effectiveness, contrastDat
 export function populateSelects(ids, types) {
     ids.forEach(id => {
         const select = document.getElementById(id);
-        const firstOptionKey = id === 'type-select' ? 'type_1' : 'type_2';
+        let firstOptionKey = 'type_1';
+        if (id === 'type2-select') firstOptionKey = 'type_2';
+        if (id === 'type3-select') firstOptionKey = 'type_3';
+
         select.innerHTML = `<option value="" data-i18n="${firstOptionKey}">${i18n.t(firstOptionKey)}</option>`;
-        
+
         types.forEach(type => {
             const opt = document.createElement('option');
             opt.value = type;
@@ -194,7 +204,6 @@ export function populateSelects(ids, types) {
         });
     });
 }
-
 /**
  * Centralized error handler for search suggestion images.
  * Provides a robust multi-stage fallback for HQ artwork.
