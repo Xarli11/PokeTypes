@@ -296,8 +296,7 @@ function setupEventListeners() {
     });
     if (type3Select) {
         type3Select.addEventListener('change', () => {
-            searchInput.value = '';
-            statsSection.classList.add('hidden');
+            // No borramos el searchInput ni ocultamos los stats si solo añadimos el tercer tipo
             updateUI();
         });
     }

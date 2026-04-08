@@ -190,9 +190,12 @@ export function generateTypeTable(containerId, types, effectiveness, contrastDat
 export function populateSelects(ids, types) {
     ids.forEach(id => {
         const select = document.getElementById(id);
-        const firstOptionKey = id === 'type-select' ? 'type_1' : 'type_2';
+        let firstOptionKey = 'type_1';
+        if (id === 'type2-select') firstOptionKey = 'type_2';
+        if (id === 'type3-select') firstOptionKey = 'type_3';
+
         select.innerHTML = `<option value="" data-i18n="${firstOptionKey}">${i18n.t(firstOptionKey)}</option>`;
-        
+
         types.forEach(type => {
             const opt = document.createElement('option');
             opt.value = type;
@@ -201,7 +204,6 @@ export function populateSelects(ids, types) {
         });
     });
 }
-
 /**
  * Centralized error handler for search suggestion images.
  * Provides a robust multi-stage fallback for HQ artwork.
