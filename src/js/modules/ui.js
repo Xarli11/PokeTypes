@@ -46,9 +46,16 @@ export function renderEffectivenessCard(cardElement, labelKey, typeList, noConte
     cardElement.innerHTML = contentHTML;
 }
 
-export function renderSplitEffectivenessCard(cardElement, labelKey, x4List, x2List, noContentKey, iconType, contrastData) {
+export function renderSplitEffectivenessCard(cardElement, labelKey, x4List, x2List, noContentKey, iconType, contrastData, x8List = null) {
     let contentHTML = `<div class="label-group">${getEffectivenessIcon(iconType)} <span>${i18n.t(labelKey)}</span></div>`;
     contentHTML += `<div class="flex flex-col gap-4">`;
+
+    if (x8List && x8List.length) {
+        contentHTML += `<div class="flex items-center gap-3">
+            <span class="px-2 h-8 min-w-[2rem] flex items-center justify-center rounded-lg bg-red-700 text-white font-black text-xs shadow-cyber-glow">x8</span>
+            <div class="type-pills-container">${x8List.map(t => createTypePill(t, contrastData)).join('')}</div>
+        </div>`;
+    }
     
     if (x4List && x4List.length) {
         contentHTML += `<div class="flex items-center gap-3">
@@ -64,7 +71,7 @@ export function renderSplitEffectivenessCard(cardElement, labelKey, x4List, x2Li
         </div>`;
     }
     
-    if ((!x4List || !x4List.length) && (!x2List || !x2List.length)) {
+    if ((!x8List || !x8List.length) && (!x4List || !x4List.length) && (!x2List || !x2List.length)) {
         contentHTML += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">${i18n.t(noContentKey || 'none')}</span>`;
     }
     

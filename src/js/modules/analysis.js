@@ -36,11 +36,13 @@ export function analyzeTeamDefense(team, allTypes, effectiveness) {
                     
                     typesToProcess.forEach(type => {
                         // Remove from other buckets
+                        def.weaknesses8x = def.weaknesses8x.filter(t => t !== type);
                         def.weaknesses4x = def.weaknesses4x.filter(t => t !== type);
                         def.weaknesses2x = def.weaknesses2x.filter(t => t !== type);
                         def.neutral = def.neutral.filter(t => t !== type);
                         def.resistances05x = def.resistances05x.filter(t => t !== type);
                         def.resistances025x = def.resistances025x.filter(t => t !== type);
+                        def.resistances0125x = def.resistances0125x.filter(t => t !== type);
                         
                         // Add to immunities
                         if (!def.immunities.includes(type)) {
@@ -51,14 +53,14 @@ export function analyzeTeamDefense(team, allTypes, effectiveness) {
             });
         }
 
-        [...def.weaknesses4x, ...def.weaknesses2x].forEach(type => {
+        [...def.weaknesses8x, ...def.weaknesses4x, ...def.weaknesses2x].forEach(type => {
             if (defenseMatrix[type]) {
                 defenseMatrix[type].weak++;
                 defenseMatrix[type].pokemonWeak.push(pokemon.name);
             }
         });
 
-        [...def.resistances025x, ...def.resistances05x].forEach(type => {
+        [...def.resistances0125x, ...def.resistances025x, ...def.resistances05x].forEach(type => {
             if (defenseMatrix[type]) {
                 defenseMatrix[type].resist++;
                 defenseMatrix[type].pokemonResist.push(pokemon.name);

@@ -565,7 +565,7 @@ function displayAnalysis(t1, t2, t3 = null) {
                                  (t2 && currentPokemon.types.includes(ui.capitalizeWords(t2))))) 
                                 ? currentPokemon : null;
 
-        const advice = getTacticalAdvice(def.weaknesses4x, def.weaknesses2x, appData.types, appData.effectiveness, appData.pokemonList, relevantPokemon);
+        const advice = getTacticalAdvice(def.weaknesses4x, def.weaknesses2x, appData.types, appData.effectiveness, appData.pokemonList, relevantPokemon, def.weaknesses8x);
         ui.renderTacticalAdvice(document.getElementById('tactical-advice'), advice);
     } catch (error) {
         console.error("AI Advisor error:", error);
