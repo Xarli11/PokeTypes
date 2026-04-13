@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.31.1] - 2026-04-13
+
+### Fixed
+- **Sprite Suggestions:** Fixed an issue where the sprite loaded in the search suggestions list did not match the official artwork displayed in the detail view.
+- **Form URLs:** Fixed a bug where selecting specific forms or varieties (like Basculin or Basculegion) from the search would lead to a 404 error by ensuring the correct API slug is used in the URL.
+
 ## [2.31.0] - 2026-04-07
 
 ### Added
