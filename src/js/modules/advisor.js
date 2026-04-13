@@ -2,7 +2,7 @@ import { getEffectiveness, getAbilityModifiers } from './calculator.js';
 import { capitalizeWords } from './ui.js';
 import { loadPokedex } from './data.js';
 
-export async function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiveness, pokemonList, activePokemon = null) {
+export async function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, effectiveness, pokemonList, activePokemon = null, weaknesses8x = []) {
     // If pokemonList is the searchIndex (small), load the full pokedex for stats
     let fullList = pokemonList;
     if (fullList && fullList.length > 0 && !fullList[0].stats) {
@@ -10,6 +10,7 @@ export async function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, ef
     }
 
     // Filter weaknesses based on abilities (e.g. Levitate)
+    let relevantWeaknesses8x = [...(weaknesses8x || [])];
     let relevantWeaknesses4x = [...(weaknesses4x || [])];
     let relevantWeaknesses2x = [...(weaknesses2x || [])];
 
@@ -26,6 +27,7 @@ export async function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, ef
             });
         });
 
+        relevantWeaknesses8x = relevantWeaknesses8x.filter(t => !immuneTypes.has(t));
         relevantWeaknesses4x = relevantWeaknesses4x.filter(t => !immuneTypes.has(t));
         relevantWeaknesses2x = relevantWeaknesses2x.filter(t => !immuneTypes.has(t));
     }
@@ -34,7 +36,10 @@ export async function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, ef
     let targetThreat = null;
     let threatMultiplier = 0;
 
-    if (relevantWeaknesses4x.length > 0) {
+    if (relevantWeaknesses8x.length > 0) {
+        targetThreat = relevantWeaknesses8x[0]; // Focus on the first x8 weakness
+        threatMultiplier = 8;
+    } else if (relevantWeaknesses4x.length > 0) {
         targetThreat = relevantWeaknesses4x[0]; // Focus on the first x4 weakness
         threatMultiplier = 4;
     } else if (relevantWeaknesses2x.length > 0) {
@@ -82,7 +87,7 @@ export async function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, ef
             else if (activePokemon.bst <= TIERS.LOW.max) activeTier = 'LOW';
             else activeTier = 'MID';
         }
-        activeWeaknesses = [...(relevantWeaknesses4x || []), ...(relevantWeaknesses2x || [])];
+        activeWeaknesses = [...(relevantWeaknesses8x || []), ...(relevantWeaknesses4x || []), ...(relevantWeaknesses2x || [])];
     } 
 
     if (fullList && Array.isArray(fullList)) {
