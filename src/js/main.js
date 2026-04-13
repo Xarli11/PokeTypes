@@ -276,21 +276,23 @@ function setupEventListeners() {
         });
     }
 
-    const updateUI = () => {
+    const updateUI = (pokemonObj = null) => {
         const t1 = typeSelect.value;
         const t2 = type2Select.value;
         const t3 = type3Select ? type3Select.value : null;
         displayAnalysis(t1, t2, t3);
-        syncURLWithState(t1, t2, t3, currentPokemon);
+        syncURLWithState(t1, t2, t3, pokemonObj || currentPokemon);
     };
 
     typeSelect.addEventListener('change', () => {
         searchInput.value = '';
+        currentPokemon = null;
         statsSection.classList.add('hidden');
         updateUI();
     });
     type2Select.addEventListener('change', () => {
         searchInput.value = '';
+        currentPokemon = null;
         statsSection.classList.add('hidden');
         updateUI();
     });
@@ -306,9 +308,10 @@ function setupEventListeners() {
         type2Select.value = '';
         if (type3Select) type3Select.value = '';
         searchInput.value = '';
+        currentPokemon = null;
         statsSection.classList.add('hidden');
         displayAnalysis('', '', '');
-        syncURLWithState('', '', '', '');
+        syncURLWithState('', '', '', null);
     });
 
     // Search Logic
@@ -411,7 +414,7 @@ function setupEventListeners() {
         type2Select.value = pokemon.types[1] || '';
         
         suggestionsList.classList.add('hidden');
-        updateUI();
+        updateUI(pokemon);
 
         // Fetch and display details
         await showPokemonDetails(pokemon);
