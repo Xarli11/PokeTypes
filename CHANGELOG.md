@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **Sprite Suggestions:** Fixed an issue where the sprite loaded in the search suggestions list did not match the official artwork displayed in the detail view.
+## [2.31.2] - 2026-04-13\n\n### Fixed\n- **8x Weaknesses:** Resolved an issue where 8x weaknesses (occurring with three types sharing a common weakness) were not being displayed in the UI, factored into team analysis, or prioritized by the Tactical Advisor.\n
 - **Form URLs:** Fixed a bug where selecting specific forms or varieties (like Basculin or Basculegion) from the search would lead to a 404 error by ensuring the correct API slug is used in the URL.
 
 ## [2.31.0] - 2026-04-07
