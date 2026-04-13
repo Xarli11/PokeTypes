@@ -81,15 +81,15 @@ function refreshUI() {
     refreshProView();
 }
 
-function syncURLWithState(t1, t2, pokemonName) {
+function syncURLWithState(t1, t2, t3, pokemonObj) {
     const url = new URL(window.location);
     
-    if (pokemonName) {
-        const slug = pokemonName.toLowerCase().replace(/\s+/g, '-');
+    if (pokemonObj) {
+        const slug = (pokemonObj.apiName || pokemonObj.name).toLowerCase().replace(/\s+/g, '-');
         url.pathname = `/pokemon/${slug}`;
         url.search = '';
-    } else if (t1 || t2) {
-        const types = [t1, t2].filter(Boolean).map(t => t.toLowerCase());
+    } else if (t1 || t2 || t3) {
+        const types = [t1, t2, t3].filter(Boolean).map(t => t.toLowerCase());
         url.pathname = `/tipo/${types.join('-')}`;
         url.search = '';
     } else {
@@ -281,7 +281,7 @@ function setupEventListeners() {
         const t2 = type2Select.value;
         const t3 = type3Select ? type3Select.value : null;
         displayAnalysis(t1, t2, t3);
-        syncURLWithState(t1, t2, t3, searchInput.value);
+        syncURLWithState(t1, t2, t3, currentPokemon);
     };
 
     typeSelect.addEventListener('change', () => {
