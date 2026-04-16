@@ -205,26 +205,26 @@ async function showPokemonDetails(pokemon) {
         const megaBtn = document.getElementById('omni-mega-btn');
         if (megaBtn) {
             megaBtn.addEventListener('click', () => {
-                const curName = pokemon.name.toLowerCase();
-                const isMega = curName.includes('mega');
+                const curNameNorm = pokemon.name.toLowerCase().replace(/\s+/g, '-');
+                const isMega = curNameNorm.includes('mega');
                 
                 let targetForm = null;
                 
                 if (isMega) {
-                    // Try to find base form (e.g. "venusaur-mega" -> "venusaur")
-                    const baseName = curName.split('-mega')[0];
-                    targetForm = appData.pokemonList.find(p => p.name.toLowerCase() === baseName);
+                    // Try to find base form
+                    // 1. Remove "mega-" prefix or "-mega" suffix
+                    const baseName = curNameNorm.replace('mega-', '').replace('-mega', '').split('-mega-')[0];
+                    targetForm = appData.pokemonList.find(p => p.name.toLowerCase().replace(/\s+/g, '-') === baseName);
                 } else {
-                    // Try to find mega form
+                    // Try to find mega form using the exact same logic as the UI (hasMega)
                     targetForm = appData.pokemonList.find(p => {
-                        const pName = p.name.toLowerCase();
+                        const pName = p.name.toLowerCase().replace(/\s+/g, '-');
                         const pApi = p.apiName?.toLowerCase() || '';
-                        return (pName === curName + '-mega') || 
-                               (pName === curName + '-mega-y') || 
-                               (pName === curName + '-mega-x') ||
-                               (pApi === curName + 'mega') ||
-                               (pApi === curName + 'megax') ||
-                               (pApi === curName + 'megay');
+                        return (pName === curNameNorm + '-mega') || 
+                               (pName === curNameNorm + '-mega-x') || 
+                               (pName === curNameNorm + '-mega-y') ||
+                               (pName === 'mega-' + curNameNorm) ||
+                               (pApi === curNameNorm + 'mega');
                     });
                 }
                 
@@ -234,6 +234,8 @@ async function showPokemonDetails(pokemon) {
                     const searchInput = document.getElementById('pokemon-search');
                     const localizedName = i18n.t(targetForm.name.toLowerCase());
                     searchInput.value = localizedName !== targetForm.name.toLowerCase() ? localizedName : ui.capitalizeWords(targetForm.name);
+                } else {
+                    console.warn("Target form not found for:", pokemon.name);
                 }
             });
         }
