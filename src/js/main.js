@@ -205,37 +205,36 @@ async function showPokemonDetails(pokemon) {
         const megaBtn = document.getElementById('omni-mega-btn');
         if (megaBtn) {
             megaBtn.addEventListener('click', () => {
-                const curNameNorm = pokemon.name.toLowerCase().replace(/\s+/g, '-');
-                const isMega = curNameNorm.includes('mega');
+                const curName = pokemon.name.toLowerCase();
+                const curId = pokemon.id;
                 
-                let targetForm = null;
+                // 1. Get all related forms (same ID or similar name)
+                const relatedForms = appData.pokemonList.filter(p => {
+                    const pName = p.name.toLowerCase();
+                    const baseName = curName.replace(/mega\s*|(-mega(-[xy])?)/gi, '').trim();
+                    return p.id === curId || pName.includes(baseName);
+                }).filter(p => p.name.toLowerCase().includes('mega') || p.id === curId);
+
+                // Sort to ensure Base is first, then X, then Y, then others
+                relatedForms.sort((a, b) => {
+                    const aName = a.name.toLowerCase();
+                    const bName = b.name.toLowerCase();
+                    if (!aName.includes('mega')) return -1;
+                    if (!bName.includes('mega')) return 1;
+                    return aName.localeCompare(bName);
+                });
+
+                // 2. Find next form in cycle
+                const currentIndex = relatedForms.findIndex(p => p.name === pokemon.name);
+                const nextIndex = (currentIndex + 1) % relatedForms.length;
+                const targetForm = relatedForms[nextIndex];
                 
-                if (isMega) {
-                    // Try to find base form
-                    // 1. Remove "mega-" prefix or "-mega" suffix
-                    const baseName = curNameNorm.replace('mega-', '').replace('-mega', '').split('-mega-')[0];
-                    targetForm = appData.pokemonList.find(p => p.name.toLowerCase().replace(/\s+/g, '-') === baseName);
-                } else {
-                    // Try to find mega form using the exact same logic as the UI (hasMega)
-                    targetForm = appData.pokemonList.find(p => {
-                        const pName = p.name.toLowerCase().replace(/\s+/g, '-');
-                        const pApi = p.apiName?.toLowerCase() || '';
-                        return (pName === curNameNorm + '-mega') || 
-                               (pName === curNameNorm + '-mega-x') || 
-                               (pName === curNameNorm + '-mega-y') ||
-                               (pName === 'mega-' + curNameNorm) ||
-                               (pApi === curNameNorm + 'mega');
-                    });
-                }
-                
-                if (targetForm) {
+                if (targetForm && targetForm.name !== pokemon.name) {
                     showPokemonDetails(targetForm);
                     updateUI(targetForm);
                     const searchInput = document.getElementById('pokemon-search');
                     const localizedName = i18n.t(targetForm.name.toLowerCase());
                     searchInput.value = localizedName !== targetForm.name.toLowerCase() ? localizedName : ui.capitalizeWords(targetForm.name);
-                } else {
-                    console.warn("Target form not found for:", pokemon.name);
                 }
             });
         }
