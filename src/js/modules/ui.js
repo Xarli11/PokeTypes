@@ -329,9 +329,9 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
                      class="w-32 h-32 md:w-48 md:h-48 object-contain drop-shadow-xl transform transition-transform duration-500 hover:scale-110"
                      onerror="this.src='${sources[1]}'; this.onerror=function(){this.src='${sources[2]}'; this.onerror=null;}">
                 
-                <!-- Omni Mega Button (Always Orange & Pulsing if available) -->
-                <button id="omni-mega-btn" class="absolute -bottom-4 -right-4 p-4 rounded-full bg-gradient-to-br from-amber-400 to-orange-600 text-white shadow-[0_0_20px_rgba(245,158,11,0.4)] border-2 border-white dark:border-slate-800 transition-all hover:scale-125 active:scale-95 animate-bounce-short ${hasMega || pokemon.name.toLowerCase().includes('mega') ? '' : 'hidden'}" title="Omni Ring Transformation">
-                    <svg class="w-7 h-7 drop-shadow-md" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                <!-- Omni Mega Button (Subtle & Integrated) -->
+                <button id="omni-mega-btn" class="absolute -bottom-1 -right-1 p-2.5 rounded-xl bg-white dark:bg-slate-800 text-amber-500 shadow-md border border-slate-100 dark:border-slate-700 transition-all hover:scale-110 active:scale-95 ${hasMega || pokemon.name.toLowerCase().includes('mega') ? '' : 'hidden'}" title="Omni Ring Transformation">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
                 </button>
             </div>
             
