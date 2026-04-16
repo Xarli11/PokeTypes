@@ -206,23 +206,34 @@ async function showPokemonDetails(pokemon) {
         if (megaBtn) {
             megaBtn.addEventListener('click', () => {
                 const curName = pokemon.name.toLowerCase();
-                const megaForm = appData.pokemonList.find(p => {
-                    const pName = p.name.toLowerCase();
-                    const pApi = p.apiName?.toLowerCase() || '';
-                    return (pName === curName + '-mega') || 
-                           (pName === curName + '-mega-y') || 
-                           (pName === curName + '-mega-x') ||
-                           (pApi === curName + 'mega') ||
-                           (pApi === curName + 'megax') ||
-                           (pApi === curName + 'megay');
-                });
+                const isMega = curName.includes('mega');
                 
-                if (megaForm) {
-                    showPokemonDetails(megaForm);
-                    updateUI(megaForm);
+                let targetForm = null;
+                
+                if (isMega) {
+                    // Try to find base form (e.g. "venusaur-mega" -> "venusaur")
+                    const baseName = curName.split('-mega')[0];
+                    targetForm = appData.pokemonList.find(p => p.name.toLowerCase() === baseName);
+                } else {
+                    // Try to find mega form
+                    targetForm = appData.pokemonList.find(p => {
+                        const pName = p.name.toLowerCase();
+                        const pApi = p.apiName?.toLowerCase() || '';
+                        return (pName === curName + '-mega') || 
+                               (pName === curName + '-mega-y') || 
+                               (pName === curName + '-mega-x') ||
+                               (pApi === curName + 'mega') ||
+                               (pApi === curName + 'megax') ||
+                               (pApi === curName + 'megay');
+                    });
+                }
+                
+                if (targetForm) {
+                    showPokemonDetails(targetForm);
+                    updateUI(targetForm);
                     const searchInput = document.getElementById('pokemon-search');
-                    const localizedName = i18n.t(megaForm.name.toLowerCase());
-                    searchInput.value = localizedName !== megaForm.name.toLowerCase() ? localizedName : ui.capitalizeWords(megaForm.name);
+                    const localizedName = i18n.t(targetForm.name.toLowerCase());
+                    searchInput.value = localizedName !== targetForm.name.toLowerCase() ? localizedName : ui.capitalizeWords(targetForm.name);
                 }
             });
         }
