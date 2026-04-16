@@ -4,8 +4,15 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout title="PokeTypes | Pokemon Type Calculator & Effectiveness Chart" description="The most advanced Pokemon type calculator and effectiveness chart. Analyze weaknesses, resistances, and dual-type coverage for all Pokemon (Gen 9, Scarlet/Violet included).">
     <div class="max-w-7xl mx-auto relative">
-        <!-- Top Controls (Language & Theme) -->
+        <!-- Top Controls (Language, Champions & Theme) -->
         <div class="absolute top-0 right-0 z-50 flex items-center gap-2">
+            <!-- Champions Mode Toggle -->
+            <button id="champions-toggle" class="group flex items-center gap-2 px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm transition-all hover:bg-slate-50 dark:hover:bg-slate-700 overflow-hidden relative" aria-label="Toggle Champions Mode">
+                <div class="absolute inset-0 bg-gradient-to-r from-amber-400/0 via-amber-400/10 to-amber-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                <svg class="w-5 h-5 text-slate-400 group-[.active]:text-amber-500 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 group-[.active]:text-amber-600 dark:group-[.active]:text-amber-400 hidden sm:block">Champions</span>
+            </button>
+
             <!-- Language Toggle -->
             <button id="lang-toggle" class="p-2 rounded-lg bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm transition-all font-bold text-sm tracking-wide" aria-label="Toggle Language">
                 ES

@@ -8,11 +8,13 @@ import { i18n } from './modules/i18n.js';
 
 let appData = null;
 let currentPokemon = null;
+let championsMode = localStorage.getItem('poketypes_champions_mode') === 'true';
 
 async function init() {
     try {
         initTheme(); // Initialize Dark/Light Mode
         initProMode(); // Initialize Pro Mode Switcher
+        initChampionsMode(); // Initialize Champions Mode Toggle
         
         // Expose centralized image error handler for inline use
         window.handleSearchImageError = ui.handleSearchImageError;
@@ -35,6 +37,22 @@ async function init() {
     } catch (error) {
         console.error("Initialization failed:", error);
     }
+}
+
+function initChampionsMode() {
+    const toggle = document.getElementById('champions-toggle');
+    if (!toggle) return;
+
+    if (championsMode) {
+        toggle.classList.add('active');
+    }
+
+    toggle.addEventListener('click', () => {
+        championsMode = !championsMode;
+        localStorage.setItem('poketypes_champions_mode', championsMode);
+        toggle.classList.toggle('active');
+        refreshUI();
+    });
 }
 
 function updateLanguageToggle() {
@@ -183,6 +201,22 @@ async function showPokemonDetails(pokemon) {
         // Render Hero Card immediately (data is available locally)
         ui.renderPokemonHero(document.getElementById('pokemon-hero'), pokemon, appData.contrast, appData.imageFixes);
 
+        // Add Omni Mega Listener
+        const megaBtn = document.getElementById('omni-mega-btn');
+        if (megaBtn) {
+            megaBtn.addEventListener('click', () => {
+                const megaForm = appData.pokemonList.find(p => p.name.toLowerCase().startsWith(pokemon.name.toLowerCase() + '-mega') || 
+                                                             p.apiName?.toLowerCase().startsWith(pokemon.name.toLowerCase() + 'mega'));
+                if (megaForm) {
+                    showPokemonDetails(megaForm);
+                    updateUI(megaForm);
+                    const searchInput = document.getElementById('pokemon-search');
+                    const localizedName = i18n.t(megaForm.name.toLowerCase());
+                    searchInput.value = localizedName !== megaForm.name.toLowerCase() ? localizedName : ui.capitalizeWords(megaForm.name);
+                }
+            });
+        }
+
         // Fetch both Pokemon details and competitive data
         const [details, compData] = await Promise.all([
             fetchPokemonDetails(pokemon.apiName || pokemon.id),
@@ -326,7 +360,7 @@ function setupEventListeners() {
         }
 
         // 1. Get matches with localization support
-        const matches = appData.pokemonList.map(p => {
+        let matches = appData.pokemonList.map(p => {
             // Check if we have a localized name for this pokemon (using its slug/name as key)
             const localizedName = i18n.t(p.name.toLowerCase());
             return {
@@ -335,6 +369,11 @@ function setupEventListeners() {
                 searchName: (localizedName + " " + p.name).toLowerCase()
             };
         }).filter(p => p.searchName.includes(query));
+
+        // 2. Filter by Champions Mode if active (Regulation M-A)
+        if (championsMode) {
+            matches = matches.filter(p => p.id <= 1025 || p.name.toLowerCase().includes('mega'));
+        }
 
         // ... (sorting omitted for brevity) ...
 

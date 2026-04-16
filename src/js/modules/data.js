@@ -10,15 +10,21 @@ export function loadAppData() {
 
     appDataPromise = (async () => {
         try {
-            const response = await fetch('/api/app-data.json');
-            if (!response.ok) throw new Error('Failed to load app data');
-            const data = await response.json();
+            const [appRes, championsRes] = await Promise.all([
+                fetch('/api/app-data.json'),
+                fetch('/data/champions-meta.json').catch(() => null)
+            ]);
+
+            if (!appRes.ok) throw new Error('Failed to load app data');
+            const data = await appRes.json();
+            const championsMeta = championsRes && championsRes.ok ? await championsRes.json() : null;
 
             // Start loading full pokedex in background
             loadPokedex();
 
             return {
                 ...data,
+                championsMeta,
                 // Fallback for code expecting pokemonList immediately (like search)
                 // Search will use searchIndex if available, otherwise will wait for pokedex
                 pokemonList: data.searchIndex || [] 

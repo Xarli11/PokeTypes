@@ -1,0 +1,25 @@
+{
+  "regulation": "Regulation M-A",
+  "legal_items": [
+    "focus-sash", "leftovers", "choice-scarf", "sitrus-berry", "lum-berry", "white-herb", "mental-herb",
+    "black-belt", "black-glasses", "charcoal", "dragon-fang", "fairy-feather", "magnet", "mystic-water",
+    "miracle-seed", "never-melt-ice", "poison-barb", "sharp-beak", "silk-scarf", "silver-powder", "soft-sand",
+    "spell-tag", "twisted-spoon", "occa-berry", "shuca-berry", "chople-berry", "colbur-berry",
+    "bright-powder", "quick-claw", "abomasite", "absolite", "aerodactylite", "aggronite", "alakazite",
+    "altarianite", "ampharosite", "audinite", "banettite", "beedrillite", "blastoisinite", "blazikenite",
+    "cameruptite", "charizardite-x", "charizardite-y", "diancite", "galladite", "garchompite", "gardevoirite",
+    "gengarite", "glalitite", "gyaradosite", "heracronite", "houndoominite", "kangaskhanite", "latiasite",
+    "latiosite", "lopunnite", "lucarionite", "manectite", "mawilitite", "medichamite", "metagrossite",
+    "mewtwonite-x", "mewtwonite-y", "pidgeotite", "pinsirite", "sablenite", "salamencite", "sceptilite",
+    "scizorite", "sharpedonite", "slowbronite", "steelixite", "swampertite", "tyranitarite", "venusaurite",
+    "glimmoranite", "dragoninite", "delphoxite", "froslassite", "meganiumite", "floettite"
+  ],
+  "item_alternatives": {
+    "life-orb": ["charcoal", "black-belt", "mystic-water", "silk-scarf"],
+    "choice-band": ["black-belt", "dragon-fang", "sharp-beak"],
+    "choice-specs": ["twisted-spoon", "magnet", "miracle-seed"],
+    "assault-vest": ["sitrus-berry", "leftovers", "occa-berry"],
+    "rocky-helmet": ["leftovers"],
+    "eviolite": ["focus-sash"]
+  }
+}
