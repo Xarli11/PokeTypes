@@ -564,18 +564,23 @@ export function renderAbilityAlerts(container, abilities) {
 }
 
 export function renderTacticalAdvice(container, advice) {
-    if (!advice) {
-        container.innerHTML = '';
-        container.classList.add('hidden');
+    if (!advice || !container) {
+        if (container) {
+            container.innerHTML = '';
+            container.classList.add('hidden');
+        }
         return;
     }
 
+    const suggestedTypes = advice.suggestedTypes || [];
+    const suggestedPokemon = advice.suggestedPokemon || [];
+
     container.classList.remove('hidden');
 
-    const suggestedTypesHTML = advice.suggestedTypes.map(t => `<span class="font-bold text-slate-700 dark:text-slate-200">${i18n.tType(t)}</span>`).join('/');
-    const suggestedMonsHTML = advice.suggestedPokemon.map(p => capitalizeWords(p.name)).join(', ');
+    const suggestedTypesHTML = suggestedTypes.map(t => `<span class="font-bold text-slate-700 dark:text-slate-200">${i18n.tType(t)}</span>`).join('/');
+    const suggestedMonsHTML = suggestedPokemon.map(p => capitalizeWords(p.name)).join(', ') || '---';
 
-    const threatTypeHTML = `<span class="font-bold text-red-200 border-b border-red-200/50">${i18n.tType(advice.threat)}</span>`;
+    const threatTypeHTML = `<span class="font-bold text-red-200 border-b border-red-200/50">${i18n.tType(advice.threat || '')}</span>`;
 
     const contentHTML = `
         <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-700 p-6 text-white shadow-lg">
