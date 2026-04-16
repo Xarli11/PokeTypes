@@ -382,7 +382,14 @@ function setupEventListeners() {
 
         // 2. Filter by Champions Mode if active (Regulation M-A)
         if (championsMode) {
-            matches = matches.filter(p => p.id <= 1025 || p.name.toLowerCase().includes('mega'));
+            matches = matches.filter(p => {
+                // IDs 1-1025 are the base pool for Gen 1-9
+                const isBaseLegal = p.id <= 1025;
+                const isMega = p.name.toLowerCase().includes('mega');
+                // Exclude some specific Gen 9 bans if needed (e.g. legendary trios or paradox if they were banned)
+                // For now, based on Wolfey's video, most 1025 are legal except restricted.
+                return isBaseLegal || isMega;
+            });
         }
 
         // ... (sorting omitted for brevity) ...
