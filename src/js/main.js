@@ -199,14 +199,24 @@ async function showPokemonDetails(pokemon) {
         statsSection.classList.remove('hidden');
 
         // Render Hero Card immediately (data is available locally)
-        ui.renderPokemonHero(document.getElementById('pokemon-hero'), pokemon, appData.contrast, appData.imageFixes);
+        ui.renderPokemonHero(document.getElementById('pokemon-hero'), pokemon, appData.contrast, appData.imageFixes, appData.pokemonList);
 
         // Add Omni Mega Listener
         const megaBtn = document.getElementById('omni-mega-btn');
         if (megaBtn) {
             megaBtn.addEventListener('click', () => {
-                const megaForm = appData.pokemonList.find(p => p.name.toLowerCase().startsWith(pokemon.name.toLowerCase() + '-mega') || 
-                                                             p.apiName?.toLowerCase().startsWith(pokemon.name.toLowerCase() + 'mega'));
+                const curName = pokemon.name.toLowerCase();
+                const megaForm = appData.pokemonList.find(p => {
+                    const pName = p.name.toLowerCase();
+                    const pApi = p.apiName?.toLowerCase() || '';
+                    return (pName === curName + '-mega') || 
+                           (pName === curName + '-mega-y') || 
+                           (pName === curName + '-mega-x') ||
+                           (pApi === curName + 'mega') ||
+                           (pApi === curName + 'megax') ||
+                           (pApi === curName + 'megay');
+                });
+                
                 if (megaForm) {
                     showPokemonDetails(megaForm);
                     updateUI(megaForm);

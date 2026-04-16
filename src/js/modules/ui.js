@@ -272,7 +272,7 @@ export function getPokemonImageUrl(p, imageFixes = {}) {
     return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${cleanSlug}.png`;
 }
 
-export function renderPokemonHero(container, pokemon, contrastData, imageFixes = {}) {
+export function renderPokemonHero(container, pokemon, contrastData, imageFixes = {}, pokemonList = []) {
     if (!pokemon) {
         container.innerHTML = '';
         return;
@@ -309,6 +309,13 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
         '/pokeball.png'
     ];
 
+    const hasMega = pokemonList.some(p => {
+        const pName = p.name.toLowerCase();
+        const curName = pokemon.name.toLowerCase();
+        return pName.startsWith(curName + '-mega') || 
+               p.apiName?.toLowerCase().startsWith(curName + 'mega');
+    });
+
     const contentHTML = `
         <div class="relative z-10 flex flex-col items-center gap-6 py-8 animate-in fade-in zoom-in duration-500">
             <div class="relative group">
@@ -319,8 +326,8 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
                      class="w-32 h-32 md:w-48 md:h-48 object-contain drop-shadow-xl transform transition-transform duration-500 hover:scale-110"
                      onerror="this.src='${sources[1]}'; this.onerror=function(){this.src='${sources[2]}'; this.onerror=null;}">
                 
-                <!-- Omni Mega Button -->
-                <button id="omni-mega-btn" class="absolute -bottom-2 -right-2 p-3 rounded-2xl bg-white dark:bg-slate-800 shadow-lg border border-slate-100 dark:border-slate-700 text-slate-400 hover:text-amber-500 hover:border-amber-500/50 transition-all opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 scale-90 hover:scale-105" title="Mega Evolution (Omni Ring)">
+                <!-- Omni Mega Button (Only if mega exists) -->
+                <button id="omni-mega-btn" class="absolute -bottom-2 -right-2 p-3 rounded-2xl bg-white dark:bg-slate-800 shadow-lg border border-slate-100 dark:border-slate-700 text-slate-400 hover:text-amber-500 hover:border-amber-500/50 transition-all opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 scale-90 hover:scale-105 ${hasMega ? '' : 'hidden'}" title="Mega Evolution (Omni Ring)">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
                 </button>
             </div>
