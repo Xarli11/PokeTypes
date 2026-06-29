@@ -29,6 +29,7 @@ const siteUrl = 'https://poketypes.app';
 const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
+    "@id": `${siteUrl}${canonicalPath}#breadcrumb`,
     "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "PokeTypes", "item": `${siteUrl}/` },
         { "@type": "ListItem", "position": 2, "name": `${typeName} Type`, "item": `${siteUrl}${canonicalPath}` }
