@@ -22,10 +22,36 @@ if (!t1 && !t2) {
 
 const typeName = t2 ? `${t1}/${t2}` : t1;
 const title = `${typeName} Type Weaknesses, Resistances & Chart | PokeTypes`;
-const description = `Efectividad y debilidades del tipo ${typeName}. Analysis of ${typeName} type vulnerabilities and resistances for Pokemon Scarlet & Violet.`;
+const description = `${typeName} type weakness chart: full effectiveness analysis, resistances, and immunities for Gen 9 (Scarlet & Violet). See every type that beats ${typeName} and every type ${typeName} beats.`;
+const canonicalPath = `/tipo/${slug}`;
+const siteUrl = 'https://poketypes.app';
+
+const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "PokeTypes", "item": `${siteUrl}/` },
+        { "@type": "ListItem", "position": 2, "name": `${typeName} Type`, "item": `${siteUrl}${canonicalPath}` }
+    ]
+};
+
+const webPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${siteUrl}${canonicalPath}`,
+    "url": `${siteUrl}${canonicalPath}`,
+    "name": title,
+    "description": description,
+    "isPartOf": { "@id": `${siteUrl}/#webapp` },
+    "breadcrumb": { "@id": `${siteUrl}${canonicalPath}#breadcrumb` }
+};
 ---
 
 <Layout title={title} description={description}>
+    <Fragment slot="head">
+        <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
+        <script type="application/ld+json" is:inline set:html={JSON.stringify(webPageSchema)} />
+    </Fragment>
     <div class="max-w-7xl mx-auto relative">
         <div class="absolute top-0 right-0 z-50 flex items-center gap-2">
             <button id="lang-toggle" class="p-2 rounded-lg bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm transition-all font-bold text-sm tracking-wide">

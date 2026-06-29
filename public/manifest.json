@@ -1,21 +1,43 @@
 {
-  "name": "Poketypes",
-  "short_name": "Poketypes",
-  "description": "Modern Pokemon Type Calculator",
+  "name": "PokeTypes — Pokemon Type Calculator",
+  "short_name": "PokeTypes",
+  "description": "Instant Pokemon type calculator and effectiveness chart. Check weaknesses, resistances, and dual-type coverage for all 1,000+ Pokemon (Gen 9).",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "orientation": "any",
+  "background_color": "#F9FAFB",
   "theme_color": "#6366f1",
+  "lang": "en",
+  "categories": ["games", "utilities", "education"],
   "icons": [
     {
-      "src": "pokeball.png",
+      "src": "/pokeball.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "pokeball.png",
+      "src": "/pokeball.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Fire Type",
+      "url": "/tipo/fire",
+      "description": "Fire type weakness chart"
+    },
+    {
+      "name": "Water Type",
+      "url": "/tipo/water",
+      "description": "Water type weakness chart"
+    },
+    {
+      "name": "Dragon Type",
+      "url": "/tipo/dragon",
+      "description": "Dragon type weakness chart"
     }
   ]
 }
