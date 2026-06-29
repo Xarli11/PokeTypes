@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.32.0] - 2026-06-29
+
+### Added
+- **Share Team URL:** New "Share Team" button in the Team Builder analysis section that serializes the full team (Pokémon, ability, nature, item, Tera type) into a shareable URL. Opening the link automatically restores the team and switches to Team Builder.
+- **Damage Estimate in Simulator:** The Ability Interaction Checker now shows an approximate damage range (~X–Y% HP) below the type multiplier, calculated using the defender's actual base stats and a reference attacker (base 100 Atk, 252 EVs, 100 BP move).
+- **11 New Abilities:** Added `galvanize`, `pixilate`, `refrigerate`, `aerilate`, `transistor`, `dragon's-maw`, `steelworker`, `rocky-payload`, `adaptability`, `neuroforce`, `stakeout`, and `neutralizing-gas` to the ability interaction data.
+
+### Fixed
+- **Filter / Solid Rock / Prism Armor:** These abilities now correctly apply their 25% damage reduction only to super-effective moves, not to all attacks.
+- **Wonder Guard:** Now correctly blocks only non-super-effective moves, allowing SE moves to pass through at normal effectiveness.
+- **Team Role Analysis:** Sweeper thresholds raised to ≥110 Atk/SpA (from 100) for more accurate classification. Wall detection now requires ≥65 base HP. Speedster threshold lowered to ≥95 Speed.
+- **Search Diacritics:** All search inputs (main, Pro Mode, Simulator) now normalize diacritics and apostrophes before matching, allowing searches like "flabebe" to find Flabébé and "farfetchd" to find Farfetch'd.
+
 ## [2.31.1] - 2026-04-13
 
 ### Fixed
