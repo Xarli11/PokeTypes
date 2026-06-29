@@ -1,7 +1,7 @@
-import { loadTeam, addPokemonToSlot, removePokemonFromSlot, setAbility, setNature, setItem } from './team.js';
+import { loadTeam, saveTeam, addPokemonToSlot, removePokemonFromSlot, setAbility, setNature, setItem, getTeam } from './team.js';
 import { loadAppData } from './data.js';
 import { analyzeTeamDefense, getThreatAlerts, analyzeTeamRoles } from './analysis.js';
-import { createTypePill, getPokemonImageUrl, capitalizeWords } from './ui.js';
+import { createTypePill, getPokemonImageUrl, capitalizeWords, normalizeSearch } from './ui.js';
 import { i18n } from './i18n.js';
 import { initSimulator } from './simulator.js';
 
@@ -27,8 +27,9 @@ export async function initProMode() {
         appData = await loadAppData();
         allPokemon = appData.pokemonList;
         contrastData = appData.contrast;
+        await restoreTeamFromURL();
         renderTeamGrid();
-        initSimulator(); 
+        initSimulator();
     } catch (e) {
         console.error("Pro mode init failed", e);
     }
@@ -311,9 +312,20 @@ function renderTeamAnalysis(team) {
             ${renderRoleCard('role_phys_wall', roles.role_phys_wall, 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300')}
             ${renderRoleCard('role_spec_wall', roles.role_spec_wall, 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300')}
         </div>
+
+        <div class="border-t border-slate-100 dark:border-slate-700 mt-6 pt-6 flex justify-end">
+            <button id="share-team-btn" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 font-bold text-sm hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+                ${i18n.t('pro_share_team')}
+            </button>
+        </div>
     </div>`;
 
     analysisSection.innerHTML = html;
+
+    document.getElementById('share-team-btn')?.addEventListener('click', shareTeamURL);
 }
 
 function renderRoleCard(key, count, colorClass) {
@@ -425,7 +437,7 @@ function setupSearchModal() {
     backdrop.addEventListener('click', closeModal);
     
     input.addEventListener('input', (e) => {
-        const query = e.target.value.trim().toLowerCase();
+        const query = normalizeSearch(e.target.value);
         if (!query) {
             resultsContainer.innerHTML = `<div class="py-12 text-center text-slate-400 text-sm">${i18n.t('search_placeholder')}</div>`;
             return;
@@ -433,10 +445,11 @@ function setupSearchModal() {
 
         const matches = allPokemon.map(p => {
             const localizedName = i18n.t(p.name.toLowerCase());
+            const displayName = localizedName !== p.name.toLowerCase() ? localizedName : capitalizeWords(p.name);
             return {
                 ...p,
-                displayName: localizedName !== p.name.toLowerCase() ? localizedName : capitalizeWords(p.name),
-                searchName: (localizedName + " " + p.name).toLowerCase()
+                displayName,
+                searchName: normalizeSearch(localizedName + " " + p.name)
             };
         }).filter(p => p.searchName.includes(query));
 
@@ -480,19 +493,118 @@ function setupSearchModal() {
     resultsContainer.addEventListener('click', async (e) => {
         const item = e.target.closest('[data-poke-name]');
         if (!item) return;
-        
+
         const name = item.dataset.pokeName;
-        
+
         // Ensure we have the full pokedex data (with stats and abilities)
         // before adding to the slot
         const { loadPokedex } = await import('./data.js');
         const fullDex = await loadPokedex();
         const pokemon = fullDex.find(p => p.name === name);
-        
+
         if (pokemon) {
             addPokemonToSlot(activeSlotIndex, pokemon);
             renderTeamGrid();
             closeModal();
         }
     });
+}
+
+// --- Share Team URL ---
+
+function serializeTeam(team) {
+    const compact = team.map(slot => {
+        if (!slot) return null;
+        return {
+            id: slot.id,
+            n: slot.apiName || slot.name,
+            t: slot.types,
+            a: slot.ability || null,
+            nat: slot.nature || null,
+            i: slot.item || null,
+            tera: slot.teraType || null
+        };
+    });
+    return btoa(unescape(encodeURIComponent(JSON.stringify(compact))));
+}
+
+async function restoreTeamFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const encoded = params.get('team');
+    if (!encoded) return;
+
+    try {
+        const compact = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+        if (!Array.isArray(compact) || compact.length !== 6) return;
+
+        const { loadPokedex } = await import('./data.js');
+        const fullDex = await loadPokedex();
+
+        compact.forEach((slot, index) => {
+            if (!slot) return;
+            const pokemon = fullDex.find(p => p.id === slot.id || (p.apiName || p.name) === slot.n);
+            if (pokemon) {
+                addPokemonToSlot(index, pokemon);
+                if (slot.a) setAbility(index, slot.a);
+                if (slot.nat) setNature(index, slot.nat);
+                if (slot.i) setItem(index, slot.i);
+            }
+        });
+
+        // Remove ?team param from URL without reload
+        const url = new URL(window.location);
+        url.searchParams.delete('team');
+        window.history.replaceState({}, '', url);
+
+        renderTeamGrid();
+    } catch (e) {
+        console.error('Failed to restore team from URL', e);
+    }
+}
+
+async function shareTeamURL() {
+    const btn = document.getElementById('share-team-btn');
+    if (!btn) return;
+
+    const team = loadTeam();
+    const encoded = serializeTeam(team);
+
+    // Always link to home page, regardless of current route
+    const url = new URL(window.location.origin + '/');
+    url.searchParams.set('team', encoded);
+    url.searchParams.set('mode', 'pro');
+    const shareUrl = url.toString();
+
+    const original = btn.innerHTML;
+    const showSuccess = () => {
+        btn.innerHTML = `<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> ${i18n.t('pro_share_copied')}`;
+        btn.classList.add('bg-emerald-200', 'dark:bg-emerald-800');
+        setTimeout(() => {
+            const currentBtn = document.getElementById('share-team-btn');
+            if (currentBtn) {
+                currentBtn.innerHTML = original;
+                currentBtn.classList.remove('bg-emerald-200', 'dark:bg-emerald-800');
+            }
+        }, 2000);
+    };
+
+    try {
+        await navigator.clipboard.writeText(shareUrl);
+        showSuccess();
+    } catch {
+        // Fallback for non-secure contexts
+        const ta = document.createElement('textarea');
+        ta.value = shareUrl;
+        ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try {
+            document.execCommand('copy');
+            showSuccess();
+        } catch {
+            prompt(i18n.t('pro_share_team'), shareUrl);
+        }
+        document.body.removeChild(ta);
+    }
 }

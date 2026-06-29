@@ -137,14 +137,17 @@ export function analyzeTeamRoles(team, pokemonList) {
             }
         }
 
-        // Simple heuristics based on modified base stats thresholds
-        if (spe >= 100) roles.role_speedster++;
-        
-        if (atk >= 100 && atk >= spa) roles.role_phys_sweeper++;
-        if (spa >= 100 && spa >= atk) roles.role_spec_sweeper++;
-        
-        if (def >= 100 && def >= spd) roles.role_phys_wall++;
-        if (spd >= 100 && spd >= def) roles.role_spec_wall++;
+        // Thresholds calibrated to competitive benchmarks:
+        // Speedster ≥95 spe (outspeeds unboosted base-100 with +nature)
+        // Sweepers ≥110 atk/spa (genuinely threatening, e.g. Garchomp 130, Gengar 130)
+        // Walls ≥100 def/spd with ≥65 hp to distinguish walls from frail defenders
+        if (spe >= 95) roles.role_speedster++;
+
+        if (atk >= 110 && atk >= spa) roles.role_phys_sweeper++;
+        if (spa >= 110 && spa >= atk) roles.role_spec_sweeper++;
+
+        if (def >= 100 && hp >= 65) roles.role_phys_wall++;
+        if (spd >= 100 && hp >= 65) roles.role_spec_wall++;
     });
     
     return roles;

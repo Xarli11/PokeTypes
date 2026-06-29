@@ -1,6 +1,15 @@
 import { getEffectiveness, getAbilityModifiers } from './calculator.js';
 import { i18n } from './i18n.js';
 
+export function normalizeSearch(str) {
+    return str
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')
+        .replace(/'/g, '')
+        .trim();
+}
+
 export function createTypePill(type, contrastData) {
     const textColorClass = contrastData[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
     const translatedType = i18n.tType(type);
