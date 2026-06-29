@@ -182,6 +182,7 @@ export function renderDualImmunities(container, labelKey, pairs, contrastData) {
 
 export function generateTypeTable(containerId, types, effectiveness, contrastData) {
     const tableContainer = document.getElementById(containerId);
+    if (!tableContainer) return;
     let tableHTML = '<table><thead><tr><th></th>';
 
     types.forEach(type => {
