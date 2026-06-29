@@ -1,7 +1,7 @@
 // src/js/modules/simulator.js
 import { getEffectiveness, getAbilityModifiers } from './calculator.js';
 import { loadAppData, fetchPokemonDetails } from './data.js';
-import { getPokemonImageUrl, createTypePill, capitalizeWords } from './ui.js';
+import { getPokemonImageUrl, createTypePill, capitalizeWords, normalizeSearch } from './ui.js';
 import { i18n } from './i18n.js';
 
 export async function initSimulator() {
@@ -113,14 +113,16 @@ function setupEventListeners(appData) {
             return;
         }
 
+        const normalizedQuery = normalizeSearch(query);
         const matches = appData.pokemonList.map(p => {
             const localizedName = i18n.t(p.name.toLowerCase());
+            const displayName = localizedName !== p.name.toLowerCase() ? localizedName : capitalizeWords(p.name);
             return {
                 ...p,
-                displayName: localizedName !== p.name.toLowerCase() ? localizedName : capitalizeWords(p.name),
-                searchName: (localizedName + " " + p.name).toLowerCase()
+                displayName,
+                searchName: normalizeSearch(localizedName + " " + p.name)
             };
-        }).filter(p => p.searchName.includes(query))
+        }).filter(p => p.searchName.includes(normalizedQuery))
           .sort((a, b) => a.id - b.id)
           .slice(0, 10);
 
@@ -170,9 +172,12 @@ function setupEventListeners(appData) {
     });
 }
 
+let defenderDetails = null;
+
 async function selectDefender(pokemon, appData) {
     selectedPokemon = pokemon;
-    
+    defenderDetails = null;
+
     // UI Update
     document.getElementById('sim-defender-input').classList.add('hidden');
     document.getElementById('sim-defender-display').classList.remove('hidden');
@@ -182,24 +187,25 @@ async function selectDefender(pokemon, appData) {
         this.src = '/pokeball.png';
         this.onerror = null;
     };
-    document.getElementById('sim-defender-name').textContent = capitalizeWords(pokemon.name); // Or localized name
+    document.getElementById('sim-defender-name').textContent = capitalizeWords(pokemon.name);
     document.getElementById('sim-defender-types').innerHTML = pokemon.types.map(t => createTypePill(t, appData.contrast)).join('');
 
-    // Fetch Abilities
+    // Fetch Abilities + Stats
     const abilitySelect = document.getElementById('sim-ability-select');
     abilitySelect.innerHTML = `<option>${i18n.t('loading_stats')}</option>`;
     abilitySelect.disabled = true;
 
     try {
         const details = await fetchPokemonDetails(pokemon.apiName || pokemon.id);
+        defenderDetails = details;
+
         if (details && details.abilities) {
             abilitySelect.innerHTML = details.abilities.map(a => {
                 const name = i18n.tAbility(a.ability.name);
                 return `<option value="${a.ability.name}">${name}</option>`;
             }).join('');
             abilitySelect.disabled = false;
-            
-            // Trigger calculation
+
             const event = new Event('change');
             abilitySelect.dispatchEvent(event);
         } else {
@@ -211,52 +217,99 @@ async function selectDefender(pokemon, appData) {
     }
 }
 
+function estimateDamageRange(pokemon, typeModifier) {
+    const stats = defenderDetails?.stats || pokemon.stats;
+    if (!stats || typeModifier === 0) return null;
+
+    const { hp, def, spd } = stats;
+    if (!hp || (!def && !spd)) return null;
+
+    // Defender HP: base stat → typical lv100 value (252 EVs in HP, 31 IVs)
+    const hpStat = 2 * hp + 204;
+    // Defender def/spd: base stat → 0 EV spread (attacker perspective: defender invests in HP not defenses)
+    const defStat = 2 * Math.min(def || 999, spd || 999) + 36;
+
+    // Reference attacker: base 100 Atk/SpA with 252 EVs, neutral nature → 299 stat
+    const atkStat = 299;
+    const bp = 100;
+
+    // Standard Gen 3+ damage formula (level 100)
+    const rawDmg = Math.floor(Math.floor(Math.floor(2 * 100 / 5 + 2) * atkStat * bp / defStat) / 50 + 2);
+    const dmgWithMod = rawDmg * typeModifier;
+
+    const minPct = Math.round((dmgWithMod * 0.85) / hpStat * 100);
+    const maxPct = Math.round(dmgWithMod / hpStat * 100);
+
+    return { minPct, maxPct };
+}
+
 function runSimulation(attackType, pokemon, abilityName, effectiveness) {
     const resultContainer = document.getElementById('sim-result-container');
     const resultValue = document.getElementById('sim-result-value');
     const resultText = document.getElementById('sim-result-text');
-    
+
     resultContainer.classList.remove('hidden');
 
-    // 1. Base Effectiveness
+    // 1. Base type effectiveness
     let modifier = getEffectiveness(attackType, pokemon.types[0], effectiveness);
-    if (pokemon.types[1]) {
-        modifier *= getEffectiveness(attackType, pokemon.types[1], effectiveness);
-    }
+    if (pokemon.types[1]) modifier *= getEffectiveness(attackType, pokemon.types[1], effectiveness);
 
-    // 2. Ability Modifier
+    // 2. Ability modifier — respects superEffectiveOnly and blockNonSE flags
     const abilityMods = getAbilityModifiers(abilityName);
     let abilityTriggered = null;
 
     if (abilityMods.length > 0) {
-        // Check for specific type interaction
         const mod = abilityMods.find(m => m.type.toLowerCase() === attackType.toLowerCase() || m.type === 'All');
-        
+
         if (mod) {
-            if (mod.modifier === 0) {
-                modifier = 0; // Immunity overrides everything
+            if (mod.blockNonSE) {
+                // Wonder Guard: blocks non-SE moves, SE moves pass through
+                if (modifier <= 1) {
+                    modifier = 0;
+                    abilityTriggered = mod;
+                }
+            } else if (mod.superEffectiveOnly && modifier <= 1) {
+                // Filter / Solid Rock / Prism Armor: only reduces SE damage
+                // No effect on neutral or resisted moves
+            } else if (mod.modifier === 0) {
+                modifier = 0;
                 abilityTriggered = mod;
             } else {
                 modifier *= mod.modifier;
                 abilityTriggered = mod;
             }
         }
+
+        // Show offensive ability description even if it doesn't affect the multiplier
+        if (!abilityTriggered) {
+            const offensiveMod = abilityMods.find(m => m.type === 'Offensive');
+            if (offensiveMod) abilityTriggered = { ...offensiveMod, offensiveOnly: true };
+        }
     }
 
-    // 3. Render
-    let colorClass = "text-slate-800 dark:text-white";
-    if (modifier >= 2) colorClass = "text-red-500";
-    else if (modifier === 0) colorClass = "text-slate-400";
-    else if (modifier < 1) colorClass = "text-emerald-500";
+    // 3. Render multiplier
+    let colorClass = 'text-slate-800 dark:text-white';
+    if (modifier >= 2) colorClass = 'text-red-500';
+    else if (modifier === 0) colorClass = 'text-slate-400';
+    else if (modifier < 1) colorClass = 'text-emerald-500';
 
     resultValue.className = `text-4xl md:text-5xl font-black mb-2 transition-all ${colorClass}`;
     resultValue.textContent = `${modifier}x`;
 
-    if (abilityTriggered) {
-        resultText.innerHTML = `
-            <span class="font-bold">${capitalizeWords(abilityName.replace(/-/g, ' '))}</span>: ${abilityTriggered.description}
-        `;
+    // 4. Render description + damage estimate
+    let descHTML = '';
+    if (abilityTriggered && !abilityTriggered.offensiveOnly) {
+        descHTML += `<p class="mb-1"><span class="font-bold">${capitalizeWords(abilityName.replace(/-/g, ' '))}</span>: ${abilityTriggered.description}</p>`;
+    } else if (abilityTriggered?.offensiveOnly) {
+        descHTML += `<p class="mb-1 text-amber-600 dark:text-amber-400"><span class="font-bold">${capitalizeWords(abilityName.replace(/-/g, ' '))}</span>: ${abilityTriggered.description}</p>`;
     } else {
-        resultText.textContent = i18n.t('sim_standard_effectiveness');
+        descHTML += `<p class="mb-1">${i18n.t('sim_standard_effectiveness')}</p>`;
     }
+
+    const estimate = estimateDamageRange(pokemon, modifier);
+    if (estimate) {
+        descHTML += `<p class="text-xs text-slate-400 mt-1">${i18n.t('sim_damage_estimate').replace('{min}', estimate.minPct).replace('{max}', estimate.maxPct)}</p>`;
+    }
+
+    resultText.innerHTML = descHTML;
 }

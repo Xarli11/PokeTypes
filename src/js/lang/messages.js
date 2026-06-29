@@ -141,6 +141,10 @@ export const messages = {
         role_mixed_wall: "Mixed Wall",
         role_speedster: "Speedster",
 
+        // Pro Mode - Share
+        pro_share_team: "Share Team",
+        pro_share_copied: "Link copied!",
+
         // Simulator
         sim_title: "Ability Interaction Checker",
         sim_attack_type: "Attacking Type",
@@ -148,6 +152,7 @@ export const messages = {
         sim_select_pokemon: "Select Pokemon first",
         sim_effectiveness: "Effectiveness",
         sim_standard_effectiveness: "Standard type effectiveness.",
+        sim_damage_estimate: "~{min}–{max}% HP (ref. 100 BP move, base 100 Atk, 252 EVs)",
         
         // Types
         normal: "Normal",
@@ -342,6 +347,10 @@ export const messages = {
         role_mixed_wall: "Muro Mixto",
         role_speedster: "Velocista",
 
+        // Pro Mode - Compartir
+        pro_share_team: "Compartir Equipo",
+        pro_share_copied: "¡Enlace copiado!",
+
         // Simulator
         sim_title: "Simulador de Habilidades",
         sim_attack_type: "Tipo de Ataque",
@@ -349,6 +358,7 @@ export const messages = {
         sim_select_pokemon: "Selecciona un Pokémon primero",
         sim_effectiveness: "Efectividad",
         sim_standard_effectiveness: "Efectividad de tipos estándar.",
+        sim_damage_estimate: "~{min}–{max}% PS (ref. move 100 PP, base 100 Atk, 252 EVs)",
         
         // Types
         normal: "Normal",

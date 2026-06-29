@@ -2,6 +2,7 @@ import { loadAppData, fetchPokemonDetails, fetchCompetitiveData } from './module
 import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js';
 import { getTacticalAdvice } from './modules/advisor.js';
 import * as ui from './modules/ui.js';
+import { normalizeSearch } from './modules/ui.js';
 import { initTheme } from './modules/theme.js';
 import { initProMode, refreshProView } from './modules/pro.js';
 import { i18n } from './modules/i18n.js';
@@ -318,21 +319,21 @@ function setupEventListeners() {
     let activeIndex = -1;
 
     searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.trim().toLowerCase();
+        const query = normalizeSearch(e.target.value);
         activeIndex = -1;
         if (!query) {
             suggestionsList.classList.add('hidden');
             return;
         }
 
-        // 1. Get matches with localization support
+        // 1. Get matches with localization support and diacritics normalization
         const matches = appData.pokemonList.map(p => {
-            // Check if we have a localized name for this pokemon (using its slug/name as key)
             const localizedName = i18n.t(p.name.toLowerCase());
+            const displayName = localizedName !== p.name.toLowerCase() ? localizedName : ui.capitalizeWords(p.name);
             return {
                 ...p,
-                displayName: localizedName !== p.name.toLowerCase() ? localizedName : ui.capitalizeWords(p.name),
-                searchName: (localizedName + " " + p.name).toLowerCase()
+                displayName,
+                searchName: normalizeSearch(localizedName + " " + p.name)
             };
         }).filter(p => p.searchName.includes(query));
 
