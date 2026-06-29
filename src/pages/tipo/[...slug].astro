@@ -38,9 +38,17 @@ const description = `Efectividad y debilidades del tipo ${typeName}. Analysis of
         </div>
 
         <header class="text-center mb-8">
-            <a href="/" class="inline-block">
-                <h1 class="bento-title dark:text-white">Poketypes</h1>
-            </a>
+            <div class="flex items-center justify-center gap-4 mb-2">
+                <svg class="w-10 h-10 md:w-14 md:h-14 text-slate-300 dark:text-slate-600 flex-shrink-0" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="7"/>
+                    <path d="M5 50 H95" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+                    <circle cx="50" cy="50" r="17" stroke="currentColor" stroke-width="7"/>
+                    <circle cx="50" cy="50" r="8" fill="currentColor"/>
+                </svg>
+                <a href="/" class="hover:opacity-70 transition-opacity duration-200">
+                    <h1 class="bento-title dark:text-white">Poketypes</h1>
+                </a>
+            </div>
             <p id="type-subtitle" class="text-slate-400 text-lg font-medium max-w-xl mx-auto">
                 Análisis de efectividad para el tipo <span class="text-indigo-500 font-bold">{typeName}</span>
             </p>

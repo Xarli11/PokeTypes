@@ -594,10 +594,8 @@ function displayAnalysis(t1, t2, t3 = null) {
     const typeSubtitle = document.getElementById('type-subtitle');
     const staticSubtitle = document.getElementById('static-subtitle');
     if (typeSubtitle) {
-        const typePills = [t1, t2, t3].filter(Boolean)
-            .map(t => ui.createTypePill(t, appData.contrast))
-            .join('<span class="text-slate-300 font-bold px-1">+</span>');
-        typeSubtitle.innerHTML = `<span class="mr-2">${i18n.t('type_subtitle_prefix')}</span>${typePills}`;
+        const typeLabel = [t1, t2, t3].filter(Boolean).map(t => i18n.tType(t)).join('/');
+        typeSubtitle.innerHTML = `${i18n.t('type_subtitle_prefix')} <span class="text-indigo-500 font-bold">${typeLabel}</span>`;
         typeSubtitle.classList.remove('hidden');
     }
     if (staticSubtitle) staticSubtitle.classList.add('hidden');
