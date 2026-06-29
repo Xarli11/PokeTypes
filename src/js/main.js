@@ -543,8 +543,13 @@ function displayAnalysis(t1, t2, t3 = null) {
     }
 
     if (!t1 && !t2 && !t3) {
+        if (!emptyState) {
+            // Tipo/pokemon pages have no empty state — go home
+            window.location.href = '/';
+            return;
+        }
         section.classList.add('hidden');
-        if (emptyState) emptyState.classList.remove('hidden');
+        emptyState.classList.remove('hidden');
         if (tacticalAdvice) { tacticalAdvice.innerHTML = ''; tacticalAdvice.classList.add('hidden'); }
         if (shareBtn) shareBtn.classList.add('hidden');
         const typeSubtitle = document.getElementById('type-subtitle');
