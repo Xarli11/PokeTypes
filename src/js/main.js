@@ -103,6 +103,12 @@ function syncURLWithState(t1, t2, t3, pokemonObj) {
 
 async function applyStateFromURL() {
     const params = new URLSearchParams(window.location.search);
+
+    // Auto-switch to Pro mode if share link requested it
+    if (params.get('mode') === 'pro') {
+        document.getElementById('toggle-pro')?.click();
+    }
+
     const pathParts = window.location.pathname.split('/').filter(Boolean);
     
     let p = params.get('p');

@@ -564,24 +564,47 @@ async function restoreTeamFromURL() {
 
 async function shareTeamURL() {
     const btn = document.getElementById('share-team-btn');
+    if (!btn) return;
+
     const team = loadTeam();
     const encoded = serializeTeam(team);
-    const url = new URL(window.location.origin + window.location.pathname);
+
+    // Always link to home page, regardless of current route
+    const url = new URL(window.location.origin + '/');
     url.searchParams.set('team', encoded);
     url.searchParams.set('mode', 'pro');
+    const shareUrl = url.toString();
 
-    const label = btn.querySelector('span') || btn;
-
-    try {
-        await navigator.clipboard.writeText(url.toString());
-        const original = btn.innerHTML;
+    const original = btn.innerHTML;
+    const showSuccess = () => {
         btn.innerHTML = `<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> ${i18n.t('pro_share_copied')}`;
         btn.classList.add('bg-emerald-200', 'dark:bg-emerald-800');
         setTimeout(() => {
-            btn.innerHTML = original;
-            btn.classList.remove('bg-emerald-200', 'dark:bg-emerald-800');
+            const currentBtn = document.getElementById('share-team-btn');
+            if (currentBtn) {
+                currentBtn.innerHTML = original;
+                currentBtn.classList.remove('bg-emerald-200', 'dark:bg-emerald-800');
+            }
         }, 2000);
+    };
+
+    try {
+        await navigator.clipboard.writeText(shareUrl);
+        showSuccess();
     } catch {
-        prompt(i18n.t('pro_share_team'), url.toString());
+        // Fallback for non-secure contexts
+        const ta = document.createElement('textarea');
+        ta.value = shareUrl;
+        ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try {
+            document.execCommand('copy');
+            showSuccess();
+        } catch {
+            prompt(i18n.t('pro_share_team'), shareUrl);
+        }
+        document.body.removeChild(ta);
     }
 }

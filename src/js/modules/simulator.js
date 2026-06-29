@@ -217,8 +217,26 @@ async function selectDefender(pokemon, appData) {
     }
 }
 
+function parseStats(rawStats) {
+    if (!rawStats) return null;
+    // PokeAPI array format: [{base_stat: N, stat: {name: 'hp'}}, ...]
+    if (Array.isArray(rawStats)) {
+        const map = {};
+        rawStats.forEach(s => {
+            const name = s.stat?.name;
+            if (name === 'hp') map.hp = s.base_stat;
+            else if (name === 'defense') map.def = s.base_stat;
+            else if (name === 'special-defense') map.spd = s.base_stat;
+        });
+        return Object.keys(map).length ? map : null;
+    }
+    // Already normalized object format {hp, def, spd, ...}
+    return rawStats;
+}
+
 function estimateDamageRange(pokemon, typeModifier) {
-    const stats = defenderDetails?.stats || pokemon.stats;
+    const raw = defenderDetails?.stats || pokemon.stats;
+    const stats = parseStats(raw);
     if (!stats || typeModifier === 0) return null;
 
     const { hp, def, spd } = stats;
@@ -226,7 +244,7 @@ function estimateDamageRange(pokemon, typeModifier) {
 
     // Defender HP: base stat → typical lv100 value (252 EVs in HP, 31 IVs)
     const hpStat = 2 * hp + 204;
-    // Defender def/spd: base stat → 0 EV spread (attacker perspective: defender invests in HP not defenses)
+    // Defender def/spd: 0 EV spread (no investment assumed for attacker-perspective calc)
     const defStat = 2 * Math.min(def || 999, spd || 999) + 36;
 
     // Reference attacker: base 100 Atk/SpA with 252 EVs, neutral nature → 299 stat
