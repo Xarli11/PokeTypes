@@ -189,10 +189,13 @@ async function showPokemonDetails(pokemon) {
         abilitiesContainer.innerHTML = '';
         if (alertsContainer) alertsContainer.innerHTML = '';
         
+        const statsWasHidden = statsSection.classList.contains('hidden');
         statsSection.classList.remove('hidden');
-        statsSection.classList.remove('section-enter');
-        void statsSection.offsetWidth;
-        statsSection.classList.add('section-enter');
+        if (statsWasHidden) {
+            statsSection.classList.remove('section-enter');
+            void statsSection.offsetWidth;
+            statsSection.classList.add('section-enter');
+        }
 
         // Render Hero Card immediately (data is available locally)
         ui.renderPokemonHero(document.getElementById('pokemon-hero'), pokemon, appData.contrast, appData.imageFixes);
@@ -548,10 +551,13 @@ function displayAnalysis(t1, t2, t3 = null) {
     }
 
     if (emptyState) emptyState.classList.add('hidden');
+    const sectionWasHidden = section.classList.contains('hidden');
     section.classList.remove('hidden');
-    section.classList.remove('section-enter');
-    void section.offsetWidth; // reflow to restart animation
-    section.classList.add('section-enter');
+    if (sectionWasHidden) {
+        section.classList.remove('section-enter');
+        void section.offsetWidth;
+        section.classList.add('section-enter');
+    }
 
     // Treat same type selection as monotype
     if (t1 === t2) t2 = '';
