@@ -13,14 +13,46 @@ if (!pokemon) {
     return Astro.redirect('/404');
 }
 
-const { name, id } = pokemon;
+const { name, id, types } = pokemon as { name: string; id: number; types: string[]; apiName?: string };
+
+const slug = (pokemon.apiName || pokemon.name).toLowerCase().replace(/\s+/g, '-');
+const siteUrl = 'https://poketypes.app';
+const canonicalPath = `/pokemon/${slug}`;
+const typeLabel = types.join('/');
 
 const title = `${name} Weaknesses, Resistances & Type Chart | PokeTypes`;
-const description = `Analyze weaknesses, resistances, and type effectiveness for ${name} (Gen 9, Scarlet & Violet). Detailed type calculator and defense breakdown for ${name}.`;
+const description = `${name} is a ${typeLabel}-type Pokemon. See its full weakness chart, resistances, immunities, base stats, and abilities. Gen 9 (Scarlet & Violet) type calculator.`;
 const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+
+const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "PokeTypes", "item": `${siteUrl}/` },
+        { "@type": "ListItem", "position": 2, "name": name, "item": `${siteUrl}${canonicalPath}` }
+    ]
+};
+
+const pokemonSchema = {
+    "@context": "https://schema.org",
+    "@type": "VideoGameCharacter",
+    "name": name,
+    "description": description,
+    "image": imageUrl,
+    "url": `${siteUrl}${canonicalPath}`,
+    "isPartOf": {
+        "@type": "VideoGame",
+        "name": "Pokemon Scarlet & Violet",
+        "gamePlatform": "Nintendo Switch"
+    }
+};
 ---
 
 <Layout title={title} description={description} image={imageUrl}>
+    <Fragment slot="head">
+        <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
+        <script type="application/ld+json" is:inline set:html={JSON.stringify(pokemonSchema)} />
+    </Fragment>
     <div class="max-w-7xl mx-auto relative">
         <div class="absolute top-0 right-0 z-50 flex items-center gap-2">
             <button id="lang-toggle" class="p-2 rounded-lg bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm transition-all font-bold text-sm tracking-wide">
