@@ -27,7 +27,8 @@ async function init() {
         
         ui.populateSelects(['type-select', 'type2-select', 'type3-select'], appData.types);
         ui.generateTypeTable('type-table-container', appData.types, appData.effectiveness, appData.contrast);
-        
+        populateEmptyStateTypes();
+
         setupEventListeners();
         
         // Initial state from URL
@@ -80,6 +81,9 @@ function refreshUI() {
 
     // 6. Refresh Pro Mode View
     refreshProView();
+
+    // 7. Re-render empty state types (language may have changed)
+    populateEmptyStateTypes();
 }
 
 function syncURLWithState(t1, t2, t3, pokemonObj) {
@@ -186,6 +190,9 @@ async function showPokemonDetails(pokemon) {
         if (alertsContainer) alertsContainer.innerHTML = '';
         
         statsSection.classList.remove('hidden');
+        statsSection.classList.remove('section-enter');
+        void statsSection.offsetWidth;
+        statsSection.classList.add('section-enter');
 
         // Render Hero Card immediately (data is available locally)
         ui.renderPokemonHero(document.getElementById('pokemon-hero'), pokemon, appData.contrast, appData.imageFixes);
@@ -495,26 +502,55 @@ function setupEventListeners() {
     }
 }
 
+function populateEmptyStateTypes() {
+    const container = document.getElementById('empty-state-types');
+    if (!container || !appData) return;
+
+    container.innerHTML = appData.types.map(type => {
+        const contrast = appData.contrast[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
+        return `<button class="type-pill bg-type-${type.toLowerCase()} ${contrast} hover:scale-110 active:scale-95 transition-transform cursor-pointer" data-type="${type}">${i18n.tType(type)}</button>`;
+    }).join('');
+
+    if (!container.dataset.initialized) {
+        container.dataset.initialized = 'true';
+        container.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-type]');
+            if (!btn) return;
+            const typeSelect = document.getElementById('type-select');
+            if (typeSelect) {
+                typeSelect.value = btn.dataset.type;
+                typeSelect.dispatchEvent(new Event('change'));
+            }
+        });
+    }
+}
+
 function displayAnalysis(t1, t2, t3 = null) {
     const section = document.getElementById('type-details');
+    const emptyState = document.getElementById('empty-state');
     const nameSpan = document.getElementById('selected-type-name');
     const abilityAlerts = document.getElementById('ability-alerts');
-    
+
     // Always clear alerts when refreshing analysis (generic type analysis implies no specific abilities)
     if (abilityAlerts) {
         abilityAlerts.innerHTML = '';
         abilityAlerts.classList.add('hidden');
     }
-    
+
     if (!t1 && !t2 && !t3) {
         section.classList.add('hidden');
+        if (emptyState) emptyState.classList.remove('hidden');
         document.getElementById('tactical-advice').innerHTML = ''; // Clear advice
         document.getElementById('tactical-advice').classList.add('hidden');
         document.getElementById('share-btn').classList.add('hidden'); // Hide share button
         return;
     }
 
+    if (emptyState) emptyState.classList.add('hidden');
     section.classList.remove('hidden');
+    section.classList.remove('section-enter');
+    void section.offsetWidth; // reflow to restart animation
+    section.classList.add('section-enter');
     
     // Treat same type selection as monotype
     if (t1 === t2) t2 = '';

@@ -33,8 +33,14 @@ const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprit
         </div>
 
         <header class="text-center mb-8">
-            <a href="/" class="inline-block">
-                <h1 class="bento-title dark:text-white">Poketypes</h1>
+            <a href="/" class="inline-flex items-center justify-center gap-3 mb-2 group">
+                <svg class="w-9 h-9 md:w-12 md:h-12 text-slate-300 dark:text-slate-600 group-hover:text-slate-400 dark:group-hover:text-slate-500 flex-shrink-0 transition-colors" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="7"/>
+                    <path d="M5 50 H95" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+                    <circle cx="50" cy="50" r="17" stroke="currentColor" stroke-width="7"/>
+                    <circle cx="50" cy="50" r="8" fill="currentColor"/>
+                </svg>
+                <h1 class="bento-title">Poketypes</h1>
             </a>
             <p class="text-slate-400 text-lg font-medium max-w-xl mx-auto">
                 Analizando a <span class="text-indigo-500 font-bold">{name}</span>

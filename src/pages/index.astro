@@ -26,10 +26,18 @@ import Layout from '../layouts/Layout.astro';
 
         <!-- Header Section -->
         <header class="text-center mb-8">
-            <h1 class="bento-title dark:text-white">
-                <span data-i18n="brand_name">Poketypes</span>
-                <span class="sr-only" data-i18n="title_seo">: Pokemon Type Calculator</span>
-            </h1>
+            <div class="flex items-center justify-center gap-4 mb-2">
+                <svg class="w-10 h-10 md:w-14 md:h-14 text-slate-300 dark:text-slate-600 flex-shrink-0" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="7"/>
+                    <path d="M5 50 H95" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+                    <circle cx="50" cy="50" r="17" stroke="currentColor" stroke-width="7"/>
+                    <circle cx="50" cy="50" r="8" fill="currentColor"/>
+                </svg>
+                <h1 class="bento-title">
+                    <span data-i18n="brand_name">Poketypes</span>
+                    <span class="sr-only" data-i18n="title_seo">: Pokemon Type Calculator</span>
+                </h1>
+            </div>
             <p class="text-slate-400 text-lg font-medium max-w-xl mx-auto" data-i18n="subtitle">
                 Quickly analyze type coverage, weaknesses, and resistances for any Pokemon or type combination.
             </p>
@@ -106,6 +114,23 @@ import Layout from '../layouts/Layout.astro';
                         <span data-i18n="abilities">Abilities</span>
                     </div>
                     <div id="abilities-container" class="grid grid-cols-1 gap-4"></div>
+                </div>
+            </section>
+
+            <!-- Empty State (shown until a type or Pokemon is selected) -->
+            <section id="empty-state" class="md:col-span-12">
+                <div class="bento-card dark:bg-slate-800 dark:border-slate-700 text-center py-14 px-8">
+                    <div class="w-16 h-16 mx-auto mb-5">
+                        <svg class="w-full h-full text-slate-200 dark:text-slate-700" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="7"/>
+                            <path d="M5 50 H95" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+                            <circle cx="50" cy="50" r="17" stroke="currentColor" stroke-width="7"/>
+                            <circle cx="50" cy="50" r="8" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <p class="text-lg font-bold text-slate-500 dark:text-slate-400 mb-1" data-i18n="select_types">Select a type or Pokemon to begin analysis</p>
+                    <p class="text-sm text-slate-400 dark:text-slate-500 mb-8" data-i18n="empty_state_hint">Click any type below to get started instantly</p>
+                    <div id="empty-state-types" class="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto"></div>
                 </div>
             </section>
 

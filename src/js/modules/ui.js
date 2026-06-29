@@ -1,6 +1,14 @@
 import { getEffectiveness, getAbilityModifiers } from './calculator.js';
 import { i18n } from './i18n.js';
 
+const TYPE_COLORS = {
+    Normal: '#A8A77A', Fire: '#EE8130', Water: '#6390F0', Grass: '#7AC74C',
+    Electric: '#F7D02C', Ice: '#96D9D6', Fighting: '#C22E28', Poison: '#A33EA1',
+    Ground: '#E2BF65', Flying: '#A98FF3', Psychic: '#F95587', Bug: '#A6B91A',
+    Rock: '#B6A136', Ghost: '#735797', Dragon: '#6F35FC', Steel: '#B7B7CE',
+    Fairy: '#D685AD', Dark: '#705746'
+};
+
 export function normalizeSearch(str) {
     return str
         .toLowerCase()
@@ -284,8 +292,16 @@ export function getPokemonImageUrl(p, imageFixes = {}) {
 export function renderPokemonHero(container, pokemon, contrastData, imageFixes = {}) {
     if (!pokemon) {
         container.innerHTML = '';
+        container.style.background = '';
         return;
     }
+
+    // Type-reactive gradient background
+    const primaryColor = TYPE_COLORS[pokemon.types[0]] || '#6366f1';
+    const secondaryColor = TYPE_COLORS[pokemon.types[1]] || primaryColor;
+    container.style.background = pokemon.types[1]
+        ? `linear-gradient(145deg, ${primaryColor}22 0%, ${secondaryColor}18 100%)`
+        : `radial-gradient(ellipse at 65% 35%, ${primaryColor}30 0%, transparent 68%)`;
 
     const slug = pokemon.spriteSlug || pokemon.apiName;
     const fix = imageFixes[pokemon.apiName];
@@ -319,7 +335,7 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
     ];
 
     const contentHTML = `
-        <div class="relative z-10 flex flex-col items-center gap-6 py-8 animate-in fade-in zoom-in duration-500">
+        <div class="relative z-10 flex flex-col items-center gap-6 py-8 scale-in">
             <div class="relative group">
                 <div class="absolute inset-0 bg-emerald-500/20 dark:bg-emerald-400/10 rounded-full blur-3xl transform scale-75 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                 <img id="pokemon-hero-img" 

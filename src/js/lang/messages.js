@@ -74,6 +74,7 @@ export const messages = {
         // Empty States
         none: "None",
         select_types: "Select a type or Pokemon to begin analysis",
+        empty_state_hint: "Click any type below to get started instantly",
         stats_unavailable: "Stats unavailable.",
         loading_desc: "Loading description...",
         loading_stats: "Loading stats...",
@@ -280,6 +281,7 @@ export const messages = {
         // Empty States
         none: "Ninguno",
         select_types: "Selecciona un tipo o Pokémon para comenzar",
+        empty_state_hint: "Haz clic en cualquier tipo para empezar al instante",
         stats_unavailable: "Estadísticas no disponibles.",
         loading_desc: "Cargando descripción...",
         loading_stats: "Cargando estadísticas...",
