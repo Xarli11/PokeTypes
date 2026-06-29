@@ -3,22 +3,124 @@ import Layout from '../../layouts/Layout.astro';
 import typeData from '../../data/type-data.json';
 
 const { slug } = Astro.params;
-const { types } = typeData;
+const { types, effectiveness, contrast } = typeData;
 
 let t1 = null;
 let t2 = null;
 
 if (slug) {
     const parts = slug.split('-');
-    const findType = (s) => types.find(t => t.toLowerCase() === s.toLowerCase());
-    
-    t1 = findType(parts[0]);
-    t2 = parts[1] ? findType(parts[1]) : null;
+    const findType = (s: string) => types.find(t => t.toLowerCase() === s.toLowerCase());
+    t1 = findType(parts[0]) || null;
+    t2 = parts[1] ? findType(parts[1]) || null : null;
 }
 
-if (!t1 && !t2) {
-    return Astro.redirect('/404');
+if (!t1) return Astro.redirect('/404');
+
+// ── SSR calculator ────────────────────────────────────────────────────────────
+
+function eff(atk: string, def: string): number {
+    const e = (effectiveness as Record<string, Record<string, number>>)[atk];
+    return e && Object.prototype.hasOwnProperty.call(e, def) ? e[def] : 1;
 }
+
+function calcDefense(a: string, b: string | null) {
+    const r = { x8: [] as string[], x4: [] as string[], x2: [] as string[], n: [] as string[], r05: [] as string[], r025: [] as string[], r0125: [] as string[], imm: [] as string[] };
+    types.forEach(atk => {
+        let m = eff(atk, a);
+        if (b) m *= eff(atk, b);
+        if (m === 8)     r.x8.push(atk);
+        else if (m === 4)   r.x4.push(atk);
+        else if (m === 2)   r.x2.push(atk);
+        else if (m === 1)   r.n.push(atk);
+        else if (m === 0.5) r.r05.push(atk);
+        else if (m === 0.25) r.r025.push(atk);
+        else if (m === 0.125) r.r0125.push(atk);
+        else if (m === 0)   r.imm.push(atk);
+    });
+    return r;
+}
+
+function calcOffense(a: string, b: string | null) {
+    const r = { se: [] as string[], n: [] as string[], nve: [] as string[], none: [] as string[] };
+    types.forEach(def => {
+        let m = eff(a, def);
+        if (b) m = Math.max(m, eff(b, def));
+        if (m >= 2)     r.se.push(def);
+        else if (m === 1)   r.n.push(def);
+        else if (m === 0.5) r.nve.push(def);
+        else if (m === 0)   r.none.push(def);
+    });
+    return r;
+}
+
+// ── HTML helpers ─────────────────────────────────────────────────────────────
+
+const contrastMap = contrast as Record<string, string>;
+
+function pill(type: string): string {
+    const tc = contrastMap[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
+    return `<span class="type-pill bg-type-${type.toLowerCase()} ${tc}">${type}</span>`;
+}
+
+function pills(list: string[]): string {
+    return list.length
+        ? list.map(pill).join('')
+        : `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">None</span>`;
+}
+
+const iconSuper  = `<svg class="label-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>`;
+const iconResist = `<svg class="label-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>`;
+const iconImmune = `<svg class="label-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>`;
+const iconNeutral = `<svg class="label-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" /></svg>`;
+
+function badge(label: string, color: string): string {
+    return `<span class="px-2 h-8 min-w-[2rem] flex items-center justify-center rounded-lg ${color} text-white font-black text-xs">${label}</span>`;
+}
+
+function row(badgeHtml: string, typeList: string[]): string {
+    return `<div class="flex items-center gap-3">${badgeHtml}<div class="type-pills-container">${pills(typeList)}</div></div>`;
+}
+
+// ── Compute ───────────────────────────────────────────────────────────────────
+
+const def = calcDefense(t1, t2);
+const off = calcOffense(t1, t2);
+
+const weaknessesHtml = (() => {
+    const hasAny = def.x8.length || def.x4.length || def.x2.length;
+    let html = `<div class="label-group">${iconSuper}<span>Weaknesses</span></div><div class="flex flex-col gap-4">`;
+    if (def.x8.length)  html += row(badge('x8', 'bg-red-700'), def.x8);
+    if (def.x4.length)  html += row(badge('x4', 'bg-red-600'), def.x4);
+    if (def.x2.length)  html += row(badge('x2', 'bg-orange-500'), def.x2);
+    if (!hasAny)        html += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">None</span>`;
+    return html + '</div>';
+})();
+
+const neutralDamageHtml = (() => {
+    return `<div class="label-group">${iconNeutral}<span>Neutral damage</span></div><div class="type-pills-container">${pills(def.n)}</div>`;
+})();
+
+const resistancesHtml = (() => {
+    const hasAny = def.r0125.length || def.r025.length || def.r05.length;
+    let html = `<div class="label-group">${iconResist}<span>Resistances</span></div><div class="flex flex-col gap-4">`;
+    if (def.r0125.length) html += row(badge('x0.125', 'bg-emerald-800'), def.r0125);
+    if (def.r025.length)  html += row(badge('x0.25', 'bg-green-600'), def.r025);
+    if (def.r05.length)   html += row(badge('x0.5', 'bg-emerald-500'), def.r05);
+    if (!hasAny)          html += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">None</span>`;
+    return html + '</div>';
+})();
+
+const immunitiesHtml = `<div class="label-group">${iconImmune}<span>Immunities</span></div><div class="type-pills-container">${pills(def.imm)}</div>`;
+
+const superEffHtml = `<div class="label-group">${iconSuper}<span>Super effective</span></div><div class="type-pills-container">${pills(off.se)}</div>`;
+const neutralOffHtml = `<div class="label-group">${iconNeutral}<span>Neutral</span></div><div class="type-pills-container">${pills(off.n)}</div>`;
+const nveHtml = `<div class="label-group">${iconResist}<span>Not very effective</span></div><div class="type-pills-container">${pills(off.nve)}</div>`;
+const noEffHtml = `<div class="label-group">${iconImmune}<span>No effect</span></div><div class="type-pills-container">${pills(off.none)}</div>`;
+
+const selectedTypeHtml = [t1, t2].filter(Boolean).map(t => pill(t!)).join('');
+
+// ── Meta ──────────────────────────────────────────────────────────────────────
 
 const typeName = t2 ? `${t1}/${t2}` : t1;
 const title = `${typeName} Type Weaknesses, Resistances & Chart | PokeTypes`;
@@ -115,21 +217,21 @@ const webPageSchema = {
             <section id="type-details" class="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="md:col-span-2 bento-card dark:bg-slate-800 dark:border-slate-700 !py-6 !px-10 flex flex-wrap items-center justify-between gap-4">
                     <h2 class="text-xl font-bold text-slate-400 uppercase tracking-widest">Análisis Activo</h2>
-                    <div id="selected-type-name" class="flex items-center gap-2"></div>
+                    <div id="selected-type-name" class="flex items-center gap-2" set:html={selectedTypeHtml}></div>
                 </div>
                 <div class="flex flex-col gap-6">
                     <div class="bento-card dark:bg-slate-800 dark:border-slate-700">
-                        <div id="weaknesses" class="effectiveness-card dark:border-slate-700"></div>
-                        <div id="neutral-damage" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
-                        <div id="resistances" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
-                        <div id="immunities" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
+                        <div id="weaknesses" class="effectiveness-card dark:border-slate-700" set:html={weaknessesHtml}></div>
+                        <div id="neutral-damage" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700" set:html={neutralDamageHtml}></div>
+                        <div id="resistances" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700" set:html={resistancesHtml}></div>
+                        <div id="immunities" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700" set:html={immunitiesHtml}></div>
                     </div>
                 </div>
                 <div class="bento-card dark:bg-slate-800 dark:border-slate-700">
-                    <div id="super-effective" class="effectiveness-card dark:border-slate-700"></div>
-                    <div id="neutral-offense" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
-                    <div id="not-very-effective" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
-                    <div id="no-effect" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700"></div>
+                    <div id="super-effective" class="effectiveness-card dark:border-slate-700" set:html={superEffHtml}></div>
+                    <div id="neutral-offense" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700" set:html={neutralOffHtml}></div>
+                    <div id="not-very-effective" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700" set:html={nveHtml}></div>
+                    <div id="no-effect" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700" set:html={noEffHtml}></div>
                 </div>
             </section>
         </div>
