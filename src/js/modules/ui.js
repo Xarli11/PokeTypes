@@ -147,6 +147,7 @@ export function renderBadgedCard(cardElement, labelKey, typeList, noContentKey, 
 }
 
 export function renderDualImmunities(container, labelKey, pairs, contrastData) {
+    if (!container) return;
     if (!pairs || pairs.length === 0) {
         container.classList.add('hidden');
         return;
@@ -574,6 +575,7 @@ export function renderAbilityAlerts(container, abilities) {
 }
 
 export function renderTacticalAdvice(container, advice) {
+    if (!container) return;
     if (!advice) {
         container.innerHTML = '';
         container.classList.add('hidden');
