@@ -4,6 +4,7 @@ export const messages = {
         brand_name: "Poketypes",
         title_seo: ": Pokemon Type Calculator",
         subtitle: "Quickly analyze type coverage, weaknesses, and resistances for any Pokemon or type combination.",
+        type_subtitle_prefix: "Effectiveness analysis for",
         search_placeholder: "Search Pokemon...",
         reset_btn: "Reset",
         type_1: "Type 1",
@@ -74,6 +75,7 @@ export const messages = {
         // Empty States
         none: "None",
         select_types: "Select a type or Pokemon to begin analysis",
+        empty_state_hint: "Click any type below to get started instantly",
         stats_unavailable: "Stats unavailable.",
         loading_desc: "Loading description...",
         loading_stats: "Loading stats...",
@@ -210,6 +212,7 @@ export const messages = {
         brand_name: "Poketypes",
         title_seo: ": Calculadora de tipos Pokémon",
         subtitle: "Analiza rápidamente coberturas, debilidades y resistencias para cualquier Pokémon o combinación de tipos.",
+        type_subtitle_prefix: "Análisis de efectividad para el tipo",
         search_placeholder: "Buscar Pokémon...",
         reset_btn: "Reiniciar",
         type_1: "Tipo 1",
@@ -280,6 +283,7 @@ export const messages = {
         // Empty States
         none: "Ninguno",
         select_types: "Selecciona un tipo o Pokémon para comenzar",
+        empty_state_hint: "Haz clic en cualquier tipo para empezar al instante",
         stats_unavailable: "Estadísticas no disponibles.",
         loading_desc: "Cargando descripción...",
         loading_stats: "Cargando estadísticas...",

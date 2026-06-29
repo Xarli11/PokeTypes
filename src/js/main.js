@@ -27,7 +27,8 @@ async function init() {
         
         ui.populateSelects(['type-select', 'type2-select', 'type3-select'], appData.types);
         ui.generateTypeTable('type-table-container', appData.types, appData.effectiveness, appData.contrast);
-        
+        populateEmptyStateTypes();
+
         setupEventListeners();
         
         // Initial state from URL
@@ -80,6 +81,9 @@ function refreshUI() {
 
     // 6. Refresh Pro Mode View
     refreshProView();
+
+    // 7. Re-render empty state types (language may have changed)
+    populateEmptyStateTypes();
 }
 
 function syncURLWithState(t1, t2, t3, pokemonObj) {
@@ -185,7 +189,13 @@ async function showPokemonDetails(pokemon) {
         abilitiesContainer.innerHTML = '';
         if (alertsContainer) alertsContainer.innerHTML = '';
         
+        const statsWasHidden = statsSection.classList.contains('hidden');
         statsSection.classList.remove('hidden');
+        if (statsWasHidden) {
+            statsSection.classList.remove('section-enter');
+            void statsSection.offsetWidth;
+            statsSection.classList.add('section-enter');
+        }
 
         // Render Hero Card immediately (data is available locally)
         ui.renderPokemonHero(document.getElementById('pokemon-hero'), pokemon, appData.contrast, appData.imageFixes);
@@ -495,27 +505,69 @@ function setupEventListeners() {
     }
 }
 
+function populateEmptyStateTypes() {
+    const container = document.getElementById('empty-state-types');
+    if (!container || !appData) return;
+
+    container.innerHTML = appData.types.map(type => {
+        const contrast = appData.contrast[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
+        return `<button class="type-pill bg-type-${type.toLowerCase()} ${contrast} hover:scale-110 active:scale-95 transition-transform cursor-pointer" data-type="${type}">${i18n.tType(type)}</button>`;
+    }).join('');
+
+    if (!container.dataset.initialized) {
+        container.dataset.initialized = 'true';
+        container.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-type]');
+            if (!btn) return;
+            const typeSelect = document.getElementById('type-select');
+            if (typeSelect) {
+                typeSelect.value = btn.dataset.type;
+                typeSelect.dispatchEvent(new Event('change'));
+            }
+        });
+    }
+}
+
 function displayAnalysis(t1, t2, t3 = null) {
     const section = document.getElementById('type-details');
+    const emptyState = document.getElementById('empty-state');
     const nameSpan = document.getElementById('selected-type-name');
     const abilityAlerts = document.getElementById('ability-alerts');
-    
+    const shareBtn = document.getElementById('share-btn');
+    const tacticalAdvice = document.getElementById('tactical-advice');
+
     // Always clear alerts when refreshing analysis (generic type analysis implies no specific abilities)
     if (abilityAlerts) {
         abilityAlerts.innerHTML = '';
         abilityAlerts.classList.add('hidden');
     }
-    
+
     if (!t1 && !t2 && !t3) {
+        if (!emptyState) {
+            // Tipo/pokemon pages have no empty state — go home
+            window.location.href = '/';
+            return;
+        }
         section.classList.add('hidden');
-        document.getElementById('tactical-advice').innerHTML = ''; // Clear advice
-        document.getElementById('tactical-advice').classList.add('hidden');
-        document.getElementById('share-btn').classList.add('hidden'); // Hide share button
+        emptyState.classList.remove('hidden');
+        if (tacticalAdvice) { tacticalAdvice.innerHTML = ''; tacticalAdvice.classList.add('hidden'); }
+        if (shareBtn) shareBtn.classList.add('hidden');
+        const typeSubtitle = document.getElementById('type-subtitle');
+        const staticSubtitle = document.getElementById('static-subtitle');
+        if (typeSubtitle) typeSubtitle.classList.add('hidden');
+        if (staticSubtitle) staticSubtitle.classList.remove('hidden');
         return;
     }
 
+    if (emptyState) emptyState.classList.add('hidden');
+    const sectionWasHidden = section.classList.contains('hidden');
     section.classList.remove('hidden');
-    
+    if (sectionWasHidden) {
+        section.classList.remove('section-enter');
+        void section.offsetWidth;
+        section.classList.add('section-enter');
+    }
+
     // Treat same type selection as monotype
     if (t1 === t2) t2 = '';
     if (t1 === t3) t3 = '';
@@ -526,17 +578,27 @@ function displayAnalysis(t1, t2, t3 = null) {
     if (!t1 && !t2 && t3) { t1 = t3; t3 = ''; }
     if (!t2 && t3) { t2 = t3; t3 = ''; }
 
-    // Show share button
-    const shareBtn = document.getElementById('share-btn');
-    shareBtn.classList.remove('hidden');
-    // Reset visual feedback if any
-    shareBtn.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-        </svg>
-    `;
-    shareBtn.classList.remove('text-green-600', 'bg-green-100');
-    shareBtn.classList.add('text-emerald-600', 'bg-emerald-50');
+    // Show share button (only present on index page)
+    if (shareBtn) {
+        shareBtn.classList.remove('hidden');
+        shareBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+        `;
+        shareBtn.classList.remove('text-green-600', 'bg-green-100');
+        shareBtn.classList.add('text-emerald-600', 'bg-emerald-50');
+    }
+
+    // Update dynamic subtitle in header
+    const typeSubtitle = document.getElementById('type-subtitle');
+    const staticSubtitle = document.getElementById('static-subtitle');
+    if (typeSubtitle) {
+        const typeLabel = [t1, t2, t3].filter(Boolean).map(t => i18n.tType(t)).join('/');
+        typeSubtitle.innerHTML = `${i18n.t('type_subtitle_prefix')} <span class="text-indigo-500 font-bold">${typeLabel}</span>`;
+        typeSubtitle.classList.remove('hidden');
+    }
+    if (staticSubtitle) staticSubtitle.classList.add('hidden');
 
     // Render Title Pills
     nameSpan.innerHTML = '';
@@ -573,10 +635,10 @@ function displayAnalysis(t1, t2, t3 = null) {
                                 ? currentPokemon : null;
 
         const advice = getTacticalAdvice(def.weaknesses4x, def.weaknesses2x, appData.types, appData.effectiveness, appData.pokemonList, relevantPokemon, def.weaknesses8x);
-        ui.renderTacticalAdvice(document.getElementById('tactical-advice'), advice);
+        if (tacticalAdvice) ui.renderTacticalAdvice(tacticalAdvice, advice);
     } catch (error) {
         console.error("AI Advisor error:", error);
-        document.getElementById('tactical-advice').classList.add('hidden');
+        if (tacticalAdvice) tacticalAdvice.classList.add('hidden');
     }
 
     ui.renderBadgedCard(document.getElementById('super-effective'), 'super_effective', off.superEffective2x, 'none', 'super', 'x2', 'bg-orange-500', appData.contrast);

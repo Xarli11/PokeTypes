@@ -392,6 +392,8 @@ function setupDeleteModal() {
     const confirmBtn = document.getElementById('confirm-delete');
     const panel = document.getElementById('delete-panel');
 
+    if (!modal || !cancelBtn || !confirmBtn) return;
+
     const closeModal = () => {
         backdrop.classList.add('opacity-0');
         panel.classList.remove('opacity-100', 'scale-100');
@@ -421,6 +423,8 @@ function setupSearchModal() {
     const panel = document.getElementById('search-panel');
     const input = document.getElementById('pro-search-input');
     const resultsContainer = document.getElementById('pro-search-results');
+
+    if (!modal || !closeBtn || !input || !resultsContainer) return;
 
     const closeModal = () => {
         backdrop.classList.add('opacity-0');
