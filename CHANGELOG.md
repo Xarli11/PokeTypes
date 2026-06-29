@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.33.0] - 2026-06-29
+
+### Added
+- **New brand identity:** Syne (display) + Outfit (body) font pairing replacing Inter; bento-card layout with rounded-[2rem] cards and consistent shadow system.
+- **Dot-grid background texture:** Subtle radial-gradient dot pattern on light and dark modes.
+- **Dynamic type subtitle:** Header now shows "Análisis de efectividad para el tipo X" dynamically when a type is selected, consistent across index, tipo and pokemon pages.
+- **Empty state:** New empty state card with Pokéball icon and type-pill grid on the index page when no type is selected.
+- **Pokémon hero gradient:** Hero card background reacts to the Pokémon's primary type color.
+
+### Fixed
+- **Tipo/pokemon pages after hard refresh:** `generateTypeTable` crashed on null when `#type-table-container` was absent, aborting `init()` before `applyStateFromURL()` ran — all analysis cards stayed empty.
+- **Reset on tipo page:** Resetting types now redirects to `/` instead of leaving a blank page (no empty state exists on SSR tipo pages).
+- **Header home link:** Poketypes title on index page now links to `/` on all pages consistently (pokeball SVG added to tipo page header too).
+- **Null references on tipo/pokemon pages:** `shareBtn`, `tacticalAdvice`, `renderDualImmunities`, `renderTacticalAdvice`, `setupSearchModal`, `setupDeleteModal` all null-guarded for pages missing those DOM elements.
+- **Section animation on pre-visible sections:** `section-enter` class only applied when the section was previously hidden, preventing immediate opacity-0 flash on tipo page.
+- **Pokemon page back link:** SVG and `<h1>` correctly separated so only the title is the link anchor.
+
 ## [2.32.0] - 2026-06-29
 
 ### Added
