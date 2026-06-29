@@ -38,9 +38,10 @@ import Layout from '../layouts/Layout.astro';
                     <span class="sr-only" data-i18n="title_seo">: Pokemon Type Calculator</span>
                 </h1>
             </div>
-            <p class="text-slate-400 text-lg font-medium max-w-xl mx-auto" data-i18n="subtitle">
+            <p id="static-subtitle" class="text-slate-400 text-lg font-medium max-w-xl mx-auto" data-i18n="subtitle">
                 Quickly analyze type coverage, weaknesses, and resistances for any Pokemon or type combination.
             </p>
+            <p id="type-subtitle" class="hidden text-slate-400 text-lg font-medium max-w-xl mx-auto mt-1"></p>
         </header>
 
         <!-- Mode Switcher -->

@@ -547,6 +547,10 @@ function displayAnalysis(t1, t2, t3 = null) {
         if (emptyState) emptyState.classList.remove('hidden');
         if (tacticalAdvice) { tacticalAdvice.innerHTML = ''; tacticalAdvice.classList.add('hidden'); }
         if (shareBtn) shareBtn.classList.add('hidden');
+        const typeSubtitle = document.getElementById('type-subtitle');
+        const staticSubtitle = document.getElementById('static-subtitle');
+        if (typeSubtitle) typeSubtitle.classList.add('hidden');
+        if (staticSubtitle) staticSubtitle.classList.remove('hidden');
         return;
     }
 
@@ -580,6 +584,18 @@ function displayAnalysis(t1, t2, t3 = null) {
         shareBtn.classList.remove('text-green-600', 'bg-green-100');
         shareBtn.classList.add('text-emerald-600', 'bg-emerald-50');
     }
+
+    // Update dynamic subtitle in header
+    const typeSubtitle = document.getElementById('type-subtitle');
+    const staticSubtitle = document.getElementById('static-subtitle');
+    if (typeSubtitle) {
+        const typePills = [t1, t2, t3].filter(Boolean)
+            .map(t => ui.createTypePill(t, appData.contrast))
+            .join('<span class="text-slate-300 font-bold px-1">+</span>');
+        typeSubtitle.innerHTML = `<span class="mr-2">${i18n.t('type_subtitle_prefix')}</span>${typePills}`;
+        typeSubtitle.classList.remove('hidden');
+    }
+    if (staticSubtitle) staticSubtitle.classList.add('hidden');
 
     // Render Title Pills
     nameSpan.innerHTML = '';
