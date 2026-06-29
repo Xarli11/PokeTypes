@@ -4,13 +4,17 @@
 @layer base {
   body {
     @apply bg-[#F9FAFB] text-slate-900 antialiased dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300;
-    background-image: radial-gradient(circle, rgba(148, 163, 184, 0.18) 1px, transparent 1px);
-    background-size: 28px 28px;
   }
 }
 
+/* Dot grid texture — outside @layer for correct specificity */
+body {
+  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.09) 1.5px, transparent 1.5px);
+  background-size: 28px 28px;
+}
+
 :is(.dark) body {
-  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px);
   background-size: 28px 28px;
 }
 
