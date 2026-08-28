@@ -1,11 +1,12 @@
 import { loadAppData, fetchPokemonDetails, fetchCompetitiveData } from './modules/data.js';
-import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js';
+import { calculateDefense, calculateOffense, findImmuneDualTypes } from '../lib/type-engine/index.js';
 import { getTacticalAdvice } from './modules/advisor.js';
 import * as ui from './modules/ui.js';
 import { normalizeSearch } from './modules/ui.js';
 import { initTheme } from './modules/theme.js';
 import { initProMode, refreshProView } from './modules/pro.js';
 import { i18n } from './modules/i18n.js';
+import { initTypeSelectors, refreshTypeSelectorLabels } from './modules/typeSelector.js';
 
 let appData = null;
 let currentPokemon = null;
@@ -28,6 +29,7 @@ async function init() {
         ui.populateSelects(['type-select', 'type2-select', 'type3-select'], appData.types);
         ui.generateTypeTable('type-table-container', appData.types, appData.effectiveness, appData.contrast);
         populateEmptyStateTypes();
+        initTypeSelectors(appData.types, appData.contrast);
 
         setupEventListeners();
         
@@ -68,6 +70,7 @@ function refreshUI() {
     t1Select.value = t1Val;
     t2Select.value = t2Val;
     if (t3Select) t3Select.value = t3Val;
+    refreshTypeSelectorLabels();
 
     // 4. Update Analysis Cards
     displayAnalysis(t1Val, t2Val, t3Val);
@@ -148,6 +151,7 @@ async function applyStateFromURL() {
             typeSelect.value = pokemon.types[0] || '';
             type2Select.value = pokemon.types[1] || '';
             if (type3Select) type3Select.value = pokemon.types[2] || '';
+            refreshTypeSelectorLabels();
             displayAnalysis(typeSelect.value, type2Select.value, type3Select ? type3Select.value : null);
             await showPokemonDetails(pokemon);
             return;
@@ -163,7 +167,8 @@ async function applyStateFromURL() {
         if (validT1) typeSelect.value = validT1;
         if (validT2) type2Select.value = validT2;
         if (validT3 && type3Select) type3Select.value = validT3;
-        
+        refreshTypeSelectorLabels();
+
         displayAnalysis(typeSelect.value, type2Select.value, type3Select ? type3Select.value : null);
     }
 }
@@ -239,7 +244,7 @@ async function showPokemonDetails(pokemon) {
 
             ui.renderStats(statsContainer, details.stats);
             ui.renderAbilities(abilitiesContainer, details.abilities);
-            ui.renderAbilityAlerts(alertsContainer, details.abilities);
+            ui.renderAbilityAlerts(alertsContainer, details.abilities, pokemon.types, appData.effectiveness);
         } else {
             // If details fetch fails, keep Hero visible but show error in stats area
             statsContainer.innerHTML = `<div class="text-center p-4 text-slate-400 text-sm italic">${i18n.t('stats_unavailable') || 'Stats unavailable'}</div>`;
@@ -305,12 +310,14 @@ function setupEventListeners() {
         searchInput.value = '';
         currentPokemon = null;
         statsSection.classList.add('hidden');
+        document.getElementById('pokemon-hero')?.classList.add('hidden');
         updateUI();
     });
     type2Select.addEventListener('change', () => {
         searchInput.value = '';
         currentPokemon = null;
         statsSection.classList.add('hidden');
+        document.getElementById('pokemon-hero')?.classList.add('hidden');
         updateUI();
     });
     if (type3Select) {
@@ -324,9 +331,11 @@ function setupEventListeners() {
         typeSelect.value = '';
         type2Select.value = '';
         if (type3Select) type3Select.value = '';
+        refreshTypeSelectorLabels();
         searchInput.value = '';
         currentPokemon = null;
         statsSection.classList.add('hidden');
+        document.getElementById('pokemon-hero')?.classList.add('hidden');
         displayAnalysis('', '', '');
         syncURLWithState('', '', '', null);
     });
@@ -358,23 +367,23 @@ function setupEventListeners() {
         const topMatches = matches.slice(0, 10);
         
         if (topMatches.length === 0) {
-            suggestionsList.innerHTML = '<li class="p-4 text-slate-400 italic text-center">' + i18n.t('none') + '</li>';
+            suggestionsList.innerHTML = `<li class="p-4 italic text-center" style="color: var(--text-muted)">${i18n.t('none')}</li>`;
         } else {
             suggestionsList.innerHTML = topMatches.map((p, index) => {
                 // Use centralized image URL logic
                 const imageUrl = ui.getPokemonImageUrl(p, appData.imageFixes);
 
-                const typePills = p.types.map(t => ui.createTypePill(t, appData.contrast)).join('');
-                
+                const typePills = p.types.map(t => ui.createTypePill(t, appData.contrast, 'type-pill-sm')).join('');
+
                 return `
                     <li data-name="${p.name}" data-index="${index}" class="suggestion-item flex items-center gap-4 !py-3">
-                        <img src="${imageUrl}" 
-                             alt="${p.displayName}" 
+                        <img src="${imageUrl}"
+                             alt="${p.displayName}"
                              loading="lazy"
                              class="w-10 h-10 object-contain flex-shrink-0"
                              onerror="handleSearchImageError(this, ${p.id}, '${p.name.replace(/'/g, "\\'")}')">
-                        <span class="flex-1 font-bold text-slate-700 dark:text-slate-200">${p.displayName}</span>
-                        <div class="flex gap-1 scale-90 origin-right">
+                        <span class="flex-1 min-w-0 truncate font-bold" style="color: var(--text)">${p.displayName}</span>
+                        <div class="flex gap-1 shrink-0">
                             ${typePills}
                         </div>
                     </li>`;
@@ -407,12 +416,8 @@ function setupEventListeners() {
 
     function updateActiveSuggestion(items) {
         items.forEach((item, index) => {
-            if (index === activeIndex) {
-                item.classList.add('bg-indigo-50', 'dark:bg-indigo-900/40', 'text-indigo-600', 'dark:text-indigo-300');
-                item.scrollIntoView({ block: 'nearest' });
-            } else {
-                item.classList.remove('bg-indigo-50', 'dark:bg-indigo-900/40', 'text-indigo-600', 'dark:text-indigo-300');
-            }
+            item.classList.toggle('suggestion-active', index === activeIndex);
+            if (index === activeIndex) item.scrollIntoView({ block: 'nearest' });
         });
     }
 
@@ -429,7 +434,8 @@ function setupEventListeners() {
         
         typeSelect.value = pokemon.types[0] || '';
         type2Select.value = pokemon.types[1] || '';
-        
+        refreshTypeSelectorLabels();
+
         suggestionsList.classList.add('hidden');
         updateUI(pokemon);
 
@@ -489,14 +495,13 @@ function setupEventListeners() {
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
                     `;
-                    shareBtn.classList.remove('text-indigo-600', 'bg-indigo-50', 'dark:text-indigo-400', 'dark:bg-indigo-900/30');
-                    shareBtn.classList.add('text-green-600', 'bg-green-100', 'dark:text-green-400', 'dark:bg-green-900/30');
-                    
+                    shareBtn.classList.add('icon-btn-success');
+
                     setTimeout(() => {
                         shareBtn.innerHTML = originalContent;
                         shareBtn.className = originalClass;
                     }, 2000);
-                    
+
                 } catch (err) {
                     console.error('Failed to copy URL:', err);
                 }
@@ -586,8 +591,7 @@ function displayAnalysis(t1, t2, t3 = null) {
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
             </svg>
         `;
-        shareBtn.classList.remove('text-green-600', 'bg-green-100');
-        shareBtn.classList.add('text-emerald-600', 'bg-emerald-50');
+        shareBtn.classList.remove('icon-btn-success');
     }
 
     // Update dynamic subtitle in header
@@ -617,36 +621,31 @@ function displayAnalysis(t1, t2, t3 = null) {
     const off = calculateOffense(t1, t2, appData.types, appData.effectiveness, t3);
     const dualImmunities = findImmuneDualTypes(t1, t2, appData.types, appData.effectiveness);
 
-    // Render Cards
-    // Using translation keys: 'weaknesses', 'neutral_damage', 'resistances', 'immunities', 'super_effective', etc.
-    ui.renderSplitEffectivenessCard(document.getElementById('weaknesses'), 'weaknesses', def.weaknesses4x, def.weaknesses2x, 'none', 'super', appData.contrast, def.weaknesses8x);
-    ui.renderEffectivenessCard(document.getElementById('neutral-damage'), 'neutral_damage', def.neutral, 'none', 'neutral', appData.contrast);
-    ui.renderSplitResistanceCard(document.getElementById('resistances'), 'resistances', def.resistances025x, def.resistances05x, 'none', 'resist', appData.contrast, def.resistances0125x);
-    ui.renderEffectivenessCard(document.getElementById('immunities'), 'immunities', def.immunities, 'none', 'immune', appData.contrast);
+    // Defense first — the whole point of PokeTypes.
+    ui.renderDefenseGroups(document.getElementById('defense-groups'), def, appData.contrast);
 
-    // AI Advisor
-    try {
-        // Use currentPokemon for context-aware suggestions (Tiering)
-        // If analysis is just types (no pokemon selected), currentPokemon might be null or mismatch, 
-        // but displayAnalysis logic ensures we use what we have or null.
-        const relevantPokemon = (currentPokemon && 
-                                (currentPokemon.types.includes(ui.capitalizeWords(t1)) || 
-                                 (t2 && currentPokemon.types.includes(ui.capitalizeWords(t2))))) 
-                                ? currentPokemon : null;
+    // AI Advisor — getTacticalAdvice is async (it may lazy-load the full
+    // pokedex); run it in its own IIFE so awaiting it doesn't delay the
+    // synchronous Offense render below.
+    (async () => {
+        try {
+            // Use currentPokemon for context-aware suggestions (Tiering)
+            // If analysis is just types (no pokemon selected), currentPokemon might be null or mismatch,
+            // but displayAnalysis logic ensures we use what we have or null.
+            const relevantPokemon = (currentPokemon &&
+                                    (currentPokemon.types.includes(ui.capitalizeWords(t1)) ||
+                                     (t2 && currentPokemon.types.includes(ui.capitalizeWords(t2)))))
+                                    ? currentPokemon : null;
 
-        const advice = getTacticalAdvice(def.weaknesses4x, def.weaknesses2x, appData.types, appData.effectiveness, appData.pokemonList, relevantPokemon, def.weaknesses8x);
-        if (tacticalAdvice) ui.renderTacticalAdvice(tacticalAdvice, advice);
-    } catch (error) {
-        console.error("AI Advisor error:", error);
-        if (tacticalAdvice) tacticalAdvice.classList.add('hidden');
-    }
+            const advice = await getTacticalAdvice(def.weaknesses4x, def.weaknesses2x, appData.types, appData.effectiveness, appData.pokemonList, relevantPokemon, def.weaknesses8x);
+            if (tacticalAdvice) ui.renderTacticalAdvice(tacticalAdvice, advice);
+        } catch (error) {
+            console.error("AI Advisor error:", error);
+            if (tacticalAdvice) tacticalAdvice.classList.add('hidden');
+        }
+    })();
 
-    ui.renderBadgedCard(document.getElementById('super-effective'), 'super_effective', off.superEffective2x, 'none', 'super', 'x2', 'bg-orange-500', appData.contrast);
-    ui.renderEffectivenessCard(document.getElementById('neutral-offense'), 'neutral_offense', off.neutral, 'none', 'neutral', appData.contrast);
-    ui.renderBadgedCard(document.getElementById('not-very-effective'), 'not_very_effective', off.notVeryEffective, 'none', 'resist', 'x0.5', 'bg-emerald-500', appData.contrast);
-    ui.renderEffectivenessCard(document.getElementById('no-effect'), 'no_effect', off.noEffect, 'none', 'immune', appData.contrast);
-    
-    ui.renderDualImmunities(document.getElementById('dual-immunities'), 'walled_by_dual', dualImmunities, appData.contrast);
+    ui.renderOffenseGroups(document.getElementById('offense-groups'), off, dualImmunities, appData.contrast);
 }
 
 document.addEventListener('DOMContentLoaded', init);

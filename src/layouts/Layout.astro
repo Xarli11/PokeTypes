@@ -57,7 +57,7 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
     <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
     <link rel="apple-touch-icon" href="/icon-192.png">
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#6366f1">
+    <meta name="theme-color" content="#F6F7F9">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="PokeTypes">
@@ -88,11 +88,10 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
 
     <!-- Theme (prevent FOUC) -->
     <script is:inline>
-      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
+      var isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.classList.toggle('dark', isDark);
+      var themeColorMeta = document.querySelector('meta[name="theme-color"]');
+      if (themeColorMeta) themeColorMeta.setAttribute('content', isDark ? '#0B0E14' : '#F6F7F9');
     </script>
 
     <!-- Base WebApplication Schema -->
@@ -149,7 +148,7 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
     <!-- Page-specific head content (JSON-LD, etc.) -->
     <slot name="head" />
 </head>
-<body class="min-h-screen py-12 px-4 md:px-8 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+<body class="min-h-screen py-4 sm:py-6 md:py-8 px-4 md:px-8 transition-colors duration-200">
     <slot />
 </body>
 </html>

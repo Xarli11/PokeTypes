@@ -1,4 +1,4 @@
-import { getEffectiveness, getAbilityModifiers } from './calculator.js';
+import { getEffectiveness, getAbilityModifiers, getImmuneTypesFromModifiers } from '../../lib/type-engine/index.js';
 import { capitalizeWords } from './ui.js';
 import { loadPokedex } from './data.js';
 
@@ -20,11 +20,7 @@ export async function getTacticalAdvice(weaknesses4x, weaknesses2x, allTypes, ef
 
         abilities.forEach(abilityName => {
             const modifiers = getAbilityModifiers(abilityName);
-            modifiers.forEach(mod => {
-                if (mod.modifier === 0) {
-                    immuneTypes.add(mod.type);
-                }
-            });
+            getImmuneTypesFromModifiers(modifiers, allTypes).forEach(t => immuneTypes.add(t));
         });
 
         relevantWeaknesses8x = relevantWeaknesses8x.filter(t => !immuneTypes.has(t));

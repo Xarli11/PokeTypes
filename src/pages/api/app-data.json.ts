@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro';
-import pokedex from '../../data/pokedex.json';
 import searchIndex from '../../data/search-index.json';
 import typeData from '../../data/type-data.json';
 import abilities from '../../data/abilities-i18n.json';

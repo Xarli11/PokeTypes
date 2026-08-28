@@ -41,10 +41,31 @@ export const messages = {
         neutral_offense: "Neutral Offense",
         walled_by_dual: "Totally Walled By (Dual Types)",
         
+        // Defense severity groups (Sprint 2 redesign)
+        defense_critical: "Critical",
+        defense_weak: "Weak",
+        defense_immune: "Immune",
+        defense_resists: "Resists",
+        defense_strong_resists: "Strong Resists",
+        defense_neutral: "Neutral",
+
+        // Raw vs effective (getPokemonDefenseBreakdown)
+        raw_matchup: "Raw",
+        effective_result: "Effective",
+        condition_not_confirmed: "Condition not confirmed — shown for reference only, not applied.",
+        requires_full_hp: "Requires full HP",
+        requires_contact: "Requires the move to make contact",
+
+        // Type selector popover
+        choose_type: "Choose a type",
+        clear_selection: "Clear",
+
         // Stats & Abilities
         base_stats: "Base Stats",
         abilities: "Abilities",
         ability_considerations: "Ability Considerations",
+        show_full_chart: "Show full type chart",
+        hide_full_chart: "Hide full type chart",
         
         // Competitive
         comp_analysis: "Strategic Analysis",
@@ -106,7 +127,15 @@ export const messages = {
         btn_remove: "Remove",
         pro_nature: "Nature",
         pro_item: "Item",
-        
+        team_defense_title: "Team Defense",
+        pressure_title: "{type} Pressure",
+        pressure_detail: "{weak} weak · {resist} resist · {immune} immune",
+        configure_btn: "Configure",
+        member_config_title: "Configure Pokemon",
+        close_btn: "Close",
+        no_ability: "No ability",
+        no_item: "No item",
+
         // Natures
         nature_hardy: "Hardy",
         nature_lonely: "Lonely",
@@ -155,7 +184,10 @@ export const messages = {
         sim_effectiveness: "Effectiveness",
         sim_standard_effectiveness: "Standard type effectiveness.",
         sim_damage_estimate: "~{min}–{max}% HP (ref. 100 BP move, base 100 Atk, 252 EVs)",
-        
+        sim_raw_matchup: "Raw matchup",
+        sim_ability_modifier: "Ability/item modifier",
+        sim_effective_result: "Effective result",
+
         // Types
         normal: "Normal",
         fire: "Fire",
@@ -249,10 +281,31 @@ export const messages = {
         neutral_offense: "Ataque Neutro",
         walled_by_dual: "Totalmente Bloqueado Por (Tipos Duales)",
         
+        // Defense severity groups (rediseño Sprint 2)
+        defense_critical: "Crítico",
+        defense_weak: "Débil",
+        defense_immune: "Inmune",
+        defense_resists: "Resiste",
+        defense_strong_resists: "Resiste Mucho",
+        defense_neutral: "Neutral",
+
+        // Raw vs effective (getPokemonDefenseBreakdown)
+        raw_matchup: "Sin modificar",
+        effective_result: "Efectivo",
+        condition_not_confirmed: "Condición no confirmada — solo informativo, no aplicado.",
+        requires_full_hp: "Requiere PS al máximo",
+        requires_contact: "Requiere que el movimiento haga contacto",
+
+        // Selector de tipos
+        choose_type: "Elegir un tipo",
+        clear_selection: "Quitar",
+
         // Stats & Abilities
         base_stats: "Estadísticas Base",
         abilities: "Habilidades",
         ability_considerations: "Consideraciones de Habilidad",
+        show_full_chart: "Mostrar tabla de tipos completa",
+        hide_full_chart: "Ocultar tabla de tipos completa",
         
         // Competitive
         comp_analysis: "Análisis Estratégico",
@@ -314,6 +367,14 @@ export const messages = {
         btn_remove: "Eliminar",
         pro_nature: "Naturaleza",
         pro_item: "Objeto",
+        team_defense_title: "Defensa del Equipo",
+        pressure_title: "Presión de {type}",
+        pressure_detail: "{weak} débil · {resist} resiste · {immune} inmune",
+        configure_btn: "Configurar",
+        member_config_title: "Configurar Pokémon",
+        close_btn: "Cerrar",
+        no_ability: "Sin habilidad",
+        no_item: "Sin objeto",
 
         // Naturalezas
         nature_hardy: "Fuerte",
@@ -363,6 +424,9 @@ export const messages = {
         sim_effectiveness: "Efectividad",
         sim_standard_effectiveness: "Efectividad de tipos estándar.",
         sim_damage_estimate: "~{min}–{max}% PS (ref. move 100 PP, base 100 Atk, 252 EVs)",
+        sim_raw_matchup: "Sin modificar",
+        sim_ability_modifier: "Modificador de habilidad/objeto",
+        sim_effective_result: "Resultado efectivo",
         
         // Types
         normal: "Normal",

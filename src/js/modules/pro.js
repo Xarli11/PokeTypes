@@ -4,13 +4,34 @@ import { analyzeTeamDefense, getThreatAlerts, analyzeTeamRoles } from './analysi
 import { createTypePill, getPokemonImageUrl, capitalizeWords, normalizeSearch } from './ui.js';
 import { i18n } from './i18n.js';
 import { initSimulator } from './simulator.js';
+import { encodeTeamPayload, decodeTeamPayload } from '../../lib/share-team.js';
+import { getPokemonDefenseBreakdown, formatMultiplierSymbol } from '../../lib/type-engine/index.js';
+import { getFocusable, trapTabKey, lockBodyScroll, unlockBodyScroll } from './a11y.js';
 
 // State
 let activeSlotIndex = -1;
 let deleteSlotIndex = -1;
 let allPokemon = [];
 let contrastData = {};
-let appData = null; 
+let appData = null;
+
+/**
+ * Restores focus to a team slot by INDEX rather than a saved element
+ * reference — every modal that mutates the team (search: add, delete:
+ * remove, config: change ability/nature/item) triggers renderTeamGrid(),
+ * which rebuilds #team-grid's innerHTML from scratch. A saved DOM node
+ * reference to the button that opened the modal would be detached by
+ * that rebuild, so focus.() on it silently does nothing — found this via
+ * an automated focus-restore check that came back with no aria-label
+ * (focus had fallen back to <body>). Re-querying by index always finds
+ * whatever control is now actually in the DOM at that slot.
+ */
+function focusTeamSlot(index) {
+    const slotEl = document.querySelectorAll('#team-grid > *')[index];
+    if (!slotEl) return;
+    const target = slotEl.querySelector('[data-slot-action="configure"]') || (slotEl.matches('button') ? slotEl : null);
+    (target || slotEl).focus?.();
+}
 
 const NATURES = [
     'hardy', 'lonely', 'brave', 'adamant', 'naughty',
@@ -36,6 +57,7 @@ export async function initProMode() {
 
     setupSearchModal();
     setupDeleteModal();
+    setupMemberConfigModal();
 }
 
 export function refreshProView() {
@@ -52,24 +74,18 @@ function setupModeToggling() {
         if (mode === 'simple') {
             simpleView.classList.remove('hidden');
             proView.classList.add('hidden');
-            
-            toggleSimple.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
-            toggleSimple.classList.remove('text-slate-500', 'hover:text-slate-700');
-            
-            togglePro.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
-            togglePro.classList.add('text-slate-500', 'hover:text-slate-700');
-            
+
+            toggleSimple.classList.add('mode-btn-active');
+            togglePro.classList.remove('mode-btn-active');
+
             localStorage.setItem('poketypes_mode', 'simple');
         } else {
             simpleView.classList.add('hidden');
             proView.classList.remove('hidden');
-            
-            togglePro.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
-            togglePro.classList.remove('text-slate-500', 'hover:text-slate-700');
-            
-            toggleSimple.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
-            toggleSimple.classList.add('text-slate-500', 'hover:text-slate-700');
-            
+
+            togglePro.classList.add('mode-btn-active');
+            toggleSimple.classList.remove('mode-btn-active');
+
             localStorage.setItem('poketypes_mode', 'pro');
             renderTeamGrid();
         }
@@ -93,114 +109,51 @@ function renderTeamGrid() {
 
     // Update Counter
     const count = team.filter(p => p !== null).length;
-    const counterEl = document.querySelector('#view-pro span.text-slate-500');
+    const counterEl = document.getElementById('team-count');
     if (counterEl) {
-        const pokemonLabel = i18n.t('stat_hp') === 'PS' ? 'Pokémon' : 'Pokemon'; 
+        const pokemonLabel = i18n.t('stat_hp') === 'PS' ? 'Pokémon' : 'Pokemon';
         counterEl.textContent = `${count}/6 ${pokemonLabel}`;
     }
 
     container.innerHTML = team.map((member, index) => {
         if (!member) {
             return `
-            <div onclick="window.openSearchModal(${index})" class="team-slot-empty cursor-pointer bento-card dark:bg-slate-800 dark:border-slate-700 border-dashed border-2 border-slate-300 dark:border-slate-600 hover:border-emerald-500 dark:hover:border-emerald-400 flex flex-col items-center justify-center h-72 transition-all group relative">
-                <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/30 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400 group-hover:text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                </div>
-                <span class="mt-2 text-[10px] uppercase font-black tracking-wider text-slate-400 group-hover:text-emerald-500">${i18n.t('pro_add_pokemon')}</span>
-            </div>`;
-        } else {
-            const imageUrl = getPokemonImageUrl(member, appData?.imageFixes || {});
-            const typePills = member.types.map(t => createTypePill(t, contrastData)).join('');
-            
-            // Ability Dropdown
-            let abilitySelectHTML = '';
-            if (member.abilities) {
-                const options = Object.values(member.abilities).map(abilityName => {
-                    const selected = member.ability === abilityName ? 'selected' : '';
-                    const abilitySlug = abilityName.toLowerCase().replace(/ /g, '-');
-                    const localizedAbility = i18n.tAbility(abilitySlug);
-                    return `<option value="${abilityName}" ${selected}>${localizedAbility}</option>`;
-                }).join('');
-                
-                abilitySelectHTML = `
-                    <div class="w-full">
-                        <label class="text-[8px] uppercase font-black text-slate-400 dark:text-slate-500 block mb-0.5 px-1">${i18n.t('abilities')}</label>
-                        <select onchange="window.updateTeamAbility(${index}, this.value)" class="w-full text-[10px] font-bold py-1 px-2 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/50 focus:ring-2 focus:ring-emerald-500/30 text-slate-600 dark:text-slate-300 truncate cursor-pointer hover:bg-white dark:hover:bg-slate-700 transition-all appearance-none outline-none">
-                            ${options}
-                        </select>
-                    </div>
-                `;
-            }
-
-            // Nature Dropdown
-            const natureOptions = NATURES.map(n => {
-                const selected = member.nature === n ? 'selected' : '';
-                return `<option value="${n}" ${selected}>${i18n.t('nature_' + n)}</option>`;
-            }).join('');
-
-            const natureSelectHTML = `
-                <div class="w-full">
-                    <label class="text-[8px] uppercase font-black text-slate-400 dark:text-slate-500 block mb-0.5 px-1">${i18n.t('pro_nature')}</label>
-                    <select onchange="window.updateTeamNature(${index}, this.value)" class="w-full text-[10px] font-bold py-1 px-2 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/50 focus:ring-2 focus:ring-emerald-500/30 text-slate-600 dark:text-slate-300 truncate cursor-pointer hover:bg-white dark:hover:bg-slate-700 transition-all appearance-none outline-none">
-                        <option value="" ${!member.nature ? 'selected' : ''}>---</option>
-                        ${natureOptions}
-                    </select>
-                </div>
-            `;
-
-            // Item Dropdown
-            const currentLang = i18n.currentLang;
-            const itemMap = appData?.items || {};
-            const itemEntries = Object.entries(itemMap).map(([slug, names]) => ({
-                slug,
-                name: names[currentLang] || names.en
-            }));
-            itemEntries.sort((a, b) => a.name.localeCompare(b.name));
-
-            const itemOptions = itemEntries.map(item => {
-                const selected = member.item === item.slug ? 'selected' : '';
-                return `<option value="${item.slug}" ${selected}>${item.name}</option>`;
-            }).join('');
-
-            const itemSelectHTML = `
-                <div class="w-full">
-                    <label class="text-[8px] uppercase font-black text-slate-400 dark:text-slate-500 block mb-0.5 px-1">${i18n.t('pro_item')}</label>
-                    <select onchange="window.updateTeamItem(${index}, this.value)" class="w-full text-[10px] font-bold py-1 px-2 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/50 focus:ring-2 focus:ring-emerald-500/30 text-slate-600 dark:text-slate-300 truncate cursor-pointer hover:bg-white dark:hover:bg-slate-700 transition-all appearance-none outline-none">
-                        <option value="" ${!member.item ? 'selected' : ''}>---</option>
-                        ${itemOptions}
-                    </select>
-                </div>
-            `;
-
-            return `
-            <div class="team-slot-filled relative bento-card dark:bg-slate-800 dark:border-slate-700 p-3 flex flex-col items-center h-72 transition-all group">
-                <button onclick="window.openDeleteModal(event, ${index})" class="absolute -top-1.5 -right-1.5 p-1 rounded-full bg-white dark:bg-slate-700 shadow-md text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-all z-10" title="${i18n.t('btn_remove')}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-                
-                <div class="flex items-center gap-2 w-full mb-2">
-                    <div class="w-10 h-10 flex-shrink-0 bg-slate-50 dark:bg-slate-900/30 rounded-lg p-1">
-                        <img src="${imageUrl}" class="w-full h-full object-contain" loading="lazy" alt="${member.name}">
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="font-black text-slate-800 dark:text-white text-[11px] truncate leading-tight">${member.name}</div>
-                        <div class="flex gap-0.5 mt-0.5 scale-[0.65] origin-left">
-                            ${typePills}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="w-full flex-1 flex flex-col justify-between border-t border-slate-100 dark:border-slate-700/50 pt-2 gap-1.5">
-                    ${abilitySelectHTML}
-                    ${natureSelectHTML}
-                    ${itemSelectHTML}
-                </div>
-            </div>`;
+            <button type="button" data-slot-action="add" onclick="window.openSearchModal(${index})" class="team-slot-empty cursor-pointer panel border-dashed flex flex-col items-center justify-center h-28 transition-all group w-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--text-muted)">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                <span class="mt-2 text-[10px] uppercase font-bold tracking-wider" style="color: var(--text-muted)">${i18n.t('pro_add_pokemon')}</span>
+            </button>`;
         }
+
+        const imageUrl = getPokemonImageUrl(member, appData?.imageFixes || {});
+        const typePills = member.types.map(t => createTypePill(t, contrastData, 'type-pill-sm')).join('');
+        const abilityLabel = member.ability ? i18n.tAbility(member.ability.toLowerCase().replace(/ /g, '-')) : i18n.t('no_ability');
+        const itemLabel = member.item ? (appData?.items?.[member.item]?.[i18n.currentLang] || appData?.items?.[member.item]?.en) : i18n.t('no_item');
+
+        return `
+        <div class="team-slot-filled relative panel !p-2.5 flex items-center gap-2.5 h-24 transition-all group">
+            <button type="button" data-slot-action="remove" onclick="window.openDeleteModal(event, ${index})" class="tap-target-44 absolute -top-1.5 -right-1.5 w-5 h-5 flex items-center justify-center rounded-full text-white bg-red-600 hover:bg-red-700 transition-all z-10" title="${i18n.t('btn_remove')}" aria-label="${i18n.t('btn_remove')} ${capitalizeWords(member.name)}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <img src="${imageUrl}" class="w-11 h-11 object-contain shrink-0" loading="lazy" alt="${member.name}">
+
+            <div class="flex-1 min-w-0">
+                <div class="font-bold text-xs truncate" style="color: var(--text)">${capitalizeWords(member.name)}</div>
+                <div class="flex flex-wrap gap-1 mt-1">${typePills}</div>
+                <div class="text-[10px] mt-1 truncate" style="color: var(--text-muted)" title="${abilityLabel} · ${itemLabel}">${abilityLabel} · ${itemLabel}</div>
+            </div>
+
+            <button type="button" data-slot-action="configure" onclick="window.openMemberConfig(${index})" class="icon-btn shrink-0" title="${i18n.t('configure_btn')}" aria-label="${i18n.t('configure_btn')} ${capitalizeWords(member.name)}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </button>
+        </div>`;
     }).join('');
 
     renderTeamAnalysis(team);
@@ -212,13 +165,8 @@ function renderTeamAnalysis(team) {
 
     if (team.every(p => p === null)) {
         analysisSection.innerHTML = `
-            <div class="flex flex-col items-center justify-center py-8 opacity-60">
-                <div class="p-3 rounded-full bg-slate-100 dark:bg-slate-700 mb-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                </div>
-                <p class="text-slate-400 text-sm text-center max-w-sm">${i18n.t('pro_analysis_placeholder')}</p>
+            <div class="flex flex-col items-center justify-center py-8">
+                <p class="text-sm text-center max-w-sm" style="color: var(--text-muted)">${i18n.t('pro_analysis_placeholder')}</p>
             </div>`;
         return;
     }
@@ -229,92 +177,72 @@ function renderTeamAnalysis(team) {
     const alerts = getThreatAlerts(analysis);
     const roles = analyzeTeamRoles(team, appData.pokemonList);
 
-    let html = `
-        <div class="p-6">
-            <h2 class="text-xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-                ${i18n.t('pro_defense_coverage')}
-            </h2>
-    `;
+    let html = `<div class="p-3 sm:p-4 text-left">`;
 
-    // Alerts
+    // Threat pressure — deterministic, derived straight from analysis.matrix
+    // for the types getThreatAlerts flagged. No inferred strategy/AI copy.
     if (alerts.length > 0) {
-        html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">`;
+        html += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-5">`;
         alerts.forEach(alert => {
-            const localizedType = i18n.tType(alert.messageType);
-            const typePill = createTypePill(alert.messageType, contrastData);
-            const colorClass = alert.type === 'danger' ? 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800' : 'bg-orange-50 text-orange-700 border-orange-100 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800';
-            const icon = alert.type === 'danger' 
-                ? '<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>'
-                : '<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
-            
-            let message = "";
-            if (alert.code === 'major_weakness') {
-                message = i18n.t('alert_weakness').replace('{count}', alert.count).replace('{type}', localizedType);
-            } else {
-                message = i18n.t('alert_no_resist').replace('{type}', localizedType);
-            }
+            const data = analysis.matrix[alert.messageType];
+            const pill = createTypePill(alert.messageType, contrastData, 'type-pill-sm');
+            const isDanger = alert.type === 'danger';
+            const accentVar = isDanger ? '--danger' : '--warning';
 
             html += `
-                <div class="flex items-center gap-3 p-3 rounded-xl border ${colorClass}">
-                    ${icon}
-                    <span class="flex-1 font-medium text-sm">${message}</span>
-                    <div class="scale-75 origin-right">${typePill}</div>
+                <div class="flex items-center gap-3 px-3 py-2.5 rounded-md" style="background: color-mix(in srgb, var(${accentVar}) 8%, transparent); border: 1px solid color-mix(in srgb, var(${accentVar}) 40%, transparent)">
+                    <div class="shrink-0">${pill}</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-xs font-bold uppercase tracking-wide" style="color: var(${accentVar})">${i18n.t('pressure_title', { type: i18n.tType(alert.messageType) })}</div>
+                        <div class="text-xs" style="color: var(--text-muted)">${i18n.t('pressure_detail', { weak: data.weak, resist: data.resist, immune: data.immune })}</div>
+                    </div>
                 </div>
             `;
         });
         html += `</div>`;
     }
 
-    // Matrix Grid
-    html += `<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">`;
-    appData.types.forEach(type => {
+    // Team Defense — Type / Weak / Resist / Immune, all 18 types, canonical order.
+    html += `
+        <div class="label-group">${i18n.t('team_defense_title')}</div>
+        <div class="rounded-md overflow-hidden mb-5" style="border: 1px solid var(--border)">
+            <div class="grid gap-2 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest" style="grid-template-columns: 1fr repeat(3, 3rem); color: var(--text-muted); border-bottom: 1px solid var(--border)">
+                <span></span>
+                <span class="text-center">${i18n.t('pro_weak')}</span>
+                <span class="text-center">${i18n.t('pro_resist')}</span>
+                <span class="text-center">${i18n.t('pro_immune')}</span>
+            </div>
+    `;
+    appData.types.forEach((type, i) => {
         const data = analysis.matrix[type];
-        const pill = createTypePill(type, contrastData); 
-        
-        let cardClass = "bg-slate-50 dark:bg-slate-900/50";
-        if (data.weak >= 3) cardClass = "bg-red-50 dark:bg-red-900/20 ring-1 ring-red-200 dark:ring-red-800";
-        else if (data.weak > 0 && data.resist === 0 && data.immune === 0) cardClass = "bg-orange-50 dark:bg-orange-900/20";
-        
+        const pill = createTypePill(type, contrastData, 'type-pill-sm');
+        const isLast = i === appData.types.length - 1;
+        const highlighted = data.weak >= 3;
+
         html += `
-            <div class="flex flex-col gap-2 p-3 rounded-xl ${cardClass}">
-                <div class="flex justify-between items-center mb-1">
-                    <div class="scale-75 origin-left">${pill}</div>
-                </div>
-                
-                <div class="flex justify-between text-xs font-bold">
-                    <div class="flex flex-col items-center flex-1" title="${i18n.t('explanation_weak')}">
-                        <span class="text-red-500 mb-0.5">${i18n.t('pro_weak')}</span>
-                        <span class="${data.weak > 0 ? 'text-red-600 dark:text-red-400 text-lg' : 'text-slate-300'}">${data.weak || '-'}</span>
-                    </div>
-                    <div class="flex flex-col items-center flex-1 border-l border-r border-slate-200 dark:border-slate-700" title="${i18n.t('explanation_resist')}">
-                        <span class="text-emerald-500 mb-0.5">${i18n.t('pro_resist')}</span>
-                        <span class="${data.resist > 0 ? 'text-emerald-600 dark:text-emerald-400 text-lg' : 'text-slate-300'}">${data.resist || '-'}</span>
-                    </div>
-                    <div class="flex flex-col items-center flex-1" title="${i18n.t('explanation_immune')}">
-                        <span class="text-slate-400 mb-0.5">${i18n.t('pro_immune')}</span>
-                        <span class="${data.immune > 0 ? 'text-slate-600 dark:text-slate-300 text-lg' : 'text-slate-300'}">${data.immune || '-'}</span>
-                    </div>
-                </div>
+            <div class="grid gap-2 items-center px-3 py-1.5 text-sm" style="grid-template-columns: 1fr repeat(3, 3rem); ${isLast ? '' : 'border-bottom: 1px solid var(--border);'} ${highlighted ? 'background: color-mix(in srgb, var(--danger) 6%, transparent)' : ''}">
+                <div class="min-w-0">${pill}</div>
+                <span class="text-center font-mono font-bold" style="color: ${data.weak > 0 ? 'var(--danger)' : 'var(--text-muted)'}">${data.weak || '–'}</span>
+                <span class="text-center font-mono font-bold" style="color: ${data.resist > 0 ? 'var(--success)' : 'var(--text-muted)'}">${data.resist || '–'}</span>
+                <span class="text-center font-mono font-bold" style="color: var(--text-muted)">${data.immune || '–'}</span>
             </div>
         `;
     });
     html += `</div>`;
 
-    // Role Breakdown Section
+    // Team roles — secondary, compact, never competing visually with Team Defense.
     html += `
-        <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-4 border-t border-slate-100 dark:border-slate-700 pt-6">
-            ${i18n.t('pro_roles_title')}
-        </h3>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            ${renderRoleCard('role_speedster', roles.role_speedster, 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300')}
-            ${renderRoleCard('role_phys_sweeper', roles.role_phys_sweeper, 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300')}
-            ${renderRoleCard('role_spec_sweeper', roles.role_spec_sweeper, 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300')}
-            ${renderRoleCard('role_phys_wall', roles.role_phys_wall, 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300')}
-            ${renderRoleCard('role_spec_wall', roles.role_spec_wall, 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300')}
+        <div class="text-[11px] font-bold uppercase tracking-widest mb-2" style="color: var(--text-muted)">${i18n.t('pro_roles_title')}</div>
+        <div class="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-5">
+            ${renderRoleCard('role_speedster', roles.role_speedster)}
+            ${renderRoleCard('role_phys_sweeper', roles.role_phys_sweeper)}
+            ${renderRoleCard('role_spec_sweeper', roles.role_spec_sweeper)}
+            ${renderRoleCard('role_phys_wall', roles.role_phys_wall)}
+            ${renderRoleCard('role_spec_wall', roles.role_spec_wall)}
         </div>
 
-        <div class="border-t border-slate-100 dark:border-slate-700 mt-6 pt-6 flex justify-end">
-            <button id="share-team-btn" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 font-bold text-sm hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors">
+        <div class="flex justify-end pt-3" style="border-top: 1px solid var(--border)">
+            <button id="share-team-btn" class="flex items-center gap-2 px-3 py-2 rounded-md font-bold text-sm transition-colors" style="background: var(--surface-raised); border: 1px solid var(--border); color: var(--text)">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                 </svg>
@@ -328,12 +256,12 @@ function renderTeamAnalysis(team) {
     document.getElementById('share-team-btn')?.addEventListener('click', shareTeamURL);
 }
 
-function renderRoleCard(key, count, colorClass) {
-    const opacity = count > 0 ? 'opacity-100' : 'opacity-40 grayscale';
+function renderRoleCard(key, count) {
+    const dim = count === 0;
     return `
-        <div class="flex flex-col items-center justify-center p-3 rounded-xl ${colorClass} ${opacity} transition-all">
-            <span class="text-2xl font-black mb-1">${count}</span>
-            <span class="text-xs font-bold text-center uppercase tracking-wide leading-tight">${i18n.t(key)}</span>
+        <div class="flex flex-col items-center justify-center py-2 rounded-md" style="background: var(--surface-raised); border: 1px solid var(--border); ${dim ? 'opacity: 0.5' : ''}">
+            <span class="text-base font-bold font-mono" style="color: var(--text)">${count}</span>
+            <span class="text-[9px] font-bold text-center uppercase tracking-wide leading-tight px-1" style="color: var(--text-muted)">${i18n.t(key)}</span>
         </div>
     `;
 }
@@ -341,7 +269,8 @@ function renderRoleCard(key, count, colorClass) {
 // Global functions for onclick handlers
 window.updateTeamAbility = (index, ability) => {
     setAbility(index, ability);
-    renderTeamAnalysis(loadTeam());
+    renderTeamGrid();
+    renderMemberConfigPreview(index);
 };
 
 window.updateTeamNature = (index, nature) => {
@@ -351,8 +280,162 @@ window.updateTeamNature = (index, nature) => {
 
 window.updateTeamItem = (index, item) => {
     setItem(index, item);
-    renderTeamAnalysis(loadTeam());
+    renderTeamGrid();
+    renderMemberConfigPreview(index);
 };
+
+// --- Member configuration modal (ability / nature / item) ---
+// Moved out of the team slot card itself — a slot only shows a compact
+// summary; editing happens here so slots stay small (see renderTeamGrid).
+
+let configSlotIndex = -1;
+
+function renderMemberConfigPreview(index) {
+    const preview = document.getElementById('member-config-preview');
+    if (!preview || !appData) return;
+
+    const member = loadTeam()[index];
+    if (!member) return;
+
+    const { raw, effective } = getPokemonDefenseBreakdown(member, appData.types, appData.effectiveness);
+    const diffs = appData.types.filter(type => raw[type] !== effective[type]);
+
+    if (diffs.length === 0) {
+        preview.innerHTML = '';
+        preview.classList.add('hidden');
+        return;
+    }
+
+    preview.classList.remove('hidden');
+    preview.innerHTML = `
+        <div class="text-[11px] font-bold uppercase tracking-widest mb-1.5" style="color: var(--text-muted)">${i18n.t('raw_matchup')} → ${i18n.t('effective_result')}</div>
+        <div class="flex flex-col gap-1">
+            ${diffs.map(type => `
+                <div class="flex items-center gap-2 text-xs font-mono">
+                    <span class="font-sans font-bold uppercase w-16 shrink-0" style="color: var(--text-muted)">${i18n.tType(type)}</span>
+                    <span style="color: var(--text-muted)">${formatMultiplierSymbol(raw[type])}</span>
+                    <span aria-hidden="true">→</span>
+                    <span class="font-bold" style="color: var(--accent)">${formatMultiplierSymbol(effective[type])}</span>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+window.openMemberConfig = (index) => {
+    configSlotIndex = index;
+    const member = loadTeam()[index];
+    if (!member || !appData) return;
+
+    const body = document.getElementById('member-config-body');
+    const imageUrl = getPokemonImageUrl(member, appData.imageFixes || {});
+    const typePills = member.types.map(t => createTypePill(t, contrastData)).join('');
+
+    const abilityOptions = member.abilities
+        ? Object.values(member.abilities).map(abilityName => {
+            const selected = member.ability === abilityName ? 'selected' : '';
+            const localizedAbility = i18n.tAbility(abilityName.toLowerCase().replace(/ /g, '-'));
+            return `<option value="${abilityName}" ${selected}>${localizedAbility}</option>`;
+        }).join('')
+        : '';
+
+    const natureOptions = NATURES.map(n => {
+        const selected = member.nature === n ? 'selected' : '';
+        return `<option value="${n}" ${selected}>${i18n.t('nature_' + n)}</option>`;
+    }).join('');
+
+    const currentLang = i18n.currentLang;
+    const itemMap = appData.items || {};
+    const itemEntries = Object.entries(itemMap)
+        .map(([slug, names]) => ({ slug, name: names[currentLang] || names.en }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+    const itemOptions = itemEntries.map(item => {
+        const selected = member.item === item.slug ? 'selected' : '';
+        return `<option value="${item.slug}" ${selected}>${item.name}</option>`;
+    }).join('');
+
+    body.innerHTML = `
+        <div class="flex items-center gap-3 pb-3" style="border-bottom: 1px solid var(--border)">
+            <img src="${imageUrl}" class="w-12 h-12 object-contain shrink-0" alt="${member.name}">
+            <div class="min-w-0">
+                <div class="font-bold text-sm truncate" style="color: var(--text)">${capitalizeWords(member.name)}</div>
+                <div class="flex gap-1 mt-1">${typePills}</div>
+            </div>
+        </div>
+
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wide block mb-1" style="color: var(--text-muted)" for="config-ability-select">${i18n.t('abilities')}</label>
+            <select id="config-ability-select" class="search-input !py-2 !text-sm">${abilityOptions}</select>
+        </div>
+
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wide block mb-1" style="color: var(--text-muted)" for="config-nature-select">${i18n.t('pro_nature')}</label>
+            <select id="config-nature-select" class="search-input !py-2 !text-sm">
+                <option value="" ${!member.nature ? 'selected' : ''}>---</option>
+                ${natureOptions}
+            </select>
+        </div>
+
+        <div>
+            <label class="text-xs font-bold uppercase tracking-wide block mb-1" style="color: var(--text-muted)" for="config-item-select">${i18n.t('pro_item')}</label>
+            <select id="config-item-select" class="search-input !py-2 !text-sm">
+                <option value="" ${!member.item ? 'selected' : ''}>---</option>
+                ${itemOptions}
+            </select>
+        </div>
+
+        <div id="member-config-preview" class="hidden"></div>
+    `;
+
+    document.getElementById('config-ability-select')?.addEventListener('change', (e) => window.updateTeamAbility(configSlotIndex, e.target.value));
+    document.getElementById('config-nature-select')?.addEventListener('change', (e) => window.updateTeamNature(configSlotIndex, e.target.value));
+    document.getElementById('config-item-select')?.addEventListener('change', (e) => window.updateTeamItem(configSlotIndex, e.target.value));
+
+    renderMemberConfigPreview(index);
+
+    const modal = document.getElementById('member-config-modal');
+    const backdrop = document.getElementById('member-config-backdrop');
+    const panel = document.getElementById('member-config-panel');
+
+    modal.classList.remove('hidden');
+    lockBodyScroll();
+    requestAnimationFrame(() => {
+        backdrop.classList.remove('opacity-0');
+        panel.classList.remove('opacity-0', 'scale-95', 'translate-y-full');
+        panel.classList.add('opacity-100', 'scale-100', 'translate-y-0');
+        // First useful control (the ability select), falling back to Close
+        // if this member has no ability list to choose from.
+        (document.getElementById('config-ability-select') || document.getElementById('close-member-config'))?.focus();
+    });
+};
+
+function setupMemberConfigModal() {
+    const modal = document.getElementById('member-config-modal');
+    const backdrop = document.getElementById('member-config-backdrop');
+    const panel = document.getElementById('member-config-panel');
+    const closeBtn = document.getElementById('close-member-config');
+    if (!modal || !closeBtn) return;
+
+    const closeModal = () => {
+        const indexToRestore = configSlotIndex;
+        backdrop.classList.add('opacity-0');
+        panel.classList.remove('opacity-100', 'scale-100', 'translate-y-0');
+        panel.classList.add('opacity-0', 'scale-95', 'translate-y-full');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            unlockBodyScroll();
+            configSlotIndex = -1;
+            focusTeamSlot(indexToRestore);
+        }, 200);
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+    modal.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+        else trapTabKey(e, panel);
+    });
+}
 
 window.openSearchModal = (index) => {
     activeSlotIndex = index;
@@ -360,8 +443,9 @@ window.openSearchModal = (index) => {
     const backdrop = document.getElementById('search-backdrop');
     const panel = document.getElementById('search-panel');
     const input = document.getElementById('pro-search-input');
-    
+
     modal.classList.remove('hidden');
+    lockBodyScroll();
     requestAnimationFrame(() => {
         backdrop.classList.remove('opacity-0');
         panel.classList.remove('opacity-0', 'scale-95');
@@ -376,12 +460,16 @@ window.openDeleteModal = (e, index) => {
     const modal = document.getElementById('delete-modal');
     const backdrop = document.getElementById('delete-backdrop');
     const panel = document.getElementById('delete-panel');
-    
+
     modal.classList.remove('hidden');
+    lockBodyScroll();
     requestAnimationFrame(() => {
         backdrop.classList.remove('opacity-0');
         panel.classList.remove('opacity-0', 'scale-95');
         panel.classList.add('opacity-100', 'scale-100');
+        // Cancel, not Remove, is the safe default focus target for a
+        // destructive confirmation.
+        document.getElementById('cancel-delete')?.focus();
     });
 }
 
@@ -395,17 +483,24 @@ function setupDeleteModal() {
     if (!modal || !cancelBtn || !confirmBtn) return;
 
     const closeModal = () => {
+        const indexToRestore = deleteSlotIndex;
         backdrop.classList.add('opacity-0');
         panel.classList.remove('opacity-100', 'scale-100');
         panel.classList.add('opacity-0', 'scale-95');
         setTimeout(() => {
             modal.classList.add('hidden');
+            unlockBodyScroll();
             deleteSlotIndex = -1;
+            focusTeamSlot(indexToRestore);
         }, 200);
     };
 
     cancelBtn.addEventListener('click', closeModal);
     backdrop.addEventListener('click', closeModal);
+    modal.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+        else trapTabKey(e, panel);
+    });
 
     confirmBtn.addEventListener('click', () => {
         if (deleteSlotIndex > -1) {
@@ -426,24 +521,43 @@ function setupSearchModal() {
 
     if (!modal || !closeBtn || !input || !resultsContainer) return;
 
+    const placeholderHTML = `<div class="py-12 text-center text-sm" style="color: var(--text-muted)">${i18n.t('search_placeholder')}</div>`;
+    let activeIndex = -1;
+
     const closeModal = () => {
+        const indexToRestore = activeSlotIndex;
         backdrop.classList.add('opacity-0');
         panel.classList.remove('opacity-100', 'scale-100');
         panel.classList.add('opacity-0', 'scale-95');
         setTimeout(() => {
             modal.classList.add('hidden');
+            unlockBodyScroll();
             input.value = '';
-            resultsContainer.innerHTML = `<div class="py-12 text-center text-slate-400 text-sm">${i18n.t('search_placeholder')}</div>`;
+            resultsContainer.innerHTML = placeholderHTML;
+            activeIndex = -1;
+            focusTeamSlot(indexToRestore);
         }, 200);
     };
 
     closeBtn.addEventListener('click', closeModal);
     backdrop.addEventListener('click', closeModal);
-    
+    modal.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+        else trapTabKey(e, panel);
+    });
+
+    const updateActiveResult = (items) => {
+        items.forEach((item, index) => {
+            item.classList.toggle('search-result-active', index === activeIndex);
+        });
+        if (activeIndex > -1) items[activeIndex].scrollIntoView({ block: 'nearest' });
+    };
+
     input.addEventListener('input', (e) => {
+        activeIndex = -1;
         const query = normalizeSearch(e.target.value);
         if (!query) {
-            resultsContainer.innerHTML = `<div class="py-12 text-center text-slate-400 text-sm">${i18n.t('search_placeholder')}</div>`;
+            resultsContainer.innerHTML = placeholderHTML;
             return;
         }
 
@@ -468,29 +582,48 @@ function setupSearchModal() {
         const topMatches = matches.slice(0, 20);
 
         if (topMatches.length === 0) {
-            resultsContainer.innerHTML = `<div class="py-12 text-center text-slate-400 text-sm">${i18n.t('none')}</div>`;
+            resultsContainer.innerHTML = `<div class="py-12 text-center text-sm" style="color: var(--text-muted)">${i18n.t('none')}</div>`;
         } else {
-            resultsContainer.innerHTML = topMatches.map((p) => {
+            resultsContainer.innerHTML = `<ul>${topMatches.map((p) => {
                 const imageUrl = getPokemonImageUrl(p, appData?.imageFixes || {});
-                const typePills = p.types.map(t => createTypePill(t, contrastData)).join('');
-                
+                const typePills = p.types.map(t => createTypePill(t, contrastData, 'type-pill-sm')).join('');
+
                 return `
-                    <div data-poke-name="${p.name}" 
-                         class="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 p-3 flex items-center gap-4 border-b border-slate-100 dark:border-slate-700 last:border-0 transition-colors">
-                        <img src="${imageUrl}" 
-                             loading="lazy" 
-                             class="w-10 h-10 object-contain"
-                             onerror="handleSearchImageError(this, ${p.id}, '${p.name.replace(/'/g, "\\'")}')">
-                        <div class="flex-1">
-                            <div class="font-bold text-slate-800 dark:text-white">${p.displayName}</div>
-                            <div class="text-xs text-slate-400">#${p.id}</div>
-                        </div>
-                        <div class="flex gap-1 scale-90">
-                            ${typePills}
-                        </div>
-                    </div>
+                    <li>
+                        <button type="button" data-poke-name="${p.name}" class="search-result-row w-full text-left flex items-center gap-4 p-3">
+                            <img src="${imageUrl}"
+                                 loading="lazy"
+                                 class="w-10 h-10 object-contain"
+                                 onerror="handleSearchImageError(this, ${p.id}, '${p.name.replace(/'/g, "\\'")}')">
+                            <div class="flex-1 min-w-0">
+                                <div class="font-bold truncate" style="color: var(--text)">${p.displayName}</div>
+                                <div class="text-xs font-mono" style="color: var(--text-muted)">#${p.id}</div>
+                            </div>
+                            <div class="flex gap-1 shrink-0">
+                                ${typePills}
+                            </div>
+                        </button>
+                    </li>
                 `;
-            }).join('');
+            }).join('')}</ul>`;
+        }
+    });
+
+    input.addEventListener('keydown', (e) => {
+        const items = resultsContainer.querySelectorAll('[data-poke-name]');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            activeIndex = (activeIndex + 1) % items.length;
+            updateActiveResult(items);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            activeIndex = (activeIndex - 1 + items.length) % items.length;
+            updateActiveResult(items);
+        } else if (e.key === 'Enter' && activeIndex > -1) {
+            e.preventDefault();
+            items[activeIndex].click();
         }
     });
 
@@ -515,21 +648,11 @@ function setupSearchModal() {
 }
 
 // --- Share Team URL ---
+// Payload encode/decode/validation lives in ../../lib/share-team.js (pure,
+// unit tested). See that file for the Tera policy this sprint decided on.
 
 function serializeTeam(team) {
-    const compact = team.map(slot => {
-        if (!slot) return null;
-        return {
-            id: slot.id,
-            n: slot.apiName || slot.name,
-            t: slot.types,
-            a: slot.ability || null,
-            nat: slot.nature || null,
-            i: slot.item || null,
-            tera: slot.teraType || null
-        };
-    });
-    return btoa(unescape(encodeURIComponent(JSON.stringify(compact))));
+    return encodeTeamPayload(team);
 }
 
 async function restoreTeamFromURL() {
@@ -537,10 +660,13 @@ async function restoreTeamFromURL() {
     const encoded = params.get('team');
     if (!encoded) return;
 
-    try {
-        const compact = JSON.parse(decodeURIComponent(escape(atob(encoded))));
-        if (!Array.isArray(compact) || compact.length !== 6) return;
+    const compact = decodeTeamPayload(encoded);
+    if (!compact) {
+        console.error('Invalid or unsupported shared team link, ignoring');
+        return;
+    }
 
+    try {
         const { loadPokedex } = await import('./data.js');
         const fullDex = await loadPokedex();
 
