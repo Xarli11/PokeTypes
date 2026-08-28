@@ -437,7 +437,7 @@ export function renderCompetitiveData(container, data, pokemonName) {
     const tierColor = tierColors[tier] || 'bg-slate-400';
 
     container.innerHTML = `
-        <div class="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div class="flex flex-col gap-6 animate-in fade-in">
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
                     <div class="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl text-emerald-600 dark:text-emerald-400">

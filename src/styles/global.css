@@ -15,8 +15,18 @@
   --border: #E4E7EC;
   --text: #14181F;
   --text-muted: #5B6472;
-  --accent: #4F7CFF;
+  --accent: #1D4ED8;
   --accent-contrast: #FFFFFF;
+
+  /* Semantic colors — these are darker/more saturated than their dark-mode
+     counterparts on purpose. The dark-mode values (#EF4444/#F97316/#22C55E/
+     #6C8CFF) fail WCAG AA (4.5:1) as small text on a light background —
+     verified by computing contrast ratios against #FFFFFF/#F6F7F9. Same
+     hue family, tuned per theme for AA text contrast (see docs/type-engine.md
+     is unrelated; rationale kept here since it's UI-only). */
+  --danger: #B91C1C;
+  --warning: #C2410C;
+  --success: #15803D;
 
   --radius-sm: 10px;
   --radius-md: 14px;
@@ -34,6 +44,10 @@
   --text-muted: #8B94A3;
   --accent: #6C8CFF;
   --accent-contrast: #0B0E14;
+
+  --danger: #EF4444;
+  --warning: #F97316;
+  --success: #22C55E;
 
   --shadow-card: none;
 }
@@ -161,10 +175,10 @@
 .mult-badge {
   @apply inline-flex items-center justify-center min-w-[2.75rem] h-8 px-2 rounded-md font-mono font-bold text-sm border;
 }
-.mult-critical { background-color: rgba(239, 68, 68, 0.14); color: #EF4444; border-color: rgba(239, 68, 68, 0.35); }
-.mult-weak     { background-color: rgba(249, 115, 22, 0.14); color: #F97316; border-color: rgba(249, 115, 22, 0.35); }
+.mult-critical { background-color: color-mix(in srgb, var(--danger) 14%, transparent); color: var(--danger); border-color: color-mix(in srgb, var(--danger) 35%, transparent); }
+.mult-weak     { background-color: color-mix(in srgb, var(--warning) 14%, transparent); color: var(--warning); border-color: color-mix(in srgb, var(--warning) 35%, transparent); }
 .mult-immune   { background-color: rgba(139, 148, 163, 0.16); color: var(--text-muted); border-color: var(--border); }
-.mult-resist   { background-color: rgba(34, 197, 94, 0.14); color: #22C55E; border-color: rgba(34, 197, 94, 0.35); }
+.mult-resist   { background-color: color-mix(in srgb, var(--success) 14%, transparent); color: var(--success); border-color: color-mix(in srgb, var(--success) 35%, transparent); }
 .mult-neutral  { background-color: transparent; color: var(--text-muted); border-color: var(--border); }
 
 #suggestions, #sim-defender-suggestions {
@@ -204,6 +218,11 @@
   color: var(--text-muted);
 }
 .icon-btn:hover { background-color: var(--surface-raised); color: var(--text); }
+.icon-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.icon-btn-success {
+  color: var(--success) !important;
+  background-color: color-mix(in srgb, var(--success) 14%, transparent) !important;
+}
 
 .mode-switch {
   @apply flex items-center gap-0.5 p-1 rounded-lg;
@@ -287,7 +306,7 @@
 }
 
 .stat-bar {
-  @apply transition-[width] duration-300 ease-out;
+  @apply transition-[width] duration-200 ease-out;
 }
 
 /* Animations — feedback, not decoration. Nothing above 220ms. */

@@ -339,7 +339,7 @@ function runSimulation(attackType, pokemon, abilityName, effectiveness) {
     if (abilityTriggered && !abilityTriggered.offensiveOnly) {
         descHTML += `<p class="mb-1"><span class="font-bold" style="color: var(--text)">${capitalizeWords(abilityName.replace(/-/g, ' '))}</span>: ${abilityTriggered.description}</p>`;
     } else if (abilityTriggered?.offensiveOnly) {
-        descHTML += `<p class="mb-1" style="color: #F59E0B"><span class="font-bold">${capitalizeWords(abilityName.replace(/-/g, ' '))}</span>: ${abilityTriggered.description}</p>`;
+        descHTML += `<p class="mb-1" style="color: var(--warning)"><span class="font-bold">${capitalizeWords(abilityName.replace(/-/g, ' '))}</span>: ${abilityTriggered.description}</p>`;
     } else {
         descHTML += `<p class="mb-1">${i18n.t('sim_standard_effectiveness')}</p>`;
     }

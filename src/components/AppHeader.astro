@@ -13,14 +13,17 @@ const { showModeSwitcher = false, contextLabel = '' } = Astro.props;
 
 <header class="mb-6">
     <div class="max-w-7xl mx-auto flex items-center justify-between gap-3 h-14">
-        <a href="/" class="flex items-center gap-2 shrink-0 min-w-0">
+        <a href="/" class="flex items-center gap-2 shrink-0 min-w-0" aria-label="PokeTypes — Home">
             <svg class="w-6 h-6 shrink-0" style="color: var(--text-muted)" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8"/>
                 <path d="M5 50 H95" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
                 <circle cx="50" cy="50" r="17" stroke="currentColor" stroke-width="8"/>
                 <circle cx="50" cy="50" r="8" fill="currentColor"/>
             </svg>
-            <span class="brand-title text-lg sm:text-xl truncate">
+            <!-- Brand name collapses to just the Pokeball icon below ~640px so
+                 the mode switcher + lang/theme controls always fit without
+                 page-level horizontal overflow (see docs in this component). -->
+            <span class="brand-title hidden sm:inline text-lg sm:text-xl truncate">
                 <span data-i18n="brand_name">PokeTypes</span>
             </span>
             {contextLabel && (
@@ -30,7 +33,7 @@ const { showModeSwitcher = false, contextLabel = '' } = Astro.props;
             )}
         </a>
 
-        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
             {showModeSwitcher && (
                 <div class="mode-switch">
                     <button id="toggle-simple" class="mode-btn mode-btn-active" data-i18n="mode_calculator" type="button">Calculator</button>

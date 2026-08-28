@@ -168,13 +168,13 @@ function renderTeamAnalysis(team) {
             const data = analysis.matrix[alert.messageType];
             const pill = createTypePill(alert.messageType, contrastData);
             const isDanger = alert.type === 'danger';
-            const accentColor = isDanger ? '#EF4444' : '#F97316';
+            const accentVar = isDanger ? '--danger' : '--warning';
 
             html += `
-                <div class="flex items-center gap-3 px-3 py-2.5 rounded-md" style="background: ${isDanger ? 'rgba(239,68,68,0.08)' : 'rgba(249,115,22,0.08)'}; border: 1px solid ${accentColor}40">
+                <div class="flex items-center gap-3 px-3 py-2.5 rounded-md" style="background: color-mix(in srgb, var(${accentVar}) 8%, transparent); border: 1px solid color-mix(in srgb, var(${accentVar}) 40%, transparent)">
                     <div class="scale-90 shrink-0">${pill}</div>
                     <div class="flex-1 min-w-0">
-                        <div class="text-xs font-bold uppercase tracking-wide" style="color: ${accentColor}">${i18n.t('pressure_title', { type: i18n.tType(alert.messageType) })}</div>
+                        <div class="text-xs font-bold uppercase tracking-wide" style="color: var(${accentVar})">${i18n.t('pressure_title', { type: i18n.tType(alert.messageType) })}</div>
                         <div class="text-xs" style="color: var(--text-muted)">${i18n.t('pressure_detail', { weak: data.weak, resist: data.resist, immune: data.immune })}</div>
                     </div>
                 </div>
@@ -201,10 +201,10 @@ function renderTeamAnalysis(team) {
         const highlighted = data.weak >= 3;
 
         html += `
-            <div class="grid gap-2 items-center px-3 py-1.5 text-sm ${isLast ? '' : ''}" style="grid-template-columns: 1fr repeat(3, 2.5rem); ${isLast ? '' : 'border-bottom: 1px solid var(--border);'} ${highlighted ? 'background: rgba(239,68,68,0.06)' : ''}">
+            <div class="grid gap-2 items-center px-3 py-1.5 text-sm" style="grid-template-columns: 1fr repeat(3, 2.5rem); ${isLast ? '' : 'border-bottom: 1px solid var(--border);'} ${highlighted ? 'background: color-mix(in srgb, var(--danger) 6%, transparent)' : ''}">
                 <div class="scale-90 origin-left">${pill}</div>
-                <span class="text-center font-mono font-bold" style="color: ${data.weak > 0 ? '#EF4444' : 'var(--text-muted)'}">${data.weak || '–'}</span>
-                <span class="text-center font-mono font-bold" style="color: ${data.resist > 0 ? '#22C55E' : 'var(--text-muted)'}">${data.resist || '–'}</span>
+                <span class="text-center font-mono font-bold" style="color: ${data.weak > 0 ? 'var(--danger)' : 'var(--text-muted)'}">${data.weak || '–'}</span>
+                <span class="text-center font-mono font-bold" style="color: ${data.resist > 0 ? 'var(--success)' : 'var(--text-muted)'}">${data.resist || '–'}</span>
                 <span class="text-center font-mono font-bold" style="color: var(--text-muted)">${data.immune || '–'}</span>
             </div>
         `;
