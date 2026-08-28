@@ -1,0 +1,55 @@
+---
+// Compact app shell header shared by index/tipo/pokemon pages. Keeps the
+// exact element ids main.js/pro.js already wire up (lang-toggle,
+// theme-toggle, toggle-simple, toggle-pro) — only the markup/classes
+// changed for the Sprint 2 redesign.
+interface Props {
+    showModeSwitcher?: boolean;
+    contextLabel?: string;
+}
+
+const { showModeSwitcher = false, contextLabel = '' } = Astro.props;
+---
+
+<header class="mb-6">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-3 h-14">
+        <a href="/" class="flex items-center gap-2 shrink-0 min-w-0">
+            <svg class="w-6 h-6 shrink-0" style="color: var(--text-muted)" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8"/>
+                <path d="M5 50 H95" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+                <circle cx="50" cy="50" r="17" stroke="currentColor" stroke-width="8"/>
+                <circle cx="50" cy="50" r="8" fill="currentColor"/>
+            </svg>
+            <span class="brand-title text-lg sm:text-xl truncate">
+                <span data-i18n="brand_name">PokeTypes</span>
+            </span>
+            {contextLabel && (
+                <span class="hidden md:inline text-sm font-medium truncate" style="color: var(--text-muted)">
+                    &middot; {contextLabel}
+                </span>
+            )}
+        </a>
+
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+            {showModeSwitcher && (
+                <div class="mode-switch">
+                    <button id="toggle-simple" class="mode-btn mode-btn-active" data-i18n="mode_calculator" type="button">Calculator</button>
+                    <button id="toggle-pro" class="mode-btn" data-i18n="mode_team_builder" type="button">Team Builder</button>
+                </div>
+            )}
+
+            <button id="lang-toggle" class="icon-btn font-bold text-sm tracking-wide" aria-label="Toggle language" type="button">
+                ES
+            </button>
+
+            <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark mode" type="button">
+                <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <svg class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</header>

@@ -197,6 +197,90 @@
   @apply mb-5 last:mb-0;
 }
 
+/* App shell */
+.icon-btn {
+  @apply p-2 rounded-md transition-colors duration-150;
+  color: var(--text-muted);
+}
+.icon-btn:hover { background-color: var(--surface-raised); color: var(--text); }
+
+.mode-switch {
+  @apply flex items-center gap-0.5 p-1 rounded-lg;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+}
+.mode-btn {
+  @apply px-3 py-1.5 rounded-md text-xs sm:text-sm font-bold transition-colors duration-150 whitespace-nowrap;
+  color: var(--text-muted);
+}
+.mode-btn:hover { color: var(--text); }
+.mode-btn-active {
+  background-color: var(--surface-raised);
+  color: var(--text);
+}
+
+/* Type selector (button -> popover grid, replaces the native <select>s) */
+.type-selector-btn {
+  width: 100%;
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  @apply px-4 py-3 text-sm font-semibold text-left flex items-center justify-between gap-2 transition-colors duration-150;
+}
+.type-selector-btn:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+.type-selector-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.type-selector-btn-filled { color: var(--text); }
+.type-selector-btn .type-selector-caret { color: var(--text-muted); }
+.type-selector-btn-extra {
+  border-style: dashed;
+}
+
+.type-selector-popover {
+  position: fixed;
+  z-index: 60;
+  width: 320px;
+  max-width: calc(100vw - 1rem);
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+  padding: 0.75rem;
+}
+.type-selector-header {
+  @apply flex items-center justify-between mb-2 px-1;
+}
+.type-selector-title {
+  @apply text-xs font-bold uppercase tracking-widest;
+  color: var(--text-muted);
+}
+.type-selector-clear {
+  @apply text-xs font-bold uppercase;
+  color: var(--accent);
+}
+.type-selector-grid {
+  @apply grid grid-cols-3 gap-1.5;
+}
+.type-grid-option {
+  @apply cursor-pointer w-full;
+}
+
+/* Mobile: bottom sheet instead of an anchored popover */
+.type-selector-sheet {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  top: auto !important;
+  width: auto;
+  max-width: none;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+.type-selector-sheet .type-selector-grid {
+  @apply grid-cols-4;
+}
+
 .type-pills-container {
   @apply flex flex-wrap gap-1.5;
 }

@@ -1,0 +1,39 @@
+---
+// One "Type 1 / Type 2 / Extra Type" field: a visual trigger button (opens
+// the shared popover grid from typeSelector.js) plus the real, functional
+// <select> it controls — kept in the DOM so every existing main.js
+// listener (change events, .value reads/writes from search/reset/URL
+// restore) keeps working unchanged. See typeSelector.js for the wiring.
+interface Props {
+    selectId: string;
+    placeholderKey: string;
+    extra?: boolean;
+    tooltipKey?: string;
+}
+
+const { selectId, placeholderKey, extra = false, tooltipKey } = Astro.props;
+---
+
+<div class="relative w-full sm:w-40 group">
+    <button
+        type="button"
+        class:list={["type-selector-btn", { "type-selector-btn-extra": extra }]}
+        data-for={selectId}
+        data-placeholder={placeholderKey}
+        aria-haspopup="dialog"
+        aria-expanded="false"
+    >
+        <span class="type-selector-label" data-i18n={placeholderKey}></span>
+        <svg class="type-selector-caret w-4 h-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+        </svg>
+    </button>
+
+    <select id={selectId} class="sr-only" tabindex="-1" aria-hidden="true">
+        <option value="" data-i18n={placeholderKey}></option>
+    </select>
+
+    {tooltipKey && (
+        <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-48 text-xs p-2 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-150 z-50 text-center pointer-events-none shadow-xl" style="background: var(--surface-raised); color: var(--text); border: 1px solid var(--border)" data-i18n={tooltipKey}></div>
+    )}
+</div>

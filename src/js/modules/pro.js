@@ -53,24 +53,18 @@ function setupModeToggling() {
         if (mode === 'simple') {
             simpleView.classList.remove('hidden');
             proView.classList.add('hidden');
-            
-            toggleSimple.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
-            toggleSimple.classList.remove('text-slate-500', 'hover:text-slate-700');
-            
-            togglePro.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
-            togglePro.classList.add('text-slate-500', 'hover:text-slate-700');
-            
+
+            toggleSimple.classList.add('mode-btn-active');
+            togglePro.classList.remove('mode-btn-active');
+
             localStorage.setItem('poketypes_mode', 'simple');
         } else {
             simpleView.classList.add('hidden');
             proView.classList.remove('hidden');
-            
-            togglePro.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
-            togglePro.classList.remove('text-slate-500', 'hover:text-slate-700');
-            
-            toggleSimple.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
-            toggleSimple.classList.add('text-slate-500', 'hover:text-slate-700');
-            
+
+            togglePro.classList.add('mode-btn-active');
+            toggleSimple.classList.remove('mode-btn-active');
+
             localStorage.setItem('poketypes_mode', 'pro');
             renderTeamGrid();
         }

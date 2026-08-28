@@ -6,6 +6,7 @@ import { normalizeSearch } from './modules/ui.js';
 import { initTheme } from './modules/theme.js';
 import { initProMode, refreshProView } from './modules/pro.js';
 import { i18n } from './modules/i18n.js';
+import { initTypeSelectors, refreshTypeSelectorLabels } from './modules/typeSelector.js';
 
 let appData = null;
 let currentPokemon = null;
@@ -28,6 +29,7 @@ async function init() {
         ui.populateSelects(['type-select', 'type2-select', 'type3-select'], appData.types);
         ui.generateTypeTable('type-table-container', appData.types, appData.effectiveness, appData.contrast);
         populateEmptyStateTypes();
+        initTypeSelectors(appData.types, appData.contrast);
 
         setupEventListeners();
         
@@ -68,6 +70,7 @@ function refreshUI() {
     t1Select.value = t1Val;
     t2Select.value = t2Val;
     if (t3Select) t3Select.value = t3Val;
+    refreshTypeSelectorLabels();
 
     // 4. Update Analysis Cards
     displayAnalysis(t1Val, t2Val, t3Val);
@@ -148,6 +151,7 @@ async function applyStateFromURL() {
             typeSelect.value = pokemon.types[0] || '';
             type2Select.value = pokemon.types[1] || '';
             if (type3Select) type3Select.value = pokemon.types[2] || '';
+            refreshTypeSelectorLabels();
             displayAnalysis(typeSelect.value, type2Select.value, type3Select ? type3Select.value : null);
             await showPokemonDetails(pokemon);
             return;
@@ -163,7 +167,8 @@ async function applyStateFromURL() {
         if (validT1) typeSelect.value = validT1;
         if (validT2) type2Select.value = validT2;
         if (validT3 && type3Select) type3Select.value = validT3;
-        
+        refreshTypeSelectorLabels();
+
         displayAnalysis(typeSelect.value, type2Select.value, type3Select ? type3Select.value : null);
     }
 }
@@ -239,7 +244,7 @@ async function showPokemonDetails(pokemon) {
 
             ui.renderStats(statsContainer, details.stats);
             ui.renderAbilities(abilitiesContainer, details.abilities);
-            ui.renderAbilityAlerts(alertsContainer, details.abilities);
+            ui.renderAbilityAlerts(alertsContainer, details.abilities, pokemon.types, appData.effectiveness);
         } else {
             // If details fetch fails, keep Hero visible but show error in stats area
             statsContainer.innerHTML = `<div class="text-center p-4 text-slate-400 text-sm italic">${i18n.t('stats_unavailable') || 'Stats unavailable'}</div>`;
@@ -305,12 +310,14 @@ function setupEventListeners() {
         searchInput.value = '';
         currentPokemon = null;
         statsSection.classList.add('hidden');
+        document.getElementById('pokemon-hero')?.classList.add('hidden');
         updateUI();
     });
     type2Select.addEventListener('change', () => {
         searchInput.value = '';
         currentPokemon = null;
         statsSection.classList.add('hidden');
+        document.getElementById('pokemon-hero')?.classList.add('hidden');
         updateUI();
     });
     if (type3Select) {
@@ -324,9 +331,11 @@ function setupEventListeners() {
         typeSelect.value = '';
         type2Select.value = '';
         if (type3Select) type3Select.value = '';
+        refreshTypeSelectorLabels();
         searchInput.value = '';
         currentPokemon = null;
         statsSection.classList.add('hidden');
+        document.getElementById('pokemon-hero')?.classList.add('hidden');
         displayAnalysis('', '', '');
         syncURLWithState('', '', '', null);
     });
@@ -429,7 +438,8 @@ function setupEventListeners() {
         
         typeSelect.value = pokemon.types[0] || '';
         type2Select.value = pokemon.types[1] || '';
-        
+        refreshTypeSelectorLabels();
+
         suggestionsList.classList.add('hidden');
         updateUI(pokemon);
 
@@ -617,12 +627,8 @@ function displayAnalysis(t1, t2, t3 = null) {
     const off = calculateOffense(t1, t2, appData.types, appData.effectiveness, t3);
     const dualImmunities = findImmuneDualTypes(t1, t2, appData.types, appData.effectiveness);
 
-    // Render Cards
-    // Using translation keys: 'weaknesses', 'neutral_damage', 'resistances', 'immunities', 'super_effective', etc.
-    ui.renderSplitEffectivenessCard(document.getElementById('weaknesses'), 'weaknesses', def.weaknesses4x, def.weaknesses2x, 'none', 'super', appData.contrast, def.weaknesses8x);
-    ui.renderEffectivenessCard(document.getElementById('neutral-damage'), 'neutral_damage', def.neutral, 'none', 'neutral', appData.contrast);
-    ui.renderSplitResistanceCard(document.getElementById('resistances'), 'resistances', def.resistances025x, def.resistances05x, 'none', 'resist', appData.contrast, def.resistances0125x);
-    ui.renderEffectivenessCard(document.getElementById('immunities'), 'immunities', def.immunities, 'none', 'immune', appData.contrast);
+    // Defense first — the whole point of PokeTypes.
+    ui.renderDefenseGroups(document.getElementById('defense-groups'), def, appData.contrast);
 
     // AI Advisor
     try {
@@ -641,12 +647,7 @@ function displayAnalysis(t1, t2, t3 = null) {
         if (tacticalAdvice) tacticalAdvice.classList.add('hidden');
     }
 
-    ui.renderBadgedCard(document.getElementById('super-effective'), 'super_effective', off.superEffective2x, 'none', 'super', 'x2', 'bg-orange-500', appData.contrast);
-    ui.renderEffectivenessCard(document.getElementById('neutral-offense'), 'neutral_offense', off.neutral, 'none', 'neutral', appData.contrast);
-    ui.renderBadgedCard(document.getElementById('not-very-effective'), 'not_very_effective', off.notVeryEffective, 'none', 'resist', 'x0.5', 'bg-emerald-500', appData.contrast);
-    ui.renderEffectivenessCard(document.getElementById('no-effect'), 'no_effect', off.noEffect, 'none', 'immune', appData.contrast);
-    
-    ui.renderDualImmunities(document.getElementById('dual-immunities'), 'walled_by_dual', dualImmunities, appData.contrast);
+    ui.renderOffenseGroups(document.getElementById('offense-groups'), off, dualImmunities, appData.contrast);
 }
 
 document.addEventListener('DOMContentLoaded', init);
