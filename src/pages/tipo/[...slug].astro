@@ -1,58 +1,24 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import typeData from '../../data/type-data.json';
+import { calculateDefense, calculateOffense } from '../../lib/type-engine/index.js';
 
 const { slug } = Astro.params;
 const { types, effectiveness, contrast } = typeData;
 
 let t1 = null;
 let t2 = null;
+let t3 = null;
 
 if (slug) {
     const parts = slug.split('-');
     const findType = (s: string) => types.find(t => t.toLowerCase() === s.toLowerCase());
     t1 = findType(parts[0]) || null;
     t2 = parts[1] ? findType(parts[1]) || null : null;
+    t3 = parts[2] ? findType(parts[2]) || null : null;
 }
 
 if (!t1) return Astro.redirect('/404');
-
-// ── SSR calculator ────────────────────────────────────────────────────────────
-
-function eff(atk: string, def: string): number {
-    const e = (effectiveness as Record<string, Record<string, number>>)[atk];
-    return e && Object.prototype.hasOwnProperty.call(e, def) ? e[def] : 1;
-}
-
-function calcDefense(a: string, b: string | null) {
-    const r = { x8: [] as string[], x4: [] as string[], x2: [] as string[], n: [] as string[], r05: [] as string[], r025: [] as string[], r0125: [] as string[], imm: [] as string[] };
-    types.forEach(atk => {
-        let m = eff(atk, a);
-        if (b) m *= eff(atk, b);
-        if (m === 8)     r.x8.push(atk);
-        else if (m === 4)   r.x4.push(atk);
-        else if (m === 2)   r.x2.push(atk);
-        else if (m === 1)   r.n.push(atk);
-        else if (m === 0.5) r.r05.push(atk);
-        else if (m === 0.25) r.r025.push(atk);
-        else if (m === 0.125) r.r0125.push(atk);
-        else if (m === 0)   r.imm.push(atk);
-    });
-    return r;
-}
-
-function calcOffense(a: string, b: string | null) {
-    const r = { se: [] as string[], n: [] as string[], nve: [] as string[], none: [] as string[] };
-    types.forEach(def => {
-        let m = eff(a, def);
-        if (b) m = Math.max(m, eff(b, def));
-        if (m >= 2)     r.se.push(def);
-        else if (m === 1)   r.n.push(def);
-        else if (m === 0.5) r.nve.push(def);
-        else if (m === 0)   r.none.push(def);
-    });
-    return r;
-}
 
 // ── HTML helpers ─────────────────────────────────────────────────────────────
 
@@ -84,45 +50,45 @@ function row(badgeHtml: string, typeList: string[]): string {
 
 // ── Compute ───────────────────────────────────────────────────────────────────
 
-const def = calcDefense(t1, t2);
-const off = calcOffense(t1, t2);
+const def = calculateDefense(t1, t2, types, effectiveness, t3);
+const off = calculateOffense(t1, t2, types, effectiveness, t3);
 
 const weaknessesHtml = (() => {
-    const hasAny = def.x8.length || def.x4.length || def.x2.length;
+    const hasAny = def.weaknesses8x.length || def.weaknesses4x.length || def.weaknesses2x.length;
     let html = `<div class="label-group">${iconSuper}<span>Weaknesses</span></div><div class="flex flex-col gap-4">`;
-    if (def.x8.length)  html += row(badge('x8', 'bg-red-700'), def.x8);
-    if (def.x4.length)  html += row(badge('x4', 'bg-red-600'), def.x4);
-    if (def.x2.length)  html += row(badge('x2', 'bg-orange-500'), def.x2);
-    if (!hasAny)        html += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">None</span>`;
+    if (def.weaknesses8x.length) html += row(badge('x8', 'bg-red-700'), def.weaknesses8x);
+    if (def.weaknesses4x.length) html += row(badge('x4', 'bg-red-600'), def.weaknesses4x);
+    if (def.weaknesses2x.length) html += row(badge('x2', 'bg-orange-500'), def.weaknesses2x);
+    if (!hasAny)                 html += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">None</span>`;
     return html + '</div>';
 })();
 
 const neutralDamageHtml = (() => {
-    return `<div class="label-group">${iconNeutral}<span>Neutral damage</span></div><div class="type-pills-container">${pills(def.n)}</div>`;
+    return `<div class="label-group">${iconNeutral}<span>Neutral damage</span></div><div class="type-pills-container">${pills(def.neutral)}</div>`;
 })();
 
 const resistancesHtml = (() => {
-    const hasAny = def.r0125.length || def.r025.length || def.r05.length;
+    const hasAny = def.resistances0125x.length || def.resistances025x.length || def.resistances05x.length;
     let html = `<div class="label-group">${iconResist}<span>Resistances</span></div><div class="flex flex-col gap-4">`;
-    if (def.r0125.length) html += row(badge('x0.125', 'bg-emerald-800'), def.r0125);
-    if (def.r025.length)  html += row(badge('x0.25', 'bg-green-600'), def.r025);
-    if (def.r05.length)   html += row(badge('x0.5', 'bg-emerald-500'), def.r05);
-    if (!hasAny)          html += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">None</span>`;
+    if (def.resistances0125x.length) html += row(badge('x0.125', 'bg-emerald-800'), def.resistances0125x);
+    if (def.resistances025x.length)  html += row(badge('x0.25', 'bg-green-600'), def.resistances025x);
+    if (def.resistances05x.length)   html += row(badge('x0.5', 'bg-emerald-500'), def.resistances05x);
+    if (!hasAny)                     html += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">None</span>`;
     return html + '</div>';
 })();
 
-const immunitiesHtml = `<div class="label-group">${iconImmune}<span>Immunities</span></div><div class="type-pills-container">${pills(def.imm)}</div>`;
+const immunitiesHtml = `<div class="label-group">${iconImmune}<span>Immunities</span></div><div class="type-pills-container">${pills(def.immunities)}</div>`;
 
-const superEffHtml = `<div class="label-group">${iconSuper}<span>Super effective</span></div><div class="type-pills-container">${pills(off.se)}</div>`;
-const neutralOffHtml = `<div class="label-group">${iconNeutral}<span>Neutral</span></div><div class="type-pills-container">${pills(off.n)}</div>`;
-const nveHtml = `<div class="label-group">${iconResist}<span>Not very effective</span></div><div class="type-pills-container">${pills(off.nve)}</div>`;
-const noEffHtml = `<div class="label-group">${iconImmune}<span>No effect</span></div><div class="type-pills-container">${pills(off.none)}</div>`;
+const superEffHtml = `<div class="label-group">${iconSuper}<span>Super effective</span></div><div class="type-pills-container">${pills(off.superEffective2x)}</div>`;
+const neutralOffHtml = `<div class="label-group">${iconNeutral}<span>Neutral</span></div><div class="type-pills-container">${pills(off.neutral)}</div>`;
+const nveHtml = `<div class="label-group">${iconResist}<span>Not very effective</span></div><div class="type-pills-container">${pills(off.notVeryEffective)}</div>`;
+const noEffHtml = `<div class="label-group">${iconImmune}<span>No effect</span></div><div class="type-pills-container">${pills(off.noEffect)}</div>`;
 
-const selectedTypeHtml = [t1, t2].filter(Boolean).map(t => pill(t!)).join('');
+const selectedTypeHtml = [t1, t2, t3].filter(Boolean).map(t => pill(t!)).join('');
 
 // ── Meta ──────────────────────────────────────────────────────────────────────
 
-const typeName = t2 ? `${t1}/${t2}` : t1;
+const typeName = [t1, t2, t3].filter(Boolean).join('/');
 const title = `${typeName} Type Weaknesses, Resistances & Chart | PokeTypes`;
 const description = `${typeName} type weakness chart: full effectiveness analysis, resistances, and immunities for Gen 9 (Scarlet & Violet). See every type that beats ${typeName} and every type ${typeName} beats.`;
 const canonicalPath = `/tipo/${slug}`;
