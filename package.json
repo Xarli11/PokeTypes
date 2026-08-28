@@ -9,7 +9,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "release": "node scripts/release.cjs"
+    "release": "node scripts/release.cjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "astro check"
   },
   "repository": {
     "type": "git",
@@ -28,5 +31,10 @@
     "@tailwindcss/vite": "^4.0.0",
     "astro": "^5.0.0",
     "tailwindcss": "^4.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
   }
 }
