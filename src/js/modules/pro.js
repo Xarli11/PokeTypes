@@ -11,12 +11,27 @@ import { getFocusable, trapTabKey, lockBodyScroll, unlockBodyScroll } from './a1
 // State
 let activeSlotIndex = -1;
 let deleteSlotIndex = -1;
-let lastSearchTrigger = null;
-let lastDeleteTrigger = null;
-let lastConfigTrigger = null;
 let allPokemon = [];
 let contrastData = {};
-let appData = null; 
+let appData = null;
+
+/**
+ * Restores focus to a team slot by INDEX rather than a saved element
+ * reference — every modal that mutates the team (search: add, delete:
+ * remove, config: change ability/nature/item) triggers renderTeamGrid(),
+ * which rebuilds #team-grid's innerHTML from scratch. A saved DOM node
+ * reference to the button that opened the modal would be detached by
+ * that rebuild, so focus.() on it silently does nothing — found this via
+ * an automated focus-restore check that came back with no aria-label
+ * (focus had fallen back to <body>). Re-querying by index always finds
+ * whatever control is now actually in the DOM at that slot.
+ */
+function focusTeamSlot(index) {
+    const slotEl = document.querySelectorAll('#team-grid > *')[index];
+    if (!slotEl) return;
+    const target = slotEl.querySelector('[data-slot-action="configure"]') || (slotEl.matches('button') ? slotEl : null);
+    (target || slotEl).focus?.();
+}
 
 const NATURES = [
     'hardy', 'lonely', 'brave', 'adamant', 'naughty',
@@ -103,7 +118,7 @@ function renderTeamGrid() {
     container.innerHTML = team.map((member, index) => {
         if (!member) {
             return `
-            <button type="button" onclick="window.openSearchModal(${index}, this)" class="team-slot-empty cursor-pointer panel border-dashed flex flex-col items-center justify-center h-28 transition-all group w-full">
+            <button type="button" data-slot-action="add" onclick="window.openSearchModal(${index})" class="team-slot-empty cursor-pointer panel border-dashed flex flex-col items-center justify-center h-28 transition-all group w-full">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--text-muted)">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
@@ -112,13 +127,13 @@ function renderTeamGrid() {
         }
 
         const imageUrl = getPokemonImageUrl(member, appData?.imageFixes || {});
-        const typePills = member.types.map(t => createTypePill(t, contrastData)).join('');
+        const typePills = member.types.map(t => createTypePill(t, contrastData, 'type-pill-sm')).join('');
         const abilityLabel = member.ability ? i18n.tAbility(member.ability.toLowerCase().replace(/ /g, '-')) : i18n.t('no_ability');
         const itemLabel = member.item ? (appData?.items?.[member.item]?.[i18n.currentLang] || appData?.items?.[member.item]?.en) : i18n.t('no_item');
 
         return `
         <div class="team-slot-filled relative panel !p-2.5 flex items-center gap-2.5 h-24 transition-all group">
-            <button type="button" onclick="window.openDeleteModal(event, ${index}, this)" class="tap-target-44 absolute -top-1.5 -right-1.5 w-5 h-5 flex items-center justify-center rounded-full text-white bg-red-600 hover:bg-red-700 transition-all z-10" title="${i18n.t('btn_remove')}" aria-label="${i18n.t('btn_remove')} ${capitalizeWords(member.name)}">
+            <button type="button" data-slot-action="remove" onclick="window.openDeleteModal(event, ${index})" class="tap-target-44 absolute -top-1.5 -right-1.5 w-5 h-5 flex items-center justify-center rounded-full text-white bg-red-600 hover:bg-red-700 transition-all z-10" title="${i18n.t('btn_remove')}" aria-label="${i18n.t('btn_remove')} ${capitalizeWords(member.name)}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -128,11 +143,11 @@ function renderTeamGrid() {
 
             <div class="flex-1 min-w-0">
                 <div class="font-bold text-xs truncate" style="color: var(--text)">${capitalizeWords(member.name)}</div>
-                <div class="flex gap-1 mt-1 scale-90 origin-left">${typePills}</div>
+                <div class="flex flex-wrap gap-1 mt-1">${typePills}</div>
                 <div class="text-[10px] mt-1 truncate" style="color: var(--text-muted)" title="${abilityLabel} · ${itemLabel}">${abilityLabel} · ${itemLabel}</div>
             </div>
 
-            <button type="button" onclick="window.openMemberConfig(${index}, this)" class="icon-btn shrink-0" title="${i18n.t('configure_btn')}" aria-label="${i18n.t('configure_btn')} ${capitalizeWords(member.name)}">
+            <button type="button" data-slot-action="configure" onclick="window.openMemberConfig(${index})" class="icon-btn shrink-0" title="${i18n.t('configure_btn')}" aria-label="${i18n.t('configure_btn')} ${capitalizeWords(member.name)}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -170,13 +185,13 @@ function renderTeamAnalysis(team) {
         html += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-5">`;
         alerts.forEach(alert => {
             const data = analysis.matrix[alert.messageType];
-            const pill = createTypePill(alert.messageType, contrastData);
+            const pill = createTypePill(alert.messageType, contrastData, 'type-pill-sm');
             const isDanger = alert.type === 'danger';
             const accentVar = isDanger ? '--danger' : '--warning';
 
             html += `
                 <div class="flex items-center gap-3 px-3 py-2.5 rounded-md" style="background: color-mix(in srgb, var(${accentVar}) 8%, transparent); border: 1px solid color-mix(in srgb, var(${accentVar}) 40%, transparent)">
-                    <div class="scale-90 shrink-0">${pill}</div>
+                    <div class="shrink-0">${pill}</div>
                     <div class="flex-1 min-w-0">
                         <div class="text-xs font-bold uppercase tracking-wide" style="color: var(${accentVar})">${i18n.t('pressure_title', { type: i18n.tType(alert.messageType) })}</div>
                         <div class="text-xs" style="color: var(--text-muted)">${i18n.t('pressure_detail', { weak: data.weak, resist: data.resist, immune: data.immune })}</div>
@@ -191,7 +206,7 @@ function renderTeamAnalysis(team) {
     html += `
         <div class="label-group">${i18n.t('team_defense_title')}</div>
         <div class="rounded-md overflow-hidden mb-5" style="border: 1px solid var(--border)">
-            <div class="grid gap-2 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest" style="grid-template-columns: 1fr repeat(3, 2.5rem); color: var(--text-muted); border-bottom: 1px solid var(--border)">
+            <div class="grid gap-2 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest" style="grid-template-columns: 1fr repeat(3, 3rem); color: var(--text-muted); border-bottom: 1px solid var(--border)">
                 <span></span>
                 <span class="text-center">${i18n.t('pro_weak')}</span>
                 <span class="text-center">${i18n.t('pro_resist')}</span>
@@ -200,13 +215,13 @@ function renderTeamAnalysis(team) {
     `;
     appData.types.forEach((type, i) => {
         const data = analysis.matrix[type];
-        const pill = createTypePill(type, contrastData);
+        const pill = createTypePill(type, contrastData, 'type-pill-sm');
         const isLast = i === appData.types.length - 1;
         const highlighted = data.weak >= 3;
 
         html += `
-            <div class="grid gap-2 items-center px-3 py-1.5 text-sm" style="grid-template-columns: 1fr repeat(3, 2.5rem); ${isLast ? '' : 'border-bottom: 1px solid var(--border);'} ${highlighted ? 'background: color-mix(in srgb, var(--danger) 6%, transparent)' : ''}">
-                <div class="scale-90 origin-left">${pill}</div>
+            <div class="grid gap-2 items-center px-3 py-1.5 text-sm" style="grid-template-columns: 1fr repeat(3, 3rem); ${isLast ? '' : 'border-bottom: 1px solid var(--border);'} ${highlighted ? 'background: color-mix(in srgb, var(--danger) 6%, transparent)' : ''}">
+                <div class="min-w-0">${pill}</div>
                 <span class="text-center font-mono font-bold" style="color: ${data.weak > 0 ? 'var(--danger)' : 'var(--text-muted)'}">${data.weak || '–'}</span>
                 <span class="text-center font-mono font-bold" style="color: ${data.resist > 0 ? 'var(--success)' : 'var(--text-muted)'}">${data.resist || '–'}</span>
                 <span class="text-center font-mono font-bold" style="color: var(--text-muted)">${data.immune || '–'}</span>
@@ -307,9 +322,8 @@ function renderMemberConfigPreview(index) {
     `;
 }
 
-window.openMemberConfig = (index, trigger = null) => {
+window.openMemberConfig = (index) => {
     configSlotIndex = index;
-    lastConfigTrigger = trigger || document.activeElement;
     const member = loadTeam()[index];
     if (!member || !appData) return;
 
@@ -403,6 +417,7 @@ function setupMemberConfigModal() {
     if (!modal || !closeBtn) return;
 
     const closeModal = () => {
+        const indexToRestore = configSlotIndex;
         backdrop.classList.add('opacity-0');
         panel.classList.remove('opacity-100', 'scale-100', 'translate-y-0');
         panel.classList.add('opacity-0', 'scale-95', 'translate-y-full');
@@ -410,7 +425,7 @@ function setupMemberConfigModal() {
             modal.classList.add('hidden');
             unlockBodyScroll();
             configSlotIndex = -1;
-            if (lastConfigTrigger) lastConfigTrigger.focus();
+            focusTeamSlot(indexToRestore);
         }, 200);
     };
 
@@ -422,9 +437,8 @@ function setupMemberConfigModal() {
     });
 }
 
-window.openSearchModal = (index, trigger = null) => {
+window.openSearchModal = (index) => {
     activeSlotIndex = index;
-    lastSearchTrigger = trigger || document.activeElement;
     const modal = document.getElementById('search-modal');
     const backdrop = document.getElementById('search-backdrop');
     const panel = document.getElementById('search-panel');
@@ -440,10 +454,9 @@ window.openSearchModal = (index, trigger = null) => {
     });
 };
 
-window.openDeleteModal = (e, index, trigger = null) => {
+window.openDeleteModal = (e, index) => {
     e.stopPropagation();
     deleteSlotIndex = index;
-    lastDeleteTrigger = trigger || e.currentTarget || document.activeElement;
     const modal = document.getElementById('delete-modal');
     const backdrop = document.getElementById('delete-backdrop');
     const panel = document.getElementById('delete-panel');
@@ -470,6 +483,7 @@ function setupDeleteModal() {
     if (!modal || !cancelBtn || !confirmBtn) return;
 
     const closeModal = () => {
+        const indexToRestore = deleteSlotIndex;
         backdrop.classList.add('opacity-0');
         panel.classList.remove('opacity-100', 'scale-100');
         panel.classList.add('opacity-0', 'scale-95');
@@ -477,7 +491,7 @@ function setupDeleteModal() {
             modal.classList.add('hidden');
             unlockBodyScroll();
             deleteSlotIndex = -1;
-            if (lastDeleteTrigger) lastDeleteTrigger.focus();
+            focusTeamSlot(indexToRestore);
         }, 200);
     };
 
@@ -511,6 +525,7 @@ function setupSearchModal() {
     let activeIndex = -1;
 
     const closeModal = () => {
+        const indexToRestore = activeSlotIndex;
         backdrop.classList.add('opacity-0');
         panel.classList.remove('opacity-100', 'scale-100');
         panel.classList.add('opacity-0', 'scale-95');
@@ -520,7 +535,7 @@ function setupSearchModal() {
             input.value = '';
             resultsContainer.innerHTML = placeholderHTML;
             activeIndex = -1;
-            if (lastSearchTrigger) lastSearchTrigger.focus();
+            focusTeamSlot(indexToRestore);
         }, 200);
     };
 
@@ -571,7 +586,7 @@ function setupSearchModal() {
         } else {
             resultsContainer.innerHTML = `<ul>${topMatches.map((p) => {
                 const imageUrl = getPokemonImageUrl(p, appData?.imageFixes || {});
-                const typePills = p.types.map(t => createTypePill(t, contrastData)).join('');
+                const typePills = p.types.map(t => createTypePill(t, contrastData, 'type-pill-sm')).join('');
 
                 return `
                     <li>
@@ -584,7 +599,7 @@ function setupSearchModal() {
                                 <div class="font-bold truncate" style="color: var(--text)">${p.displayName}</div>
                                 <div class="text-xs font-mono" style="color: var(--text-muted)">#${p.id}</div>
                             </div>
-                            <div class="flex gap-1 scale-90 shrink-0">
+                            <div class="flex gap-1 shrink-0">
                                 ${typePills}
                             </div>
                         </button>
