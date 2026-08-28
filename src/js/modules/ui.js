@@ -533,7 +533,7 @@ export function renderAbilityAlerts(container, abilities, pokemonTypes = null, e
 
             alertsToRender.push({
                 abilityName: displayName,
-                description: mod.description,
+                description: i18n.t(mod.descriptionKey),
                 requiresContext: mod.requiresContext,
                 delta
             });

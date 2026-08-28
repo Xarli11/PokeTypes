@@ -83,9 +83,39 @@ export async function initSimulator() {
     });
 
     setupEventListeners(appData);
+    simEffectiveness = appData.effectiveness;
 }
 
 let selectedPokemon = null;
+let simEffectiveness = null;
+
+/**
+ * Re-renders the ability <select> labels and the current result's
+ * ability description in the active language, without a new PokeAPI
+ * fetch (reuses the already-cached `defenderDetails`). The language
+ * toggle re-runs displayAnalysis/refreshProView but never re-invoked
+ * initSimulator, so without this the Ability Interaction Checker kept
+ * showing whichever language was active when a defender was selected —
+ * found via QA toggling EN/ES with a defender already picked.
+ */
+export function refreshSimulatorLanguage() {
+    if (!selectedPokemon) return;
+
+    const abilitySelect = document.getElementById('sim-ability-select');
+    if (abilitySelect && defenderDetails?.abilities) {
+        const currentValue = abilitySelect.value;
+        abilitySelect.innerHTML = defenderDetails.abilities.map(a => {
+            const name = i18n.tAbility(a.ability.name);
+            return `<option value="${a.ability.name}">${name}</option>`;
+        }).join('');
+        abilitySelect.value = currentValue;
+    }
+
+    const attackSelect = document.getElementById('sim-attack-type');
+    if (attackSelect && abilitySelect && !abilitySelect.disabled && simEffectiveness) {
+        runSimulation(attackSelect.value, selectedPokemon, abilitySelect.value, simEffectiveness);
+    }
+}
 
 function setupEventListeners(appData) {
     const attackSelect = document.getElementById('sim-attack-type');
@@ -336,10 +366,11 @@ function runSimulation(attackType, pokemon, abilityName, effectiveness) {
 
     // 4. Render description + damage estimate
     let descHTML = '';
+    const abilityDisplayName = i18n.tAbility(abilityName);
     if (abilityTriggered && !abilityTriggered.offensiveOnly) {
-        descHTML += `<p class="mb-1"><span class="font-bold" style="color: var(--text)">${capitalizeWords(abilityName.replace(/-/g, ' '))}</span>: ${abilityTriggered.description}</p>`;
+        descHTML += `<p class="mb-1"><span class="font-bold" style="color: var(--text)">${abilityDisplayName}</span>: ${i18n.t(abilityTriggered.descriptionKey)}</p>`;
     } else if (abilityTriggered?.offensiveOnly) {
-        descHTML += `<p class="mb-1" style="color: var(--warning)"><span class="font-bold">${capitalizeWords(abilityName.replace(/-/g, ' '))}</span>: ${abilityTriggered.description}</p>`;
+        descHTML += `<p class="mb-1" style="color: var(--warning)"><span class="font-bold">${abilityDisplayName}</span>: ${i18n.t(abilityTriggered.descriptionKey)}</p>`;
     } else {
         descHTML += `<p class="mb-1">${i18n.t('sim_standard_effectiveness')}</p>`;
     }
