@@ -8,9 +8,12 @@
 //   - multiplier          : plain damage scaling (0.5, 1.25, 1.5, 2, ...).
 //   - conditional effect  : `superEffectiveOnly` (Filter/Solid Rock/Prism
 //                           Armor — only scales hits that are already
-//                           super effective) or `blockNonSE` (Wonder Guard
+//                           super effective), `blockNonSE` (Wonder Guard
 //                           — zeroes anything that isn't already super
-//                           effective).
+//                           effective), or `removesTypeImmunity` (Ring
+//                           Target — negates the holder's TYPE-based
+//                           immunities specifically, never an
+//                           ability/item's own immunity; see below).
 //
 // `type: 'Offensive'` entries describe a move-boosting effect on the
 // ability holder's own STAB (Transistor, Adaptability, Tinted Lens...).
@@ -18,6 +21,17 @@
 // `applyDefensiveModifiers` intentionally ignores them — they only exist
 // for informational display (see ui.js renderAbilityAlerts and
 // simulator.js's "why didn't the number change" note).
+//
+// ── Ring Target: type immunity vs ability/item immunity ─────────────────
+//
+// Ring Target negates immunities that come from TYPING (Ghost immune to
+// Normal, Ground immune to Electric, Flying immune to Ground, ...). It
+// must NOT undo an immunity granted by an ability or another item
+// (Levitate, Volt Absorb, Flash Fire, Air Balloon, ...) — those are
+// separate mechanics in the games and stay in effect regardless of Ring
+// Target. `applyDefensiveModifiers` tracks which types went to 0 via a
+// hard ability/item immunity (stage 1) before ever considering Ring
+// Target (stage 2), so it can tell the two apart; see that function.
 //
 // Known unmodeled limitations (documented rather than guessed at):
 //   - Multiscale / Shadow Shield / Tera Shell are "only at full HP" in the
@@ -81,7 +95,11 @@ export const ABILITY_EFFECTIVENESS = {
 
 export const ITEM_EFFECTIVENESS = {
     'air-balloon': [{ type: 'Ground', modifier: 0, description: 'Grants immunity to Ground-type moves.' }],
-    'ring-target': [{ type: 'All', modifier: 1, description: 'Allows moves to hit even if the user is normally immune.' }]
+    // Negates the holder's own TYPE-based immunities (Ghost immune to
+    // Normal, Ground immune to Electric, Flying immune to Ground, ...) —
+    // it does NOT undo an ability/item's own immunity (Levitate, Volt
+    // Absorb, Flash Fire, ...). See applyDefensiveModifiers below.
+    'ring-target': [{ type: 'All', modifier: 1, removesTypeImmunity: true, description: "Negates the holder's type-based immunities (ability/item immunities are unaffected)." }]
 };
 
 export function getAbilityModifiers(abilityName) {
@@ -122,14 +140,49 @@ export function getImmuneTypesFromModifiers(modifiers, allTypes) {
  * and are therefore always a no-op in this function, by construction.
  *
  * @param {Record<string, number>} defenseMap
- * @param {Array<{type: string, modifier: number, superEffectiveOnly?: boolean, blockNonSE?: boolean}>} modifiers
+ * @param {Array<{type: string, modifier: number, superEffectiveOnly?: boolean, blockNonSE?: boolean, removesTypeImmunity?: boolean}>} modifiers
  * @param {string[]} allTypes
+ * @param {object} [options]
+ * @param {Record<string, number>} [options.ignoringTypeImmunityMap] - result of `computeDefenseMapIgnoringTypeImmunities` for the same defending combination; required for `removesTypeImmunity` (Ring Target) entries to have any effect. If omitted, those entries are a documented no-op rather than a guess.
  * @returns {Record<string, number>}
  */
-export function applyDefensiveModifiers(defenseMap, modifiers, allTypes) {
+export function applyDefensiveModifiers(defenseMap, modifiers, allTypes, options = {}) {
+    const { ignoringTypeImmunityMap = null } = options;
     const result = { ...defenseMap };
 
+    // Stage 1: hard ability/item immunities (unconditional modifier === 0).
+    // Tracked separately so Ring Target (stage 2) can tell a TYPE-based
+    // immunity (present in the original `defenseMap`, negatable) apart
+    // from an ABILITY/ITEM-based one recorded here (never negatable).
+    const hardImmuneTypes = new Set();
     modifiers.forEach(mod => {
+        if (mod.modifier !== 0 || mod.blockNonSE || mod.superEffectiveOnly || mod.removesTypeImmunity) return;
+        const types = mod.type === 'All' ? allTypes : (Object.prototype.hasOwnProperty.call(result, mod.type) ? [mod.type] : []);
+        types.forEach(type => {
+            result[type] = 0;
+            hardImmuneTypes.add(type);
+        });
+    });
+
+    // Stage 2: Ring Target — negate TYPE-based immunities only. Never
+    // touches a type that an ability/item made immune in stage 1 above.
+    if (ignoringTypeImmunityMap) {
+        modifiers.forEach(mod => {
+            if (!mod.removesTypeImmunity) return;
+            allTypes.forEach(type => {
+                const wasTypeImmune = defenseMap[type] === 0;
+                if (wasTypeImmune && !hardImmuneTypes.has(type)) {
+                    result[type] = ignoringTypeImmunityMap[type];
+                }
+            });
+        });
+    }
+
+    // Stage 3: everything else — conditional effects and plain multipliers.
+    modifiers.forEach(mod => {
+        if (mod.removesTypeImmunity) return; // handled in stage 2
+        if (mod.modifier === 0 && !mod.blockNonSE && !mod.superEffectiveOnly) return; // handled in stage 1
+
         const types = mod.type === 'All'
             ? allTypes
             : (Object.prototype.hasOwnProperty.call(result, mod.type) ? [mod.type] : []);
@@ -145,9 +198,6 @@ export function applyDefensiveModifiers(defenseMap, modifiers, allTypes) {
                 // are already super effective; neutral/resisted/immune are
                 // untouched.
                 if (current >= 2) result[type] = current * mod.modifier;
-            } else if (mod.modifier === 0) {
-                // Hard immunity always wins, regardless of the prior value.
-                result[type] = 0;
             } else {
                 result[type] = current * mod.modifier;
             }

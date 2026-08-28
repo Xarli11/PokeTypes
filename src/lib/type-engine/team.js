@@ -6,7 +6,7 @@
 // are applied identically here and in the single-Pokemon Ability
 // Interaction Checker (simulator.js) — there is only one engine, not two.
 
-import { computeDefenseMap } from './effectiveness.js';
+import { computeDefenseMap, computeDefenseMapIgnoringTypeImmunities } from './effectiveness.js';
 import { applyDefensiveModifiers, getAbilityModifiers, getItemModifiers } from './modifiers.js';
 import { classifyMultiplier } from './result.js';
 
@@ -46,7 +46,9 @@ export function analyzeTeamDefense(team, allTypes, effectiveness) {
         ];
 
         const finalMap = modifiers.length > 0
-            ? applyDefensiveModifiers(baseMap, modifiers, allTypes)
+            ? applyDefensiveModifiers(baseMap, modifiers, allTypes, {
+                ignoringTypeImmunityMap: computeDefenseMapIgnoringTypeImmunities(t1, t2, allTypes, effectiveness)
+            })
             : baseMap;
 
         Object.entries(finalMap).forEach(([type, multiplier]) => {

@@ -43,6 +43,46 @@ export function computeDefenseMap(type1, type2, allTypes, effectiveness, type3 =
 }
 
 /**
+ * Same defense map as `computeDefenseMap`, except any single defending
+ * type's component that would grant a hard TYPE-based immunity (e.g.
+ * Flying's immunity to Ground) is treated as neutral (1x) instead of 0,
+ * while every other type's component in the combination is left exactly
+ * as-is (still weak/resisted/whatever it naturally is).
+ *
+ * This is deliberately *not* "clamp the final product to 1 if it's 0" —
+ * that would be wrong for a combination where the immunity-granting type
+ * is paired with a type that's independently weak or resistant to the
+ * same attacker (e.g. Ground/Flying is immune to Electric only because of
+ * Flying; Ground's own component is neutral, but Flying's is actually
+ * weak (2x) to Electric — negating just the immunity should reveal that
+ * 2x, not fall back to neutral).
+ *
+ * Exists to support Ring Target (see modifiers.js), which negates the
+ * holder's type-based immunities without touching ability/item-based
+ * ones (Levitate, Volt Absorb, ...) — those are handled separately in
+ * applyDefensiveModifiers.
+ * @param {string} type1
+ * @param {string|null} type2
+ * @param {string[]} allTypes
+ * @param {Record<string, Record<string, number>>} effectiveness
+ * @param {string|null} [type3]
+ * @returns {Record<string, number>}
+ */
+export function computeDefenseMapIgnoringTypeImmunities(type1, type2, allTypes, effectiveness, type3 = null) {
+    const defendingTypes = [type1, type2, type3].filter(Boolean);
+    const map = {};
+    allTypes.forEach(attackingType => {
+        let modifier = 1;
+        defendingTypes.forEach(defendingType => {
+            const component = getEffectiveness(attackingType, defendingType, effectiveness);
+            modifier *= (component === 0 ? 1 : component);
+        });
+        map[attackingType] = modifier;
+    });
+    return map;
+}
+
+/**
  * Groups a defense map into the fixed multiplier buckets the UI renders
  * (weaknesses8x..immunities). Only used for the no-modifier, type-only
  * path, where every value is guaranteed to land exactly on one of the

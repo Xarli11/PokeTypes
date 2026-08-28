@@ -12,6 +12,7 @@
 export {
     getEffectiveness,
     computeDefenseMap,
+    computeDefenseMapIgnoringTypeImmunities,
     calculateDefense,
     calculateOffense,
     findImmuneDualTypes
