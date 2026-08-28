@@ -99,6 +99,17 @@ let simEffectiveness = null;
  * found via QA toggling EN/ES with a defender already picked.
  */
 export function refreshSimulatorLanguage() {
+    // The attack-type options never change (always all 18 types), so
+    // relabeling each option's textContent in place — rather than
+    // rebuilding the <select> — keeps the current selection intact for
+    // free and doesn't depend on a defender being picked yet.
+    const attackSelect = document.getElementById('sim-attack-type');
+    if (attackSelect) {
+        Array.from(attackSelect.options).forEach(opt => {
+            opt.textContent = i18n.tType(opt.value);
+        });
+    }
+
     if (!selectedPokemon) return;
 
     const abilitySelect = document.getElementById('sim-ability-select');
@@ -111,7 +122,6 @@ export function refreshSimulatorLanguage() {
         abilitySelect.value = currentValue;
     }
 
-    const attackSelect = document.getElementById('sim-attack-type');
     if (attackSelect && abilitySelect && !abilitySelect.disabled && simEffectiveness) {
         runSimulation(attackSelect.value, selectedPokemon, abilitySelect.value, simEffectiveness);
     }
