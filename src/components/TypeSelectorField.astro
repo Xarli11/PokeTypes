@@ -12,9 +12,10 @@ interface Props {
 }
 
 const { selectId, placeholderKey, extra = false, tooltipKey } = Astro.props;
+const helpId = tooltipKey ? `${selectId}-help` : undefined;
 ---
 
-<div class="relative w-full sm:w-40 group">
+<div class="relative w-full sm:w-40">
     <button
         type="button"
         class:list={["type-selector-btn", { "type-selector-btn-extra": extra }]}
@@ -22,6 +23,7 @@ const { selectId, placeholderKey, extra = false, tooltipKey } = Astro.props;
         data-placeholder={placeholderKey}
         aria-haspopup="dialog"
         aria-expanded="false"
+        aria-describedby={helpId}
     >
         <span class="type-selector-label" data-i18n={placeholderKey}></span>
         <svg class="type-selector-caret w-4 h-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -34,6 +36,16 @@ const { selectId, placeholderKey, extra = false, tooltipKey } = Astro.props;
     </select>
 
     {tooltipKey && (
-        <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-48 text-xs p-2 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-150 z-50 text-center pointer-events-none shadow-xl" style="background: var(--surface-raised); color: var(--text); border: 1px solid var(--border)" data-i18n={tooltipKey}></div>
+        <!-- <details> gives us click/tap/keyboard/screen-reader support for
+             free (Enter, Space, and tap all toggle <summary>; the expanded
+             state is announced natively) — no custom JS needed, and unlike
+             the old group-hover-only tooltip this also works on touch. The
+             description is additionally wired to the trigger button itself
+             via aria-describedby, so screen reader users hear it just by
+             focusing the button — they don't have to find/open this too. -->
+        <details class="type-selector-help">
+            <summary aria-label="Extra Type help">?</summary>
+            <div id={helpId} role="tooltip" class="type-selector-help-panel" data-i18n={tooltipKey}></div>
+        </details>
     )}
 </div>

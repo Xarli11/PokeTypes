@@ -6,10 +6,14 @@ import { i18n } from './i18n.js';
 import { initSimulator } from './simulator.js';
 import { encodeTeamPayload, decodeTeamPayload } from '../../lib/share-team.js';
 import { getPokemonDefenseBreakdown, formatMultiplierSymbol } from '../../lib/type-engine/index.js';
+import { getFocusable, trapTabKey, lockBodyScroll, unlockBodyScroll } from './a11y.js';
 
 // State
 let activeSlotIndex = -1;
 let deleteSlotIndex = -1;
+let lastSearchTrigger = null;
+let lastDeleteTrigger = null;
+let lastConfigTrigger = null;
 let allPokemon = [];
 let contrastData = {};
 let appData = null; 
@@ -99,12 +103,12 @@ function renderTeamGrid() {
     container.innerHTML = team.map((member, index) => {
         if (!member) {
             return `
-            <div onclick="window.openSearchModal(${index})" class="team-slot-empty cursor-pointer panel border-dashed flex flex-col items-center justify-center h-28 transition-all group">
+            <button type="button" onclick="window.openSearchModal(${index}, this)" class="team-slot-empty cursor-pointer panel border-dashed flex flex-col items-center justify-center h-28 transition-all group w-full">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--text-muted)">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
                 <span class="mt-2 text-[10px] uppercase font-bold tracking-wider" style="color: var(--text-muted)">${i18n.t('pro_add_pokemon')}</span>
-            </div>`;
+            </button>`;
         }
 
         const imageUrl = getPokemonImageUrl(member, appData?.imageFixes || {});
@@ -114,7 +118,7 @@ function renderTeamGrid() {
 
         return `
         <div class="team-slot-filled relative panel !p-2.5 flex items-center gap-2.5 h-24 transition-all group">
-            <button onclick="window.openDeleteModal(event, ${index})" class="absolute -top-1.5 -right-1.5 w-5 h-5 flex items-center justify-center rounded-full text-white bg-red-500 hover:bg-red-600 transition-all z-10" title="${i18n.t('btn_remove')}" aria-label="${i18n.t('btn_remove')}">
+            <button type="button" onclick="window.openDeleteModal(event, ${index}, this)" class="tap-target-44 absolute -top-1.5 -right-1.5 w-5 h-5 flex items-center justify-center rounded-full text-white bg-red-600 hover:bg-red-700 transition-all z-10" title="${i18n.t('btn_remove')}" aria-label="${i18n.t('btn_remove')} ${capitalizeWords(member.name)}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -128,7 +132,7 @@ function renderTeamGrid() {
                 <div class="text-[10px] mt-1 truncate" style="color: var(--text-muted)" title="${abilityLabel} · ${itemLabel}">${abilityLabel} · ${itemLabel}</div>
             </div>
 
-            <button onclick="window.openMemberConfig(${index})" class="icon-btn shrink-0" title="${i18n.t('configure_btn')}" aria-label="${i18n.t('configure_btn')} ${capitalizeWords(member.name)}">
+            <button type="button" onclick="window.openMemberConfig(${index}, this)" class="icon-btn shrink-0" title="${i18n.t('configure_btn')}" aria-label="${i18n.t('configure_btn')} ${capitalizeWords(member.name)}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -303,8 +307,9 @@ function renderMemberConfigPreview(index) {
     `;
 }
 
-window.openMemberConfig = (index) => {
+window.openMemberConfig = (index, trigger = null) => {
     configSlotIndex = index;
+    lastConfigTrigger = trigger || document.activeElement;
     const member = loadTeam()[index];
     if (!member || !appData) return;
 
@@ -379,10 +384,14 @@ window.openMemberConfig = (index) => {
     const panel = document.getElementById('member-config-panel');
 
     modal.classList.remove('hidden');
+    lockBodyScroll();
     requestAnimationFrame(() => {
         backdrop.classList.remove('opacity-0');
         panel.classList.remove('opacity-0', 'scale-95', 'translate-y-full');
         panel.classList.add('opacity-100', 'scale-100', 'translate-y-0');
+        // First useful control (the ability select), falling back to Close
+        // if this member has no ability list to choose from.
+        (document.getElementById('config-ability-select') || document.getElementById('close-member-config'))?.focus();
     });
 };
 
@@ -399,25 +408,30 @@ function setupMemberConfigModal() {
         panel.classList.add('opacity-0', 'scale-95', 'translate-y-full');
         setTimeout(() => {
             modal.classList.add('hidden');
+            unlockBodyScroll();
             configSlotIndex = -1;
+            if (lastConfigTrigger) lastConfigTrigger.focus();
         }, 200);
     };
 
     closeBtn.addEventListener('click', closeModal);
     backdrop.addEventListener('click', closeModal);
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+    modal.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+        else trapTabKey(e, panel);
     });
 }
 
-window.openSearchModal = (index) => {
+window.openSearchModal = (index, trigger = null) => {
     activeSlotIndex = index;
+    lastSearchTrigger = trigger || document.activeElement;
     const modal = document.getElementById('search-modal');
     const backdrop = document.getElementById('search-backdrop');
     const panel = document.getElementById('search-panel');
     const input = document.getElementById('pro-search-input');
-    
+
     modal.classList.remove('hidden');
+    lockBodyScroll();
     requestAnimationFrame(() => {
         backdrop.classList.remove('opacity-0');
         panel.classList.remove('opacity-0', 'scale-95');
@@ -426,18 +440,23 @@ window.openSearchModal = (index) => {
     });
 };
 
-window.openDeleteModal = (e, index) => {
+window.openDeleteModal = (e, index, trigger = null) => {
     e.stopPropagation();
     deleteSlotIndex = index;
+    lastDeleteTrigger = trigger || e.currentTarget || document.activeElement;
     const modal = document.getElementById('delete-modal');
     const backdrop = document.getElementById('delete-backdrop');
     const panel = document.getElementById('delete-panel');
-    
+
     modal.classList.remove('hidden');
+    lockBodyScroll();
     requestAnimationFrame(() => {
         backdrop.classList.remove('opacity-0');
         panel.classList.remove('opacity-0', 'scale-95');
         panel.classList.add('opacity-100', 'scale-100');
+        // Cancel, not Remove, is the safe default focus target for a
+        // destructive confirmation.
+        document.getElementById('cancel-delete')?.focus();
     });
 }
 
@@ -456,12 +475,18 @@ function setupDeleteModal() {
         panel.classList.add('opacity-0', 'scale-95');
         setTimeout(() => {
             modal.classList.add('hidden');
+            unlockBodyScroll();
             deleteSlotIndex = -1;
+            if (lastDeleteTrigger) lastDeleteTrigger.focus();
         }, 200);
     };
 
     cancelBtn.addEventListener('click', closeModal);
     backdrop.addEventListener('click', closeModal);
+    modal.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+        else trapTabKey(e, panel);
+    });
 
     confirmBtn.addEventListener('click', () => {
         if (deleteSlotIndex > -1) {
@@ -482,24 +507,42 @@ function setupSearchModal() {
 
     if (!modal || !closeBtn || !input || !resultsContainer) return;
 
+    const placeholderHTML = `<div class="py-12 text-center text-sm" style="color: var(--text-muted)">${i18n.t('search_placeholder')}</div>`;
+    let activeIndex = -1;
+
     const closeModal = () => {
         backdrop.classList.add('opacity-0');
         panel.classList.remove('opacity-100', 'scale-100');
         panel.classList.add('opacity-0', 'scale-95');
         setTimeout(() => {
             modal.classList.add('hidden');
+            unlockBodyScroll();
             input.value = '';
-            resultsContainer.innerHTML = `<div class="py-12 text-center text-slate-400 text-sm">${i18n.t('search_placeholder')}</div>`;
+            resultsContainer.innerHTML = placeholderHTML;
+            activeIndex = -1;
+            if (lastSearchTrigger) lastSearchTrigger.focus();
         }, 200);
     };
 
     closeBtn.addEventListener('click', closeModal);
     backdrop.addEventListener('click', closeModal);
-    
+    modal.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+        else trapTabKey(e, panel);
+    });
+
+    const updateActiveResult = (items) => {
+        items.forEach((item, index) => {
+            item.classList.toggle('search-result-active', index === activeIndex);
+        });
+        if (activeIndex > -1) items[activeIndex].scrollIntoView({ block: 'nearest' });
+    };
+
     input.addEventListener('input', (e) => {
+        activeIndex = -1;
         const query = normalizeSearch(e.target.value);
         if (!query) {
-            resultsContainer.innerHTML = `<div class="py-12 text-center text-slate-400 text-sm">${i18n.t('search_placeholder')}</div>`;
+            resultsContainer.innerHTML = placeholderHTML;
             return;
         }
 
@@ -524,29 +567,48 @@ function setupSearchModal() {
         const topMatches = matches.slice(0, 20);
 
         if (topMatches.length === 0) {
-            resultsContainer.innerHTML = `<div class="py-12 text-center text-slate-400 text-sm">${i18n.t('none')}</div>`;
+            resultsContainer.innerHTML = `<div class="py-12 text-center text-sm" style="color: var(--text-muted)">${i18n.t('none')}</div>`;
         } else {
-            resultsContainer.innerHTML = topMatches.map((p) => {
+            resultsContainer.innerHTML = `<ul>${topMatches.map((p) => {
                 const imageUrl = getPokemonImageUrl(p, appData?.imageFixes || {});
                 const typePills = p.types.map(t => createTypePill(t, contrastData)).join('');
-                
+
                 return `
-                    <div data-poke-name="${p.name}" 
-                         class="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 p-3 flex items-center gap-4 border-b border-slate-100 dark:border-slate-700 last:border-0 transition-colors">
-                        <img src="${imageUrl}" 
-                             loading="lazy" 
-                             class="w-10 h-10 object-contain"
-                             onerror="handleSearchImageError(this, ${p.id}, '${p.name.replace(/'/g, "\\'")}')">
-                        <div class="flex-1">
-                            <div class="font-bold text-slate-800 dark:text-white">${p.displayName}</div>
-                            <div class="text-xs text-slate-400">#${p.id}</div>
-                        </div>
-                        <div class="flex gap-1 scale-90">
-                            ${typePills}
-                        </div>
-                    </div>
+                    <li>
+                        <button type="button" data-poke-name="${p.name}" class="search-result-row w-full text-left flex items-center gap-4 p-3">
+                            <img src="${imageUrl}"
+                                 loading="lazy"
+                                 class="w-10 h-10 object-contain"
+                                 onerror="handleSearchImageError(this, ${p.id}, '${p.name.replace(/'/g, "\\'")}')">
+                            <div class="flex-1 min-w-0">
+                                <div class="font-bold truncate" style="color: var(--text)">${p.displayName}</div>
+                                <div class="text-xs font-mono" style="color: var(--text-muted)">#${p.id}</div>
+                            </div>
+                            <div class="flex gap-1 scale-90 shrink-0">
+                                ${typePills}
+                            </div>
+                        </button>
+                    </li>
                 `;
-            }).join('');
+            }).join('')}</ul>`;
+        }
+    });
+
+    input.addEventListener('keydown', (e) => {
+        const items = resultsContainer.querySelectorAll('[data-poke-name]');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            activeIndex = (activeIndex + 1) % items.length;
+            updateActiveResult(items);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            activeIndex = (activeIndex - 1 + items.length) % items.length;
+            updateActiveResult(items);
+        } else if (e.key === 'Enter' && activeIndex > -1) {
+            e.preventDefault();
+            items[activeIndex].click();
         }
     });
 

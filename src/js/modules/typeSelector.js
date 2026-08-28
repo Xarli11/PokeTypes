@@ -10,20 +10,34 @@
 // type buttons) keeps working completely unchanged — this module only
 // ever does `select.value = X; select.dispatchEvent(new Event('change'))`,
 // exactly like the pre-existing empty-state type buttons already did.
+//
+// Accessibility model: below the `sm` breakpoint the popover becomes a
+// full bottom sheet and behaves like a real modal (aria-modal, body
+// scroll lock, Tab trapped inside). At `sm` and above it's a lightweight
+// anchored popover — not modal: Tab is allowed to move focus out of it
+// (closing it, like a native <select>'s dropdown would), and clicking
+// outside also closes it. Either way, closing always returns focus to
+// the trigger button that opened it.
 
 import { i18n } from './i18n.js';
+import { getFocusable, trapTabKey, lockBodyScroll, unlockBodyScroll } from './a11y.js';
+
+const MOBILE_BREAKPOINT = 640;
 
 let types = [];
 let contrastData = {};
 let popover = null;
+let backdrop = null;
 let activeButton = null;
 let activeSelect = null;
+let isSheetMode = false;
 
 /** Pure — used by initTypeSelectors and by tests. */
-export function buildTypeGridHTML(typeList, contrast) {
+export function buildTypeGridHTML(typeList, contrast, selectedType = '') {
     return typeList.map(type => {
         const tc = contrast[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
-        return `<button type="button" class="type-grid-option type-pill bg-type-${type.toLowerCase()} ${tc}" data-type="${type}">${i18n.tType(type)}</button>`;
+        const pressed = type === selectedType;
+        return `<button type="button" class="type-grid-option type-pill bg-type-${type.toLowerCase()} ${tc}" data-type="${type}" role="button" aria-pressed="${pressed}">${i18n.tType(type)}</button>`;
     }).join('');
 }
 
@@ -32,11 +46,18 @@ export function initTypeSelectors(allTypes, contrast) {
     contrastData = contrast;
 
     if (!popover) {
+        backdrop = document.createElement('div');
+        backdrop.id = 'type-selector-backdrop';
+        backdrop.className = 'type-selector-backdrop hidden';
+        document.body.appendChild(backdrop);
+        backdrop.addEventListener('click', closePopover);
+
         popover = document.createElement('div');
         popover.id = 'type-selector-popover';
         popover.className = 'type-selector-popover hidden';
         popover.setAttribute('role', 'dialog');
         popover.setAttribute('aria-modal', 'false');
+        popover.setAttribute('aria-label', i18n.t('choose_type'));
         document.body.appendChild(popover);
 
         popover.addEventListener('click', (e) => {
@@ -49,11 +70,23 @@ export function initTypeSelectors(allTypes, contrast) {
             if (option) setSelection(option.dataset.type);
         });
 
+        popover.addEventListener('keydown', handlePopoverKeydown);
+
         document.addEventListener('click', (e) => {
             if (popover.classList.contains('hidden')) return;
             if (!popover.contains(e.target) && !e.target.closest('.type-selector-btn')) {
                 closePopover();
             }
+        });
+
+        // Non-modal desktop popover: Tab moving focus out of it (to
+        // anything other than the popover itself or its trigger) closes
+        // it, same as a native <select> losing focus.
+        popover.addEventListener('focusout', (e) => {
+            if (isSheetMode) return;
+            const next = e.relatedTarget;
+            if (next && (popover.contains(next) || next === activeButton)) return;
+            closePopover();
         });
 
         document.addEventListener('keydown', (e) => {
@@ -72,6 +105,7 @@ export function initTypeSelectors(allTypes, contrast) {
     document.querySelectorAll('.type-selector-btn').forEach(btn => {
         if (btn.dataset.tsBound) return;
         btn.dataset.tsBound = '1';
+        btn.setAttribute('aria-controls', 'type-selector-popover');
         btn.addEventListener('click', () => togglePopover(btn));
 
         const select = document.getElementById(btn.dataset.for);
@@ -91,12 +125,13 @@ export function refreshTypeSelectorLabels() {
 }
 
 function renderPopoverContent() {
+    const selectedType = activeSelect ? activeSelect.value : '';
     popover.innerHTML = `
         <div class="type-selector-header">
             <span class="type-selector-title" data-i18n="choose_type">${i18n.t('choose_type')}</span>
             <button type="button" class="type-selector-clear" data-action="clear" data-i18n="clear_selection">${i18n.t('clear_selection')}</button>
         </div>
-        <div class="type-selector-grid">${buildTypeGridHTML(types, contrastData)}</div>
+        <div class="type-selector-grid">${buildTypeGridHTML(types, contrastData, selectedType)}</div>
     `;
 }
 
@@ -131,22 +166,40 @@ function togglePopover(btn) {
     activeButton = btn;
     activeSelect = document.getElementById(btn.dataset.for);
     btn.setAttribute('aria-expanded', 'true');
+
+    isSheetMode = window.innerWidth < MOBILE_BREAKPOINT;
+    popover.setAttribute('aria-modal', String(isSheetMode));
+    backdrop.classList.toggle('hidden', !isSheetMode);
+    if (isSheetMode) lockBodyScroll();
+
+    renderPopoverContent(); // reflect current selection's aria-pressed
     popover.classList.remove('hidden');
     positionPopover(btn);
+
+    // Move focus into the panel: the currently selected type if there is
+    // one, otherwise the first focusable control (Clear or the first
+    // type option).
+    const selected = popover.querySelector('[data-type][aria-pressed="true"]');
+    const target = selected || getFocusable(popover)[0];
+    target?.focus();
 }
 
 function closePopover() {
+    const wasSheet = isSheetMode;
     if (activeButton) {
         activeButton.setAttribute('aria-expanded', 'false');
         activeButton.focus();
     }
     popover.classList.add('hidden');
+    backdrop.classList.add('hidden');
+    if (wasSheet) unlockBodyScroll();
+    isSheetMode = false;
     activeButton = null;
     activeSelect = null;
 }
 
 function positionPopover(btn) {
-    if (window.innerWidth < 640) {
+    if (window.innerWidth < MOBILE_BREAKPOINT) {
         popover.classList.add('type-selector-sheet');
         popover.style.position = '';
         popover.style.top = '';
@@ -162,4 +215,29 @@ function positionPopover(btn) {
     popover.style.position = 'fixed';
     popover.style.top = `${rect.bottom + 8}px`;
     popover.style.left = `${Math.max(8, left)}px`;
+}
+
+function handlePopoverKeydown(e) {
+    if (isSheetMode) trapTabKey(e, popover);
+
+    const options = Array.from(popover.querySelectorAll('.type-selector-grid [data-type]'));
+    const currentIndex = options.indexOf(document.activeElement);
+    if (currentIndex === -1) return;
+
+    const arrowKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+    if (!arrowKeys.includes(e.key)) return;
+
+    const grid = popover.querySelector('.type-selector-grid');
+    const columns = getComputedStyle(grid).gridTemplateColumns.split(' ').length || 3;
+
+    let nextIndex = currentIndex;
+    if (e.key === 'ArrowLeft') nextIndex = currentIndex - 1;
+    else if (e.key === 'ArrowRight') nextIndex = currentIndex + 1;
+    else if (e.key === 'ArrowUp') nextIndex = currentIndex - columns;
+    else if (e.key === 'ArrowDown') nextIndex = currentIndex + columns;
+
+    if (nextIndex >= 0 && nextIndex < options.length) {
+        e.preventDefault();
+        options[nextIndex].focus();
+    }
 }
