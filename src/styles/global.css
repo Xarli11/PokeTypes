@@ -87,6 +87,11 @@
   .type-pill {
     @apply inline-flex items-center justify-center px-3 py-1 rounded-md text-xs font-bold tracking-tight uppercase border-2 border-transparent;
   }
+  /* A real smaller pill (less padding/font-size), not a transform: scale()
+     shrink — see createTypePill's docs in ui.js for why that matters. */
+  .type-pill-sm {
+    @apply px-1.5 py-0.5 text-[10px];
+  }
 
   /* Type Colors (unchanged from Sprint 1 — protagonists of the palette) */
   .bg-type-normal { background-color: #A8A77A; }

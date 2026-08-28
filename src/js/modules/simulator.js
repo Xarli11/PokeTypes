@@ -34,7 +34,7 @@ export async function initSimulator() {
                     <img id="sim-defender-img" src="" class="w-10 h-10 object-contain">
                     <div class="flex-1 min-w-0">
                         <div id="sim-defender-name" class="font-bold text-sm truncate" style="color: var(--text)"></div>
-                        <div id="sim-defender-types" class="flex gap-1 scale-75 origin-left"></div>
+                        <div id="sim-defender-types" class="flex flex-wrap gap-1"></div>
                     </div>
                     <button id="sim-clear-defender" class="icon-btn" type="button">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -192,7 +192,7 @@ async function selectDefender(pokemon, appData) {
         this.onerror = null;
     };
     document.getElementById('sim-defender-name').textContent = capitalizeWords(pokemon.name);
-    document.getElementById('sim-defender-types').innerHTML = pokemon.types.map(t => createTypePill(t, appData.contrast)).join('');
+    document.getElementById('sim-defender-types').innerHTML = pokemon.types.map(t => createTypePill(t, appData.contrast, 'type-pill-sm')).join('');
 
     // Fetch Abilities + Stats
     const abilitySelect = document.getElementById('sim-ability-select');

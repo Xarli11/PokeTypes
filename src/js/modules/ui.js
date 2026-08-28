@@ -18,10 +18,17 @@ export function normalizeSearch(str) {
         .trim();
 }
 
-export function createTypePill(type, contrastData) {
+/**
+ * `sizeClass` is an actual smaller pill variant (e.g. 'type-pill-sm'), not
+ * a transform: scale() shrink — scaling only changes paint, not layout
+ * box size, so a scaled-down pill row can still silently overflow its
+ * (width-constrained) container and cause page-level horizontal scroll.
+ * Found exactly this in the compact Team Builder slot (see global.css).
+ */
+export function createTypePill(type, contrastData, sizeClass = '') {
     const textColorClass = contrastData[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
     const translatedType = i18n.tType(type);
-    return `<span class="type-pill bg-type-${type.toLowerCase()} ${textColorClass}">
+    return `<span class="type-pill ${sizeClass} bg-type-${type.toLowerCase()} ${textColorClass}">
         ${translatedType}
     </span>`;
 }
@@ -144,9 +151,9 @@ export function renderOffenseGroups(container, off, dualImmunityPairs, contrastD
 
     if (dualImmunityPairs && dualImmunityPairs.length) {
         const pairsHTML = dualImmunityPairs.map(pair => {
-            const p1 = createTypePill(pair[0], contrastData);
-            const p2 = createTypePill(pair[1], contrastData);
-            return `<div class="flex items-center gap-1 px-2 py-1.5 rounded-md" style="background: var(--surface-raised); border: 1px solid var(--border)"><div class="flex scale-90 -space-x-2">${p1}${p2}</div></div>`;
+            const p1 = createTypePill(pair[0], contrastData, 'type-pill-sm');
+            const p2 = createTypePill(pair[1], contrastData, 'type-pill-sm');
+            return `<div class="flex items-center gap-1 px-2 py-1.5 rounded-md" style="background: var(--surface-raised); border: 1px solid var(--border)"><div class="flex flex-wrap gap-1">${p1}${p2}</div></div>`;
         }).join('');
 
         sections.push(`

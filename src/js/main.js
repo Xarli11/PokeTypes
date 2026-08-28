@@ -367,23 +367,23 @@ function setupEventListeners() {
         const topMatches = matches.slice(0, 10);
         
         if (topMatches.length === 0) {
-            suggestionsList.innerHTML = '<li class="p-4 text-slate-400 italic text-center">' + i18n.t('none') + '</li>';
+            suggestionsList.innerHTML = `<li class="p-4 italic text-center" style="color: var(--text-muted)">${i18n.t('none')}</li>`;
         } else {
             suggestionsList.innerHTML = topMatches.map((p, index) => {
                 // Use centralized image URL logic
                 const imageUrl = ui.getPokemonImageUrl(p, appData.imageFixes);
 
-                const typePills = p.types.map(t => ui.createTypePill(t, appData.contrast)).join('');
-                
+                const typePills = p.types.map(t => ui.createTypePill(t, appData.contrast, 'type-pill-sm')).join('');
+
                 return `
                     <li data-name="${p.name}" data-index="${index}" class="suggestion-item flex items-center gap-4 !py-3">
-                        <img src="${imageUrl}" 
-                             alt="${p.displayName}" 
+                        <img src="${imageUrl}"
+                             alt="${p.displayName}"
                              loading="lazy"
                              class="w-10 h-10 object-contain flex-shrink-0"
                              onerror="handleSearchImageError(this, ${p.id}, '${p.name.replace(/'/g, "\\'")}')">
-                        <span class="flex-1 font-bold text-slate-700 dark:text-slate-200">${p.displayName}</span>
-                        <div class="flex gap-1 scale-90 origin-right">
+                        <span class="flex-1 min-w-0 truncate font-bold" style="color: var(--text)">${p.displayName}</span>
+                        <div class="flex gap-1 shrink-0">
                             ${typePills}
                         </div>
                     </li>`;
@@ -416,12 +416,8 @@ function setupEventListeners() {
 
     function updateActiveSuggestion(items) {
         items.forEach((item, index) => {
-            if (index === activeIndex) {
-                item.classList.add('bg-indigo-50', 'dark:bg-indigo-900/40', 'text-indigo-600', 'dark:text-indigo-300');
-                item.scrollIntoView({ block: 'nearest' });
-            } else {
-                item.classList.remove('bg-indigo-50', 'dark:bg-indigo-900/40', 'text-indigo-600', 'dark:text-indigo-300');
-            }
+            item.classList.toggle('suggestion-active', index === activeIndex);
+            if (index === activeIndex) item.scrollIntoView({ block: 'nearest' });
         });
     }
 
