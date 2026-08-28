@@ -273,22 +273,29 @@ function runSimulation(attackType, pokemon, abilityName, effectiveness) {
     if (pokemon.types[1]) modifier *= getEffectiveness(attackType, pokemon.types[1], effectiveness);
 
     // 2. Ability modifier — same engine as Team Builder (applyDefensiveModifiers),
-    // so a single ability behaves identically here and in analysis.js.
+    // so a single ability behaves identically here and in analysis.js. The
+    // simulator has no full-HP/contact input yet, so `context` stays empty:
+    // any Multiscale/Shadow Shield/Tera Shell/Fluffy-contact component is
+    // never assumed to apply (see modifiers.js "Battle context").
     const abilityMods = getAbilityModifiers(abilityName);
     let abilityTriggered = null;
 
     if (abilityMods.length > 0) {
-        const mod = abilityMods.find(m => m.type.toLowerCase() === attackType.toLowerCase() || m.type === 'All');
+        const defensiveMods = abilityMods.filter(m => m.type === 'All' || m.type.toLowerCase() === attackType.toLowerCase());
 
-        if (mod) {
+        if (defensiveMods.length > 0) {
             const before = modifier;
-            modifier = applyDefensiveModifiers({ [attackType]: modifier }, [mod], [attackType])[attackType];
+            modifier = applyDefensiveModifiers({ [attackType]: modifier }, defensiveMods, [attackType])[attackType];
 
-            const triggered = mod.blockNonSE ? before <= 1
-                : mod.superEffectiveOnly ? before >= 2
-                : true; // hard immunity or a plain multiplier always trigger
-
-            if (triggered) abilityTriggered = mod;
+            // Describe whichever matching modifier could plausibly explain
+            // the (possibly unchanged) number: an unconditional one, or a
+            // conditional one whose flag is actually relevant right now.
+            abilityTriggered = defensiveMods.find(mod => {
+                if (mod.requiresContext) return false; // never confirmed here
+                if (mod.blockNonSE) return before <= 1;
+                if (mod.superEffectiveOnly) return before >= 2;
+                return true;
+            }) || null;
         }
 
         // Show offensive ability description even if it doesn't affect the multiplier

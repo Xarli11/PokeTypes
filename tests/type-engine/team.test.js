@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import typeData from '../../src/data/type-data.json';
-import { analyzeTeamDefense, getThreatAlerts } from '../../src/lib/type-engine/team.js';
+import { analyzeTeamDefense, getThreatAlerts, getPokemonDefenseBreakdown } from '../../src/lib/type-engine/team.js';
 
 const { types, effectiveness } = typeData;
 
@@ -76,6 +76,52 @@ describe('analyzeTeamDefense — non-zero ability/item modifiers now apply', () 
         // Everything that was neutral/resisted/immune by typing becomes immune under Wonder Guard.
         expect(matrix.Water.immune).toBe(1);
         expect(matrix.Water.weak).toBe(0);
+    });
+});
+
+// Regression coverage: analyzeTeamDefense must never silently assume a
+// battle condition (full HP, contact, ...) it can't actually know. A
+// Multiscale/Shadow Shield/Tera Shell Pokemon's weak/resist/immune tally
+// should reflect its RAW typing (Team Builder has no HP tracking), not a
+// best-case "already at full HP" assumption.
+describe('analyzeTeamDefense — never assumes an unconfirmed battle condition', () => {
+    it('Multiscale does not hide a Dragon/Flying member\'s real Ice weakness', () => {
+        const team = [pokemon({ name: 'dragonite', types: ['Dragon', 'Flying'], ability: 'multiscale' }), null, null, null, null, null];
+        const { matrix } = analyzeTeamDefense(team, types, effectiveness);
+        expect(matrix.Ice.weak).toBe(1);
+    });
+
+    it('Tera Shell does not force every matchup to Not Very Effective without confirmed full HP', () => {
+        const team = [pokemon({ name: 'tera-shell-mon', types: ['Dragon', 'Flying'], ability: 'tera-shell' }), null, null, null, null, null];
+        const { matrix } = analyzeTeamDefense(team, types, effectiveness);
+        expect(matrix.Ice.weak).toBe(1);
+    });
+});
+
+describe('getPokemonDefenseBreakdown — raw vs effective', () => {
+    it('reports the same value for both when there is no ability/item', () => {
+        const { raw, effective } = getPokemonDefenseBreakdown(pokemon({ types: ['Fire', 'Flying'] }), types, effectiveness);
+        expect(effective).toEqual(raw);
+    });
+
+    it('keeps the original TYPE-only matchup visible alongside the ability-adjusted one (Solid Rock)', () => {
+        const { raw, effective } = getPokemonDefenseBreakdown(
+            pokemon({ types: ['Rock', 'Ground'], ability: 'solid-rock' }),
+            types, effectiveness
+        );
+        // Water is 4x super effective vs Rock/Ground by typing alone...
+        expect(raw.Water).toBe(4);
+        // ...but Solid Rock softens any super-effective hit by 25%.
+        expect(effective.Water).toBe(3);
+    });
+
+    it('accepts an explicit context for the conditional abilities (fullHp for Multiscale)', () => {
+        const p = pokemon({ types: ['Dragon', 'Flying'], ability: 'multiscale' });
+        const withoutContext = getPokemonDefenseBreakdown(p, types, effectiveness);
+        const withFullHp = getPokemonDefenseBreakdown(p, types, effectiveness, { fullHp: true });
+        expect(withoutContext.effective.Ice).toBe(4);
+        expect(withFullHp.effective.Ice).toBe(2);
+        expect(withFullHp.raw.Ice).toBe(4); // raw never changes regardless of context
     });
 });
 

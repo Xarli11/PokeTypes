@@ -35,5 +35,6 @@ export {
 
 export {
     analyzeTeamDefense,
-    getThreatAlerts
+    getThreatAlerts,
+    getPokemonDefenseBreakdown
 } from './team.js';

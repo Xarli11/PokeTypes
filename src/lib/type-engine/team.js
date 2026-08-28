@@ -11,9 +11,49 @@ import { applyDefensiveModifiers, getAbilityModifiers, getItemModifiers } from '
 import { classifyMultiplier } from './result.js';
 
 /**
+ * Raw (typing-only) vs effective (typing + that Pokemon's confirmed
+ * ability/item modifiers) defense map for a single Pokemon. Kept
+ * distinct so a future UI can show e.g. "Rock 2x, reduced by Solid Rock
+ * -> effective 1.5x" without losing the original type matchup — see
+ * docs/type-engine.md, "Raw vs effective".
+ *
+ * `context` is forwarded to applyDefensiveModifiers unchanged (see
+ * modifiers.js for what it gates): omitting it — the default everywhere
+ * in analyzeTeamDefense below — means no unconfirmed battle condition
+ * (full HP, contact, ...) is ever assumed to hold.
+ * @param {{ types: string[], ability?: string|null, item?: string|null }} pokemon
+ * @param {string[]} allTypes
+ * @param {Record<string, Record<string, number>>} effectiveness
+ * @param {Record<string, boolean>} [context]
+ * @returns {{ raw: Record<string, number>, effective: Record<string, number> }}
+ */
+export function getPokemonDefenseBreakdown(pokemon, allTypes, effectiveness, context = {}) {
+    const [t1, t2 = null, t3 = null] = pokemon.types;
+    const raw = computeDefenseMap(t1, t2, allTypes, effectiveness, t3);
+
+    const modifiers = [
+        ...getAbilityModifiers(pokemon.ability),
+        ...getItemModifiers(pokemon.item)
+    ];
+
+    if (modifiers.length === 0) {
+        return { raw, effective: raw };
+    }
+
+    const ignoringTypeImmunityMap = computeDefenseMapIgnoringTypeImmunities(t1, t2, allTypes, effectiveness, t3);
+    const effective = applyDefensiveModifiers(raw, modifiers, allTypes, { context, ignoringTypeImmunityMap });
+
+    return { raw, effective };
+}
+
+/**
  * For every type in `allTypes`, counts how many active team members are
  * weak to / resist / are immune to it, accounting for each member's
- * ability and held item.
+ * ability and held item — but never an unconfirmed battle condition
+ * (full HP, a move making contact, ...), since Team Builder has no way
+ * to know those. `matrix[type].weak/resist/immune` is therefore always
+ * derived from: typing + the member's selected ability + selected item,
+ * nothing else. See docs/type-engine.md, "Team result semantics".
  * @param {Array<object|null>} team
  * @param {string[]} allTypes
  * @param {Record<string, Record<string, number>>} effectiveness
@@ -35,23 +75,9 @@ export function analyzeTeamDefense(team, allTypes, effectiveness) {
     const activeMembers = team.filter(p => p !== null);
 
     activeMembers.forEach(pokemon => {
-        const t1 = pokemon.types[0];
-        const t2 = pokemon.types[1] || null;
+        const { effective } = getPokemonDefenseBreakdown(pokemon, allTypes, effectiveness);
 
-        const baseMap = computeDefenseMap(t1, t2, allTypes, effectiveness);
-
-        const modifiers = [
-            ...getAbilityModifiers(pokemon.ability),
-            ...getItemModifiers(pokemon.item)
-        ];
-
-        const finalMap = modifiers.length > 0
-            ? applyDefensiveModifiers(baseMap, modifiers, allTypes, {
-                ignoringTypeImmunityMap: computeDefenseMapIgnoringTypeImmunities(t1, t2, allTypes, effectiveness)
-            })
-            : baseMap;
-
-        Object.entries(finalMap).forEach(([type, multiplier]) => {
+        Object.entries(effective).forEach(([type, multiplier]) => {
             const bucket = defenseMatrix[type];
             if (!bucket) return;
 
