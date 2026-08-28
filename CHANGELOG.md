@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.36.2] - 2026-08-29
+
+### Fixed
+- Fixed missing PWA and app icon assets (`/icon-192.png`, `/icon-512.png` were 404 in production).
+- Replaced the invalid `.ico` favicon (a PNG renamed with an `.ico` extension) with a real multi-size ICO file.
+- Added a dedicated Apple touch icon and aligned manifest/page icon metadata with the deployed assets.
+
 ## [2.36.1] - 2026-08-29
 
 ### Fixed
