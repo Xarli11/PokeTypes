@@ -71,7 +71,8 @@ export const ABILITY_EFFECTIVENESS = {
     'pixilate': [{ type: 'Offensive', modifier: 1.2, description: 'Normal-type moves become Fairy-type and gain 20% power.' }],
     'refrigerate': [{ type: 'Offensive', modifier: 1.2, description: 'Normal-type moves become Ice-type and gain 20% power.' }],
     'aerilate': [{ type: 'Offensive', modifier: 1.2, description: 'Normal-type moves become Flying-type and gain 20% power.' }],
-    'transistor': [{ type: 'Offensive', modifier: 1.5, description: 'Boosts the power of Electric-type moves by 50%.' }],
+    // Modern (Gen 9) Transistor boost is 1.3x — the Gen 8 value was 1.5x.
+    'transistor': [{ type: 'Offensive', modifier: 1.3, description: 'Boosts the power of Electric-type moves by 30%.' }],
     'dragons-maw': [{ type: 'Offensive', modifier: 1.5, description: 'Boosts the power of Dragon-type moves by 50%.' }],
     'steelworker': [{ type: 'Offensive', modifier: 1.5, description: 'Boosts the power of Steel-type moves by 50%.' }],
     'rocky-payload': [{ type: 'Offensive', modifier: 1.5, description: 'Boosts the power of Rock-type moves by 50%.' }],
