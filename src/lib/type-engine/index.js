@@ -30,7 +30,9 @@ export {
 export {
     MULTIPLIER_CATEGORIES,
     categorizeMultiplier,
-    classifyMultiplier
+    classifyMultiplier,
+    formatMultiplierSymbol,
+    classifySeverity
 } from './result.js';
 
 export {

@@ -1,4 +1,4 @@
-import { getEffectiveness, getAbilityModifiers } from '../../lib/type-engine/index.js';
+import { getEffectiveness, getAbilityModifiers, formatMultiplierSymbol } from '../../lib/type-engine/index.js';
 import { i18n } from './i18n.js';
 
 const TYPE_COLORS = {
@@ -476,11 +476,6 @@ export function renderCompetitiveData(container, data, pokemonName) {
 
 export function capitalizeWords(str) {
     return str.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-}
-
-const MULTIPLIER_SYMBOLS = new Map([[8, '8×'], [4, '4×'], [2, '2×'], [1, '1×'], [0.5, '½×'], [0.25, '¼×'], [0.125, '⅛×'], [0, '0×']]);
-function formatMultiplierSymbol(n) {
-    return MULTIPLIER_SYMBOLS.get(n) || `${n}×`;
 }
 
 /**

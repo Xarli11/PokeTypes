@@ -1,5 +1,5 @@
 // src/js/modules/simulator.js
-import { getEffectiveness, getAbilityModifiers, applyDefensiveModifiers } from '../../lib/type-engine/index.js';
+import { getEffectiveness, getAbilityModifiers, applyDefensiveModifiers, formatMultiplierSymbol, classifySeverity } from '../../lib/type-engine/index.js';
 import { loadAppData, fetchPokemonDetails } from './data.js';
 import { getPokemonImageUrl, createTypePill, capitalizeWords, normalizeSearch } from './ui.js';
 import { i18n } from './i18n.js';
@@ -10,57 +10,61 @@ export async function initSimulator() {
 
     // Create the Simulator Card
     const simulatorSection = document.createElement('section');
-    simulatorSection.className = 'md:col-span-12 bento-card dark:bg-slate-800 dark:border-slate-700 !p-6 md:!p-8';
+    simulatorSection.className = 'panel';
     simulatorSection.innerHTML = `
-        <h2 class="text-xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-            </svg>
-            ${i18n.t('sim_title')}
-        </h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+        <div class="label-group">${i18n.t('sim_title')}</div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
             <!-- 1. Attacker -->
-            <div class="space-y-2">
-                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">${i18n.t('sim_attack_type')}</label>
-                <select id="sim-attack-type" class="bento-select w-full dark:bg-slate-900 dark:border-slate-700">
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-muted)">${i18n.t('sim_attack_type')}</label>
+                <select id="sim-attack-type" class="search-input w-full !py-2.5">
                     <!-- Populated by JS -->
                 </select>
             </div>
 
             <!-- 2. Defender -->
-            <div class="space-y-2 relative">
-                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">${i18n.t('sim_defender')}</label>
-                <input type="text" id="sim-defender-input" placeholder="${i18n.t('search_placeholder')}" class="search-input w-full dark:bg-slate-900 dark:border-slate-700 dark:placeholder-slate-500">
-                <ul id="sim-defender-suggestions" class="hidden absolute z-50 w-full mt-1 max-h-60 overflow-y-auto rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl"></ul>
-                
+            <div class="space-y-1.5 relative">
+                <label class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-muted)">${i18n.t('sim_defender')}</label>
+                <input type="text" id="sim-defender-input" placeholder="${i18n.t('search_placeholder')}" class="search-input w-full !py-2.5" autocomplete="off">
+                <ul id="sim-defender-suggestions" class="hidden absolute z-50 w-full mt-1 max-h-60 overflow-y-auto"></ul>
+
                 <!-- Active Defender Display -->
-                <div id="sim-defender-display" class="hidden mt-2 p-2 rounded-lg bg-slate-50 dark:bg-slate-900/50 flex items-center gap-3 border border-slate-100 dark:border-slate-700">
+                <div id="sim-defender-display" class="hidden mt-2 p-2 rounded-md flex items-center gap-3" style="background: var(--surface-raised); border: 1px solid var(--border)">
                     <img id="sim-defender-img" src="" class="w-10 h-10 object-contain">
                     <div class="flex-1 min-w-0">
-                        <div id="sim-defender-name" class="font-bold text-sm truncate dark:text-white"></div>
+                        <div id="sim-defender-name" class="font-bold text-sm truncate" style="color: var(--text)"></div>
                         <div id="sim-defender-types" class="flex gap-1 scale-75 origin-left"></div>
                     </div>
-                    <button id="sim-clear-defender" class="text-slate-400 hover:text-red-500">
+                    <button id="sim-clear-defender" class="icon-btn" type="button">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
             </div>
 
             <!-- 3. Ability -->
-            <div class="space-y-2">
-                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">${i18n.t('abilities')}</label>
-                <select id="sim-ability-select" class="bento-select w-full dark:bg-slate-900 dark:border-slate-700 disabled:opacity-50" disabled>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-muted)">${i18n.t('abilities')}</label>
+                <select id="sim-ability-select" class="search-input w-full !py-2.5 disabled:opacity-50" disabled>
                     <option value="">${i18n.t('sim_select_pokemon')}</option>
                 </select>
             </div>
         </div>
 
         <!-- Result -->
-        <div id="sim-result-container" class="mt-8 p-6 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700 hidden text-center">
-            <div class="text-slate-400 text-sm mb-2 font-medium uppercase tracking-widest">${i18n.t('sim_effectiveness')}</div>
-            <div id="sim-result-value" class="text-4xl md:text-5xl font-black mb-2 transition-all">1x</div>
-            <div id="sim-result-text" class="text-slate-600 dark:text-slate-300 font-medium"></div>
+        <div id="sim-result-container" class="mt-5 p-4 rounded-md hidden" style="background: var(--surface-raised); border: 1px solid var(--border)">
+            <div class="flex flex-wrap items-center gap-4">
+                <div class="text-center">
+                    <div class="text-[10px] font-bold uppercase tracking-widest mb-1" style="color: var(--text-muted)">${i18n.t('sim_raw_matchup')}</div>
+                    <div id="sim-raw-value" class="mult-badge mult-neutral">1×</div>
+                </div>
+                <div id="sim-modifier-arrow" class="hidden text-lg" style="color: var(--text-muted)" aria-hidden="true">→</div>
+                <div id="sim-effective-wrap" class="hidden text-center">
+                    <div class="text-[10px] font-bold uppercase tracking-widest mb-1" style="color: var(--text-muted)">${i18n.t('sim_effective_result')}</div>
+                    <div id="sim-result-value" class="mult-badge mult-neutral">1×</div>
+                </div>
+            </div>
+            <div id="sim-result-text" class="mt-3 text-sm" style="color: var(--text-muted)"></div>
         </div>
     `;
 
@@ -128,10 +132,10 @@ function setupEventListeners(appData) {
 
         if (matches.length > 0) {
             suggestions.innerHTML = matches.map(p => `
-                <li data-name="${p.name}" class="cursor-pointer px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-3 border-b border-slate-100 dark:border-slate-700 last:border-0">
-                    <img src="${getPokemonImageUrl(p, appData.imageFixes)}" class="w-8 h-8 object-contain" 
+                <li data-name="${p.name}" class="flex items-center gap-3">
+                    <img src="${getPokemonImageUrl(p, appData.imageFixes)}" class="w-8 h-8 object-contain"
                          onerror="handleSearchImageError(this, ${p.id}, '${p.name.replace(/'/g, "\\'")}')">
-                    <span class="text-sm font-bold dark:text-white">${p.displayName}</span>
+                    <span class="text-sm font-bold" style="color: var(--text)">${p.displayName}</span>
                 </li>
             `).join('');
             suggestions.classList.remove('hidden');
@@ -263,14 +267,18 @@ function estimateDamageRange(pokemon, typeModifier) {
 
 function runSimulation(attackType, pokemon, abilityName, effectiveness) {
     const resultContainer = document.getElementById('sim-result-container');
+    const rawValueEl = document.getElementById('sim-raw-value');
+    const arrowEl = document.getElementById('sim-modifier-arrow');
+    const effectiveWrapEl = document.getElementById('sim-effective-wrap');
     const resultValue = document.getElementById('sim-result-value');
     const resultText = document.getElementById('sim-result-text');
 
     resultContainer.classList.remove('hidden');
 
-    // 1. Base type effectiveness
-    let modifier = getEffectiveness(attackType, pokemon.types[0], effectiveness);
-    if (pokemon.types[1]) modifier *= getEffectiveness(attackType, pokemon.types[1], effectiveness);
+    // 1. Base type effectiveness (raw matchup)
+    const rawModifier = getEffectiveness(attackType, pokemon.types[0], effectiveness) *
+        (pokemon.types[1] ? getEffectiveness(attackType, pokemon.types[1], effectiveness) : 1);
+    let modifier = rawModifier;
 
     // 2. Ability modifier — same engine as Team Builder (applyDefensiveModifiers),
     // so a single ability behaves identically here and in analysis.js. The
@@ -279,23 +287,32 @@ function runSimulation(attackType, pokemon, abilityName, effectiveness) {
     // never assumed to apply (see modifiers.js "Battle context").
     const abilityMods = getAbilityModifiers(abilityName);
     let abilityTriggered = null;
+    let conditionalNote = null;
 
     if (abilityMods.length > 0) {
         const defensiveMods = abilityMods.filter(m => m.type === 'All' || m.type.toLowerCase() === attackType.toLowerCase());
 
         if (defensiveMods.length > 0) {
-            const before = modifier;
-            modifier = applyDefensiveModifiers({ [attackType]: modifier }, defensiveMods, [attackType])[attackType];
+            modifier = applyDefensiveModifiers({ [attackType]: rawModifier }, defensiveMods, [attackType])[attackType];
 
             // Describe whichever matching modifier could plausibly explain
             // the (possibly unchanged) number: an unconditional one, or a
             // conditional one whose flag is actually relevant right now.
             abilityTriggered = defensiveMods.find(mod => {
                 if (mod.requiresContext) return false; // never confirmed here
-                if (mod.blockNonSE) return before <= 1;
-                if (mod.superEffectiveOnly) return before >= 2;
+                if (mod.blockNonSE) return rawModifier <= 1;
+                if (mod.superEffectiveOnly) return rawModifier >= 2;
                 return true;
             }) || null;
+
+            // A conditional modifier (Multiscale/Tera Shell/Fluffy's contact
+            // half/...) never applies here — be honest about why the number
+            // didn't reflect it, instead of pretending the condition holds.
+            const unconfirmed = defensiveMods.find(mod => mod.requiresContext);
+            if (unconfirmed) {
+                const noteKey = unconfirmed.requiresContext === 'fullHp' ? 'requires_full_hp' : 'requires_contact';
+                conditionalNote = `${i18n.t(noteKey)} — ${i18n.t('condition_not_confirmed')}`;
+            }
         }
 
         // Show offensive ability description even if it doesn't affect the multiplier
@@ -305,28 +322,35 @@ function runSimulation(attackType, pokemon, abilityName, effectiveness) {
         }
     }
 
-    // 3. Render multiplier
-    let colorClass = 'text-slate-800 dark:text-white';
-    if (modifier >= 2) colorClass = 'text-red-500';
-    else if (modifier === 0) colorClass = 'text-slate-400';
-    else if (modifier < 1) colorClass = 'text-emerald-500';
+    // 3. Render raw -> effective breakdown
+    const changed = modifier !== rawModifier;
+    rawValueEl.textContent = formatMultiplierSymbol(rawModifier);
+    rawValueEl.className = `mult-badge ${classifySeverity(rawModifier)}`;
 
-    resultValue.className = `text-4xl md:text-5xl font-black mb-2 transition-all ${colorClass}`;
-    resultValue.textContent = `${modifier}x`;
+    arrowEl.classList.toggle('hidden', !changed);
+    effectiveWrapEl.classList.toggle('hidden', !changed);
+    if (changed) {
+        resultValue.textContent = formatMultiplierSymbol(modifier);
+        resultValue.className = `mult-badge ${classifySeverity(modifier)}`;
+    }
 
     // 4. Render description + damage estimate
     let descHTML = '';
     if (abilityTriggered && !abilityTriggered.offensiveOnly) {
-        descHTML += `<p class="mb-1"><span class="font-bold">${capitalizeWords(abilityName.replace(/-/g, ' '))}</span>: ${abilityTriggered.description}</p>`;
+        descHTML += `<p class="mb-1"><span class="font-bold" style="color: var(--text)">${capitalizeWords(abilityName.replace(/-/g, ' '))}</span>: ${abilityTriggered.description}</p>`;
     } else if (abilityTriggered?.offensiveOnly) {
-        descHTML += `<p class="mb-1 text-amber-600 dark:text-amber-400"><span class="font-bold">${capitalizeWords(abilityName.replace(/-/g, ' '))}</span>: ${abilityTriggered.description}</p>`;
+        descHTML += `<p class="mb-1" style="color: #F59E0B"><span class="font-bold">${capitalizeWords(abilityName.replace(/-/g, ' '))}</span>: ${abilityTriggered.description}</p>`;
     } else {
         descHTML += `<p class="mb-1">${i18n.t('sim_standard_effectiveness')}</p>`;
     }
 
+    if (conditionalNote) {
+        descHTML += `<p class="italic mt-1">${conditionalNote}</p>`;
+    }
+
     const estimate = estimateDamageRange(pokemon, modifier);
     if (estimate) {
-        descHTML += `<p class="text-xs text-slate-400 mt-1">${i18n.t('sim_damage_estimate').replace('{min}', estimate.minPct).replace('{max}', estimate.maxPct)}</p>`;
+        descHTML += `<p class="text-xs mt-1" style="color: var(--text-muted)">${i18n.t('sim_damage_estimate').replace('{min}', estimate.minPct).replace('{max}', estimate.maxPct)}</p>`;
     }
 
     resultText.innerHTML = descHTML;

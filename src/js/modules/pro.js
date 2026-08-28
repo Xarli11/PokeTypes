@@ -5,12 +5,7 @@ import { createTypePill, getPokemonImageUrl, capitalizeWords, normalizeSearch } 
 import { i18n } from './i18n.js';
 import { initSimulator } from './simulator.js';
 import { encodeTeamPayload, decodeTeamPayload } from '../../lib/share-team.js';
-import { getPokemonDefenseBreakdown } from '../../lib/type-engine/index.js';
-
-const MULTIPLIER_SYMBOLS = new Map([[8, '8×'], [4, '4×'], [2, '2×'], [1, '1×'], [0.5, '½×'], [0.25, '¼×'], [0.125, '⅛×'], [0, '0×']]);
-function formatMultiplierSymbol(n) {
-    return MULTIPLIER_SYMBOLS.get(n) || `${n}×`;
-}
+import { getPokemonDefenseBreakdown, formatMultiplierSymbol } from '../../lib/type-engine/index.js';
 
 // State
 let activeSlotIndex = -1;

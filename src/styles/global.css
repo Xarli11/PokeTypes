@@ -167,20 +167,21 @@
 .mult-resist   { background-color: rgba(34, 197, 94, 0.14); color: #22C55E; border-color: rgba(34, 197, 94, 0.35); }
 .mult-neutral  { background-color: transparent; color: var(--text-muted); border-color: var(--border); }
 
-#suggestions {
+#suggestions, #sim-defender-suggestions {
   position: absolute; top: 100%; left: 0; right: 0; margin-top: 0.5rem;
   background-color: var(--surface-raised);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   @apply shadow-xl z-50 max-h-72 overflow-y-auto overflow-hidden;
 }
-#suggestions li {
+#suggestions li, #sim-defender-suggestions li {
   @apply px-4 py-3 cursor-pointer transition-colors duration-100 font-medium;
   color: var(--text-muted);
   border-bottom: 1px solid var(--border);
 }
-#suggestions li:last-child { border-bottom: none; }
-#suggestions li:hover, #suggestions li.suggestion-active {
+#suggestions li:last-child, #sim-defender-suggestions li:last-child { border-bottom: none; }
+#suggestions li:hover, #suggestions li.suggestion-active,
+#sim-defender-suggestions li:hover {
   background-color: color-mix(in srgb, var(--accent) 10%, transparent);
   color: var(--text);
 }
