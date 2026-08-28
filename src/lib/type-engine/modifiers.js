@@ -67,78 +67,78 @@
 //     with a neutral modifier (no-op) rather than simulated.
 
 export const ABILITY_EFFECTIVENESS = {
-    'levitate': [{ type: 'Ground', modifier: 0, description: 'Grants immunity to Ground-type moves.' }],
-    'flash-fire': [{ type: 'Fire', modifier: 0, description: 'Grants immunity to Fire-type moves.' }],
-    'volt-absorb': [{ type: 'Electric', modifier: 0, description: 'Grants immunity to Electric-type moves.' }],
-    'motor-drive': [{ type: 'Electric', modifier: 0, description: 'Grants immunity to Electric-type moves.' }],
-    'lightning-rod': [{ type: 'Electric', modifier: 0, description: 'Grants immunity to Electric-type moves.' }],
-    'sap-sipper': [{ type: 'Grass', modifier: 0, description: 'Grants immunity to Grass-type moves.' }],
-    'water-absorb': [{ type: 'Water', modifier: 0, description: 'Grants immunity to Water-type moves.' }],
-    'storm-drain': [{ type: 'Water', modifier: 0, description: 'Grants immunity to Water-type moves.' }],
+    'levitate': [{ type: 'Ground', modifier: 0, descriptionKey: 'modifier_ground_immunity_description' }],
+    'flash-fire': [{ type: 'Fire', modifier: 0, descriptionKey: 'modifier_fire_immunity_description' }],
+    'volt-absorb': [{ type: 'Electric', modifier: 0, descriptionKey: 'modifier_electric_immunity_description' }],
+    'motor-drive': [{ type: 'Electric', modifier: 0, descriptionKey: 'modifier_electric_immunity_description' }],
+    'lightning-rod': [{ type: 'Electric', modifier: 0, descriptionKey: 'modifier_electric_immunity_description' }],
+    'sap-sipper': [{ type: 'Grass', modifier: 0, descriptionKey: 'modifier_grass_immunity_description' }],
+    'water-absorb': [{ type: 'Water', modifier: 0, descriptionKey: 'modifier_water_immunity_description' }],
+    'storm-drain': [{ type: 'Water', modifier: 0, descriptionKey: 'modifier_water_immunity_description' }],
     'dry-skin': [
-        { type: 'Water', modifier: 0, description: 'Grants immunity to Water-type moves.' },
-        { type: 'Fire', modifier: 1.25, description: 'Takes 25% more damage from Fire-type moves.' }
+        { type: 'Water', modifier: 0, descriptionKey: 'modifier_water_immunity_description' },
+        { type: 'Fire', modifier: 1.25, descriptionKey: 'modifier_fire_damage_increase_25_description' }
     ],
-    'earth-eater': [{ type: 'Ground', modifier: 0, description: 'Grants immunity to Ground-type moves.' }],
+    'earth-eater': [{ type: 'Ground', modifier: 0, descriptionKey: 'modifier_ground_immunity_description' }],
     'thick-fat': [
-        { type: 'Fire', modifier: 0.5, description: 'Halves damage from Fire-type moves.' },
-        { type: 'Ice', modifier: 0.5, description: 'Halves damage from Ice-type moves.' }
+        { type: 'Fire', modifier: 0.5, descriptionKey: 'modifier_fire_damage_half_description' },
+        { type: 'Ice', modifier: 0.5, descriptionKey: 'modifier_ice_damage_half_description' }
     ],
-    'heatproof': [{ type: 'Fire', modifier: 0.5, description: 'Halves damage from Fire-type moves.' }],
-    'purifying-salt': [{ type: 'Ghost', modifier: 0.5, description: 'Halves damage from Ghost-type moves.' }],
-    'well-baked-body': [{ type: 'Fire', modifier: 0, description: 'Grants immunity to Fire-type moves.' }],
-    'water-bubble': [{ type: 'Fire', modifier: 0.5, description: 'Halves damage from Fire-type moves.' }],
+    'heatproof': [{ type: 'Fire', modifier: 0.5, descriptionKey: 'modifier_fire_damage_half_description' }],
+    'purifying-salt': [{ type: 'Ghost', modifier: 0.5, descriptionKey: 'modifier_ghost_damage_half_description' }],
+    'well-baked-body': [{ type: 'Fire', modifier: 0, descriptionKey: 'modifier_fire_immunity_description' }],
+    'water-bubble': [{ type: 'Fire', modifier: 0.5, descriptionKey: 'modifier_fire_damage_half_description' }],
     'fluffy': [
-        { type: 'Fire', modifier: 2, description: 'Takes 2x damage from Fire-type moves (independent of contact).' },
+        { type: 'Fire', modifier: 2, descriptionKey: 'modifier_fire_damage_double_description' },
         {
             type: 'All', modifier: 0.5, requiresContext: 'contact', contextValue: true,
-            description: 'Halves damage from contact moves (stacks with the Fire modifier above — a contact Fire move nets out to no change at all). Only shown as applied when contact is explicitly confirmed; otherwise it is informational only.'
+            descriptionKey: 'modifier_contact_damage_half_description'
         }
     ],
-    'filter': [{ type: 'All', modifier: 0.75, superEffectiveOnly: true, description: 'Reduces Super Effective damage by 25%.' }],
-    'solid-rock': [{ type: 'All', modifier: 0.75, superEffectiveOnly: true, description: 'Reduces Super Effective damage by 25%.' }],
-    'prism-armor': [{ type: 'All', modifier: 0.75, superEffectiveOnly: true, description: 'Reduces Super Effective damage by 25%.' }],
-    'wonder-guard': [{ type: 'All', modifier: 0, blockNonSE: true, description: 'Immune to all non-Super Effective damage (NOT an immunity to every type — Super Effective hits still land).' }],
+    'filter': [{ type: 'All', modifier: 0.75, superEffectiveOnly: true, descriptionKey: 'modifier_reduce_super_effective_25_description' }],
+    'solid-rock': [{ type: 'All', modifier: 0.75, superEffectiveOnly: true, descriptionKey: 'modifier_reduce_super_effective_25_description' }],
+    'prism-armor': [{ type: 'All', modifier: 0.75, superEffectiveOnly: true, descriptionKey: 'modifier_reduce_super_effective_25_description' }],
+    'wonder-guard': [{ type: 'All', modifier: 0, blockNonSE: true, descriptionKey: 'modifier_wonder_guard_description' }],
     'multiscale': [{
         type: 'All', modifier: 0.5, requiresContext: 'fullHp', contextValue: true,
-        description: 'Halves damage, but only while HP is full. Only shown as applied when full HP is explicitly confirmed; otherwise it is informational only.'
+        descriptionKey: 'modifier_half_damage_full_hp_description'
     }],
     'shadow-shield': [{
         type: 'All', modifier: 0.5, requiresContext: 'fullHp', contextValue: true,
-        description: 'Halves damage, but only while HP is full. Only shown as applied when full HP is explicitly confirmed; otherwise it is informational only.'
+        descriptionKey: 'modifier_half_damage_full_hp_description'
     }],
     'tera-shell': [{
         type: 'All', modifier: 0.5, forceValue: true, requiresContext: 'fullHp', contextValue: true,
-        description: 'At full HP, any hit that would otherwise connect becomes exactly Not Very Effective (0.5x) — natural immunities (0x) are unaffected. Only shown as applied when full HP is explicitly confirmed; otherwise it is informational only.'
+        descriptionKey: 'modifier_tera_shell_description'
     }],
-    'delta-stream': [{ type: 'Flying', modifier: 1, description: 'Removes weaknesses of Flying-type Pokemon.' }],
-    'desolate-land': [{ type: 'Water', modifier: 0, description: 'Grants immunity to Water-type moves.' }],
-    'primordial-sea': [{ type: 'Fire', modifier: 0, description: 'Grants immunity to Fire-type moves.' }],
-    'neutralizing-gas': [{ type: 'All', modifier: 1, description: 'Suppresses all other abilities while active.' }],
-    'tinted-lens': [{ type: 'Offensive', modifier: 2, description: 'Doubles damage of "Not Very Effective" moves.' }],
-    'scrappy': [{ type: 'Offensive', modifier: 1, description: 'Allows Normal and Fighting moves to hit Ghost types.' }],
-    'minds-eye': [{ type: 'Offensive', modifier: 1, description: 'Allows Normal and Fighting moves to hit Ghost types.' }],
-    'adaptability': [{ type: 'Offensive', modifier: 2, description: 'Doubles the STAB bonus (2x instead of 1.5x).' }],
-    'neuroforce': [{ type: 'Offensive', modifier: 1.25, description: 'Boosts the power of Super Effective moves by 25%.' }],
-    'galvanize': [{ type: 'Offensive', modifier: 1.2, description: 'Normal-type moves become Electric-type and gain 20% power.' }],
-    'pixilate': [{ type: 'Offensive', modifier: 1.2, description: 'Normal-type moves become Fairy-type and gain 20% power.' }],
-    'refrigerate': [{ type: 'Offensive', modifier: 1.2, description: 'Normal-type moves become Ice-type and gain 20% power.' }],
-    'aerilate': [{ type: 'Offensive', modifier: 1.2, description: 'Normal-type moves become Flying-type and gain 20% power.' }],
+    'delta-stream': [{ type: 'Flying', modifier: 1, descriptionKey: 'modifier_delta_stream_description' }],
+    'desolate-land': [{ type: 'Water', modifier: 0, descriptionKey: 'modifier_water_immunity_description' }],
+    'primordial-sea': [{ type: 'Fire', modifier: 0, descriptionKey: 'modifier_fire_immunity_description' }],
+    'neutralizing-gas': [{ type: 'All', modifier: 1, descriptionKey: 'modifier_neutralizing_gas_description' }],
+    'tinted-lens': [{ type: 'Offensive', modifier: 2, descriptionKey: 'modifier_tinted_lens_description' }],
+    'scrappy': [{ type: 'Offensive', modifier: 1, descriptionKey: 'modifier_hits_ghost_types_description' }],
+    'minds-eye': [{ type: 'Offensive', modifier: 1, descriptionKey: 'modifier_hits_ghost_types_description' }],
+    'adaptability': [{ type: 'Offensive', modifier: 2, descriptionKey: 'modifier_adaptability_description' }],
+    'neuroforce': [{ type: 'Offensive', modifier: 1.25, descriptionKey: 'modifier_neuroforce_description' }],
+    'galvanize': [{ type: 'Offensive', modifier: 1.2, descriptionKey: 'modifier_galvanize_description' }],
+    'pixilate': [{ type: 'Offensive', modifier: 1.2, descriptionKey: 'modifier_pixilate_description' }],
+    'refrigerate': [{ type: 'Offensive', modifier: 1.2, descriptionKey: 'modifier_refrigerate_description' }],
+    'aerilate': [{ type: 'Offensive', modifier: 1.2, descriptionKey: 'modifier_aerilate_description' }],
     // Modern (Gen 9) Transistor boost is 1.3x — the Gen 8 value was 1.5x.
-    'transistor': [{ type: 'Offensive', modifier: 1.3, description: 'Boosts the power of Electric-type moves by 30%.' }],
-    'dragons-maw': [{ type: 'Offensive', modifier: 1.5, description: 'Boosts the power of Dragon-type moves by 50%.' }],
-    'steelworker': [{ type: 'Offensive', modifier: 1.5, description: 'Boosts the power of Steel-type moves by 50%.' }],
-    'rocky-payload': [{ type: 'Offensive', modifier: 1.5, description: 'Boosts the power of Rock-type moves by 50%.' }],
-    'stakeout': [{ type: 'Offensive', modifier: 2, description: 'Doubles damage against a Pokemon that just switched in.' }]
+    'transistor': [{ type: 'Offensive', modifier: 1.3, descriptionKey: 'modifier_transistor_description' }],
+    'dragons-maw': [{ type: 'Offensive', modifier: 1.5, descriptionKey: 'modifier_dragons_maw_description' }],
+    'steelworker': [{ type: 'Offensive', modifier: 1.5, descriptionKey: 'modifier_steelworker_description' }],
+    'rocky-payload': [{ type: 'Offensive', modifier: 1.5, descriptionKey: 'modifier_rocky_payload_description' }],
+    'stakeout': [{ type: 'Offensive', modifier: 2, descriptionKey: 'modifier_stakeout_description' }]
 };
 
 export const ITEM_EFFECTIVENESS = {
-    'air-balloon': [{ type: 'Ground', modifier: 0, description: 'Grants immunity to Ground-type moves.' }],
+    'air-balloon': [{ type: 'Ground', modifier: 0, descriptionKey: 'modifier_air_balloon_description' }],
     // Negates the holder's own TYPE-based immunities (Ghost immune to
     // Normal, Ground immune to Electric, Flying immune to Ground, ...) —
     // it does NOT undo an ability/item's own immunity (Levitate, Volt
     // Absorb, Flash Fire, ...). See modifiers.removesTypeImmunity below.
-    'ring-target': [{ type: 'All', modifier: 1, removesTypeImmunity: true, description: "Negates the holder's type-based immunities (ability/item immunities are unaffected)." }]
+    'ring-target': [{ type: 'All', modifier: 1, removesTypeImmunity: true, descriptionKey: 'modifier_ring_target_description' }]
 };
 
 /**

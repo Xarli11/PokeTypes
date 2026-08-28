@@ -171,7 +171,15 @@
 /* Title with Syne display font — brand mark only */
 .brand-title {
   font-family: 'Syne', sans-serif;
-  @apply font-black tracking-tight;
+  @apply font-bold;
+  /* Syne's display-weight glyphs read as flattened/cramped at the old
+     font-black (900) + tracking-tight (-0.025em) + text-xl (20px/28px)
+     combination — a real typography issue, not a layout bug, confirmed
+     by comparing rendered candidates in a real browser. 700 weight with
+     a touch more size and open line-height gives the wordmark natural
+     proportion and presence without a fake transform: scaleY() fix. */
+  line-height: 1.15;
+  letter-spacing: -0.01em;
   color: var(--text);
 }
 
