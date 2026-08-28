@@ -624,22 +624,26 @@ function displayAnalysis(t1, t2, t3 = null) {
     // Defense first — the whole point of PokeTypes.
     ui.renderDefenseGroups(document.getElementById('defense-groups'), def, appData.contrast);
 
-    // AI Advisor
-    try {
-        // Use currentPokemon for context-aware suggestions (Tiering)
-        // If analysis is just types (no pokemon selected), currentPokemon might be null or mismatch, 
-        // but displayAnalysis logic ensures we use what we have or null.
-        const relevantPokemon = (currentPokemon && 
-                                (currentPokemon.types.includes(ui.capitalizeWords(t1)) || 
-                                 (t2 && currentPokemon.types.includes(ui.capitalizeWords(t2))))) 
-                                ? currentPokemon : null;
+    // AI Advisor — getTacticalAdvice is async (it may lazy-load the full
+    // pokedex); run it in its own IIFE so awaiting it doesn't delay the
+    // synchronous Offense render below.
+    (async () => {
+        try {
+            // Use currentPokemon for context-aware suggestions (Tiering)
+            // If analysis is just types (no pokemon selected), currentPokemon might be null or mismatch,
+            // but displayAnalysis logic ensures we use what we have or null.
+            const relevantPokemon = (currentPokemon &&
+                                    (currentPokemon.types.includes(ui.capitalizeWords(t1)) ||
+                                     (t2 && currentPokemon.types.includes(ui.capitalizeWords(t2)))))
+                                    ? currentPokemon : null;
 
-        const advice = getTacticalAdvice(def.weaknesses4x, def.weaknesses2x, appData.types, appData.effectiveness, appData.pokemonList, relevantPokemon, def.weaknesses8x);
-        if (tacticalAdvice) ui.renderTacticalAdvice(tacticalAdvice, advice);
-    } catch (error) {
-        console.error("AI Advisor error:", error);
-        if (tacticalAdvice) tacticalAdvice.classList.add('hidden');
-    }
+            const advice = await getTacticalAdvice(def.weaknesses4x, def.weaknesses2x, appData.types, appData.effectiveness, appData.pokemonList, relevantPokemon, def.weaknesses8x);
+            if (tacticalAdvice) ui.renderTacticalAdvice(tacticalAdvice, advice);
+        } catch (error) {
+            console.error("AI Advisor error:", error);
+            if (tacticalAdvice) tacticalAdvice.classList.add('hidden');
+        }
+    })();
 
     ui.renderOffenseGroups(document.getElementById('offense-groups'), off, dualImmunities, appData.contrast);
 }
