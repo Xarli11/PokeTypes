@@ -1,5 +1,5 @@
 // src/js/modules/simulator.js
-import { getEffectiveness, getAbilityModifiers } from './calculator.js';
+import { getEffectiveness, getAbilityModifiers, applyDefensiveModifiers } from '../../lib/type-engine/index.js';
 import { loadAppData, fetchPokemonDetails } from './data.js';
 import { getPokemonImageUrl, createTypePill, capitalizeWords, normalizeSearch } from './ui.js';
 import { i18n } from './i18n.js';
@@ -272,7 +272,8 @@ function runSimulation(attackType, pokemon, abilityName, effectiveness) {
     let modifier = getEffectiveness(attackType, pokemon.types[0], effectiveness);
     if (pokemon.types[1]) modifier *= getEffectiveness(attackType, pokemon.types[1], effectiveness);
 
-    // 2. Ability modifier — respects superEffectiveOnly and blockNonSE flags
+    // 2. Ability modifier — same engine as Team Builder (applyDefensiveModifiers),
+    // so a single ability behaves identically here and in analysis.js.
     const abilityMods = getAbilityModifiers(abilityName);
     let abilityTriggered = null;
 
@@ -280,22 +281,14 @@ function runSimulation(attackType, pokemon, abilityName, effectiveness) {
         const mod = abilityMods.find(m => m.type.toLowerCase() === attackType.toLowerCase() || m.type === 'All');
 
         if (mod) {
-            if (mod.blockNonSE) {
-                // Wonder Guard: blocks non-SE moves, SE moves pass through
-                if (modifier <= 1) {
-                    modifier = 0;
-                    abilityTriggered = mod;
-                }
-            } else if (mod.superEffectiveOnly && modifier <= 1) {
-                // Filter / Solid Rock / Prism Armor: only reduces SE damage
-                // No effect on neutral or resisted moves
-            } else if (mod.modifier === 0) {
-                modifier = 0;
-                abilityTriggered = mod;
-            } else {
-                modifier *= mod.modifier;
-                abilityTriggered = mod;
-            }
+            const before = modifier;
+            modifier = applyDefensiveModifiers({ [attackType]: modifier }, [mod], [attackType])[attackType];
+
+            const triggered = mod.blockNonSE ? before <= 1
+                : mod.superEffectiveOnly ? before >= 2
+                : true; // hard immunity or a plain multiplier always trigger
+
+            if (triggered) abilityTriggered = mod;
         }
 
         // Show offensive ability description even if it doesn't affect the multiplier

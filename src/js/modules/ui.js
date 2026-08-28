@@ -1,4 +1,4 @@
-import { getEffectiveness, getAbilityModifiers } from './calculator.js';
+import { getEffectiveness, getAbilityModifiers } from '../../lib/type-engine/index.js';
 import { i18n } from './i18n.js';
 
 const TYPE_COLORS = {

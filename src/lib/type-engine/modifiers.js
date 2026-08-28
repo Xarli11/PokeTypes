@@ -1,111 +1,32 @@
-export function getEffectiveness(attackingType, defendingType, typeEffectiveness) {
-    const attackerEffects = typeEffectiveness[attackingType];
-    if (attackerEffects && attackerEffects.hasOwnProperty(defendingType)) {
-        return attackerEffects[defendingType];
-    }
-    return 1;
-}
-
-export function calculateDefense(type1, type2, types, effectiveness, type3 = null) {
-    const results = {
-        weaknesses4x: [],
-        weaknesses2x: [],
-        neutral: [],
-        resistances05x: [],
-        resistances025x: [],
-        immunities: []
-    };
-
-    // Extension for 8x weaknesses / 0.125x resistances with 3 types
-    results.weaknesses8x = [];
-    results.resistances0125x = [];
-
-    types.forEach(attackingType => {
-        let modifier = getEffectiveness(attackingType, type1, effectiveness);
-        if (type2) modifier *= getEffectiveness(attackingType, type2, effectiveness);
-        if (type3) modifier *= getEffectiveness(attackingType, type3, effectiveness);
-
-        if (modifier === 8) results.weaknesses8x.push(attackingType);
-        else if (modifier === 4) results.weaknesses4x.push(attackingType);
-        else if (modifier === 2) results.weaknesses2x.push(attackingType);
-        else if (modifier === 1) results.neutral.push(attackingType);
-        else if (modifier === 0.5) results.resistances05x.push(attackingType);
-        else if (modifier === 0.25) results.resistances025x.push(attackingType);
-        else if (modifier === 0.125) results.resistances0125x.push(attackingType);
-        else if (modifier === 0) results.immunities.push(attackingType);
-    });
-
-    return results;
-}
-
-export function calculateOffense(type1, type2, types, effectiveness, type3 = null) {
-    const results = {
-        superEffective2x: [],
-        neutral: [],
-        notVeryEffective: [],
-        noEffect: []
-    };
-
-    types.forEach(defendingType => {
-        let modifier = getEffectiveness(type1, defendingType, effectiveness);
-        if (type2) modifier = Math.max(modifier, getEffectiveness(type2, defendingType, effectiveness));
-        if (type3) modifier = Math.max(modifier, getEffectiveness(type3, defendingType, effectiveness));
-
-        if (modifier >= 2) results.superEffective2x.push(defendingType);
-        else if (modifier === 1) results.neutral.push(defendingType);
-        else if (modifier === 0.5) results.notVeryEffective.push(defendingType);
-        else if (modifier === 0) results.noEffect.push(defendingType);
-    });
-
-    return results;
-}
-
-export function findImmuneDualTypes(type1, type2, types, effectiveness) {
-    const immuneCombinations = [];
-
-    // Helper to check if a single defending type is immune to ALL attacker types
-    const isImmuneToAll = (defType) => {
-        const d1 = getEffectiveness(type1, defType, effectiveness);
-        const d2 = type2 ? getEffectiveness(type2, defType, effectiveness) : 0;
-        
-        // If single type attacker: needs to be immune to type1 (d1 === 0)
-        // If dual type attacker: needs to be immune to type1 AND type2 (d1 === 0 && d2 === 0)
-        // Wait, "Totally Walled" means the attacker has NO moves that work.
-        // So the defender must be immune to the BEST option.
-        // If Attacker has Electric (0 vs Ground) and Normal (1 vs Ground). Max is 1. Ground is NOT immune to all.
-        // If Attacker has Electric (0 vs Ground) and Poison (0.5 vs Ground). Max is 0.5.
-        // We want cases where Max(Damage) is 0.
-        
-        const bestOutcome = type2 ? Math.max(d1, d2) : d1;
-        return bestOutcome === 0;
-    };
-
-    for (let i = 0; i < types.length; i++) {
-        for (let j = i + 1; j < types.length; j++) {
-            const defType1 = types[i];
-            const defType2 = types[j];
-
-            // 1. Check strict immunity for the pair
-            const damage1 = getEffectiveness(type1, defType1, effectiveness) * getEffectiveness(type1, defType2, effectiveness);
-            let damage2 = 0;
-            if (type2) {
-                damage2 = getEffectiveness(type2, defType1, effectiveness) * getEffectiveness(type2, defType2, effectiveness);
-            }
-            const pairBestOutcome = type2 ? Math.max(damage1, damage2) : damage1;
-
-            if (pairBestOutcome === 0) {
-                // 2. Filter out redundant pairs (where one type alone is enough)
-                const d1AloneImmune = isImmuneToAll(defType1);
-                const d2AloneImmune = isImmuneToAll(defType2);
-
-                if (!d1AloneImmune && !d2AloneImmune) {
-                    immuneCombinations.push([defType1, defType2]);
-                }
-            }
-        }
-    }
-    return immuneCombinations;
-}
+// src/lib/type-engine/modifiers.js
+//
+// Ability and item modifiers layered on top of the raw type-effectiveness
+// map from effectiveness.js. Modeled explicitly as one of three kinds so
+// callers (and tests) can reason about them without guessing:
+//
+//   - immunity            : modifier === 0, always wins over anything else.
+//   - multiplier          : plain damage scaling (0.5, 1.25, 1.5, 2, ...).
+//   - conditional effect  : `superEffectiveOnly` (Filter/Solid Rock/Prism
+//                           Armor — only scales hits that are already
+//                           super effective) or `blockNonSE` (Wonder Guard
+//                           — zeroes anything that isn't already super
+//                           effective).
+//
+// `type: 'Offensive'` entries describe a move-boosting effect on the
+// ability holder's own STAB (Transistor, Adaptability, Tinted Lens...).
+// They never change how much damage the holder TAKES, so
+// `applyDefensiveModifiers` intentionally ignores them — they only exist
+// for informational display (see ui.js renderAbilityAlerts and
+// simulator.js's "why didn't the number change" note).
+//
+// Known unmodeled limitations (documented rather than guessed at):
+//   - Multiscale / Shadow Shield / Tera Shell are "only at full HP" in the
+//     games. PokeTypes has no battle-state/HP concept, so they are applied
+//     unconditionally (best-case, full-HP scenario) wherever they appear.
+//   - Neutralizing Gas (suppresses every other ability) and Delta Stream
+//     (removes a Flying-type's own weaknesses while it's active) require
+//     cross-ability/weather state PokeTypes doesn't track. They are listed
+//     with a neutral modifier (no-op) rather than simulated.
 
 export const ABILITY_EFFECTIVENESS = {
     'levitate': [{ type: 'Ground', modifier: 0, description: 'Grants immunity to Ground-type moves.' }],
@@ -162,14 +83,75 @@ export const ITEM_EFFECTIVENESS = {
     'ring-target': [{ type: 'All', modifier: 1, description: 'Allows moves to hit even if the user is normally immune.' }]
 };
 
+export function getAbilityModifiers(abilityName) {
+    if (!abilityName) return [];
+    return ABILITY_EFFECTIVENESS[abilityName.toLowerCase()] || [];
+}
+
 export function getItemModifiers(itemName) {
     if (!itemName) return [];
-    // Normalize item name (e.g. "Air Balloon" -> "air-balloon")
     const slug = itemName.toLowerCase().replace(/ /g, '-');
     return ITEM_EFFECTIVENESS[slug] || [];
 }
 
-export function getAbilityModifiers(abilityName) {
-    if (!abilityName) return [];
-    return ABILITY_EFFECTIVENESS[abilityName.toLowerCase()] || [];
+/**
+ * The subset of a modifier list that represents hard immunities, expanded
+ * to concrete type names (`type: 'All'` -> every type in `allTypes`).
+ * @param {Array<{type: string, modifier: number}>} modifiers
+ * @param {string[]} allTypes
+ * @returns {Set<string>}
+ */
+export function getImmuneTypesFromModifiers(modifiers, allTypes) {
+    const immune = new Set();
+    modifiers.forEach(mod => {
+        if (mod.modifier !== 0) return;
+        const types = mod.type === 'All' ? allTypes : [mod.type];
+        types.forEach(t => immune.add(t));
+    });
+    return immune;
+}
+
+/**
+ * Applies a combined list of ability/item defensive modifiers on top of a
+ * raw per-attacking-type multiplier map (see effectiveness.computeDefenseMap).
+ * Pure — returns a new map, never mutates `defenseMap`.
+ *
+ * Only entries whose `type` is a real type name (or 'All') can affect
+ * anything here: `type: 'Offensive'` entries never match a real type key
+ * and are therefore always a no-op in this function, by construction.
+ *
+ * @param {Record<string, number>} defenseMap
+ * @param {Array<{type: string, modifier: number, superEffectiveOnly?: boolean, blockNonSE?: boolean}>} modifiers
+ * @param {string[]} allTypes
+ * @returns {Record<string, number>}
+ */
+export function applyDefensiveModifiers(defenseMap, modifiers, allTypes) {
+    const result = { ...defenseMap };
+
+    modifiers.forEach(mod => {
+        const types = mod.type === 'All'
+            ? allTypes
+            : (Object.prototype.hasOwnProperty.call(result, mod.type) ? [mod.type] : []);
+
+        types.forEach(type => {
+            const current = result[type];
+
+            if (mod.blockNonSE) {
+                // Wonder Guard: only super-effective hits get through.
+                if (current < 2) result[type] = 0;
+            } else if (mod.superEffectiveOnly) {
+                // Filter / Solid Rock / Prism Armor: only softens hits that
+                // are already super effective; neutral/resisted/immune are
+                // untouched.
+                if (current >= 2) result[type] = current * mod.modifier;
+            } else if (mod.modifier === 0) {
+                // Hard immunity always wins, regardless of the prior value.
+                result[type] = 0;
+            } else {
+                result[type] = current * mod.modifier;
+            }
+        });
+    });
+
+    return result;
 }
