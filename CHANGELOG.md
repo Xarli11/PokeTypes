@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.36.1] - 2026-08-29
+
+### Fixed
+- Localized ability and item modifier descriptions correctly in English and Spanish.
+- Fixed language switching in the Ability Interaction Checker.
+- Fixed attack-type labels in the simulator after changing language.
+- Improved the PokeTypes header wordmark proportions.
+
 ## [2.36.0] - 2026-08-28
 
 ### New design
