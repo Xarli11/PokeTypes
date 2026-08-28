@@ -3,7 +3,7 @@ import { loadAppData } from './data.js';
 import { analyzeTeamDefense, getThreatAlerts, analyzeTeamRoles } from './analysis.js';
 import { createTypePill, getPokemonImageUrl, capitalizeWords, normalizeSearch } from './ui.js';
 import { i18n } from './i18n.js';
-import { initSimulator } from './simulator.js';
+import { initSimulator, refreshSimulatorLanguage } from './simulator.js';
 import { encodeTeamPayload, decodeTeamPayload } from '../../lib/share-team.js';
 import { getPokemonDefenseBreakdown, formatMultiplierSymbol } from '../../lib/type-engine/index.js';
 import { getFocusable, trapTabKey, lockBodyScroll, unlockBodyScroll } from './a11y.js';
@@ -62,6 +62,7 @@ export async function initProMode() {
 
 export function refreshProView() {
     renderTeamGrid();
+    refreshSimulatorLanguage();
 }
 
 function setupModeToggling() {
