@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.36.0] - 2026-08-28
+
+### New design
+- Redesigned Calculator with a Defense-first matchup experience and a compact Pokémon summary.
+- New visual type selector (touch and keyboard friendly).
+- Redesigned Team Builder: compact six-slot roster, member configuration modal, and a threat-first Team Defense view.
+- Improved mobile, light-mode, and dark-mode experience throughout.
+
+### Type engine & correctness
+- Shared type-effectiveness engine between server-side rendering and the client, guaranteeing identical results.
+- Full parity for single, dual, and triple-type matchups.
+- Corrected Team Builder ability/item modifiers (abilities like Thick Fat, Purifying Salt, and items now apply correctly).
+- Ring Target and other type-immunity overrides now modeled correctly.
+- Conditional abilities (Multiscale, Shadow Shield, Tera Shell, Fluffy) only apply under the right battle context — no more misleading results.
+- Modern Transistor multiplier corrected to 1.3x.
+- Shared team links are now versioned and validated before restoring a team.
+
+### Accessibility
+- Fully keyboard-accessible type selector with arrow-key navigation.
+- Semantic Team Builder controls (real buttons and lists instead of clickable divs).
+- Modal focus trapping and reliable focus restoration after closing.
+- Robust mobile scroll locking when a panel or modal is open.
+- Improved light-mode contrast across weakness/resistance/immunity colors.
+- Reduced-motion friendly animations.
+
+### Platform / quality
+- 155 automated tests and a blocking CI pipeline (type check, tests, build) on every change.
+- Corrected service worker precache behavior.
+- Improved server-side rendering of Defense/Offense analysis on `/tipo/*` and `/pokemon/*` pages.
+- Fixed the Tactical Advisor so its suggestions render reliably.
+
 ## [2.35.0] - 2026-06-29
 
 ### Fixed
