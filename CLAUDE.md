@@ -86,6 +86,8 @@ Gitflow + Conventional Commits:
 
 Do not delete feature or release branches after merging.
 
+**Service worker cache version**: `public/sw.js`'s `CACHE_NAME` (e.g. `poketypes-v2.35.0`) is a plain string manually kept in sync with `package.json`'s version — nothing bumps it automatically. Update it as part of every release; if it's left stale, `activate`'s cleanup won't drop the previous deploy's cache (harmless — old entries just linger until the version finally changes — but stale cached responses can persist longer than intended for offline users).
+
 ## Protocols
 
 ### Ponytail — minimal code
