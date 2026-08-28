@@ -1,5 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import AppHeader from '../../components/AppHeader.astro';
+import TypeSelectorField from '../../components/TypeSelectorField.astro';
 import typeData from '../../data/type-data.json';
 import { calculateDefense, calculateOffense } from '../../lib/type-engine/index.js';
 
@@ -32,20 +34,20 @@ function pill(type: string): string {
 function pills(list: string[]): string {
     return list.length
         ? list.map(pill).join('')
-        : `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">None</span>`;
+        : `<span class="text-xs font-bold uppercase tracking-widest" style="color: var(--text-muted)">None</span>`;
 }
 
-const iconSuper  = `<svg class="label-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>`;
-const iconResist = `<svg class="label-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>`;
-const iconImmune = `<svg class="label-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>`;
-const iconNeutral = `<svg class="label-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" /></svg>`;
+const MULT_LABELS: Record<string, string> = { '8': '8×', '4': '4×', '2': '2×', '1': '1×', '05': '½×', '025': '¼×', '0125': '⅛×', '0': '0×' };
 
-function badge(label: string, color: string): string {
-    return `<span class="px-2 h-8 min-w-[2rem] flex items-center justify-center rounded-lg ${color} text-white font-black text-xs">${label}</span>`;
+function multRow(mult: string, severityClass: string, typeList: string[]): string {
+    if (!typeList.length) return '';
+    return `<div class="flex items-start gap-3"><span class="mult-badge ${severityClass} shrink-0">${MULT_LABELS[mult]}</span><div class="type-pills-container pt-1">${pills(typeList)}</div></div>`;
 }
 
-function row(badgeHtml: string, typeList: string[]): string {
-    return `<div class="flex items-center gap-3">${badgeHtml}<div class="type-pills-container">${pills(typeList)}</div></div>`;
+function section(title: string, rows: string[]): string {
+    const filtered = rows.filter(Boolean);
+    if (!filtered.length) return '';
+    return `<div class="mb-4 last:mb-0"><div class="text-[11px] font-bold uppercase tracking-widest mb-2" style="color: var(--text-muted)">${title}</div><div class="flex flex-col gap-2.5">${filtered.join('')}</div></div>`;
 }
 
 // ── Compute ───────────────────────────────────────────────────────────────────
@@ -53,36 +55,23 @@ function row(badgeHtml: string, typeList: string[]): string {
 const def = calculateDefense(t1, t2, types, effectiveness, t3);
 const off = calculateOffense(t1, t2, types, effectiveness, t3);
 
-const weaknessesHtml = (() => {
-    const hasAny = def.weaknesses8x.length || def.weaknesses4x.length || def.weaknesses2x.length;
-    let html = `<div class="label-group">${iconSuper}<span>Weaknesses</span></div><div class="flex flex-col gap-4">`;
-    if (def.weaknesses8x.length) html += row(badge('x8', 'bg-red-700'), def.weaknesses8x);
-    if (def.weaknesses4x.length) html += row(badge('x4', 'bg-red-600'), def.weaknesses4x);
-    if (def.weaknesses2x.length) html += row(badge('x2', 'bg-orange-500'), def.weaknesses2x);
-    if (!hasAny)                 html += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">None</span>`;
-    return html + '</div>';
-})();
+const defenseSections = [
+    section('Critical', [multRow('8', 'mult-critical', def.weaknesses8x), multRow('4', 'mult-critical', def.weaknesses4x)]),
+    section('Weak', [multRow('2', 'mult-weak', def.weaknesses2x)]),
+    section('Immune', [multRow('0', 'mult-immune', def.immunities)]),
+    section('Resists', [multRow('05', 'mult-resist', def.resistances05x)]),
+    section('Strong Resists', [multRow('025', 'mult-resist', def.resistances025x), multRow('0125', 'mult-resist', def.resistances0125x)]),
+    section('Neutral', [multRow('1', 'mult-neutral', def.neutral)])
+].filter(Boolean);
+const defenseGroupsHtml = defenseSections.join('');
 
-const neutralDamageHtml = (() => {
-    return `<div class="label-group">${iconNeutral}<span>Neutral damage</span></div><div class="type-pills-container">${pills(def.neutral)}</div>`;
-})();
-
-const resistancesHtml = (() => {
-    const hasAny = def.resistances0125x.length || def.resistances025x.length || def.resistances05x.length;
-    let html = `<div class="label-group">${iconResist}<span>Resistances</span></div><div class="flex flex-col gap-4">`;
-    if (def.resistances0125x.length) html += row(badge('x0.125', 'bg-emerald-800'), def.resistances0125x);
-    if (def.resistances025x.length)  html += row(badge('x0.25', 'bg-green-600'), def.resistances025x);
-    if (def.resistances05x.length)   html += row(badge('x0.5', 'bg-emerald-500'), def.resistances05x);
-    if (!hasAny)                     html += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">None</span>`;
-    return html + '</div>';
-})();
-
-const immunitiesHtml = `<div class="label-group">${iconImmune}<span>Immunities</span></div><div class="type-pills-container">${pills(def.immunities)}</div>`;
-
-const superEffHtml = `<div class="label-group">${iconSuper}<span>Super effective</span></div><div class="type-pills-container">${pills(off.superEffective2x)}</div>`;
-const neutralOffHtml = `<div class="label-group">${iconNeutral}<span>Neutral</span></div><div class="type-pills-container">${pills(off.neutral)}</div>`;
-const nveHtml = `<div class="label-group">${iconResist}<span>Not very effective</span></div><div class="type-pills-container">${pills(off.notVeryEffective)}</div>`;
-const noEffHtml = `<div class="label-group">${iconImmune}<span>No effect</span></div><div class="type-pills-container">${pills(off.noEffect)}</div>`;
+const offenseSections = [
+    section('Super Effective', [multRow('2', 'mult-critical', off.superEffective2x)]),
+    section('Neutral', [multRow('1', 'mult-neutral', off.neutral)]),
+    section('Not Very Effective', [multRow('05', 'mult-resist', off.notVeryEffective)]),
+    section('No Effect', [multRow('0', 'mult-immune', off.noEffect)])
+].filter(Boolean);
+const offenseGroupsHtml = offenseSections.join('');
 
 const selectedTypeHtml = [t1, t2, t3].filter(Boolean).map(t => pill(t!)).join('');
 
@@ -122,83 +111,60 @@ const webPageSchema = {
         <script type="application/ld+json" is:inline set:html={JSON.stringify(webPageSchema)} />
     </Fragment>
     <div class="max-w-7xl mx-auto relative">
-        <div class="absolute top-0 right-0 z-50 flex items-center gap-2">
-            <button id="lang-toggle" class="p-2 rounded-lg bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm transition-all font-bold text-sm tracking-wide">
-                ES
-            </button>
-            <button id="theme-toggle" class="p-2 rounded-lg bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm transition-all">
-                <svg class="w-6 h-6 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                <svg class="w-6 h-6 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-            </button>
-        </div>
+        <AppHeader contextLabel={typeName} />
 
-        <header class="text-center mb-8">
-            <div class="flex items-center justify-center gap-4 mb-2">
-                <svg class="w-10 h-10 md:w-14 md:h-14 text-slate-300 dark:text-slate-600 flex-shrink-0" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="7"/>
-                    <path d="M5 50 H95" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
-                    <circle cx="50" cy="50" r="17" stroke="currentColor" stroke-width="7"/>
-                    <circle cx="50" cy="50" r="8" fill="currentColor"/>
-                </svg>
-                <a href="/" class="hover:opacity-70 transition-opacity duration-200">
-                    <h1 class="bento-title dark:text-white">Poketypes</h1>
-                </a>
-            </div>
-            <p id="type-subtitle" class="text-slate-400 text-lg font-medium max-w-xl mx-auto">
-                Análisis de efectividad para el tipo <span class="text-indigo-500 font-bold">{typeName}</span>
-            </p>
-        </header>
-
-        <div id="view-simple" class="grid grid-cols-1 md:grid-cols-12 gap-6">
-            <section class="md:col-span-12 bento-card dark:bg-slate-800 dark:border-slate-700 flex flex-col lg:flex-row items-center gap-6">
+        <div id="view-simple" class="flex flex-col gap-5">
+            <section class="panel flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
                 <div class="relative w-full lg:flex-1">
-                    <input id="pokemon-search" type="text" placeholder="Search Pokemon..." class="search-input dark:bg-slate-900 dark:text-white dark:border-slate-700 dark:placeholder-slate-500">
-                    <ul id="suggestions" class="hidden dark:bg-slate-800 dark:border-slate-700"></ul>
+                    <input id="pokemon-search" type="text" placeholder="Search Pokemon..." class="search-input" autocomplete="off">
+                    <ul id="suggestions" class="hidden"></ul>
                 </div>
-                <div class="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
-                    <div class="relative w-full sm:w-48">
-                        <select id="type-select" class="bento-select dark:bg-slate-900 dark:text-white dark:border-slate-700">
-                            <option value="">Type 1</option>
-                        </select>
-                    </div>
-                    <div class="relative w-full sm:w-48">
-                        <select id="type2-select" class="bento-select dark:bg-slate-900 dark:text-white dark:border-slate-700">
-                            <option value="">Type 2</option>
-                        </select>
-                    </div>
-                    <div class="relative w-full sm:w-48 group">
-                        <select id="type3-select" class="bento-select dark:bg-slate-900 dark:text-white dark:border-slate-700">
-                            <option value="" data-i18n="type_3">Extra Type</option>
-                        </select>
-                        <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-48 bg-slate-800 text-white text-xs p-2 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 text-center pointer-events-none shadow-xl" data-i18n="type3_tooltip">Simulates effects like Forest's Curse or Trick-or-Treat that add a 3rd typing.</div>
-                    </div>
-                    <button id="reset-button" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-slate-900 text-white font-bold hover:bg-indigo-600 transition-colors duration-200 dark:bg-indigo-600 dark:hover:bg-indigo-500">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto">
+                    <TypeSelectorField selectId="type-select" placeholderKey="type_1" />
+                    <TypeSelectorField selectId="type2-select" placeholderKey="type_2" />
+                    <TypeSelectorField selectId="type3-select" placeholderKey="type_3" extra tooltipKey="type3_tooltip" />
+                    <button id="reset-button" data-i18n="reset_btn" type="button" class="shrink-0 px-4 py-2.5 rounded-md text-sm font-bold transition-colors duration-150" style="color: var(--text-muted); border: 1px solid var(--border)">
                         Reset
                     </button>
                 </div>
             </section>
 
-            <section id="pokemon-stats" class="md:col-span-12 grid grid-cols-1 lg:grid-cols-12 gap-6 hidden"></section>
+            <section id="pokemon-hero" class="panel !py-2 hidden"></section>
 
-            <section id="type-details" class="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="md:col-span-2 bento-card dark:bg-slate-800 dark:border-slate-700 !py-6 !px-10 flex flex-wrap items-center justify-between gap-4">
-                    <h2 class="text-xl font-bold text-slate-400 uppercase tracking-widest">Análisis Activo</h2>
+            <section id="type-details" class="flex flex-col gap-5">
+                <div class="panel !py-3 flex flex-wrap items-center justify-between gap-3">
                     <div id="selected-type-name" class="flex items-center gap-2" set:html={selectedTypeHtml}></div>
+                    <button id="share-btn" class="icon-btn" title="Share Analysis" aria-label="Share Analysis" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                        </svg>
+                    </button>
                 </div>
-                <div class="flex flex-col gap-6">
-                    <div class="bento-card dark:bg-slate-800 dark:border-slate-700">
-                        <div id="weaknesses" class="effectiveness-card dark:border-slate-700" set:html={weaknessesHtml}></div>
-                        <div id="neutral-damage" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700" set:html={neutralDamageHtml}></div>
-                        <div id="resistances" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700" set:html={resistancesHtml}></div>
-                        <div id="immunities" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700" set:html={immunitiesHtml}></div>
+
+                <div id="ability-alerts" class="hidden"></div>
+
+                <div class="panel">
+                    <div class="label-group">Defense</div>
+                    <div id="defense-groups" set:html={defenseGroupsHtml}></div>
+                </div>
+
+                <div id="tactical-advice" class="hidden"></div>
+
+                <div class="panel">
+                    <div class="label-group">Offense</div>
+                    <div id="offense-groups" set:html={offenseGroupsHtml}></div>
+                </div>
+
+                <section id="pokemon-stats" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div class="panel">
+                        <div class="label-group">Base Stats</div>
+                        <div id="stats-container" class="space-y-2.5"></div>
                     </div>
-                </div>
-                <div class="bento-card dark:bg-slate-800 dark:border-slate-700">
-                    <div id="super-effective" class="effectiveness-card dark:border-slate-700" set:html={superEffHtml}></div>
-                    <div id="neutral-offense" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700" set:html={neutralOffHtml}></div>
-                    <div id="not-very-effective" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700" set:html={nveHtml}></div>
-                    <div id="no-effect" class="effectiveness-card border-t border-gray-50 pt-6 dark:border-slate-700" set:html={noEffHtml}></div>
-                </div>
+                    <div class="panel">
+                        <div class="label-group">Abilities</div>
+                        <div id="abilities-container" class="grid grid-cols-1 gap-2"></div>
+                    </div>
+                </section>
             </section>
         </div>
     </div>

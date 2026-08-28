@@ -1,35 +1,99 @@
 @import "tailwindcss";
 @config "../../tailwind.config.js";
 
+/*
+ * Design tokens — PokeTypes is a battle-analysis tool, not a Pokedex.
+ * Dark-first, neutral surfaces, minimal shadows. Type colors (defined
+ * further down as .bg-type-*) stay untouched and do the heavy color
+ * lifting; these tokens are for chrome (backgrounds, borders, text).
+ */
+:root {
+  /* Light (default) */
+  --bg: #F6F7F9;
+  --surface: #FFFFFF;
+  --surface-raised: #FFFFFF;
+  --border: #E4E7EC;
+  --text: #14181F;
+  --text-muted: #5B6472;
+  --accent: #1D4ED8;
+  --accent-contrast: #FFFFFF;
+
+  /* Semantic colors — these are darker/more saturated than their dark-mode
+     counterparts on purpose. The dark-mode values (#EF4444/#F97316/#22C55E/
+     #6C8CFF) fail WCAG AA (4.5:1) as small text on a light background —
+     verified by computing contrast ratios against #FFFFFF/#F6F7F9. Same
+     hue family, tuned per theme for AA text contrast (see docs/type-engine.md
+     is unrelated; rationale kept here since it's UI-only). */
+  --danger: #B91C1C;
+  --warning: #C2410C;
+  --success: #15803D;
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+
+  --shadow-card: 0 1px 2px rgba(16, 20, 27, 0.04);
+}
+
+.dark {
+  --bg: #0B0E14;
+  --surface: #111620;
+  --surface-raised: #161D29;
+  --border: rgba(255, 255, 255, 0.08);
+  --text: #F2F4F8;
+  --text-muted: #8B94A3;
+  --accent: #6C8CFF;
+  --accent-contrast: #0B0E14;
+
+  --danger: #EF4444;
+  --warning: #F97316;
+  --success: #22C55E;
+
+  --shadow-card: none;
+}
+
 @layer base {
   body {
-    @apply bg-[#F9FAFB] text-slate-900 antialiased dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300;
+    background-color: var(--bg);
+    color: var(--text);
+    @apply antialiased transition-colors duration-200;
   }
 }
 
-/* Dot grid texture — outside @layer for correct specificity */
-body {
-  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.09) 1.5px, transparent 1.5px);
-  background-size: 28px 28px;
-}
-
-:is(.dark) body {
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px);
-  background-size: 28px 28px;
-}
-
 @layer components {
-  /* Bento Card Base */
-  .bento-card {
-    @apply bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 transition-all duration-300 hover:shadow-md dark:bg-slate-800 dark:border-slate-700 dark:shadow-none;
+  /* Surfaces — depth comes from background/border, not shadow. */
+  .surface {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+  }
+
+  .surface-raised {
+    background-color: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
+
+  .panel {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    @apply p-4 sm:p-5;
   }
 
   /* Minimalist Type Pill */
   .type-pill {
-    @apply inline-flex items-center justify-center px-4 py-1.5 rounded-full text-sm font-bold tracking-tight uppercase border-2 border-transparent transition-all duration-200 shadow-sm;
+    @apply inline-flex items-center justify-center px-3 py-1 rounded-md text-xs font-bold tracking-tight uppercase border-2 border-transparent;
+  }
+  /* A real smaller pill (less padding/font-size), not a transform: scale()
+     shrink — see createTypePill's docs in ui.js for why that matters. */
+  .type-pill-sm {
+    @apply px-1.5 py-0.5 text-[10px];
   }
 
-  /* Type Colors */
+  /* Type Colors (unchanged from Sprint 1 — protagonists of the palette) */
   .bg-type-normal { background-color: #A8A77A; }
   .bg-type-fire { background-color: #EE8130; }
   .bg-type-water { background-color: #6390F0; }
@@ -49,29 +113,31 @@ body {
   .bg-type-fairy { background-color: #D685AD; }
   .bg-type-dark { background-color: #705746; }
 
-  /* Text Colors for Contrast */
-  .type-text-dark { @apply text-slate-900; }
-  .type-text-light { @apply text-white; }
+  .type-text-dark { color: #14181F; }
+  .type-text-light { color: #FFFFFF; }
 
-  /* Table Custom Styles */
+  /* Full type chart */
   #type-table-container table {
     @apply w-full border-separate border-spacing-1 text-sm;
   }
   #type-table-container th, #type-table-container td {
-    @apply p-2 rounded-lg text-center transition-colors duration-150;
+    @apply p-2 rounded-md text-center transition-colors duration-150;
   }
   #type-table-container th {
-    @apply font-black text-[10px] uppercase tracking-wider text-white shadow-sm;
+    @apply font-black text-[10px] uppercase tracking-wider text-white;
     text-shadow: 0 1px 2px rgba(0,0,0,0.3);
   }
   #type-table-container td {
-    @apply bg-gray-50/50 font-medium text-slate-600 dark:bg-slate-700/40 dark:text-slate-400;
+    background-color: var(--surface-raised);
+    color: var(--text-muted);
+    @apply font-medium;
   }
   #type-table-container td:first-child {
-    @apply bg-white! text-slate-900 font-black text-left sticky left-0 z-10 pr-4 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] dark:bg-slate-800! dark:text-white! dark:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)];
+    background-color: var(--surface) !important;
+    color: var(--text) !important;
+    @apply font-black text-left sticky left-0 z-10 pr-4;
   }
 
-  /* Interaction Classes */
   .interaction-2x {
     @apply bg-green-100! text-green-700! font-bold dark:bg-green-900/40! dark:text-green-300!;
   }
@@ -85,118 +151,274 @@ body {
     @apply opacity-40 dark:opacity-20;
   }
 
-  /* Custom Search Input */
+  /* Search input — the most prominent control in the Calculator */
   .search-input {
-    @apply w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-lg font-medium text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200 dark:bg-slate-900 dark:text-slate-200 dark:placeholder-slate-600 dark:focus:ring-emerald-400/30;
+    width: 100%;
+    background-color: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text);
+    @apply px-5 py-3.5 text-base font-medium transition-all duration-150;
   }
-
-  /* Custom Select */
-  .bento-select {
-    @apply appearance-none w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-lg font-semibold text-emerald-600 cursor-pointer focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200 dark:bg-slate-900 dark:text-emerald-400 dark:focus:ring-emerald-400/30;
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww%2Ew3%2Eorg%2Fsvg%22%20viewBox%3D%220%200%20256%20512%22%3E%3Cpath%20fill%3D%22%236366f1%22%20d%3D%22M64%20192L128%20256l64-64v-64h-128v64zM192%20320L128%20256l-64%2064v64h128v-64z%22%2F%3E%3C%2Fsvg%3E');
-    background-repeat: no-repeat;
-    background-position: right 1.5rem center;
-    background-size: 1rem;
-  }
-
-  :is(.dark .bento-select) {
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww%2Ew3%2Eorg%2Fsvg%22%20viewBox%3D%220%200%20256%20512%22%3E%3Cpath%20fill%3D%22%23818cf8%22%20d%3D%22M64%20192L128%20256l64-64v-64h-128v64zM192%20320L128%20256l-64%2064v64h128v-64z%22%2F%3E%3C%2Fsvg%3E');
+  .search-input::placeholder { color: var(--text-muted); }
+  .search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
   }
 }
 
-/* Dark mode card depth */
-:is(.dark) .bento-card {
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-}
-
-/* Title with Syne display font */
-.bento-title {
+/* Title with Syne display font — brand mark only */
+.brand-title {
   font-family: 'Syne', sans-serif;
-  @apply text-5xl md:text-7xl font-black tracking-tighter text-slate-900 mb-1 dark:text-white transition-colors duration-300;
+  @apply font-black tracking-tight;
+  color: var(--text);
 }
 
-#suggestions {
-  @apply absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-gray-100 shadow-xl z-50 max-h-60 overflow-y-auto overflow-hidden dark:bg-cyber-glass dark:backdrop-blur-xl dark:border-white/10 dark:shadow-glass;
+/* Multiplier badges — the core visual language of the app. Numbers use
+   JetBrains Mono so they read as data, not decoration. */
+.mult-badge {
+  @apply inline-flex items-center justify-center min-w-[2.75rem] h-8 px-2 rounded-md font-mono font-bold text-sm border;
 }
-#suggestions li {
-  @apply px-6 py-3 cursor-pointer transition-colors duration-150 text-slate-600 font-medium hover:bg-emerald-50 hover:text-emerald-600 dark:text-slate-300 dark:hover:bg-emerald-900/30 dark:hover:text-emerald-300;
+.mult-critical { background-color: color-mix(in srgb, var(--danger) 14%, transparent); color: var(--danger); border-color: color-mix(in srgb, var(--danger) 35%, transparent); }
+.mult-weak     { background-color: color-mix(in srgb, var(--warning) 14%, transparent); color: var(--warning); border-color: color-mix(in srgb, var(--warning) 35%, transparent); }
+.mult-immune   { background-color: rgba(139, 148, 163, 0.16); color: var(--text-muted); border-color: var(--border); }
+.mult-resist   { background-color: color-mix(in srgb, var(--success) 14%, transparent); color: var(--success); border-color: color-mix(in srgb, var(--success) 35%, transparent); }
+.mult-neutral  { background-color: transparent; color: var(--text-muted); border-color: var(--border); }
+
+#suggestions, #sim-defender-suggestions {
+  position: absolute; top: 100%; left: 0; right: 0; margin-top: 0.5rem;
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  @apply shadow-xl z-50 max-h-72 overflow-y-auto overflow-hidden;
+}
+#suggestions li, #sim-defender-suggestions li {
+  @apply px-4 py-3 cursor-pointer transition-colors duration-100 font-medium;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+#suggestions li:last-child, #sim-defender-suggestions li:last-child { border-bottom: none; }
+#suggestions li:hover, #suggestions li.suggestion-active,
+#sim-defender-suggestions li:hover {
+  background-color: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--text);
+}
+
+/* Team Builder search results — a real <ul>/<li>/<button> list */
+#pro-search-results ul { list-style: none; margin: 0; padding: 0; }
+#pro-search-results li:not(:last-child) { border-bottom: 1px solid var(--border); }
+.search-result-row {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 100ms;
+}
+.search-result-row:hover, .search-result-row:focus-visible, .search-result-row.search-result-active {
+  background-color: color-mix(in srgb, var(--accent) 10%, transparent);
+  outline: none;
 }
 
 .label-group {
-  @apply flex items-center gap-2 mb-4 text-sm font-bold uppercase tracking-widest;
+  @apply flex items-center gap-2 mb-3 text-xs font-bold uppercase tracking-widest;
+  color: var(--text-muted);
 }
 .label-icon {
-  @apply w-5 h-5;
+  @apply w-4 h-4;
 }
 
 .effectiveness-card {
-  @apply mb-8 last:mb-0;
+  @apply mb-5 last:mb-0;
+}
+
+/* App shell */
+/* Expands a small control's actual hit area to ~44x44 (WCAG 2.5.5-ish
+   target size) without growing it visually — a transparent centered
+   pseudo-element, not a bigger box. Needs `position: relative` on the
+   control itself (icon-btn and the team-slot remove button set it). */
+.tap-target-44 {
+  position: relative;
+}
+.tap-target-44::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+
+.icon-btn {
+  @apply p-2 rounded-md transition-colors duration-150;
+  color: var(--text-muted);
+}
+.icon-btn { position: relative; }
+.icon-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+.icon-btn:hover { background-color: var(--surface-raised); color: var(--text); }
+.icon-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.icon-btn-success {
+  color: var(--success) !important;
+  background-color: color-mix(in srgb, var(--success) 14%, transparent) !important;
+}
+
+.mode-switch {
+  @apply flex items-center gap-0.5 p-1 rounded-lg;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+}
+.mode-btn {
+  @apply px-3 py-1.5 rounded-md text-xs sm:text-sm font-bold transition-colors duration-150 whitespace-nowrap;
+  color: var(--text-muted);
+}
+.mode-btn:hover { color: var(--text); }
+.mode-btn-active {
+  background-color: var(--surface-raised);
+  color: var(--text);
+}
+
+/* Type selector (button -> popover grid, replaces the native <select>s) */
+.type-selector-btn {
+  width: 100%;
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  @apply px-4 py-3 text-sm font-semibold text-left flex items-center justify-between gap-2 transition-colors duration-150;
+}
+.type-selector-btn:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+.type-selector-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.type-selector-btn-filled { color: var(--text); }
+.type-selector-btn .type-selector-caret { color: var(--text-muted); }
+.type-selector-btn-extra {
+  border-style: dashed;
+  /* leave room on the right for the help badge below so it doesn't sit on top of the caret */
+  padding-right: 1.75rem;
+}
+
+/* Extra Type help — a native <details> badge, touch/keyboard/mouse alike. */
+.type-selector-help {
+  position: absolute;
+  top: -0.4rem;
+  right: -0.4rem;
+}
+.type-selector-help summary {
+  @apply flex items-center justify-center w-5 h-5 rounded-full text-[11px] font-bold cursor-pointer select-none;
+  list-style: none;
+  background-color: var(--surface-raised);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.type-selector-help summary::-webkit-details-marker { display: none; }
+.type-selector-help summary:hover, .type-selector-help summary:focus-visible {
+  color: var(--text);
+  border-color: var(--accent);
+  outline: none;
+}
+.type-selector-help-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.375rem;
+  width: 13rem;
+  z-index: 40;
+  @apply text-xs p-2.5 rounded-lg text-center;
+  background-color: var(--surface-raised);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.type-selector-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.type-selector-popover {
+  position: fixed;
+  z-index: 60;
+  width: 320px;
+  max-width: calc(100vw - 1rem);
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+  padding: 0.75rem;
+}
+.type-selector-header {
+  @apply flex items-center justify-between mb-2 px-1;
+}
+.type-selector-title {
+  @apply text-xs font-bold uppercase tracking-widest;
+  color: var(--text-muted);
+}
+.type-selector-clear {
+  @apply text-xs font-bold uppercase;
+  color: var(--accent);
+}
+.type-selector-grid {
+  @apply grid grid-cols-3 gap-1.5;
+}
+.type-grid-option {
+  @apply cursor-pointer w-full;
+}
+
+/* Mobile: bottom sheet instead of an anchored popover */
+.type-selector-sheet {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  top: auto !important;
+  width: auto;
+  max-width: none;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+.type-selector-sheet .type-selector-grid {
+  @apply grid-cols-4;
 }
 
 .type-pills-container {
-  @apply flex flex-wrap gap-2;
+  @apply flex flex-wrap gap-1.5;
 }
 
-/* Stat bar transition */
 .stat-bar {
-  @apply transition-[width] duration-700 ease-out;
+  @apply transition-[width] duration-200 ease-out;
 }
 
-/* Animations */
+/* Animations — feedback, not decoration. Nothing above 220ms. */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-
-@keyframes zoomIn {
-  from { transform: scale(0.95); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
 }
-
 @keyframes slideUpFade {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.94); }
-  to { opacity: 1; transform: scale(1); }
-}
+.animate-in { animation-duration: 180ms; animation-fill-mode: both; animation-timing-function: ease-out; }
+.fade-in { animation-name: fadeIn; }
+.scale-in { animation-name: scaleIn; }
+.section-enter { animation: slideUpFade 180ms ease-out both; }
 
-.animate-in {
-  animation-duration: 500ms;
-  animation-fill-mode: both;
-}
-
-.fade-in {
-  animation-name: fadeIn;
-}
-
-.zoom-in {
-  animation-name: zoomIn;
-}
-
-.slide-up {
-  animation-name: slideUpFade;
-  animation-duration: 400ms;
-  animation-fill-mode: both;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.scale-in {
-  animation-name: scaleIn;
-  animation-duration: 350ms;
-  animation-fill-mode: both;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Staggered card animations */
-.stagger-1 { animation-delay: 0ms; }
-.stagger-2 { animation-delay: 60ms; }
-.stagger-3 { animation-delay: 120ms; }
-.stagger-4 { animation-delay: 180ms; }
-
-/* Section reveal animation */
-.section-enter {
-  animation: slideUpFade 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+@media (prefers-reduced-motion: reduce) {
+  .animate-in, .section-enter, .stat-bar, * {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
 }

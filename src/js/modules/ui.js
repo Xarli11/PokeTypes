@@ -1,4 +1,4 @@
-import { getEffectiveness, getAbilityModifiers } from '../../lib/type-engine/index.js';
+import { getEffectiveness, getAbilityModifiers, formatMultiplierSymbol } from '../../lib/type-engine/index.js';
 import { i18n } from './i18n.js';
 
 const TYPE_COLORS = {
@@ -18,10 +18,17 @@ export function normalizeSearch(str) {
         .trim();
 }
 
-export function createTypePill(type, contrastData) {
+/**
+ * `sizeClass` is an actual smaller pill variant (e.g. 'type-pill-sm'), not
+ * a transform: scale() shrink — scaling only changes paint, not layout
+ * box size, so a scaled-down pill row can still silently overflow its
+ * (width-constrained) container and cause page-level horizontal scroll.
+ * Found exactly this in the compact Team Builder slot (see global.css).
+ */
+export function createTypePill(type, contrastData, sizeClass = '') {
     const textColorClass = contrastData[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
     const translatedType = i18n.tType(type);
-    return `<span class="type-pill bg-type-${type.toLowerCase()} ${textColorClass}">
+    return `<span class="type-pill ${sizeClass} bg-type-${type.toLowerCase()} ${textColorClass}">
         ${translatedType}
     </span>`;
 }
@@ -49,135 +56,117 @@ export function getEffectivenessIcon(type) {
     }
 }
 
-export function renderEffectivenessCard(cardElement, labelKey, typeList, noContentKey, iconType, contrastData) {
-    let contentHTML = `
-        <div class="label-group"> ${getEffectivenessIcon(iconType)} <span>${i18n.t(labelKey)}</span></div>
-        <div class="type-pills-container">
+/**
+ * One row inside a defense/offense multiplier section: the multiplier
+ * badge (always shown, never relying on color alone) plus the type pills
+ * it applies to (each keeps its own type color).
+ */
+function multiplierRow(mult, severityClass, typeList, contrastData) {
+    if (!typeList || !typeList.length) return '';
+    return `
+        <div class="flex items-start gap-3">
+            <span class="mult-badge ${severityClass} shrink-0">${mult}</span>
+            <div class="type-pills-container pt-1">${typeList.map(t => createTypePill(t, contrastData)).join('')}</div>
+        </div>
     `;
-    if (typeList.length) {
-        contentHTML += typeList.map(type => createTypePill(type, contrastData)).join('');
-    } else {
-        contentHTML += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">${i18n.t(noContentKey || 'none')}</span>`;
-    }
-    contentHTML += `</div>`;
-    cardElement.innerHTML = contentHTML;
 }
 
-export function renderSplitEffectivenessCard(cardElement, labelKey, x4List, x2List, noContentKey, iconType, contrastData, x8List = null) {
-    let contentHTML = `<div class="label-group">${getEffectivenessIcon(iconType)} <span>${i18n.t(labelKey)}</span></div>`;
-    contentHTML += `<div class="flex flex-col gap-4">`;
-
-    if (x8List && x8List.length) {
-        contentHTML += `<div class="flex items-center gap-3">
-            <span class="px-2 h-8 min-w-[2rem] flex items-center justify-center rounded-lg bg-red-700 text-white font-black text-xs shadow-cyber-glow">x8</span>
-            <div class="type-pills-container">${x8List.map(t => createTypePill(t, contrastData)).join('')}</div>
-        </div>`;
-    }
-    
-    if (x4List && x4List.length) {
-        contentHTML += `<div class="flex items-center gap-3">
-            <span class="px-2 h-8 min-w-[2rem] flex items-center justify-center rounded-lg bg-red-600 text-white font-black text-xs">x4</span>
-            <div class="type-pills-container">${x4List.map(t => createTypePill(t, contrastData)).join('')}</div>
-        </div>`;
-    }
-    
-    if (x2List && x2List.length) {
-        contentHTML += `<div class="flex items-center gap-3">
-            <span class="px-2 h-8 min-w-[2rem] flex items-center justify-center rounded-lg bg-orange-500 text-white font-black text-xs">x2</span>
-            <div class="type-pills-container">${x2List.map(t => createTypePill(t, contrastData)).join('')}</div>
-        </div>`;
-    }
-    
-    if ((!x8List || !x8List.length) && (!x4List || !x4List.length) && (!x2List || !x2List.length)) {
-        contentHTML += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">${i18n.t(noContentKey || 'none')}</span>`;
-    }
-    
-    contentHTML += `</div>`;
-    cardElement.innerHTML = contentHTML;
+function multiplierSection(titleKey, rowsHTML) {
+    const rows = rowsHTML.filter(Boolean);
+    if (!rows.length) return '';
+    return `
+        <div class="mb-4 last:mb-0">
+            <div class="text-[11px] font-bold uppercase tracking-widest mb-2" style="color: var(--text-muted)">${i18n.t(titleKey)}</div>
+            <div class="flex flex-col gap-2.5">${rows.join('')}</div>
+        </div>
+    `;
 }
 
-export function renderSplitResistanceCard(cardElement, labelKey, x025List, x05List, noContentKey, iconType, contrastData, x0125List = null) {
-    let contentHTML = `<div class="label-group">${getEffectivenessIcon(iconType)} <span>${i18n.t(labelKey)}</span></div>`;
-    contentHTML += `<div class="flex flex-col gap-4">`;
-
-    if (x0125List && x0125List.length) {
-        contentHTML += `<div class="flex items-center gap-3">
-            <span class="px-2 h-8 min-w-[2rem] flex items-center justify-center rounded-lg bg-emerald-800 text-white font-black text-xs shadow-cyber-glow">x0.125</span>
-            <div class="type-pills-container">${x0125List.map(t => createTypePill(t, contrastData)).join('')}</div>
-        </div>`;
-    }
-    
-    if (x025List && x025List.length) {
-        contentHTML += `<div class="flex items-center gap-3">
-            <span class="px-2 h-8 min-w-[2rem] flex items-center justify-center rounded-lg bg-green-600 text-white font-black text-xs">x0.25</span>
-            <div class="type-pills-container">${x025List.map(t => createTypePill(t, contrastData)).join('')}</div>
-        </div>`;
-    }
-    
-    if (x05List && x05List.length) {
-        contentHTML += `<div class="flex items-center gap-3">
-            <span class="px-2 h-8 min-w-[2rem] flex items-center justify-center rounded-lg bg-emerald-500 text-white font-black text-xs">x0.5</span>
-            <div class="type-pills-container">${x05List.map(t => createTypePill(t, contrastData)).join('')}</div>
-        </div>`;
-    }
-    
-    if ((!x0125List || !x0125List.length) && (!x025List || !x025List.length) && (!x05List || !x05List.length)) {
-        contentHTML += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">${i18n.t(noContentKey || 'none')}</span>`;
-    }
-    
-    contentHTML += `</div>`;
-    cardElement.innerHTML = contentHTML;
-}
-
-export function renderBadgedCard(cardElement, labelKey, typeList, noContentKey, iconType, badgeText, badgeColorClass, contrastData) {
-    let contentHTML = `<div class="label-group">${getEffectivenessIcon(iconType)} <span>${i18n.t(labelKey)}</span></div>`;
-    contentHTML += `<div class="flex flex-col gap-4">`;
-
-    if (typeList && typeList.length) {
-        contentHTML += `<div class="flex items-center gap-3">
-            <span class="px-2 h-8 min-w-[2rem] flex items-center justify-center rounded-lg ${badgeColorClass} text-white font-black text-xs">${badgeText}</span>
-            <div class="type-pills-container">${typeList.map(t => createTypePill(t, contrastData)).join('')}</div>
-        </div>`;
-    } else {
-        contentHTML += `<span class="text-slate-300 text-xs font-bold uppercase tracking-widest">${i18n.t(noContentKey || 'none')}</span>`;
-    }
-
-    contentHTML += `</div>`;
-    cardElement.innerHTML = contentHTML;
-}
-
-export function renderDualImmunities(container, labelKey, pairs, contrastData) {
+/**
+ * Renders the full defensive matchup as ordered multiplier groups —
+ * strongest weakness to hardest resistance — instead of four separate
+ * cards. Defense is PokeTypes' top priority: this is the first thing a
+ * user sees after selecting a Pokemon or type combination.
+ * @param {HTMLElement} container
+ * @param {ReturnType<import('../../lib/type-engine/index.js').calculateDefense>} def
+ * @param {Record<string, string>} contrastData
+ */
+export function renderDefenseGroups(container, def, contrastData) {
     if (!container) return;
-    if (!pairs || pairs.length === 0) {
-        container.classList.add('hidden');
-        return;
+
+    const sections = [
+        multiplierSection('defense_critical', [
+            multiplierRow('8×', 'mult-critical', def.weaknesses8x, contrastData),
+            multiplierRow('4×', 'mult-critical', def.weaknesses4x, contrastData)
+        ]),
+        multiplierSection('defense_weak', [
+            multiplierRow('2×', 'mult-weak', def.weaknesses2x, contrastData)
+        ]),
+        multiplierSection('defense_immune', [
+            multiplierRow('0×', 'mult-immune', def.immunities, contrastData)
+        ]),
+        multiplierSection('defense_resists', [
+            multiplierRow('½×', 'mult-resist', def.resistances05x, contrastData)
+        ]),
+        multiplierSection('defense_strong_resists', [
+            multiplierRow('¼×', 'mult-resist', def.resistances025x, contrastData),
+            multiplierRow('⅛×', 'mult-resist', def.resistances0125x, contrastData)
+        ]),
+        multiplierSection('defense_neutral', [
+            multiplierRow('1×', 'mult-neutral', def.neutral, contrastData)
+        ])
+    ].filter(Boolean);
+
+    container.innerHTML = sections.length
+        ? sections.join('')
+        : `<span class="text-xs font-bold uppercase tracking-widest" style="color: var(--text-muted)">${i18n.t('none')}</span>`;
+}
+
+/**
+ * Same multiplier-group language as renderDefenseGroups, but for
+ * offensive coverage (best-move-wins across up to 3 attacking types).
+ * Super effective first — it's the actionable half of offense.
+ * @param {HTMLElement} container
+ * @param {ReturnType<import('../../lib/type-engine/index.js').calculateOffense>} off
+ * @param {string[][]} dualImmunityPairs - from findImmuneDualTypes
+ * @param {Record<string, string>} contrastData
+ */
+export function renderOffenseGroups(container, off, dualImmunityPairs, contrastData) {
+    if (!container) return;
+
+    const sections = [
+        multiplierSection('super_effective', [
+            multiplierRow('2×+', 'mult-critical', off.superEffective2x, contrastData)
+        ]),
+        multiplierSection('neutral_offense', [
+            multiplierRow('1×', 'mult-neutral', off.neutral, contrastData)
+        ]),
+        multiplierSection('not_very_effective', [
+            multiplierRow('½×', 'mult-resist', off.notVeryEffective, contrastData)
+        ]),
+        multiplierSection('no_effect', [
+            multiplierRow('0×', 'mult-immune', off.noEffect, contrastData)
+        ])
+    ].filter(Boolean);
+
+    if (dualImmunityPairs && dualImmunityPairs.length) {
+        const pairsHTML = dualImmunityPairs.map(pair => {
+            const p1 = createTypePill(pair[0], contrastData, 'type-pill-sm');
+            const p2 = createTypePill(pair[1], contrastData, 'type-pill-sm');
+            return `<div class="flex items-center gap-1 px-2 py-1.5 rounded-md" style="background: var(--surface-raised); border: 1px solid var(--border)"><div class="flex flex-wrap gap-1">${p1}${p2}</div></div>`;
+        }).join('');
+
+        sections.push(`
+            <div class="mb-4 last:mb-0">
+                <div class="text-[11px] font-bold uppercase tracking-widest mb-2" style="color: var(--text-muted)">${i18n.t('walled_by_dual')}</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">${pairsHTML}</div>
+            </div>
+        `);
     }
 
-    container.classList.remove('hidden');
-    let contentHTML = `<div class="label-group">
-        <svg class="label-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
-        </svg>
-        <span>${i18n.t(labelKey)}</span>
-    </div>`;
-    
-    contentHTML += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">`;
-    
-    pairs.forEach(pair => {
-        const p1 = createTypePill(pair[0], contrastData);
-        const p2 = createTypePill(pair[1], contrastData);
-        
-        contentHTML += `
-            <div class="flex items-center justify-center gap-1 p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-700">
-                <div class="flex scale-90 -space-x-2">
-                    ${p1}${p2}
-                </div>
-            </div>
-        `;
-    });
-    
-    contentHTML += `</div>`;
-    container.innerHTML = contentHTML;
+    container.innerHTML = sections.length
+        ? sections.join('')
+        : `<span class="text-xs font-bold uppercase tracking-widest" style="color: var(--text-muted)">${i18n.t('none')}</span>`;
 }
 
 export function generateTypeTable(containerId, types, effectiveness, contrastData) {
@@ -291,84 +280,71 @@ export function getPokemonImageUrl(p, imageFixes = {}) {
     return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${cleanSlug}.png`;
 }
 
+/**
+ * Compact "subject header" — just enough to identify what's being
+ * analyzed (sprite, name, dex #, types, active ability if any). No hero
+ * card, no big gradient glow: Defense is the star of this screen, not
+ * the artwork.
+ */
 export function renderPokemonHero(container, pokemon, contrastData, imageFixes = {}) {
     if (!pokemon) {
         container.innerHTML = '';
         container.style.background = '';
+        container.classList.add('hidden');
         return;
     }
+    container.classList.remove('hidden');
 
-    // Type-reactive gradient background
     const primaryColor = TYPE_COLORS[pokemon.types[0]] || '#6366f1';
-    const secondaryColor = TYPE_COLORS[pokemon.types[1]] || primaryColor;
-    container.style.background = pokemon.types[1]
-        ? `linear-gradient(145deg, ${primaryColor}22 0%, ${secondaryColor}18 100%)`
-        : `radial-gradient(ellipse at 65% 35%, ${primaryColor}30 0%, transparent 68%)`;
+    container.style.background = `linear-gradient(90deg, ${primaryColor}14 0%, transparent 70%)`;
 
-    const slug = pokemon.spriteSlug || pokemon.apiName;
     const fix = imageFixes[pokemon.apiName];
-    
+
     const localizedName = i18n.t(pokemon.name.toLowerCase());
     const displayName = localizedName !== pokemon.name.toLowerCase() ? localizedName : capitalizeWords(pokemon.name);
-    
+
     const typePills = pokemon.types.map(t => createTypePill(t, contrastData)).join('');
 
     const baseSlug = (pokemon.apiName || pokemon.slug || pokemon.name?.toLowerCase() || '').replace(/\s+/g, '-');
-    const cleanSlug = baseSlug.replace(/[^a-z0-0-]/g, '');
+    const cleanSlug = baseSlug.replace(/[^a-z0-9-]/g, '');
 
-    // Image Sources Strategy
     const officialArtById = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
     const officialArtBySlug = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${cleanSlug}.png`;
-    
+
     let primaryUrl = officialArtById;
-    
     if (fix) {
-        if (fix.type === 'slug' || fix.type === 'id') {
-            primaryUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${fix.value}.png`;
-        } else {
-            primaryUrl = fix.value;
-        }
+        primaryUrl = (fix.type === 'slug' || fix.type === 'id')
+            ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${fix.value}.png`
+            : fix.value;
     }
 
-    const sources = [
-        primaryUrl,
-        officialArtBySlug,
-        '/pokeball.png'
-    ];
+    const sources = [primaryUrl, officialArtBySlug, '/pokeball.png'];
+    const dexNumber = pokemon.id ? `#${String(pokemon.id).padStart(4, '0')}` : '';
 
-    const contentHTML = `
-        <div class="relative z-10 flex flex-col items-center gap-6 py-8 scale-in">
-            <div class="relative group">
-                <div class="absolute inset-0 bg-emerald-500/20 dark:bg-emerald-400/10 rounded-full blur-3xl transform scale-75 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                <img id="pokemon-hero-img" 
-                     src="${sources[0]}" 
-                     alt="${displayName}" 
-                     class="w-32 h-32 md:w-48 md:h-48 object-contain drop-shadow-xl transform transition-transform duration-500 hover:scale-110"
-                     onerror="this.src='${sources[1]}'; this.onerror=function(){this.src='${sources[2]}'; this.onerror=null;}">
-            </div>
-            
-            <div class="text-center">
-                <h3 class="text-3xl font-black text-slate-800 dark:text-white mb-3 tracking-tight">${displayName}</h3>
-                <div class="flex items-center justify-center gap-2 scale-110">
-                    ${typePills}
+    container.innerHTML = `
+        <div class="relative z-10 flex items-center gap-4 py-3 px-1 fade-in">
+            <img id="pokemon-hero-img"
+                 src="${sources[0]}"
+                 alt="${displayName}"
+                 loading="eager"
+                 class="w-16 h-16 sm:w-20 sm:h-20 object-contain shrink-0"
+                 onerror="this.src='${sources[1]}'; this.onerror=function(){this.src='${sources[2]}'; this.onerror=null;}">
+            <div class="min-w-0">
+                <div class="flex items-baseline gap-2 flex-wrap">
+                    <h3 class="text-xl sm:text-2xl font-black tracking-tight truncate" style="color: var(--text)">${displayName}</h3>
+                    ${dexNumber ? `<span class="font-mono text-xs sm:text-sm shrink-0" style="color: var(--text-muted)">${dexNumber}</span>` : ''}
                 </div>
+                <div class="flex items-center gap-1.5 mt-1.5 flex-wrap" id="pokemon-hero-types">${typePills}</div>
             </div>
         </div>
     `;
 
-    container.innerHTML = contentHTML;
-
     const img = container.querySelector('#pokemon-hero-img');
     let currentSourceIndex = 0;
-
-    const tryNextSource = () => {
+    img.onerror = () => {
         currentSourceIndex++;
-        if (currentSourceIndex < sources.length) {
-            img.src = sources[currentSourceIndex];
-        }
+        if (currentSourceIndex < sources.length) img.src = sources[currentSourceIndex];
     };
-
-    img.onerror = tryNextSource;
 }
 
 export function renderStats(container, stats) {
@@ -397,10 +373,10 @@ export function renderStats(container, stats) {
 
         return `
             <div class="flex items-center gap-3 text-sm">
-                <span class="w-20 font-bold text-slate-500 dark:text-slate-400 text-right uppercase text-xs tracking-wider whitespace-nowrap">${statNames[stat.stat.name] || stat.stat.name}</span>
-                <span class="w-8 font-mono font-bold text-slate-800 dark:text-cyber-neon text-right drop-shadow-md">${val}</span>
-                <div class="flex-1 h-2 bg-slate-200 dark:bg-slate-700/50 rounded-full overflow-hidden shadow-inner">
-                    <div class="h-full rounded-full ${colorClass} stat-bar shadow-cyber-glow" style="width: 0%" data-target-width="${targetWidth}%"></div>
+                <span class="w-16 font-bold text-right uppercase text-xs tracking-wider whitespace-nowrap" style="color: var(--text-muted)">${statNames[stat.stat.name] || stat.stat.name}</span>
+                <span class="w-8 font-mono font-bold text-right" style="color: var(--text)">${val}</span>
+                <div class="flex-1 h-1.5 rounded-full overflow-hidden" style="background: var(--border)">
+                    <div class="h-full rounded-full ${colorClass} stat-bar" style="width: 0%" data-target-width="${targetWidth}%"></div>
                 </div>
             </div>
         `;
@@ -425,27 +401,21 @@ export function renderAbilities(container, abilities) {
     }
 
     const contentHTML = `
-        <div class="flex items-center gap-2 mb-4 text-slate-400 dark:text-slate-500">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-            </svg>
-            <span class="text-xs font-black uppercase tracking-[0.2em]">${i18n.t('abilities')}</span>
-        </div>
-        <div class="grid grid-cols-1 gap-3">
+        <div class="grid grid-cols-1 gap-2">
             ${abilities.map(entry => {
                 const name = entry.ability.displayName || capitalizeWords(entry.ability.name);
                 const isHidden = entry.is_hidden;
                 const description = entry.description || i18n.t('loading_desc');
-                
+
                 return `
-                    <div class="group flex flex-col gap-2 p-4 rounded-2xl bg-white dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700/50 hover:border-emerald-200 dark:hover:border-emerald-800 transition-colors shadow-sm">
-                        <div class="flex items-center justify-between">
-                            <span class="font-black text-slate-800 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${name}</span>
-                            ${isHidden 
-                                ? `<span class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700">${i18n.t('hidden')}</span>`
+                    <div class="flex flex-col gap-1 px-3 py-2.5 rounded-md" style="background: var(--surface-raised); border: 1px solid var(--border)">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="font-bold text-sm" style="color: var(--text)">${name}</span>
+                            ${isHidden
+                                ? `<span class="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded shrink-0" style="background: var(--border); color: var(--text-muted)">${i18n.t('hidden')}</span>`
                                 : ''}
                         </div>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed italic font-medium">${description}</p>
+                        <p class="text-xs leading-relaxed" style="color: var(--text-muted)">${description}</p>
                     </div>
                 `;
             }).join('')}
@@ -474,7 +444,7 @@ export function renderCompetitiveData(container, data, pokemonName) {
     const tierColor = tierColors[tier] || 'bg-slate-400';
 
     container.innerHTML = `
-        <div class="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div class="flex flex-col gap-6 animate-in fade-in">
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
                     <div class="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl text-emerald-600 dark:text-emerald-400">
@@ -515,7 +485,18 @@ export function capitalizeWords(str) {
     return str.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 }
 
-export function renderAbilityAlerts(container, abilities) {
+/**
+ * Ability considerations for the plain Calculator (no single ability is
+ * "active" here — the base Defense/Offense numbers stay type-only). When
+ * `pokemonTypes` + `effectiveness` are given, each unconditional modifier
+ * shows its raw -> effective delta (e.g. "FIRE 2× → 1×") using the same
+ * math as applyDefensiveModifiers, purely for information — it never
+ * changes the primary Defense numbers above. Conditional modifiers
+ * (`requiresContext`, e.g. Multiscale/Tera Shell/Fluffy's contact half)
+ * are shown with an honest "requires X" note instead of a computed delta,
+ * since PokeTypes has no way to confirm that condition here.
+ */
+export function renderAbilityAlerts(container, abilities, pokemonTypes = null, effectiveness = null) {
     if (!abilities || !abilities.length) {
         container.innerHTML = '';
         container.classList.add('hidden');
@@ -529,18 +510,33 @@ export function renderAbilityAlerts(container, abilities) {
         const name = entry.ability.name;
         const displayName = entry.ability.displayName || capitalizeWords(name);
         const modifiers = getAbilityModifiers(name);
-        
+
         modifiers.forEach(mod => {
             const key = `${mod.type}-${mod.modifier}-${name}`;
-            if (!seenKeys.has(key)) {
-                seenKeys.add(key);
-                alertsToRender.push({
-                    abilityName: displayName,
-                    description: mod.description,
-                    type: mod.type,
-                    modifier: mod.modifier
-                });
+            if (seenKeys.has(key)) return;
+            seenKeys.add(key);
+
+            let delta = null;
+            const isTypeSpecific = mod.type !== 'All' && mod.type !== 'Offensive';
+            if (pokemonTypes && effectiveness && isTypeSpecific && !mod.requiresContext) {
+                let raw = 1;
+                pokemonTypes.forEach(t => { raw *= getEffectiveness(mod.type, t, effectiveness); });
+
+                let effective;
+                if (mod.blockNonSE) effective = raw < 2 ? 0 : raw;
+                else if (mod.superEffectiveOnly) effective = raw >= 2 ? raw * mod.modifier : raw;
+                else if (mod.modifier === 0) effective = 0;
+                else effective = raw * mod.modifier;
+
+                if (effective !== raw) delta = { raw, effective, type: mod.type };
             }
+
+            alertsToRender.push({
+                abilityName: displayName,
+                description: mod.description,
+                requiresContext: mod.requiresContext,
+                delta
+            });
         });
     });
 
@@ -551,28 +547,40 @@ export function renderAbilityAlerts(container, abilities) {
     }
 
     container.classList.remove('hidden');
-    
-    let contentHTML = `
-        <div class="mb-2 flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <span class="font-bold text-sm uppercase tracking-wide">${i18n.t('ability_considerations')}</span>
-        </div>
-    `;
 
-    contentHTML += `<div class="grid gap-2">`;
+    const rows = alertsToRender.map(alert => {
+        let deltaHTML = '';
+        if (alert.delta) {
+            deltaHTML = `
+                <div class="flex items-center gap-2 mt-1.5 text-xs font-mono">
+                    <span class="uppercase tracking-wide font-sans font-bold" style="color: var(--text-muted)">${i18n.tType(alert.delta.type)}</span>
+                    <span style="color: var(--text-muted)">${formatMultiplierSymbol(alert.delta.raw)}</span>
+                    <span aria-hidden="true">→</span>
+                    <span class="font-bold" style="color: var(--accent)">${formatMultiplierSymbol(alert.delta.effective)}</span>
+                </div>
+            `;
+        } else if (alert.requiresContext) {
+            const noteKey = alert.requiresContext === 'fullHp' ? 'requires_full_hp' : 'requires_contact';
+            deltaHTML = `<div class="mt-1.5 text-xs italic" style="color: var(--text-muted)">${i18n.t(noteKey)} — ${i18n.t('condition_not_confirmed')}</div>`;
+        }
 
-    alertsToRender.forEach(alert => {
-        contentHTML += `
-            <div class="p-3 rounded-lg border border-emerald-100 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/30 text-sm text-slate-700 dark:text-slate-300">
-                <span class="font-bold text-emerald-700 dark:text-emerald-300">${alert.abilityName}</span>: ${alert.description}
+        return `
+            <div class="px-3 py-2.5 rounded-md text-sm" style="background: var(--surface-raised); border: 1px solid var(--border); color: var(--text-muted)">
+                <span class="font-bold" style="color: var(--text)">${alert.abilityName}</span>: ${alert.description}
+                ${deltaHTML}
             </div>
         `;
-    });
+    }).join('');
 
-    contentHTML += `</div>`;
-    container.innerHTML = contentHTML;
+    container.innerHTML = `
+        <div class="label-group">
+            <svg class="label-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+            </svg>
+            <span>${i18n.t('ability_considerations')}</span>
+        </div>
+        <div class="grid gap-2">${rows}</div>
+    `;
 }
 
 export function renderTacticalAdvice(container, advice) {

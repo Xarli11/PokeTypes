@@ -141,9 +141,25 @@ export const ITEM_EFFECTIVENESS = {
     'ring-target': [{ type: 'All', modifier: 1, removesTypeImmunity: true, description: "Negates the holder's type-based immunities (ability/item immunities are unaffected)." }]
 };
 
+/**
+ * Normalizes the same way getItemModifiers already does (lowercase,
+ * spaces -> dashes), plus stripping apostrophes ("Dragon's Maw" ->
+ * "dragons-maw"). Callers pass ability names in two different shapes
+ * depending on where the data came from: PokeAPI-fetched ability
+ * objects are already dash-slugged ("thick-fat"), but pokedex.json's
+ * local `abilities` map (what Team Builder's ability <select> is built
+ * from) stores the display form with spaces ("Thick Fat") — found via
+ * real browser QA of the Team Builder's raw/effective preview: it
+ * silently showed nothing for Thick Fat/Purifying Salt/every
+ * multi-word ability, because `"Thick Fat".toLowerCase()` ('thick
+ * fat') never matched the 'thick-fat' key. Normalizing here (matching
+ * the slug format already used everywhere in ABILITY_EFFECTIVENESS)
+ * makes both shapes resolve the same way.
+ */
 export function getAbilityModifiers(abilityName) {
     if (!abilityName) return [];
-    return ABILITY_EFFECTIVENESS[abilityName.toLowerCase()] || [];
+    const slug = abilityName.toLowerCase().replace(/'/g, '').replace(/ /g, '-');
+    return ABILITY_EFFECTIVENESS[slug] || [];
 }
 
 export function getItemModifiers(itemName) {

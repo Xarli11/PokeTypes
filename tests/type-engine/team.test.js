@@ -43,7 +43,15 @@ describe('analyzeTeamDefense — non-zero ability/item modifiers now apply', () 
         );
         // 2x halved by Thick Fat -> 1x neutral: no longer weak, and not a resist either.
         expect(withThickFat.matrix.Fire.weak).toBe(0);
-        expect(withThickFat.matrix.Fire.resist).toBe(0);
+    });
+
+    it('also works with the display-form ability name Team Builder actually stores (pokedex.json uses "Thick Fat", not "thick-fat")', () => {
+        const withDisplayForm = analyzeTeamDefense(
+            [pokemon({ name: 'thick-fat-grass', types: ['Grass'], ability: 'Thick Fat' }), null, null, null, null, null],
+            types, effectiveness
+        );
+        expect(withDisplayForm.matrix.Fire.weak).toBe(0);
+        expect(withDisplayForm.matrix.Fire.resist).toBe(0);
     });
 
     it('Heatproof turns neutral Fire damage into a resistance', () => {

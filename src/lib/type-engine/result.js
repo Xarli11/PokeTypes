@@ -46,3 +46,35 @@ export function classifyMultiplier(multiplier) {
     if (multiplier < 1) return 'resist';
     return 'neutral';
 }
+
+const MULTIPLIER_SYMBOLS = new Map([[8, '8×'], [4, '4×'], [2, '2×'], [1, '1×'], [0.5, '½×'], [0.25, '¼×'], [0.125, '⅛×'], [0, '0×']]);
+
+/**
+ * Display-only formatting for a multiplier (e.g. 0.5 -> '½×'). Falls back
+ * to `${n}×` for values off the standard ladder (Filter-reduced hits,
+ * etc.) — this never affects any calculation, only presentation. Shared
+ * by ui.js, pro.js, and simulator.js so the symbol used for a given
+ * number is identical everywhere in the UI.
+ * @param {number} n
+ * @returns {string}
+ */
+export function formatMultiplierSymbol(n) {
+    return MULTIPLIER_SYMBOLS.get(n) || `${n}×`;
+}
+
+/**
+ * Display-only severity bucket for a multiplier, used to pick a
+ * `.mult-*` CSS class. Distinct from `classifyMultiplier` (weak/neutral/
+ * resist/immune, used for weak/resist/immune tallying): this one further
+ * splits "weak" into critical (>=4x, e.g. an 8x/4x hit) vs weak (2x) so
+ * the UI can give critical weaknesses a visually stronger treatment.
+ * @param {number} n
+ * @returns {'mult-critical'|'mult-weak'|'mult-resist'|'mult-immune'|'mult-neutral'}
+ */
+export function classifySeverity(n) {
+    if (n === 0) return 'mult-immune';
+    if (n >= 4) return 'mult-critical';
+    if (n > 1) return 'mult-weak';
+    if (n < 1) return 'mult-resist';
+    return 'mult-neutral';
+}

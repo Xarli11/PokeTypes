@@ -16,6 +16,25 @@ describe('getAbilityModifiers / getItemModifiers — lookup', () => {
         expect(getItemModifiers('Air Balloon')).toEqual(getItemModifiers('air-balloon'));
     });
 
+    // Regression: pokedex.json's local `abilities` map (what Team
+    // Builder's ability <select> is populated from) stores display-form
+    // names with spaces ("Thick Fat"), while PokeAPI-fetched ability
+    // objects are already dash-slugged ("thick-fat"). Both must resolve
+    // to the same entry — found via real browser QA of the Team
+    // Builder's raw/effective preview, which silently showed nothing for
+    // any multi-word ability before this was fixed.
+    it('normalizes multi-word display-form ability names the same as their dash-slug form', () => {
+        expect(getAbilityModifiers('Thick Fat')).toEqual(getAbilityModifiers('thick-fat'));
+        expect(getAbilityModifiers('Thick Fat').length).toBeGreaterThan(0);
+        expect(getAbilityModifiers('Purifying Salt')).toEqual(getAbilityModifiers('purifying-salt'));
+        expect(getAbilityModifiers('Wonder Guard')).toEqual(getAbilityModifiers('wonder-guard'));
+    });
+
+    it('strips apostrophes so possessive ability names resolve too', () => {
+        expect(getAbilityModifiers("Dragon's Maw")).toEqual(getAbilityModifiers('dragons-maw'));
+        expect(getAbilityModifiers("Dragon's Maw").length).toBeGreaterThan(0);
+    });
+
     it('returns an empty array for an unknown or missing ability/item', () => {
         expect(getAbilityModifiers('sturdy')).toEqual([]);
         expect(getAbilityModifiers(null)).toEqual([]);
