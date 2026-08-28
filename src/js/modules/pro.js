@@ -4,6 +4,7 @@ import { analyzeTeamDefense, getThreatAlerts, analyzeTeamRoles } from './analysi
 import { createTypePill, getPokemonImageUrl, capitalizeWords, normalizeSearch } from './ui.js';
 import { i18n } from './i18n.js';
 import { initSimulator } from './simulator.js';
+import { encodeTeamPayload, decodeTeamPayload } from '../../lib/share-team.js';
 
 // State
 let activeSlotIndex = -1;
@@ -515,21 +516,11 @@ function setupSearchModal() {
 }
 
 // --- Share Team URL ---
+// Payload encode/decode/validation lives in ../../lib/share-team.js (pure,
+// unit tested). See that file for the Tera policy this sprint decided on.
 
 function serializeTeam(team) {
-    const compact = team.map(slot => {
-        if (!slot) return null;
-        return {
-            id: slot.id,
-            n: slot.apiName || slot.name,
-            t: slot.types,
-            a: slot.ability || null,
-            nat: slot.nature || null,
-            i: slot.item || null,
-            tera: slot.teraType || null
-        };
-    });
-    return btoa(unescape(encodeURIComponent(JSON.stringify(compact))));
+    return encodeTeamPayload(team);
 }
 
 async function restoreTeamFromURL() {
@@ -537,10 +528,13 @@ async function restoreTeamFromURL() {
     const encoded = params.get('team');
     if (!encoded) return;
 
-    try {
-        const compact = JSON.parse(decodeURIComponent(escape(atob(encoded))));
-        if (!Array.isArray(compact) || compact.length !== 6) return;
+    const compact = decodeTeamPayload(encoded);
+    if (!compact) {
+        console.error('Invalid or unsupported shared team link, ignoring');
+        return;
+    }
 
+    try {
         const { loadPokedex } = await import('./data.js');
         const fullDex = await loadPokedex();
 

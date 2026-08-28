@@ -1,7 +1,10 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const projectDataPath = path.join(__dirname, '../data/type-data.json');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const projectDataPath = path.join(__dirname, '../src/data/type-data.json');
 const projectData = JSON.parse(fs.readFileSync(projectDataPath, 'utf8'));
 const myEffectiveness = projectData.effectiveness;
 

@@ -1,5 +1,5 @@
 import { loadAppData, fetchPokemonDetails, fetchCompetitiveData } from './modules/data.js';
-import { calculateDefense, calculateOffense, findImmuneDualTypes } from './modules/calculator.js';
+import { calculateDefense, calculateOffense, findImmuneDualTypes } from '../lib/type-engine/index.js';
 import { getTacticalAdvice } from './modules/advisor.js';
 import * as ui from './modules/ui.js';
 import { normalizeSearch } from './modules/ui.js';

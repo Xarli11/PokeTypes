@@ -1,5 +1,5 @@
 // src/js/modules/simulator.js
-import { getEffectiveness, getAbilityModifiers } from './calculator.js';
+import { getEffectiveness, getAbilityModifiers, applyDefensiveModifiers } from '../../lib/type-engine/index.js';
 import { loadAppData, fetchPokemonDetails } from './data.js';
 import { getPokemonImageUrl, createTypePill, capitalizeWords, normalizeSearch } from './ui.js';
 import { i18n } from './i18n.js';
@@ -272,30 +272,30 @@ function runSimulation(attackType, pokemon, abilityName, effectiveness) {
     let modifier = getEffectiveness(attackType, pokemon.types[0], effectiveness);
     if (pokemon.types[1]) modifier *= getEffectiveness(attackType, pokemon.types[1], effectiveness);
 
-    // 2. Ability modifier — respects superEffectiveOnly and blockNonSE flags
+    // 2. Ability modifier — same engine as Team Builder (applyDefensiveModifiers),
+    // so a single ability behaves identically here and in analysis.js. The
+    // simulator has no full-HP/contact input yet, so `context` stays empty:
+    // any Multiscale/Shadow Shield/Tera Shell/Fluffy-contact component is
+    // never assumed to apply (see modifiers.js "Battle context").
     const abilityMods = getAbilityModifiers(abilityName);
     let abilityTriggered = null;
 
     if (abilityMods.length > 0) {
-        const mod = abilityMods.find(m => m.type.toLowerCase() === attackType.toLowerCase() || m.type === 'All');
+        const defensiveMods = abilityMods.filter(m => m.type === 'All' || m.type.toLowerCase() === attackType.toLowerCase());
 
-        if (mod) {
-            if (mod.blockNonSE) {
-                // Wonder Guard: blocks non-SE moves, SE moves pass through
-                if (modifier <= 1) {
-                    modifier = 0;
-                    abilityTriggered = mod;
-                }
-            } else if (mod.superEffectiveOnly && modifier <= 1) {
-                // Filter / Solid Rock / Prism Armor: only reduces SE damage
-                // No effect on neutral or resisted moves
-            } else if (mod.modifier === 0) {
-                modifier = 0;
-                abilityTriggered = mod;
-            } else {
-                modifier *= mod.modifier;
-                abilityTriggered = mod;
-            }
+        if (defensiveMods.length > 0) {
+            const before = modifier;
+            modifier = applyDefensiveModifiers({ [attackType]: modifier }, defensiveMods, [attackType])[attackType];
+
+            // Describe whichever matching modifier could plausibly explain
+            // the (possibly unchanged) number: an unconditional one, or a
+            // conditional one whose flag is actually relevant right now.
+            abilityTriggered = defensiveMods.find(mod => {
+                if (mod.requiresContext) return false; // never confirmed here
+                if (mod.blockNonSE) return before <= 1;
+                if (mod.superEffectiveOnly) return before >= 2;
+                return true;
+            }) || null;
         }
 
         // Show offensive ability description even if it doesn't affect the multiplier
