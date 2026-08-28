@@ -1,25 +1,27 @@
-const CACHE_NAME = 'poketypes-v2.31.2';
+// Kept in sync with package.json's version — bump it on every release so
+// stale precaches from prior deploys get cleaned up on activate.
+const CACHE_NAME = 'poketypes-v2.35.0';
+
+// Only static assets that are guaranteed to exist as-is under Astro's
+// Cloudflare (server output) build. Client scripts (main.js and its
+// modules) are bundled and content-hashed at build time — their real
+// paths (/_astro/*.js) aren't known ahead of time, so they are never
+// precached here; the network-first fetch handler below opportunistically
+// caches them (and everything else) as they're requested.
 const ASSETS = [
   '/',
-  '/index.html',
-  '/styles.css',
-  '/src/js/main.js',
-  '/src/js/modules/calculator.js',
-  '/src/js/modules/data.js',
-  '/src/js/modules/theme.js',
-  '/src/js/modules/ui.js',
-  '/data/pokedex.json',
-  '/data/type-data.json',
+  '/manifest.json',
   '/pokeball.png',
   '/favicon.ico'
 ];
 
-// Install: Cache files
+// Install: cache what we can, but never let a single missing/failed asset
+// abort the whole install (cache.addAll is all-or-nothing).
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
+      return Promise.allSettled(ASSETS.map((url) => cache.add(url)));
     })
   );
 });
