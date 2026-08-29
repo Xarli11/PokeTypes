@@ -1,10 +1,10 @@
 import type { APIRoute } from 'astro';
-import { renderCardPng, pngResponse } from '../../../lib/og/render.js';
-import { buildPokemonCard } from '../../../lib/og/cards/pokemon.js';
-import { buildHomeCard } from '../../../lib/og/cards/home.js';
-import { resolvePokemonSlug } from '../../../lib/og/resolve.js';
-import { fetchArtworkDataUri } from '../../../lib/og/artwork.js';
-import { OG_CACHE_CONTROL } from '../../../lib/og/cache.js';
+import { renderCardPng, pngResponse } from '../../../../lib/og/render.js';
+import { buildPokemonCard } from '../../../../lib/og/cards/pokemon.js';
+import { buildHomeCard } from '../../../../lib/og/cards/home.js';
+import { resolvePokemonSlug } from '../../../../lib/og/resolve.js';
+import { fetchArtworkDataUri } from '../../../../lib/og/artwork.js';
+import { OG_CACHE_CONTROL } from '../../../../lib/og/cache.js';
 
 // Only a slug that resolves against the local pokedex (same matching
 // pokemon/[name].astro uses) ever reaches buildPokemonCard() — no

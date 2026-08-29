@@ -1,9 +1,9 @@
 import type { APIRoute } from 'astro';
-import { renderCardPng, pngResponse } from '../../../lib/og/render.js';
-import { buildTypeCard } from '../../../lib/og/cards/type.js';
-import { buildHomeCard } from '../../../lib/og/cards/home.js';
-import { resolveTypeSlug } from '../../../lib/og/resolve.js';
-import { OG_CACHE_CONTROL } from '../../../lib/og/cache.js';
+import { renderCardPng, pngResponse } from '../../../../lib/og/render.js';
+import { buildTypeCard } from '../../../../lib/og/cards/type.js';
+import { buildHomeCard } from '../../../../lib/og/cards/home.js';
+import { resolveTypeSlug } from '../../../../lib/og/resolve.js';
+import { OG_CACHE_CONTROL } from '../../../../lib/og/cache.js';
 
 // Only slugs that resolve to real type names via resolveTypeSlug() ever
 // reach buildTypeCard() — no arbitrary query params, no unbounded slug

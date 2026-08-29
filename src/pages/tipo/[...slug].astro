@@ -4,6 +4,7 @@ import AppHeader from '../../components/AppHeader.astro';
 import TypeSelectorField from '../../components/TypeSelectorField.astro';
 import typeData from '../../data/type-data.json';
 import { calculateDefense, calculateOffense } from '../../lib/type-engine/index.js';
+import { ogTypePath } from '../../lib/og/version.js';
 
 const { slug } = Astro.params;
 const { types, effectiveness, contrast } = typeData;
@@ -82,7 +83,7 @@ const title = `${typeName} Type Weaknesses, Resistances & Chart | PokeTypes`;
 const description = `${typeName} type weakness chart: full effectiveness analysis, resistances, and immunities for Gen 9 (Scarlet & Violet). See every type that beats ${typeName} and every type ${typeName} beats.`;
 const canonicalPath = `/tipo/${slug}`;
 const siteUrl = 'https://poketypes.app';
-const ogImage = `/og/type/${slug}.png`;
+const ogImage = ogTypePath(slug!);
 const ogImageAlt = `${typeName} type weaknesses and resistances on PokeTypes`;
 
 const breadcrumbSchema = {

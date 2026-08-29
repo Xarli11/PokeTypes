@@ -1,5 +1,11 @@
 ---
 import '../styles/global.css';
+import { ogDefaultPath } from '../lib/og/version.js';
+
+// No twitter:site meta below: @poketypesapp returns 404 on the public
+// oEmbed endpoint (not a verified/controlled account) as of the
+// 2026-08-29 open-graph sprint audit. Add it back only once a real,
+// owned handle is confirmed.
 
 interface Props {
     title?: string;
@@ -14,7 +20,7 @@ interface Props {
 const {
     title = "PokeTypes | Pokemon Type Calculator & Effectiveness Chart",
     description = "Instant Pokemon type calculator and effectiveness chart. Analyze weaknesses, resistances, and dual-type coverage for all 1,000+ Pokemon (Gen 9, Scarlet/Violet included).",
-    image = "/og/default.png",
+    image = ogDefaultPath(),
     imageAlt = "PokeTypes Pokemon type calculator and battle analysis tool",
     imageType = "image/png",
     imageWidth = 1200,
@@ -56,7 +62,6 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@poketypesapp">
     <meta name="twitter:url" content={canonicalURL}>
     <meta name="twitter:title" content={title}>
     <meta name="twitter:description" content={description}>
