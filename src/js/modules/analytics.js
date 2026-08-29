@@ -31,3 +31,30 @@ export function trackEvent(name, params = {}) {
         // Analytics must never break the app.
     }
 }
+
+/**
+ * A debounced trackEvent() call that can be explicitly canceled. Exists
+ * because a plain `setTimeout` scheduled from an `input` handler and only
+ * ever re-armed by the *next* keystroke has a real gap: a keystroke whose
+ * early-return path (e.g. the search box being cleared) skips past the
+ * `clearTimeout` line never cancels the pending call, so an event fires for
+ * an action the user already undid. `cancel()` must be called on every
+ * relevant input, including ones that short-circuit before scheduling a new
+ * one — see main.js's pokemon_search wiring for the real usage.
+ */
+export function createDebouncedTracker(eventName, delayMs = 600) {
+    let timer = null;
+    return {
+        schedule(params) {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                timer = null;
+                trackEvent(eventName, params);
+            }, delayMs);
+        },
+        cancel() {
+            clearTimeout(timer);
+            timer = null;
+        }
+    };
+}

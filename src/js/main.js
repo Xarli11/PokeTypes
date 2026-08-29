@@ -7,11 +7,12 @@ import { initTheme } from './modules/theme.js';
 import { initProMode, refreshProView } from './modules/pro.js';
 import { i18n } from './modules/i18n.js';
 import { initTypeSelectors, refreshTypeSelectorLabels } from './modules/typeSelector.js';
-import { trackEvent } from './modules/analytics.js';
+import { trackEvent, createDebouncedTracker } from './modules/analytics.js';
+import { normalizeTypeSelection } from './modules/typeSelection.js';
 
 let appData = null;
 let currentPokemon = null;
-let searchTrackDebounce = null;
+const searchTracker = createDebouncedTracker('pokemon_search');
 let lastTrackedTypeCombo = null;
 
 async function init() {
@@ -360,6 +361,13 @@ function setupEventListeners() {
     searchInput.addEventListener('input', (e) => {
         const query = normalizeSearch(e.target.value);
         activeIndex = -1;
+
+        // Cancel any pending pokemon_search track on every keystroke,
+        // including one that empties the field — otherwise a search typed
+        // and then cleared before the 600ms debounce elapses still fires
+        // the event for a search the user effectively canceled.
+        searchTracker.cancel();
+
         if (!query) {
             suggestionsList.classList.add('hidden');
             return;
@@ -383,10 +391,7 @@ function setupEventListeners() {
         // Track "a search happened" once per typing pause, not per keystroke —
         // debounced separately from the (intentionally instant) suggestion
         // rendering above, since the UX itself doesn't need a debounce.
-        clearTimeout(searchTrackDebounce);
-        searchTrackDebounce = setTimeout(() => {
-            trackEvent('pokemon_search', { has_results: topMatches.length > 0, language: i18n.currentLang });
-        }, 600);
+        searchTracker.schedule({ has_results: topMatches.length > 0, language: i18n.currentLang });
 
         if (topMatches.length === 0) {
             suggestionsList.innerHTML = `<li class="p-4 italic text-center" style="color: var(--text-muted)">${i18n.t('none')}</li>`;
@@ -591,9 +596,23 @@ function displayAnalysis(t1, t2, t3 = null) {
         return;
     }
 
-    // Track a real calculation once per distinct type combination — this
-    // function also re-runs on a language toggle or theme refresh with the
-    // SAME t1/t2/t3, which must not refire the event.
+    if (emptyState) emptyState.classList.add('hidden');
+    const sectionWasHidden = section.classList.contains('hidden');
+    section.classList.remove('hidden');
+    if (sectionWasHidden) {
+        section.classList.remove('section-enter');
+        void section.offsetWidth;
+        section.classList.add('section-enter');
+    }
+
+    ({ t1, t2, t3 } = normalizeTypeSelection(t1, t2, t3));
+
+    // Track a real calculation once per distinct type combination — must
+    // run AFTER the normalization above, so e.g. Fire+Fire (or
+    // Fire+Water+Fire) is reported as the monotype/dual-type it's actually
+    // analyzed as, not as a raw, pre-normalization selection. This function
+    // also re-runs on a language toggle or theme refresh with the SAME
+    // (already-normalized) t1/t2/t3, which must not refire the event.
     const comboKey = [t1, t2, t3].filter(Boolean).join('-');
     if (comboKey !== lastTrackedTypeCombo) {
         lastTrackedTypeCombo = comboKey;
@@ -605,25 +624,6 @@ function displayAnalysis(t1, t2, t3 = null) {
             language: i18n.currentLang
         });
     }
-
-    if (emptyState) emptyState.classList.add('hidden');
-    const sectionWasHidden = section.classList.contains('hidden');
-    section.classList.remove('hidden');
-    if (sectionWasHidden) {
-        section.classList.remove('section-enter');
-        void section.offsetWidth;
-        section.classList.add('section-enter');
-    }
-
-    // Treat same type selection as monotype
-    if (t1 === t2) t2 = '';
-    if (t1 === t3) t3 = '';
-    if (t2 === t3) t3 = '';
-
-    // If only t2 is selected but no t1
-    if (!t1 && t2) { t1 = t2; t2 = ''; }
-    if (!t1 && !t2 && t3) { t1 = t3; t3 = ''; }
-    if (!t2 && t3) { t2 = t3; t3 = ''; }
 
     // Show share button (only present on index page)
     if (shareBtn) {
