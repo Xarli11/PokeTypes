@@ -55,6 +55,17 @@ function refreshUI() {
     // 1. Update static texts
     i18n.updateDOM();
 
+    // 1b. /tipo/* pages: the H1 is SSR-rendered in English (matching the
+    // rest of that page's SSR title/meta — see Layout.astro comments), but
+    // still updates client-side on a language toggle like everything else
+    // here. Guarded by the element's presence so this is a no-op on index.astro,
+    // which has its own static home_h1 already handled by i18n.updateDOM() above.
+    const tipoH1 = document.getElementById('tipo-h1');
+    if (tipoH1 && tipoH1.dataset.typeName) {
+        const localizedType = tipoH1.dataset.typeName.split('/').map(t => i18n.tType(t)).join('/');
+        tipoH1.textContent = i18n.t('type_page_h1', { type: localizedType });
+    }
+
     // 2. Regenerate Table
     ui.generateTypeTable('type-table-container', appData.types, appData.effectiveness, appData.contrast);
 

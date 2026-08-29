@@ -320,6 +320,19 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
 
     const sources = [primaryUrl, officialArtBySlug, '/pokeball.png'];
     const dexNumber = pokemon.id ? `#${String(pokemon.id).padStart(4, '0')}` : '';
+    // /pokemon/[name].astro SSR-renders this exact name as the page's only
+    // <h1>, inside this same container — overwriting it with innerHTML
+    // (as this function always does) silently downgraded it to an h3 the
+    // instant JS ran, on every load, in production. index.astro/tipo pages
+    // never put an h1 in this container (they have their own, separate
+    // page h1 elsewhere) so it's empty here on first render there. Checking
+    // the container's OWN current content — rather than window.location,
+    // which client-side pushState makes unreliable once a Pokemon is
+    // selected on index.astro — correctly tells the two cases apart on
+    // every call, including subsequent re-renders (a language toggle) where
+    // the container already holds whichever tag this function picked before.
+    const useH1 = !!container.querySelector('h1');
+    const nameTag = useH1 ? 'h1' : 'h3';
 
     container.innerHTML = `
         <div class="relative z-10 flex items-center gap-4 py-3 px-1 fade-in">
@@ -331,7 +344,7 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
                  onerror="this.src='${sources[1]}'; this.onerror=function(){this.src='${sources[2]}'; this.onerror=null;}">
             <div class="min-w-0">
                 <div class="flex items-baseline gap-2 flex-wrap">
-                    <h3 class="text-xl sm:text-2xl font-black tracking-tight truncate" style="color: var(--text)">${displayName}</h3>
+                    <${nameTag} class="text-xl sm:text-2xl font-black tracking-tight truncate" style="color: var(--text)">${displayName}</${nameTag}>
                     ${dexNumber ? `<span class="font-mono text-xs sm:text-sm shrink-0" style="color: var(--text-muted)">${dexNumber}</span>` : ''}
                 </div>
                 <div class="flex items-center gap-1.5 mt-1.5 flex-wrap" id="pokemon-hero-types">${typePills}</div>
