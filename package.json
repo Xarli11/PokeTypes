@@ -28,6 +28,8 @@
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.13",
     "@astrojs/sitemap": "^3.7.0",
+    "@cf-wasm/resvg": "^0.4.0",
+    "@cf-wasm/satori": "^0.4.0",
     "@tailwindcss/vite": "^4.0.0",
     "astro": "^5.0.0",
     "tailwindcss": "^4.0.0"
