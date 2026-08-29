@@ -114,6 +114,11 @@ const webPageSchema = {
         <AppHeader contextLabel={typeName} />
 
         <div id="view-simple" class="flex flex-col gap-5">
+            <!-- SSR in English to match this page's title/meta (see
+                 refreshUI() in main.js for the client-side language update
+                 on toggle — no hreflang/locale routing here, see docs). -->
+            <h1 id="tipo-h1" data-type-name={typeName} class="text-sm sm:text-base font-bold px-1" style="color: var(--text-muted)">{typeName} Type Weaknesses &amp; Resistances</h1>
+
             <section class="panel flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
                 <div class="relative w-full lg:flex-1">
                     <input id="pokemon-search" type="text" placeholder="Search Pokemon..." class="search-input" autocomplete="off">

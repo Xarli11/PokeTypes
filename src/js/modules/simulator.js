@@ -3,6 +3,7 @@ import { getEffectiveness, getAbilityModifiers, applyDefensiveModifiers, formatM
 import { loadAppData, fetchPokemonDetails } from './data.js';
 import { getPokemonImageUrl, createTypePill, capitalizeWords, normalizeSearch } from './ui.js';
 import { i18n } from './i18n.js';
+import { trackEvent } from './analytics.js';
 
 export async function initSimulator() {
     const container = document.querySelector('#view-pro');
@@ -190,7 +191,9 @@ function setupEventListeners(appData) {
         
         const name = li.dataset.name;
         const pokemon = appData.pokemonList.find(p => p.name === name);
-        
+
+        trackEvent('pokemon_select', { pokemon: pokemon.name, source: 'simulator', mode: 'team_builder', language: i18n.currentLang });
+
         selectDefender(pokemon, appData);
         suggestions.classList.add('hidden');
         defenderInput.value = '';
