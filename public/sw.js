@@ -1,6 +1,6 @@
 // Kept in sync with package.json's version — bump it on every release so
 // stale precaches from prior deploys get cleaned up on activate.
-const CACHE_NAME = 'poketypes-v2.36.2';
+const CACHE_NAME = 'poketypes-v2.37.0';
 
 // Only static assets that are guaranteed to exist as-is under Astro's
 // Cloudflare (server output) build. Client scripts (main.js and its

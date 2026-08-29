@@ -7,6 +7,7 @@ import { initSimulator, refreshSimulatorLanguage } from './simulator.js';
 import { encodeTeamPayload, decodeTeamPayload } from '../../lib/share-team.js';
 import { getPokemonDefenseBreakdown, formatMultiplierSymbol } from '../../lib/type-engine/index.js';
 import { getFocusable, trapTabKey, lockBodyScroll, unlockBodyScroll } from './a11y.js';
+import { trackEvent } from './analytics.js';
 
 // State
 let activeSlotIndex = -1;
@@ -93,8 +94,17 @@ function setupModeToggling() {
     }
 
     if (toggleSimple && togglePro) {
-        toggleSimple.addEventListener('click', () => setMode('simple'));
-        togglePro.addEventListener('click', () => setMode('pro'));
+        // Tracks only real user-triggered switches, not the initial-load
+        // restore below (that's state restoration, not a "change").
+        let currentMode = localStorage.getItem('poketypes_mode') || 'simple';
+        const trackModeChange = (toMode) => {
+            if (toMode === currentMode) return;
+            trackEvent('mode_change', { from_mode: currentMode, to_mode: toMode, language: i18n.currentLang });
+            currentMode = toMode;
+        };
+
+        toggleSimple.addEventListener('click', () => { trackModeChange('simple'); setMode('simple'); });
+        togglePro.addEventListener('click', () => { trackModeChange('pro'); setMode('pro'); });
 
         const savedMode = localStorage.getItem('poketypes_mode') || 'simple';
         if (savedMode === 'pro') {
@@ -642,6 +652,8 @@ function setupSearchModal() {
 
         if (pokemon) {
             addPokemonToSlot(activeSlotIndex, pokemon);
+            const teamSize = getTeam().filter(Boolean).length;
+            trackEvent('team_member_add', { pokemon: pokemon.name, slot: activeSlotIndex, team_size: teamSize, language: i18n.currentLang });
             renderTeamGrid();
             closeModal();
         }
@@ -708,6 +720,7 @@ async function shareTeamURL() {
 
     const original = btn.innerHTML;
     const showSuccess = () => {
+        trackEvent('share', { context: 'team', share_method: 'clipboard', language: i18n.currentLang });
         btn.innerHTML = `<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> ${i18n.t('pro_share_copied')}`;
         btn.classList.add('bg-emerald-200', 'dark:bg-emerald-800');
         setTimeout(() => {
