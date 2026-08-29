@@ -7,9 +7,12 @@ import { initTheme } from './modules/theme.js';
 import { initProMode, refreshProView } from './modules/pro.js';
 import { i18n } from './modules/i18n.js';
 import { initTypeSelectors, refreshTypeSelectorLabels } from './modules/typeSelector.js';
+import { trackEvent } from './modules/analytics.js';
 
 let appData = null;
 let currentPokemon = null;
+let searchTrackDebounce = null;
+let lastTrackedTypeCombo = null;
 
 async function init() {
     try {
@@ -376,7 +379,15 @@ function setupEventListeners() {
         // ... (sorting omitted for brevity) ...
 
         const topMatches = matches.slice(0, 10);
-        
+
+        // Track "a search happened" once per typing pause, not per keystroke —
+        // debounced separately from the (intentionally instant) suggestion
+        // rendering above, since the UX itself doesn't need a debounce.
+        clearTimeout(searchTrackDebounce);
+        searchTrackDebounce = setTimeout(() => {
+            trackEvent('pokemon_search', { has_results: topMatches.length > 0, language: i18n.currentLang });
+        }, 600);
+
         if (topMatches.length === 0) {
             suggestionsList.innerHTML = `<li class="p-4 italic text-center" style="color: var(--text-muted)">${i18n.t('none')}</li>`;
         } else {
@@ -438,7 +449,9 @@ function setupEventListeners() {
 
         const name = li.getAttribute('data-name');
         const pokemon = appData.pokemonList.find(p => p.name === name);
-        
+
+        trackEvent('pokemon_select', { pokemon: pokemon.name, source: 'search', mode: 'calculator', language: i18n.currentLang });
+
         // Use localized name for the input field
         const localizedName = i18n.t(pokemon.name.toLowerCase());
         searchInput.value = localizedName !== pokemon.name.toLowerCase() ? localizedName : ui.capitalizeWords(pokemon.name);
@@ -489,6 +502,7 @@ function setupEventListeners() {
             if (navigator.share) {
                 try {
                     await navigator.share({ title, text, url });
+                    trackEvent('share', { context: 'analysis', share_method: 'native', language: i18n.currentLang });
                 } catch (err) {
                     console.log('Share canceled or failed:', err);
                 }
@@ -496,7 +510,8 @@ function setupEventListeners() {
                 // Fallback: Copy to clipboard
                 try {
                     await navigator.clipboard.writeText(url);
-                    
+                    trackEvent('share', { context: 'analysis', share_method: 'clipboard', language: i18n.currentLang });
+
                     // Visual feedback
                     const originalContent = shareBtn.innerHTML;
                     const originalClass = shareBtn.className;
@@ -572,7 +587,23 @@ function displayAnalysis(t1, t2, t3 = null) {
         const staticSubtitle = document.getElementById('static-subtitle');
         if (typeSubtitle) typeSubtitle.classList.add('hidden');
         if (staticSubtitle) staticSubtitle.classList.remove('hidden');
+        lastTrackedTypeCombo = null; // reset so re-selecting the same combo later tracks again
         return;
+    }
+
+    // Track a real calculation once per distinct type combination — this
+    // function also re-runs on a language toggle or theme refresh with the
+    // SAME t1/t2/t3, which must not refire the event.
+    const comboKey = [t1, t2, t3].filter(Boolean).join('-');
+    if (comboKey !== lastTrackedTypeCombo) {
+        lastTrackedTypeCombo = comboKey;
+        trackEvent('type_calculate', {
+            type_1: t1 || null,
+            type_2: t2 || null,
+            type_3: t3 || null,
+            type_count: [t1, t2, t3].filter(Boolean).length,
+            language: i18n.currentLang
+        });
     }
 
     if (emptyState) emptyState.classList.add('hidden');
