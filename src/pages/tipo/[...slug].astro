@@ -82,6 +82,8 @@ const title = `${typeName} Type Weaknesses, Resistances & Chart | PokeTypes`;
 const description = `${typeName} type weakness chart: full effectiveness analysis, resistances, and immunities for Gen 9 (Scarlet & Violet). See every type that beats ${typeName} and every type ${typeName} beats.`;
 const canonicalPath = `/tipo/${slug}`;
 const siteUrl = 'https://poketypes.app';
+const ogImage = `/og/type/${slug}.png`;
+const ogImageAlt = `${typeName} type weaknesses and resistances on PokeTypes`;
 
 const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -105,7 +107,7 @@ const webPageSchema = {
 };
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} image={ogImage} imageAlt={ogImageAlt}>
     <Fragment slot="head">
         <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
         <script type="application/ld+json" is:inline set:html={JSON.stringify(webPageSchema)} />
