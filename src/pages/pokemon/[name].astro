@@ -5,7 +5,6 @@ import TypeSelectorField from '../../components/TypeSelectorField.astro';
 import pokedex from '../../data/pokedex.json';
 import typeData from '../../data/type-data.json';
 import { calculateDefense, calculateOffense } from '../../lib/type-engine/index.js';
-import { ogPokemonPath } from '../../lib/og/version.js';
 
 const { name: nameParam } = Astro.params;
 
@@ -27,14 +26,7 @@ const typeLabel = types.join('/');
 
 const title = `${name} Weaknesses, Resistances & Type Chart | PokeTypes`;
 const description = `${name} is a ${typeLabel}-type Pokemon. See its full weakness chart, resistances, immunities, base stats, and abilities. Gen 9 (Scarlet & Violet) type calculator.`;
-// Raw PokeAPI artwork is the visual SOURCE for the OG card (see
-// src/lib/og/artwork.ts) but is never published as og:image directly — it's
-// square-ish, not 1200x630, and an external host we don't control uptime
-// for. The hero image on this page still uses it (client-side <img>, with
-// its own onerror fallback below), just not the social metadata.
 const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
-const ogImage = ogPokemonPath(slug);
-const ogImageAlt = `${name} weaknesses and resistances on PokeTypes`;
 
 const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -126,7 +118,7 @@ const heroHtml = `
 `;
 ---
 
-<Layout title={title} description={description} image={ogImage} imageAlt={ogImageAlt}>
+<Layout title={title} description={description} image={imageUrl}>
     <Fragment slot="head">
         <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
         <script type="application/ld+json" is:inline set:html={JSON.stringify(pokemonSchema)} />

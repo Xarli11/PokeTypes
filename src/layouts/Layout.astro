@@ -1,30 +1,16 @@
 ---
 import '../styles/global.css';
-import { ogDefaultPath } from '../lib/og/version.js';
-
-// No twitter:site meta below: @poketypesapp returns 404 on the public
-// oEmbed endpoint (not a verified/controlled account) as of the
-// 2026-08-29 open-graph sprint audit. Add it back only once a real,
-// owned handle is confirmed.
 
 interface Props {
     title?: string;
     description?: string;
     image?: string;
-    imageAlt?: string;
-    imageType?: string;
-    imageWidth?: number;
-    imageHeight?: number;
 }
 
 const {
     title = "PokeTypes | Pokemon Type Calculator & Effectiveness Chart",
     description = "Instant Pokemon type calculator and effectiveness chart. Analyze weaknesses, resistances, and dual-type coverage for all 1,000+ Pokemon (Gen 9, Scarlet/Violet included).",
-    image = ogDefaultPath(),
-    imageAlt = "PokeTypes Pokemon type calculator and battle analysis tool",
-    imageType = "image/png",
-    imageWidth = 1200,
-    imageHeight = 630
+    image = "/og-image.png"
 } = Astro.props;
 
 const siteUrl = "https://poketypes.app";
@@ -53,20 +39,17 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
     <meta property="og:title" content={title}>
     <meta property="og:description" content={description}>
     <meta property="og:image" content={finalImageUrl}>
-    <meta property="og:image:secure_url" content={finalImageUrl}>
-    <meta property="og:image:type" content={imageType}>
-    <meta property="og:image:width" content={String(imageWidth)}>
-    <meta property="og:image:height" content={String(imageHeight)}>
-    <meta property="og:image:alt" content={imageAlt}>
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:locale" content="en_US">
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@poketypesapp">
     <meta name="twitter:url" content={canonicalURL}>
     <meta name="twitter:title" content={title}>
     <meta name="twitter:description" content={description}>
     <meta name="twitter:image" content={finalImageUrl}>
-    <meta name="twitter:image:alt" content={imageAlt}>
 
     <!-- Icons & PWA -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">

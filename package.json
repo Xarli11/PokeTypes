@@ -1,6 +1,6 @@
 {
   "name": "poketypes",
-  "version": "2.38.0",
+  "version": "2.37.1",
   "description": "**Poketypes** es una herramienta visual interactiva para explorar la efectividad de los tipos Pokémon, tanto en defensa como en ataque. Selecciona uno o dos tipos y descubre todas sus debilidades, resistencias, inmunidades y fortalezas de un vistazo.",
   "type": "module",
   "scripts": {
@@ -12,8 +12,7 @@
     "release": "node scripts/release.cjs",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "astro check",
-    "cf:preview": "astro build && wrangler pages dev dist --compatibility-flags=nodejs_compat"
+    "check": "astro check"
   },
   "repository": {
     "type": "git",
@@ -29,8 +28,6 @@
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.13",
     "@astrojs/sitemap": "^3.7.0",
-    "@cf-wasm/resvg": "^0.4.0",
-    "@cf-wasm/satori": "^0.4.0",
     "@tailwindcss/vite": "^4.0.0",
     "astro": "^5.0.0",
     "tailwindcss": "^4.0.0"
@@ -38,7 +35,6 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.11",
-    "wrangler": "^4.127.1"
+    "vitest": "^4.1.11"
   }
 }
