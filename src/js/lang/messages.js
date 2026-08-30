@@ -149,6 +149,7 @@ export const messages = {
         // Pro Mode
         pro_team_title: "Your Team",
         pro_add_pokemon: "Add Pokemon",
+        pro_clear_team: "Clear team",
         pro_team_analysis: "Team Analysis",
         pro_analysis_placeholder: "Add Pokemon to see team coverage, weakness alerts and roles.",
         pro_defense_coverage: "Defense Coverage",
@@ -159,6 +160,7 @@ export const messages = {
         alert_no_resist: "No resistances to {type}",
         confirm_delete_title: "Remove Pokemon?",
         confirm_delete_msg: "Are you sure you want to remove this Pokemon from your team?",
+        confirm_clear_msg: "Remove all Pokémon from this team?",
         btn_cancel: "Cancel",
         btn_remove: "Remove",
         pro_nature: "Nature",
@@ -425,6 +427,7 @@ export const messages = {
         // Pro Mode
         pro_team_title: "Tu Equipo",
         pro_add_pokemon: "Añadir Pokémon",
+        pro_clear_team: "Vaciar equipo",
         pro_team_analysis: "Análisis de Equipo",
         pro_analysis_placeholder: "Añade Pokémon para ver cobertura, alertas y roles.",
         pro_defense_coverage: "Cobertura Defensiva",
@@ -435,6 +438,7 @@ export const messages = {
         alert_no_resist: "Sin resistencias a {type}",
         confirm_delete_title: "¿Eliminar Pokémon?",
         confirm_delete_msg: "¿Seguro que quieres eliminar a este Pokémon de tu equipo?",
+        confirm_clear_msg: "¿Quieres eliminar todos los Pokémon del equipo?",
         btn_cancel: "Cancelar",
         btn_remove: "Eliminar",
         pro_nature: "Naturaleza",
