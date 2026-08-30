@@ -50,6 +50,3 @@ coverage
 # Build output
 dist/
 build/.astro/
-
-# Wrangler local dev state (npm run cf:preview)
-.wrangler/

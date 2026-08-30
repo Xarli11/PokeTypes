@@ -5,22 +5,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.38.0] - 2026-08-30
-
-### Added
-- Added dynamic 1200×630 Open Graph social cards for the home page, type pages, and Pokémon pages.
-- Added self-hosted social image endpoints under `/og/v1/` with Cloudflare-compatible rendering and long-term immutable caching.
-- Added robust Pokémon artwork fallbacks and localized social image metadata.
-
-### Fixed
-- Replaced the broken default `/og-image.png` fallback.
-- Replaced externally hosted square Pokémon artwork as final `og:image`.
-- Corrected Open Graph image dimensions, type, and alt metadata.
-
-### Changed
-- Added versioned social-card routes for safe cache invalidation.
-- Improved Pokémon social-card typography for long form names.
-
 ## [2.37.1] - 2026-08-29
 
 ### Fixed
