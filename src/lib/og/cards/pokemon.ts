@@ -11,14 +11,20 @@ export type PokemonCardInput = {
 };
 
 // Length-based, not name-based — no per-Pokémon exceptions (some official
-// names run to 25 chars, e.g. "Urshifu-Rapid-Strike-Gmax"). Three steps is
-// enough to keep every real name in the dataset on one line inside the
-// card's safe width.
+// names run to 25 chars, e.g. "Urshifu-Rapid-Strike-Gmax"). Up to 13
+// chars fits the 640px-wide column on one line at these sizes (verified
+// by rendering the dataset's actual longest names at each step — see
+// docs/open-graph.md "Templates"). Past that, two lines is expected and
+// fine; the extra steps here exist so a 14-char name isn't rendered at
+// the same shrunken size as a 25-char one — each step gives up a bit more
+// size only once the previous one stops reliably holding a single line.
 function nameFontSize(name: string): number {
-    if (name.length > 20) return 34;
-    if (name.length > 13) return 42;
-    if (name.length > 8) return 52;
-    return 64;
+    const length = name.length;
+    if (length <= 8) return 64;
+    if (length <= 13) return 52;
+    if (length <= 17) return 38;
+    if (length <= 22) return 32;
+    return 28;
 }
 
 export function buildPokemonCard({ name, id, types, artworkDataUri }: PokemonCardInput): SatoriNode {
@@ -48,7 +54,11 @@ export function buildPokemonCard({ name, id, types, artworkDataUri }: PokemonCar
                                     {
                                         type: 'div',
                                         props: {
-                                            style: { display: 'flex', flexDirection: 'column', gap: 6 },
+                                            // Tighter than the card's other gaps on purpose — the dex
+                                            // number reads as part of the name group, not a separate
+                                            // block, while staying visually secondary (muted color,
+                                            // mono face, no weight/size competing with the name).
+                                            style: { display: 'flex', flexDirection: 'column', gap: 4 },
                                             children: [
                                                 {
                                                     type: 'span',
@@ -74,9 +84,12 @@ export function buildPokemonCard({ name, id, types, artworkDataUri }: PokemonCar
                                                     type: 'span',
                                                     props: {
                                                         style: {
+                                                            display: 'flex',
                                                             fontFamily: FONT_FAMILIES.mono,
                                                             fontWeight: 700,
-                                                            fontSize: 28,
+                                                            fontSize: 30,
+                                                            lineHeight: 1,
+                                                            letterSpacing: '0.02em',
                                                             color: CARD_TEXT_MUTED,
                                                         },
                                                         children: dexNumber,
