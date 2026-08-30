@@ -152,7 +152,16 @@ const faqSchema = {
                 </div>
             </section>
 
-            <section id="pro-analysis-section" class="panel text-center"></section>
+            <!-- mt-5 sm:mt-6 (not #view-pro's gap-8/gap-10) is the real
+                 source of this gap: #view-pro is missing the base `flex`
+                 utility (only has `flex-col`), so it renders as a normal
+                 block container once `hidden` is removed — `gap` has no
+                 effect there (measured 0px between this section and the
+                 slots above it before this margin existed). Left as-is
+                 rather than adding `flex` to #view-pro, which would also
+                 activate that gap between Analysis and the Simulator
+                 panel, stacking with its own approved mt-6 sm:mt-8. -->
+            <section id="pro-analysis-section" class="panel text-center mt-5 sm:mt-6"></section>
         </div>
 
         <!-- SEO Content Section — visually separated from the tool -->
