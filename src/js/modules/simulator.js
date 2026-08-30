@@ -10,8 +10,11 @@ export async function initSimulator() {
     if (!container) return;
 
     // Create the Simulator Card
+    // `mt-3 sm:mt-4` on top of #view-pro's own gap-8/gap-10 — extra
+    // separation only between Analysis and the Simulator (the previous
+    // sibling), without touching the Team → Analysis gap.
     const simulatorSection = document.createElement('section');
-    simulatorSection.className = 'panel';
+    simulatorSection.className = 'panel mt-3 sm:mt-4';
     simulatorSection.innerHTML = `
         <div class="label-group">${i18n.t('sim_title')}</div>
 

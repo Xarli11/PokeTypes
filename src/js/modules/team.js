@@ -61,6 +61,15 @@ export function removePokemonFromSlot(index) {
     return false;
 }
 
+// Each slot is a whole object (ability/item/teraType/nature all live on
+// it); replacing every slot with `null` — the same value an empty slot
+// already has — removes those alongside the Pokémon itself, with nothing
+// left over for a caller to clean up separately.
+export function clearTeam() {
+    team = new Array(TEAM_SIZE).fill(null);
+    saveTeam();
+}
+
 export function getTeam() {
     return team;
 }

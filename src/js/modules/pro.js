@@ -1,4 +1,4 @@
-import { loadTeam, saveTeam, addPokemonToSlot, removePokemonFromSlot, setAbility, setNature, setItem, getTeam } from './team.js';
+import { loadTeam, saveTeam, addPokemonToSlot, removePokemonFromSlot, clearTeam, setAbility, setNature, setItem, getTeam } from './team.js';
 import { loadAppData } from './data.js';
 import { analyzeTeamDefense, getThreatAlerts, analyzeTeamRoles } from './analysis.js';
 import { createTypePill, getPokemonImageUrl, capitalizeWords, normalizeSearch } from './ui.js';
@@ -59,6 +59,7 @@ export async function initProMode() {
     setupSearchModal();
     setupDeleteModal();
     setupMemberConfigModal();
+    setupClearTeamModal();
 }
 
 export function refreshProView() {
@@ -125,6 +126,9 @@ function renderTeamGrid() {
         const pokemonLabel = i18n.t('stat_hp') === 'PS' ? 'Pokémon' : 'Pokemon';
         counterEl.textContent = `${count}/6 ${pokemonLabel}`;
     }
+
+    const clearBtn = document.getElementById('clear-team-btn');
+    if (clearBtn) clearBtn.disabled = count === 0;
 
     container.innerHTML = team.map((member, index) => {
         if (!member) {
@@ -518,6 +522,59 @@ function setupDeleteModal() {
             removePokemonFromSlot(deleteSlotIndex);
             renderTeamGrid();
         }
+        closeModal();
+    });
+}
+
+// Same modal pattern as setupDeleteModal — a single global action rather
+// than a per-slot one, so there's no index to restore focus to; focus
+// goes back to the trigger button itself, and the button's own `disabled`
+// (driven by renderTeamGrid's count check) is the guard against opening
+// this with nothing to clear.
+function setupClearTeamModal() {
+    const openBtn = document.getElementById('clear-team-btn');
+    const modal = document.getElementById('clear-team-modal');
+    const backdrop = document.getElementById('clear-team-backdrop');
+    const cancelBtn = document.getElementById('cancel-clear-team');
+    const confirmBtn = document.getElementById('confirm-clear-team');
+    const panel = document.getElementById('clear-team-panel');
+
+    if (!openBtn || !modal || !cancelBtn || !confirmBtn) return;
+
+    const openModal = () => {
+        modal.classList.remove('hidden');
+        lockBodyScroll();
+        requestAnimationFrame(() => {
+            backdrop.classList.remove('opacity-0');
+            panel.classList.remove('opacity-0', 'scale-95');
+            panel.classList.add('opacity-100', 'scale-100');
+            // Cancel, not the destructive action, is the safe default focus target.
+            cancelBtn.focus();
+        });
+    };
+
+    const closeModal = () => {
+        backdrop.classList.add('opacity-0');
+        panel.classList.remove('opacity-100', 'scale-100');
+        panel.classList.add('opacity-0', 'scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            unlockBodyScroll();
+            openBtn.focus();
+        }, 200);
+    };
+
+    openBtn.addEventListener('click', openModal);
+    cancelBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+    modal.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+        else trapTabKey(e, panel);
+    });
+
+    confirmBtn.addEventListener('click', () => {
+        clearTeam();
+        renderTeamGrid();
         closeModal();
     });
 }
