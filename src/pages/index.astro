@@ -2,32 +2,22 @@
 import Layout from '../layouts/Layout.astro';
 import AppHeader from '../components/AppHeader.astro';
 import TypeSelectorField from '../components/TypeSelectorField.astro';
+import TypeLinks from '../components/TypeLinks.astro';
+import { messages } from '../js/lang/messages.js';
 
+// Built from the same English strings the FAQ section shows, so the markup
+// cannot drift from the visible content (it previously claimed Steel has 3
+// immunities; it has 1, Poison).
+const en = messages.en as Record<string, string>;
+const plain = (text: string) => text.replace(/\*\*/g, '');
 const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [
-        {
-            "@type": "Question",
-            "name": "What is the best Pokemon type?",
-            "acceptedAnswer": { "@type": "Answer", "text": "The Steel type is widely considered the best defensive type due to its 10 resistances and 3 immunities. Offensively, Fairy and Ground are top-tier for their broad coverage in Gen 9 (Scarlet & Violet)." }
-        },
-        {
-            "@type": "Question",
-            "name": "How do you calculate dual type weaknesses?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Multiply the effectiveness modifiers of both types. If both types are weak to the same attacking type, damage becomes 4x (or even 8x with three types). Resistances can cancel weaknesses: a 2x weakness plus a 0.5x resistance equals 1x (neutral)." }
-        },
-        {
-            "@type": "Question",
-            "name": "What types are in Gen 9 (Scarlet & Violet)?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Gen 9 uses the same 18 types introduced in Gen 6: Normal, Fire, Water, Grass, Electric, Ice, Fighting, Poison, Ground, Flying, Psychic, Bug, Rock, Ghost, Dragon, Steel, Fairy, and Dark. The Terastal phenomenon lets any Pokemon temporarily change its type mid-battle." }
-        },
-        {
-            "@type": "Question",
-            "name": "What causes 0x (immune) damage in Pokemon?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Immunities cause 0x damage. Examples: Ghost types are immune to Normal and Fighting; Ground types are immune to Electric; Fairy types are immune to Dragon; Steel types are immune to Poison. Some abilities like Levitate also grant immunity." }
-        }
-    ]
+    "mainEntity": [1, 2, 3, 4].map(n => ({
+        "@type": "Question",
+        "name": plain(en[`faq_q${n}`]),
+        "acceptedAnswer": { "@type": "Answer", "text": plain(en[`faq_a${n}`]) }
+    }))
 };
 ---
 
@@ -219,6 +209,8 @@ const faqSchema = {
                 </div>
             </div>
         </section>
+
+        <TypeLinks />
 
         <!-- Contact & Feedback Section -->
         <section class="panel flex flex-col md:flex-row items-center justify-between gap-6 mt-8">

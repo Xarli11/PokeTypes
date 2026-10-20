@@ -1,0 +1,19 @@
+---
+// Plain HTML links to the 18 type pages. The selectors are client-rendered
+// and the sitemap was the only way to reach /tipo/*, so no page linked to them.
+import typeData from '../data/type-data.json';
+
+const { types, contrast } = typeData;
+const contrastMap = contrast as Record<string, string>;
+---
+
+<nav aria-label="Browse by type" class="mt-8">
+    <h2 class="text-sm font-bold uppercase tracking-widest mb-3 px-1" style="color: var(--text-muted)">Browse by type</h2>
+    <ul class="flex flex-wrap gap-1.5">
+        {types.map(type => (
+            <li>
+                <a href={`/tipo/${type.toLowerCase()}`} class={`type-pill bg-type-${type.toLowerCase()} ${contrastMap[type] === 'dark' ? 'type-text-dark' : 'type-text-light'}`}>{type}</a>
+            </li>
+        ))}
+    </ul>
+</nav>
