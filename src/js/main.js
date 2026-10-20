@@ -1,4 +1,5 @@
-import { loadAppData, fetchPokemonDetails, fetchCompetitiveData } from './modules/data.js';
+import { loadAppData, loadPokedex, fetchPokemonDetails, fetchCompetitiveData } from './modules/data.js';
+import { findPokemonBySlug, ssrOwnedBy, createLatestGate } from './modules/pokemonDetails.js';
 import { calculateDefense, calculateOffense, findImmuneDualTypes } from '../lib/type-engine/index.js';
 import { getTacticalAdvice } from './modules/advisor.js';
 import * as ui from './modules/ui.js';
@@ -12,6 +13,7 @@ import { normalizeTypeSelection } from './modules/typeSelection.js';
 
 let appData = null;
 let currentPokemon = null;
+const detailsGate = createLatestGate();
 const searchTracker = createDebouncedTracker('pokemon_search');
 let lastTrackedTypeCombo = null;
 
@@ -154,11 +156,16 @@ async function applyStateFromURL() {
     const searchInput = document.getElementById('pokemon-search');
 
     if (p) {
-        const pokemon = appData.pokemonList.find(item => 
-            item.name.toLowerCase() === p.toLowerCase() || 
-            (item.apiName && item.apiName.toLowerCase() === p.toLowerCase()) ||
-            (item.name.toLowerCase().replace(/\s+/g, '-') === p.toLowerCase())
-        );
+        let pokemon = findPokemonBySlug(appData.pokemonList, p);
+        if (!pokemon) {
+            // Until the full pokedex arrives the list is the search index, which has no
+            // apiName: form slugs (charizard-mega-x...) only resolve against the full one.
+            try {
+                pokemon = findPokemonBySlug(await loadPokedex(), p);
+            } catch {
+                // loadPokedex already logged it; fall through to the type-only handling
+            }
+        }
         if (pokemon) {
             const localizedName = i18n.t(pokemon.name.toLowerCase());
             searchInput.value = localizedName !== pokemon.name.toLowerCase() ? localizedName : ui.capitalizeWords(pokemon.name);
@@ -203,10 +210,22 @@ async function showPokemonDetails(pokemon) {
     }
 
     currentPokemon = pokemon;
+    const ticket = detailsGate.begin();
+    // A newer selection, reset or type change makes this response obsolete.
+    const isStale = () => !detailsGate.isLatest(ticket) || currentPokemon !== pokemon;
+    // The server-rendered block stays only for the Pokemon it was rendered for, until real data replaces it.
+    const keepSsr = ssrOwnedBy(statsContainer, pokemon);
+    const dropSsr = () => {
+        delete statsContainer.dataset.ssrSlug;
+        delete abilitiesContainer.dataset.ssrSlug;
+    };
 
     try {
-        statsContainer.innerHTML = `<div class="text-center p-4 text-slate-400">${i18n.t('loading_stats')}</div>`;
-        abilitiesContainer.innerHTML = '';
+        if (!keepSsr) {
+            dropSsr();
+            statsContainer.innerHTML = `<div class="text-center p-4 text-slate-400">${i18n.t('loading_stats')}</div>`;
+            abilitiesContainer.innerHTML = '';
+        }
         if (alertsContainer) alertsContainer.innerHTML = '';
         
         const statsWasHidden = statsSection.classList.contains('hidden');
@@ -225,6 +244,7 @@ async function showPokemonDetails(pokemon) {
             fetchPokemonDetails(pokemon.apiName || pokemon.id),
             fetchCompetitiveData(pokemon.name)
         ]);
+        if (isStale()) return;
 
         if (details) {
             // Update Hero image with correct variety ID if it differs from local data
@@ -257,10 +277,15 @@ async function showPokemonDetails(pokemon) {
                 });
             }
 
-            ui.renderStats(statsContainer, details.stats);
-            ui.renderAbilities(abilitiesContainer, details.abilities);
+            // The local fallback in fetchPokemonDetails can come back without stats/abilities
+            // (search index only); never replace the server-rendered block with nothing.
+            const replaceStats = !keepSsr || details.stats?.length > 0;
+            const replaceAbilities = !keepSsr || details.abilities?.length > 0;
+            if (replaceStats) ui.renderStats(statsContainer, details.stats);
+            if (replaceAbilities) ui.renderAbilities(abilitiesContainer, details.abilities);
+            if (replaceStats && replaceAbilities) dropSsr();
             ui.renderAbilityAlerts(alertsContainer, details.abilities, pokemon.types, appData.effectiveness);
-        } else {
+        } else if (!keepSsr) {
             // If details fetch fails, keep Hero visible but show error in stats area
             statsContainer.innerHTML = `<div class="text-center p-4 text-slate-400 text-sm italic">${i18n.t('stats_unavailable') || 'Stats unavailable'}</div>`;
             abilitiesContainer.innerHTML = '';
@@ -277,6 +302,7 @@ async function showPokemonDetails(pokemon) {
         }
     } catch (err) {
         console.error('Error displaying details:', err);
+        if (isStale() || keepSsr) return;
         // Even on error, keep Hero visible if possible
         statsContainer.innerHTML = `<div class="text-center p-4 text-slate-400 text-sm italic">${i18n.t('stats_unavailable') || 'Stats unavailable'}</div>`;
     }

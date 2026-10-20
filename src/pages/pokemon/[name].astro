@@ -2,24 +2,24 @@
 import Layout from '../../layouts/Layout.astro';
 import AppHeader from '../../components/AppHeader.astro';
 import TypeSelectorField from '../../components/TypeSelectorField.astro';
+import TypeLinks from '../../components/TypeLinks.astro';
 import pokedex from '../../data/pokedex.json';
 import typeData from '../../data/type-data.json';
 import { calculateDefense, calculateOffense } from '../../lib/type-engine/index.js';
+import { pokemonSlug, renderStatsHtml, renderAbilitiesHtml } from '../../lib/seo.js';
 
 const { name: nameParam } = Astro.params;
 
 // Find pokemon by slug/apiName on the server
-const pokemon = pokedex.find(p =>
-    (p.apiName || p.name).toLowerCase().replace(/\s+/g, '-') === nameParam
-);
+const pokemon = pokedex.find(p => pokemonSlug(p) === nameParam);
 
 if (!pokemon) {
-    return Astro.redirect('/404');
+    return Astro.rewrite('/404');
 }
 
 const { name, id, types } = pokemon as { name: string; id: number; types: string[]; apiName?: string };
 
-const slug = (pokemon.apiName || pokemon.name).toLowerCase().replace(/\s+/g, '-');
+const slug = pokemonSlug(pokemon);
 const siteUrl = 'https://poketypes.app';
 const canonicalPath = `/pokemon/${slug}`;
 const typeLabel = types.join('/');
@@ -103,6 +103,11 @@ const offenseGroupsHtml = [
 
 const typePillsHtml = types.map(pill).join('');
 
+// Base stats and ability names exist in the local pokedex; PokeAPI is only
+// needed for localized names and descriptions, which main.js adds on load.
+const statsHtml = renderStatsHtml((pokemon as { stats?: Record<string, number> }).stats);
+const abilitiesHtml = renderAbilitiesHtml((pokemon as { abilities?: Record<string, string> }).abilities);
+
 const dexNumber = `#${String(id).padStart(4, '0')}`;
 const heroHtml = `
     <div class="flex items-center gap-4 py-3 px-1">
@@ -172,13 +177,11 @@ const heroHtml = `
                 <section id="pokemon-stats" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div class="panel">
                         <div class="label-group">Base Stats</div>
-                        <div id="stats-container" class="space-y-2.5">
-                            <div class="text-sm italic" style="color: var(--text-muted)">Loading stats...</div>
-                        </div>
+                        <div id="stats-container" class="space-y-2.5" data-ssr-slug={slug} set:html={statsHtml}></div>
                     </div>
                     <div class="panel">
                         <div class="label-group">Abilities</div>
-                        <div id="abilities-container" class="grid grid-cols-1 gap-2"></div>
+                        <div id="abilities-container" class="grid grid-cols-1 gap-2" data-ssr-slug={slug} set:html={abilitiesHtml}></div>
                     </div>
                 </section>
 
@@ -187,6 +190,8 @@ const heroHtml = `
                 </section>
             </section>
         </div>
+
+        <TypeLinks />
     </div>
     <script src="../../js/main.js"></script>
 </Layout>
