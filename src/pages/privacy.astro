@@ -3,16 +3,15 @@ import Layout from '../layouts/Layout.astro';
 import LegalFooter from '../components/LegalFooter.astro';
 import { legal } from '../lib/legal.js';
 
-const { controller, legalBases } = legal;
+const { controller, legalBases, providers } = legal;
 
 const pending = {
     en: '[To be completed by the site owner]',
     es: '[Pendiente de completar por el titular]'
 };
 
-const analyticsRetention = legal.analyticsRetention;
-
 // Same structure in both languages so neither can drift from the other.
+// A `null` value renders as a visible "pending" marker; `false` hides the row.
 const copy = {
     en: {
         lang: 'en',
@@ -24,46 +23,61 @@ const copy = {
         controllerRows: [
             ['Name', controller.name],
             ['Tax ID', controller.taxId],
-            ['Postal address', controller.address],
+            ['Postal address or other contact', controller.address],
             ['Country', controller.country],
-            ['Contact', legal.contactEmail]
+            ['Email', legal.contactEmail]
         ],
         processingH: 'What we process and why',
         processingHead: ['Purpose', 'Data and providers', 'Legal basis'],
         processing: [
             ['Hosting and delivery', 'Your IP address and request details are handled by Cloudflare (hosting and CDN) to serve the site and keep it secure.', legalBases.hosting],
-            ['Calculator and Pokemon details', 'Type selections are processed in your browser. To show Pokemon details, your browser requests data directly from PokeAPI (pokeapi.co) and images from GitHub (raw.githubusercontent.com), and fonts from Google Fonts. Those providers can see your IP address.', legalBases.calculator],
-            ['Audience measurement', 'Google Analytics 4 (Google). Page views and usage events such as the types or Pokemon you pick, calculator or team mode, language and share actions. Free-text searches are not sent. Analytics cookies are only used if you consent.', legalBases.analytics],
+            ['Calculator and Pokemon details', 'Type selections are processed in your browser. To show Pokemon details, your browser requests data directly from PokeAPI (pokeapi.co), images from GitHub (raw.githubusercontent.com) and, in competitive mode, data from Pokemon Showdown (play.pokemonshowdown.com). Those providers can see your IP address. Fonts are served from this site.', legalBases.calculator],
+            ['Audience measurement', 'Google Analytics 4 (Google). Page views and usage events such as the types or Pokemon you pick, calculator or team mode, language and share actions. Free-text searches are not sent. The Google Analytics tag is only loaded after Google\'s consent tool reports that analytics storage is not denied.', legalBases.analytics],
             ['Advertising', 'The Google AdSense script is loaded and Google\'s consent tool is delivered through it. Personalised advertising only works with your consent. No ads are shown at the date of this version.', legalBases.advertising]
         ],
         consentH: 'Your consent choices',
         consent: [
             'Analytics and advertising storage are denied by default. Where a consent message is shown (for example in the EEA, the UK and Switzerland) it is provided by Google\'s consent management tool, and your choice updates the Google tags.',
             'You can change or withdraw your choice at any time with the "Privacy and cookie settings" link at the bottom of every page. Withdrawing does not affect processing carried out before.',
-            'While consent is denied, Google tags may still send limited requests without cookies (consent mode).'
+            'Where no consent message is shown, Google Analytics stays in its denied state: it sets no analytics cookies, but Google may still receive limited measurement requests without cookies.'
         ],
-        cookiesH: 'Cookies and local storage',
-        cookiesHead: ['Name', 'Provider', 'Purpose', 'Duration', 'Consent'],
+        cookiesH: 'Cookies and similar technologies',
+        cookiesIntro: 'Strictly necessary items are those needed to provide something you asked for, or to remember your choices; they are not subject to the consent request. Items subject to consent stay off until you accept them.',
+        cookiesHead: ['Name', 'Provider', 'Purpose', 'Duration', 'Category'],
+        necessary: 'Strictly necessary',
+        consentNeeded: 'Subject to consent',
         cookies: [
-            ['_ga, _ga_G-9D59NL7KTH', 'Google Analytics', 'Tell visitors and sessions apart for statistics.', 'Up to 2 years', 'Required'],
-            ['Advertising cookies (for example __gads, __gpi)', 'Google AdSense', 'Only set if ad storage is allowed and ads are served. Names and durations are decided by Google.', 'Set by Google', 'Required'],
-            ['Consent choice', 'Google consent tool', 'Remember your answer so the message is not shown again. Exact names are set by Google.', 'Set by Google', 'Not required'],
-            ['poketypes_lang, poketypes_mode, poketypes_team, theme', 'PokeTypes (localStorage)', 'Remember language, calculator or team mode, your team and light or dark theme. Never sent to us.', 'Until you clear your browser data', 'Not required'],
-            ['Offline cache', 'PokeTypes (service worker)', 'Stores site files so the app loads faster and works on poor connections.', 'Until you clear your browser data', 'Not required']
+            ['_ga, _ga_G-9D59NL7KTH', 'Google Analytics', 'Tell visitors and sessions apart for statistics.', 'Up to 2 years', 'consent'],
+            ['Advertising cookies (for example __gads, __gpi)', 'Google AdSense', 'Only set if ad storage is allowed and ads are served. Names and durations are decided by Google.', 'Set by Google', 'consent'],
+            ['Consent choice', 'Google consent tool', 'Remember your answer so the message is not shown again. Exact names are set by Google.', 'Set by Google', 'necessary'],
+            ['poketypes_lang, poketypes_mode, poketypes_team, theme', 'PokeTypes (localStorage)', 'Remember the language, calculator or team mode, team and light or dark theme you chose. Never sent to us.', 'Until you clear your browser data', 'necessary'],
+            ['Offline cache', 'PokeTypes (service worker)', 'Stores site files so the app loads faster and works on poor connections.', 'Until you clear your browser data', 'necessary']
         ],
         manage: 'Besides the settings link, you can delete cookies and local storage from your browser settings, and manage Google ad personalisation at',
+        providersH: 'Recipients and international transfers',
+        providersIntro: 'These providers receive data when you use the site. Google, Cloudflare, PokeAPI, GitHub and Pokemon Showdown may process data outside your country; the safeguard for each transfer has not been confirmed yet.',
+        providersHead: ['Provider', 'Used for', 'Information', 'Role', 'Transfer safeguard'],
+        providersRows: [
+            { name: 'Google', use: 'Analytics, AdSense and consent tool', href: 'https://policies.google.com/privacy', label: 'Google Privacy Policy', info: providers.google },
+            { name: 'Cloudflare', use: 'Hosting and CDN', href: 'https://www.cloudflare.com/privacypolicy/', label: 'Cloudflare Privacy Policy', info: providers.cloudflare },
+            { name: 'PokeAPI', use: 'Pokemon details', href: 'https://pokeapi.co/docs/v2', label: 'PokeAPI docs (no privacy policy found)', info: providers.pokeapi },
+            { name: 'GitHub', use: 'Pokemon images', href: 'https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement', label: 'GitHub Privacy Statement', info: providers.github },
+            { name: 'Pokemon Showdown', use: 'Competitive data', href: 'https://pokemonshowdown.com/privacy', label: 'Pokemon Showdown privacy', info: providers.showdown }
+        ],
+        providersNote: 'Links to Buy Me a Coffee, GitHub, Discord and Smogon only take you to those sites when you click them; PokeTypes does not send them any data.',
         rightsH: 'Your rights',
         rights: [
-            'You can ask for access, rectification, erasure, restriction, portability and object to processing, and withdraw consent, by writing to the contact above.',
+            'You can ask for access, rectification, erasure, restriction, portability and object to processing, and withdraw consent, by writing to the email above.',
             ['Supervisory authority', legal.supervisoryAuthority],
-            'Recipients and transfers: Google, Cloudflare, PokeAPI and GitHub may process data outside your country. Safeguards for each transfer must be confirmed by the controller.',
-            ['Analytics retention', analyticsRetention],
-            'PokeTypes does not knowingly collect personal data from children.',
-            'We may update this page; the date at the top shows the latest version.'
+            ['Analytics retention', legal.analyticsRetention]
         ],
+        minorsH: 'Visitors under the age of digital consent',
+        minorsIntro: 'PokeTypes has no accounts and does not ask for age or personal details.',
+        minors: legal.minors.en,
+        changes: 'We may update this page; the date at the top shows the latest version.',
         pendingLabel: pending.en,
         back: 'Back to PokeTypes',
-        tocEs: 'Leer en español'
+        tocOther: 'Leer en español'
     },
     es: {
         lang: 'es',
@@ -75,46 +89,61 @@ const copy = {
         controllerRows: [
             ['Nombre', controller.name],
             ['NIF o identificador fiscal', controller.taxId],
-            ['Dirección postal', controller.address],
+            ['Dirección postal u otro medio de contacto', controller.address],
             ['País', controller.country],
-            ['Contacto', legal.contactEmail]
+            ['Correo electrónico', legal.contactEmail]
         ],
         processingH: 'Qué tratamos y para qué',
         processingHead: ['Finalidad', 'Datos y proveedores', 'Base jurídica'],
         processing: [
             ['Alojamiento y entrega', 'Cloudflare (alojamiento y CDN) trata tu dirección IP y los datos de la petición para servir el sitio y mantenerlo seguro.', legalBases.hosting],
-            ['Calculadora y detalles de Pokémon', 'Las selecciones de tipos se procesan en tu navegador. Para mostrar los detalles de un Pokémon, tu navegador pide datos directamente a PokeAPI (pokeapi.co), imágenes a GitHub (raw.githubusercontent.com) y fuentes a Google Fonts. Esos proveedores pueden ver tu dirección IP.', legalBases.calculator],
-            ['Medición de audiencia', 'Google Analytics 4 (Google). Visitas de página y eventos de uso, como los tipos o Pokémon que eliges, el modo calculadora o equipo, el idioma y las acciones de compartir. No se envían las búsquedas de texto libre. Las cookies de analítica solo se usan si das tu consentimiento.', legalBases.analytics],
+            ['Calculadora y detalles de Pokémon', 'Las selecciones de tipos se procesan en tu navegador. Para mostrar los detalles de un Pokémon, tu navegador pide datos directamente a PokeAPI (pokeapi.co), imágenes a GitHub (raw.githubusercontent.com) y, en el modo competitivo, datos a Pokémon Showdown (play.pokemonshowdown.com). Esos proveedores pueden ver tu dirección IP. Las fuentes se sirven desde este sitio.', legalBases.calculator],
+            ['Medición de audiencia', 'Google Analytics 4 (Google). Visitas de página y eventos de uso, como los tipos o Pokémon que eliges, el modo calculadora o equipo, el idioma y las acciones de compartir. No se envían las búsquedas de texto libre. La etiqueta de Google Analytics solo se carga cuando la herramienta de consentimiento de Google indica que el almacenamiento de analítica no está denegado.', legalBases.analytics],
             ['Publicidad', 'Se carga el script de Google AdSense y, a través de él, la herramienta de consentimiento de Google. La publicidad personalizada solo funciona con tu consentimiento. En la fecha de esta versión no se muestran anuncios.', legalBases.advertising]
         ],
         consentH: 'Tus opciones de consentimiento',
         consent: [
             'El almacenamiento de analítica y publicidad está denegado por defecto. Donde se muestra un mensaje de consentimiento (por ejemplo en el EEE, el Reino Unido y Suiza) lo ofrece la herramienta de gestión del consentimiento de Google, y tu elección actualiza las etiquetas de Google.',
             'Puedes cambiar o retirar tu elección en cualquier momento con el enlace «Configuración de privacidad y cookies» al final de cada página. Retirarlo no afecta al tratamiento anterior.',
-            'Mientras el consentimiento está denegado, las etiquetas de Google pueden seguir enviando solicitudes limitadas y sin cookies (modo de consentimiento).'
+            'Donde no se muestra mensaje de consentimiento, Google Analytics permanece en estado denegado: no crea cookies de analítica, pero Google puede seguir recibiendo solicitudes de medición limitadas y sin cookies.'
         ],
-        cookiesH: 'Cookies y almacenamiento local',
-        cookiesHead: ['Nombre', 'Proveedor', 'Finalidad', 'Duración', 'Consentimiento'],
+        cookiesH: 'Cookies y tecnologías similares',
+        cookiesIntro: 'Los elementos estrictamente necesarios son los imprescindibles para prestar algo que has pedido o para recordar tus elecciones; no se someten a la solicitud de consentimiento. Los elementos sujetos a consentimiento permanecen desactivados hasta que los aceptes.',
+        cookiesHead: ['Nombre', 'Proveedor', 'Finalidad', 'Duración', 'Categoría'],
+        necessary: 'Estrictamente necesaria',
+        consentNeeded: 'Sujeta a consentimiento',
         cookies: [
-            ['_ga, _ga_G-9D59NL7KTH', 'Google Analytics', 'Distinguir visitantes y sesiones para las estadísticas.', 'Hasta 2 años', 'Necesario'],
-            ['Cookies de publicidad (por ejemplo __gads, __gpi)', 'Google AdSense', 'Solo se crean si se permite el almacenamiento de anuncios y se muestran anuncios. Nombres y duraciones los decide Google.', 'La fija Google', 'Necesario'],
-            ['Elección de consentimiento', 'Herramienta de consentimiento de Google', 'Recordar tu respuesta para no volver a mostrar el mensaje. Los nombres exactos los fija Google.', 'La fija Google', 'No necesario'],
-            ['poketypes_lang, poketypes_mode, poketypes_team, theme', 'PokeTypes (localStorage)', 'Recordar idioma, modo calculadora o equipo, tu equipo y el tema claro u oscuro. Nunca se envían a nosotros.', 'Hasta que borres los datos del navegador', 'No necesario'],
-            ['Caché sin conexión', 'PokeTypes (service worker)', 'Guarda archivos del sitio para que la aplicación cargue más rápido y funcione con mala conexión.', 'Hasta que borres los datos del navegador', 'No necesario']
+            ['_ga, _ga_G-9D59NL7KTH', 'Google Analytics', 'Distinguir visitantes y sesiones para las estadísticas.', 'Hasta 2 años', 'consent'],
+            ['Cookies de publicidad (por ejemplo __gads, __gpi)', 'Google AdSense', 'Solo se crean si se permite el almacenamiento de anuncios y se muestran anuncios. Nombres y duraciones los decide Google.', 'La fija Google', 'consent'],
+            ['Elección de consentimiento', 'Herramienta de consentimiento de Google', 'Recordar tu respuesta para no volver a mostrar el mensaje. Los nombres exactos los fija Google.', 'La fija Google', 'necessary'],
+            ['poketypes_lang, poketypes_mode, poketypes_team, theme', 'PokeTypes (localStorage)', 'Recordar el idioma, el modo calculadora o equipo, el equipo y el tema claro u oscuro que elegiste. Nunca se envían a nosotros.', 'Hasta que borres los datos del navegador', 'necessary'],
+            ['Caché sin conexión', 'PokeTypes (service worker)', 'Guarda archivos del sitio para que la aplicación cargue más rápido y funcione con mala conexión.', 'Hasta que borres los datos del navegador', 'necessary']
         ],
         manage: 'Además del enlace de configuración, puedes borrar cookies y almacenamiento local desde los ajustes de tu navegador y gestionar la personalización de anuncios de Google en',
+        providersH: 'Destinatarios y transferencias internacionales',
+        providersIntro: 'Estos proveedores reciben datos cuando usas el sitio. Google, Cloudflare, PokeAPI, GitHub y Pokémon Showdown pueden tratar datos fuera de tu país; la garantía de cada transferencia aún no está confirmada.',
+        providersHead: ['Proveedor', 'Para qué', 'Información', 'Papel', 'Garantía de transferencia'],
+        providersRows: [
+            { name: 'Google', use: 'Analytics, AdSense y herramienta de consentimiento', href: 'https://policies.google.com/privacy', label: 'Política de privacidad de Google', info: providers.google },
+            { name: 'Cloudflare', use: 'Alojamiento y CDN', href: 'https://www.cloudflare.com/privacypolicy/', label: 'Política de privacidad de Cloudflare', info: providers.cloudflare },
+            { name: 'PokeAPI', use: 'Detalles de Pokémon', href: 'https://pokeapi.co/docs/v2', label: 'Documentación de PokeAPI (sin política de privacidad localizada)', info: providers.pokeapi },
+            { name: 'GitHub', use: 'Imágenes de Pokémon', href: 'https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement', label: 'Declaración de privacidad de GitHub', info: providers.github },
+            { name: 'Pokémon Showdown', use: 'Datos competitivos', href: 'https://pokemonshowdown.com/privacy', label: 'Privacidad de Pokémon Showdown', info: providers.showdown }
+        ],
+        providersNote: 'Los enlaces a Buy Me a Coffee, GitHub, Discord y Smogon solo te llevan a esos sitios cuando pulsas; PokeTypes no les envía ningún dato.',
         rightsH: 'Tus derechos',
         rights: [
-            'Puedes solicitar acceso, rectificación, supresión, limitación y portabilidad, oponerte al tratamiento y retirar el consentimiento escribiendo al contacto indicado arriba.',
+            'Puedes solicitar acceso, rectificación, supresión, limitación y portabilidad, oponerte al tratamiento y retirar el consentimiento escribiendo al correo indicado arriba.',
             ['Autoridad de control', legal.supervisoryAuthority],
-            'Destinatarios y transferencias: Google, Cloudflare, PokeAPI y GitHub pueden tratar datos fuera de tu país. Las garantías de cada transferencia las debe confirmar el responsable.',
-            ['Conservación de analítica', analyticsRetention],
-            'PokeTypes no recopila a sabiendas datos personales de menores.',
-            'Podemos actualizar esta página; la fecha de arriba indica la última versión.'
+            ['Conservación de analítica', legal.analyticsRetention]
         ],
+        minorsH: 'Visitantes menores de la edad de consentimiento digital',
+        minorsIntro: 'PokeTypes no tiene cuentas y no pide la edad ni datos personales.',
+        minors: legal.minors.es,
+        changes: 'Podemos actualizar esta página; la fecha de arriba indica la última versión.',
         pendingLabel: pending.es,
         back: 'Volver a PokeTypes',
-        tocEs: 'Read in English'
+        tocOther: 'Read in English'
     }
 };
 const sections = [copy.en, copy.es];
@@ -132,12 +161,12 @@ const sections = [copy.en, copy.es];
                     <span>PokeTypes</span>
                 </a>
                 <h1 class="text-2xl font-bold mt-4">{c.h1}</h1>
-                <p class="mt-1 text-sm" style="color: var(--text-muted)">{c.updated} &bull; <a class="underline" href={`#${sections[1 - i].id}`} lang={sections[1 - i].lang}>{c.tocEs}</a></p>
+                <p class="mt-1 text-sm" style="color: var(--text-muted)">{c.updated} &bull; <a class="underline" href={`#${sections[1 - i].id}`} lang={sections[1 - i].lang}>{c.tocOther}</a></p>
                 <p class="mt-4">{c.intro}</p>
 
                 <h2 class="text-lg font-bold mt-8">{c.controllerH}</h2>
                 <dl class="mt-2 panel">
-                    {c.controllerRows.map(([label, value]) => (
+                    {c.controllerRows.filter(([, value]) => (value as string | null | false) !== false).map(([label, value]) => (
                         <div class="flex flex-wrap gap-x-3 py-1">
                             <dt class="font-bold">{label}:</dt>
                             <dd>{value ?? <mark>{c.pendingLabel}</mark>}</dd>
@@ -167,21 +196,44 @@ const sections = [copy.en, copy.es];
                 </ul>
 
                 <h2 id={i === 0 ? 'cookies' : 'cookies-es'} class="text-lg font-bold mt-8 scroll-mt-4">{c.cookiesH}</h2>
+                <p class="mt-2">{c.cookiesIntro}</p>
                 <div class="mt-2 overflow-x-auto panel">
                     <table class="w-full text-left text-sm">
                         <thead><tr>{c.cookiesHead.map(h => <th scope="col" class="p-2 align-top">{h}</th>)}</tr></thead>
                         <tbody>
-                            {c.cookies.map(row => (
+                            {c.cookies.map(([name, provider, purpose, duration, category]) => (
                                 <tr class="border-t" style="border-color: var(--border)">
-                                    {row.map((cell, k) => k === 0
-                                        ? <th scope="row" class="p-2 align-top font-bold break-words">{cell}</th>
-                                        : <td class="p-2 align-top">{cell}</td>)}
+                                    <th scope="row" class="p-2 align-top font-bold break-words">{name}</th>
+                                    <td class="p-2 align-top">{provider}</td>
+                                    <td class="p-2 align-top">{purpose}</td>
+                                    <td class="p-2 align-top">{duration}</td>
+                                    <td class="p-2 align-top">{category === 'necessary' ? c.necessary : c.consentNeeded}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
                 <p class="mt-3">{c.manage} <a class="underline" href="https://adssettings.google.com" rel="noopener noreferrer">adssettings.google.com</a>.</p>
+
+                <h2 class="text-lg font-bold mt-8">{c.providersH}</h2>
+                <p class="mt-2">{c.providersIntro}</p>
+                <div class="mt-2 overflow-x-auto panel">
+                    <table class="w-full text-left text-sm">
+                        <thead><tr>{c.providersHead.map(h => <th scope="col" class="p-2 align-top">{h}</th>)}</tr></thead>
+                        <tbody>
+                            {c.providersRows.map(({ name, use, href, label, info }) => (
+                                <tr class="border-t" style="border-color: var(--border)">
+                                    <th scope="row" class="p-2 align-top font-bold">{name}</th>
+                                    <td class="p-2 align-top">{use}</td>
+                                    <td class="p-2 align-top"><a class="underline break-words" href={href} rel="noopener noreferrer">{label}</a></td>
+                                    <td class="p-2 align-top">{info.role ?? <mark>{c.pendingLabel}</mark>}</td>
+                                    <td class="p-2 align-top">{info.transfer ?? <mark>{c.pendingLabel}</mark>}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                <p class="mt-3">{c.providersNote}</p>
 
                 <h2 class="text-lg font-bold mt-8">{c.rightsH}</h2>
                 <ul class="mt-2 list-disc pl-5 flex flex-col gap-2">
@@ -190,6 +242,10 @@ const sections = [copy.en, copy.es];
                         : <li>{item}</li>)}
                 </ul>
 
+                <h2 class="text-lg font-bold mt-8">{c.minorsH}</h2>
+                <p class="mt-2">{c.minorsIntro} {c.minors ?? <mark>{c.pendingLabel}</mark>}</p>
+
+                <p class="mt-8">{c.changes}</p>
                 <p class="mt-10 text-center text-sm"><a class="underline" href="/">{c.back}</a></p>
             </article>
         ))}

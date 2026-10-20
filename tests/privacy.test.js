@@ -29,8 +29,12 @@ describe('Consent Mode v2 in Layout', () => {
         expect(block).not.toMatch(/granted/);
     });
 
-    it('never grants consent from our own code (only the CMP may update it)', () => {
-        expect(layout).not.toMatch(/'consent',\s*'update'/);
+    it('consent updates only happen inside the CMP callback, never at page load', () => {
+        const callback = layout.indexOf('CONSENT_MODE_DATA_READY');
+        expect(callback).toBeGreaterThan(-1);
+        const updates = [...layout.matchAll(/'consent',\s*'update'/g)].map(m => m.index);
+        expect(updates.length).toBeGreaterThan(0);
+        for (const at of updates) expect(at).toBeGreaterThan(callback);
     });
 
     it('prepares the CMP callback queue and does not enable Auto ads from code', () => {

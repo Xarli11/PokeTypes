@@ -73,9 +73,10 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
     <link rel="preload" as="font" type="font/woff2" href="/fonts/syne-latin.woff2" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="/fonts/outfit-latin.woff2" crossorigin>
 
-    <!-- Consent Mode v2: every storage/ad signal is denied until Google's CMP
-         (AdSense > Privacy & messaging) reports a choice. This block must stay
-         before the gtag.js loader and gtag('config'). -->
+    <!-- Consent Mode v2, basic implementation. Defaults deny every signal and gtag.js is NOT
+         requested until Google's CMP (AdSense > Privacy & messaging) reports consent mode data
+         (googlefc CONSENT_MODE_DATA_READY) and analytics_storage is not denied. Nothing is sent
+         to Google Analytics before that. See docs/privacy-consent.md. -->
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -86,16 +87,38 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
         'analytics_storage': 'denied',
         'wait_for_update': 500
       });
-      // Queue used by Google's CMP API (footer "Privacy and cookie settings").
       window.googlefc = window.googlefc || {};
       window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
-    </script>
-
-    <!-- Google Analytics -->
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-9D59NL7KTH"></script>
-    <script is:inline>
-      gtag('js', new Date());
-      gtag('config', 'G-9D59NL7KTH');
+      (function () {
+        var loaded = false;
+        // ConsentModePurposeStatusEnum: 1 GRANTED, 2 DENIED, 3 NOT_APPLICABLE, 4 NOT_CONFIGURED, 0 UNKNOWN
+        var SIGNALS = {
+          ad_storage: 'adStoragePurposeConsentStatus',
+          ad_user_data: 'adUserDataPurposeConsentStatus',
+          ad_personalization: 'adPersonalizationPurposeConsentStatus',
+          analytics_storage: 'analyticsStoragePurposeConsentStatus'
+        };
+        window.googlefc.callbackQueue.push({
+          CONSENT_MODE_DATA_READY: function () {
+            var values = window.googlefc.getGoogleConsentModeValues();
+            var update = {};
+            for (var signal in SIGNALS) {
+              if (values[SIGNALS[signal]] === 1) update[signal] = 'granted';
+              else if (values[SIGNALS[signal]] === 2) update[signal] = 'denied';
+            }
+            if (Object.keys(update).length) gtag('consent', 'update', update);
+            var analytics = values[SIGNALS.analytics_storage];
+            if (loaded || !(analytics === 1 || analytics === 3 || analytics === 4)) return;
+            loaded = true;
+            gtag('js', new Date());
+            gtag('config', 'G-9D59NL7KTH');
+            var tag = document.createElement('script');
+            tag.async = true;
+            tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-9D59NL7KTH';
+            document.head.appendChild(tag);
+          }
+        });
+      })();
     </script>
 
     <!-- Google AdSense (also delivers the CMP message; no ad units or Auto ads are enabled from code) -->
