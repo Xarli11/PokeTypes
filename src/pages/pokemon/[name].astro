@@ -177,11 +177,11 @@ const heroHtml = `
                 <section id="pokemon-stats" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div class="panel">
                         <div class="label-group">Base Stats</div>
-                        <div id="stats-container" class="space-y-2.5" data-ssr="true" set:html={statsHtml}></div>
+                        <div id="stats-container" class="space-y-2.5" data-ssr-slug={slug} set:html={statsHtml}></div>
                     </div>
                     <div class="panel">
                         <div class="label-group">Abilities</div>
-                        <div id="abilities-container" class="grid grid-cols-1 gap-2" data-ssr="true" set:html={abilitiesHtml}></div>
+                        <div id="abilities-container" class="grid grid-cols-1 gap-2" data-ssr-slug={slug} set:html={abilitiesHtml}></div>
                     </div>
                 </section>
 
