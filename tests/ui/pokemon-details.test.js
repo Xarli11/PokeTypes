@@ -90,3 +90,37 @@ describe('createLatestGate', () => {
         expect(shown).toBe('B');
     });
 });
+
+// The initial load of a form page awaits the full pokedex (seconds on a slow
+// network). main.js takes a ticket before waiting and every user selection or
+// reset takes a newer one, so a late initial load can never override the user.
+describe('initial load vs user actions (selectionGate semantics)', () => {
+    it('the initial load keeps priority only while the user has done nothing', () => {
+        const gate = createLatestGate();
+        const initial = gate.begin();
+        expect(gate.isLatest(initial)).toBe(true);
+    });
+
+    it('any user action invalidates a pending initial load', () => {
+        const gate = createLatestGate();
+        const initial = gate.begin();
+        gate.begin(); // user picks another Pokemon / changes a type / presses reset
+        expect(gate.isLatest(initial)).toBe(false);
+    });
+
+    it('a slow initial load that resolves after the user acted writes nothing', async () => {
+        const gate = createLatestGate();
+        const written = [];
+        const initialLoad = (async () => {
+            const ticket = gate.begin();
+            await new Promise(resolve => setTimeout(resolve, 20));
+            if (!gate.isLatest(ticket)) return;
+            written.push('Mega Charizard X');
+        })();
+        await new Promise(resolve => setTimeout(resolve, 5));
+        gate.begin();
+        written.push('Blastoise');
+        await initialLoad;
+        expect(written).toEqual(['Blastoise']);
+    });
+});

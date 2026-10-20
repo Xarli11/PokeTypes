@@ -14,6 +14,8 @@ import { normalizeTypeSelection } from './modules/typeSelection.js';
 let appData = null;
 let currentPokemon = null;
 const detailsGate = createLatestGate();
+// Each user-driven selection/reset takes a ticket; the async initial load uses it to detect it lost the race.
+const selectionGate = createLatestGate();
 const searchTracker = createDebouncedTracker('pokemon_search');
 let lastTrackedTypeCombo = null;
 
@@ -160,11 +162,14 @@ async function applyStateFromURL() {
         if (!pokemon) {
             // Until the full pokedex arrives the list is the search index, which has no
             // apiName: form slugs (charizard-mega-x...) only resolve against the full one.
+            const initialTicket = selectionGate.begin();
             try {
                 pokemon = findPokemonBySlug(await loadPokedex(), p);
             } catch {
                 // loadPokedex already logged it; fall through to the type-only handling
             }
+            // The user may have picked something else while the pokedex was loading.
+            if (!selectionGate.isLatest(initialTicket)) return;
         }
         if (pokemon) {
             const localizedName = i18n.t(pokemon.name.toLowerCase());
@@ -340,6 +345,7 @@ function setupEventListeners() {
     }
 
     const updateUI = (pokemonObj = null) => {
+        selectionGate.begin();
         const t1 = typeSelect.value;
         const t2 = type2Select.value;
         const t3 = type3Select ? type3Select.value : null;
@@ -369,6 +375,7 @@ function setupEventListeners() {
     }
 
     resetButton.addEventListener('click', () => {
+        selectionGate.begin();
         typeSelect.value = '';
         type2Select.value = '';
         if (type3Select) type3Select.value = '';
