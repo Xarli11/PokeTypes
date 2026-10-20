@@ -65,15 +65,13 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
     <meta name="mobile-web-app-capable" content="yes">
 
     <!-- DNS Prefetch / Preconnect -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://raw.githubusercontent.com">
     <link rel="dns-prefetch" href="https://pokeapi.co">
     <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
 
-    <!-- Font preload (critical display font) -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@400;500;600;700&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700;800&display=swap">
+    <!-- Fonts are self-hosted (src/styles/fonts.css): no request to Google Fonts before consent. Preload the two latin faces used on every page. -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/syne-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/outfit-latin.woff2" crossorigin>
 
     <!-- Consent Mode v2: every storage/ad signal is denied until Google's CMP
          (AdSense > Privacy & messaging) reports a choice. This block must stay
