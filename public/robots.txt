@@ -1,6 +1,10 @@
 User-agent: *
 Allow: /
 Disallow: /api/
+# The pages fetch these two files to render (type chart, search, selectors);
+# blocking them leaves Googlebot with an empty app shell.
+Allow: /api/app-data.json
+Allow: /api/pokedex.json
 
 # Sitemap
 Sitemap: https://poketypes.app/sitemap.xml

@@ -1,23 +1,25 @@
 import type { APIRoute } from 'astro';
 import pokedex from '../data/pokedex.json';
 import typeData from '../data/type-data.json';
+import { pokemonSlug } from '../lib/seo.js';
 
 const SITE = 'https://poketypes.app';
 
-function url(path: string, priority: string, changefreq: string, lastmod?: string) {
+// No <lastmod>: the site has no per-page modification date, and stamping
+// "today" on every request tells crawlers the page changed when it did not.
+function url(path: string, priority: string, changefreq: string) {
     return `  <url>
     <loc>${SITE}${path}</loc>
     <changefreq>${changefreq}</changefreq>
-    <priority>${priority}</priority>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''}
+    <priority>${priority}</priority>
   </url>`;
 }
 
 export const GET: APIRoute = () => {
-    const today = new Date().toISOString().split('T')[0];
     const entries: string[] = [];
 
     // Homepage
-    entries.push(url('/', '1.0', 'weekly', today));
+    entries.push(url('/', '1.0', 'weekly'));
 
     // All 18 type pages — highest value after homepage
     typeData.types.forEach(type => {
@@ -38,9 +40,10 @@ export const GET: APIRoute = () => {
         entries.push(url(`/tipo/${t1}-${t2}`, '0.8', 'monthly'));
     });
 
-    // All Pokemon pages
-    (pokedex as Array<{ name: string; apiName?: string }>).forEach(pokemon => {
-        const slug = (pokemon.apiName || pokemon.name).toLowerCase().replace(/\s+/g, '-');
+    // All Pokemon pages. Several pokedex entries (Arceus plates, Totems...)
+    // share one slug and therefore one page, so list each URL once.
+    const slugs = new Set((pokedex as Array<{ name: string; apiName?: string }>).map(pokemonSlug));
+    slugs.forEach(slug => {
         entries.push(url(`/pokemon/${slug}`, '0.7', 'monthly'));
     });
 
