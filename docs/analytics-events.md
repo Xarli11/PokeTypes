@@ -14,6 +14,13 @@ any other PII. Every parameter is a bounded enum (a mode, a source, a share
 method, a language code) or a Pokémon/type name already public in the site's
 own URL structure.
 
+**Consent:** `Layout.astro` sets Consent Mode v2 defaults (`ad_storage`,
+`ad_user_data`, `ad_personalization`, `analytics_storage`) to `denied` before
+`gtag.js` loads. Only Google's CMP (AdSense > Privacy & messaging) may update
+them; our code never grants consent. Events keep going through `trackEvent()`,
+and Google decides what is sent while consent is denied. Users reopen the
+choice from the footer ("Privacy and cookie settings").
+
 **`language`** is always `'en'` or `'es'` as a parameter, never a suffix on
 the event name (i.e. never `pokemon_select_es`) — the language is a
 dimension of every event, not a different event.

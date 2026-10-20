@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import AppHeader from '../components/AppHeader.astro';
 import TypeSelectorField from '../components/TypeSelectorField.astro';
 import TypeLinks from '../components/TypeLinks.astro';
+import LegalFooter from '../components/LegalFooter.astro';
 import { messages } from '../js/lang/messages.js';
 
 // Built from the same English strings the FAQ section shows, so the markup
@@ -253,6 +254,7 @@ const faqSchema = {
         <footer class="mt-10 text-center text-sm" style="color: var(--text-muted)">
             <p>&copy; 2026 Poketypes &bull; <span data-i18n="footer_copyright">Data up to Gen 9</span></p>
             <p class="mt-1"><span data-i18n="created_by">Created by</span> Xarli11</p>
+            <LegalFooter />
         </footer>
     </div>
 

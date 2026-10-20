@@ -1,0 +1,200 @@
+---
+import Layout from '../layouts/Layout.astro';
+import LegalFooter from '../components/LegalFooter.astro';
+import { legal } from '../lib/legal.js';
+
+const { controller, legalBases } = legal;
+
+const pending = {
+    en: '[To be completed by the site owner]',
+    es: '[Pendiente de completar por el titular]'
+};
+
+const analyticsRetention = legal.analyticsRetention;
+
+// Same structure in both languages so neither can drift from the other.
+const copy = {
+    en: {
+        lang: 'en',
+        id: 'privacy-en',
+        h1: 'Privacy Policy and Cookies',
+        updated: `Last updated: ${legal.lastUpdated}`,
+        intro: 'This page explains what data PokeTypes (poketypes.app) processes when you use it. PokeTypes has no accounts, forms or comments.',
+        controllerH: 'Who is responsible',
+        controllerRows: [
+            ['Name', controller.name],
+            ['Tax ID', controller.taxId],
+            ['Postal address', controller.address],
+            ['Country', controller.country],
+            ['Contact', legal.contactEmail]
+        ],
+        processingH: 'What we process and why',
+        processingHead: ['Purpose', 'Data and providers', 'Legal basis'],
+        processing: [
+            ['Hosting and delivery', 'Your IP address and request details are handled by Cloudflare (hosting and CDN) to serve the site and keep it secure.', legalBases.hosting],
+            ['Calculator and Pokemon details', 'Type selections are processed in your browser. To show Pokemon details, your browser requests data directly from PokeAPI (pokeapi.co) and images from GitHub (raw.githubusercontent.com), and fonts from Google Fonts. Those providers can see your IP address.', legalBases.calculator],
+            ['Audience measurement', 'Google Analytics 4 (Google). Page views and usage events such as the types or Pokemon you pick, calculator or team mode, language and share actions. Free-text searches are not sent. Analytics cookies are only used if you consent.', legalBases.analytics],
+            ['Advertising', 'The Google AdSense script is loaded and Google\'s consent tool is delivered through it. Personalised advertising only works with your consent. No ads are shown at the date of this version.', legalBases.advertising]
+        ],
+        consentH: 'Your consent choices',
+        consent: [
+            'Analytics and advertising storage are denied by default. Where a consent message is shown (for example in the EEA, the UK and Switzerland) it is provided by Google\'s consent management tool, and your choice updates the Google tags.',
+            'You can change or withdraw your choice at any time with the "Privacy and cookie settings" link at the bottom of every page. Withdrawing does not affect processing carried out before.',
+            'While consent is denied, Google tags may still send limited requests without cookies (consent mode).'
+        ],
+        cookiesH: 'Cookies and local storage',
+        cookiesHead: ['Name', 'Provider', 'Purpose', 'Duration', 'Consent'],
+        cookies: [
+            ['_ga, _ga_G-9D59NL7KTH', 'Google Analytics', 'Tell visitors and sessions apart for statistics.', 'Up to 2 years', 'Required'],
+            ['Advertising cookies (for example __gads, __gpi)', 'Google AdSense', 'Only set if ad storage is allowed and ads are served. Names and durations are decided by Google.', 'Set by Google', 'Required'],
+            ['Consent choice', 'Google consent tool', 'Remember your answer so the message is not shown again. Exact names are set by Google.', 'Set by Google', 'Not required'],
+            ['poketypes_lang, poketypes_mode, poketypes_team, theme', 'PokeTypes (localStorage)', 'Remember language, calculator or team mode, your team and light or dark theme. Never sent to us.', 'Until you clear your browser data', 'Not required'],
+            ['Offline cache', 'PokeTypes (service worker)', 'Stores site files so the app loads faster and works on poor connections.', 'Until you clear your browser data', 'Not required']
+        ],
+        manage: 'Besides the settings link, you can delete cookies and local storage from your browser settings, and manage Google ad personalisation at',
+        rightsH: 'Your rights',
+        rights: [
+            'You can ask for access, rectification, erasure, restriction, portability and object to processing, and withdraw consent, by writing to the contact above.',
+            ['Supervisory authority', legal.supervisoryAuthority],
+            'Recipients and transfers: Google, Cloudflare, PokeAPI and GitHub may process data outside your country. Safeguards for each transfer must be confirmed by the controller.',
+            ['Analytics retention', analyticsRetention],
+            'PokeTypes does not knowingly collect personal data from children.',
+            'We may update this page; the date at the top shows the latest version.'
+        ],
+        pendingLabel: pending.en,
+        back: 'Back to PokeTypes',
+        tocEs: 'Leer en español'
+    },
+    es: {
+        lang: 'es',
+        id: 'privacidad-es',
+        h1: 'Política de privacidad y cookies',
+        updated: `Última actualización: ${legal.lastUpdated}`,
+        intro: 'Esta página explica qué datos trata PokeTypes (poketypes.app) cuando lo usas. PokeTypes no tiene cuentas, formularios ni comentarios.',
+        controllerH: 'Responsable',
+        controllerRows: [
+            ['Nombre', controller.name],
+            ['NIF o identificador fiscal', controller.taxId],
+            ['Dirección postal', controller.address],
+            ['País', controller.country],
+            ['Contacto', legal.contactEmail]
+        ],
+        processingH: 'Qué tratamos y para qué',
+        processingHead: ['Finalidad', 'Datos y proveedores', 'Base jurídica'],
+        processing: [
+            ['Alojamiento y entrega', 'Cloudflare (alojamiento y CDN) trata tu dirección IP y los datos de la petición para servir el sitio y mantenerlo seguro.', legalBases.hosting],
+            ['Calculadora y detalles de Pokémon', 'Las selecciones de tipos se procesan en tu navegador. Para mostrar los detalles de un Pokémon, tu navegador pide datos directamente a PokeAPI (pokeapi.co), imágenes a GitHub (raw.githubusercontent.com) y fuentes a Google Fonts. Esos proveedores pueden ver tu dirección IP.', legalBases.calculator],
+            ['Medición de audiencia', 'Google Analytics 4 (Google). Visitas de página y eventos de uso, como los tipos o Pokémon que eliges, el modo calculadora o equipo, el idioma y las acciones de compartir. No se envían las búsquedas de texto libre. Las cookies de analítica solo se usan si das tu consentimiento.', legalBases.analytics],
+            ['Publicidad', 'Se carga el script de Google AdSense y, a través de él, la herramienta de consentimiento de Google. La publicidad personalizada solo funciona con tu consentimiento. En la fecha de esta versión no se muestran anuncios.', legalBases.advertising]
+        ],
+        consentH: 'Tus opciones de consentimiento',
+        consent: [
+            'El almacenamiento de analítica y publicidad está denegado por defecto. Donde se muestra un mensaje de consentimiento (por ejemplo en el EEE, el Reino Unido y Suiza) lo ofrece la herramienta de gestión del consentimiento de Google, y tu elección actualiza las etiquetas de Google.',
+            'Puedes cambiar o retirar tu elección en cualquier momento con el enlace «Configuración de privacidad y cookies» al final de cada página. Retirarlo no afecta al tratamiento anterior.',
+            'Mientras el consentimiento está denegado, las etiquetas de Google pueden seguir enviando solicitudes limitadas y sin cookies (modo de consentimiento).'
+        ],
+        cookiesH: 'Cookies y almacenamiento local',
+        cookiesHead: ['Nombre', 'Proveedor', 'Finalidad', 'Duración', 'Consentimiento'],
+        cookies: [
+            ['_ga, _ga_G-9D59NL7KTH', 'Google Analytics', 'Distinguir visitantes y sesiones para las estadísticas.', 'Hasta 2 años', 'Necesario'],
+            ['Cookies de publicidad (por ejemplo __gads, __gpi)', 'Google AdSense', 'Solo se crean si se permite el almacenamiento de anuncios y se muestran anuncios. Nombres y duraciones los decide Google.', 'La fija Google', 'Necesario'],
+            ['Elección de consentimiento', 'Herramienta de consentimiento de Google', 'Recordar tu respuesta para no volver a mostrar el mensaje. Los nombres exactos los fija Google.', 'La fija Google', 'No necesario'],
+            ['poketypes_lang, poketypes_mode, poketypes_team, theme', 'PokeTypes (localStorage)', 'Recordar idioma, modo calculadora o equipo, tu equipo y el tema claro u oscuro. Nunca se envían a nosotros.', 'Hasta que borres los datos del navegador', 'No necesario'],
+            ['Caché sin conexión', 'PokeTypes (service worker)', 'Guarda archivos del sitio para que la aplicación cargue más rápido y funcione con mala conexión.', 'Hasta que borres los datos del navegador', 'No necesario']
+        ],
+        manage: 'Además del enlace de configuración, puedes borrar cookies y almacenamiento local desde los ajustes de tu navegador y gestionar la personalización de anuncios de Google en',
+        rightsH: 'Tus derechos',
+        rights: [
+            'Puedes solicitar acceso, rectificación, supresión, limitación y portabilidad, oponerte al tratamiento y retirar el consentimiento escribiendo al contacto indicado arriba.',
+            ['Autoridad de control', legal.supervisoryAuthority],
+            'Destinatarios y transferencias: Google, Cloudflare, PokeAPI y GitHub pueden tratar datos fuera de tu país. Las garantías de cada transferencia las debe confirmar el responsable.',
+            ['Conservación de analítica', analyticsRetention],
+            'PokeTypes no recopila a sabiendas datos personales de menores.',
+            'Podemos actualizar esta página; la fecha de arriba indica la última versión.'
+        ],
+        pendingLabel: pending.es,
+        back: 'Volver a PokeTypes',
+        tocEs: 'Read in English'
+    }
+};
+const sections = [copy.en, copy.es];
+---
+
+<Layout
+    title="Privacy Policy and Cookies | PokeTypes"
+    description="Privacy policy and cookie information for PokeTypes: what data is processed, how to manage your consent, and how to contact us. Política de privacidad y cookies."
+>
+    <main class="max-w-3xl mx-auto relative">
+        {sections.map((c, i) => (
+            <article id={c.id} lang={c.lang} class={i === 0 ? '' : 'mt-16'}>
+                <a href="/" class="inline-flex items-center gap-2 py-2 font-bold" style="color: var(--text)">
+                    <img src="/icon-192.png" alt="" width="28" height="28" />
+                    <span>PokeTypes</span>
+                </a>
+                <h1 class="text-2xl font-bold mt-4">{c.h1}</h1>
+                <p class="mt-1 text-sm" style="color: var(--text-muted)">{c.updated} &bull; <a class="underline" href={`#${sections[1 - i].id}`} lang={sections[1 - i].lang}>{c.tocEs}</a></p>
+                <p class="mt-4">{c.intro}</p>
+
+                <h2 class="text-lg font-bold mt-8">{c.controllerH}</h2>
+                <dl class="mt-2 panel">
+                    {c.controllerRows.map(([label, value]) => (
+                        <div class="flex flex-wrap gap-x-3 py-1">
+                            <dt class="font-bold">{label}:</dt>
+                            <dd>{value ?? <mark>{c.pendingLabel}</mark>}</dd>
+                        </div>
+                    ))}
+                </dl>
+
+                <h2 class="text-lg font-bold mt-8">{c.processingH}</h2>
+                <div class="mt-2 overflow-x-auto panel">
+                    <table class="w-full text-left text-sm">
+                        <thead><tr>{c.processingHead.map(h => <th scope="col" class="p-2 align-top">{h}</th>)}</tr></thead>
+                        <tbody>
+                            {c.processing.map(([purpose, data, basis]) => (
+                                <tr class="border-t" style="border-color: var(--border)">
+                                    <th scope="row" class="p-2 align-top font-bold">{purpose}</th>
+                                    <td class="p-2 align-top">{data}</td>
+                                    <td class="p-2 align-top">{basis ?? <mark>{c.pendingLabel}</mark>}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 class="text-lg font-bold mt-8">{c.consentH}</h2>
+                <ul class="mt-2 list-disc pl-5 flex flex-col gap-2">
+                    {c.consent.map(p => <li>{p}</li>)}
+                </ul>
+
+                <h2 id={i === 0 ? 'cookies' : 'cookies-es'} class="text-lg font-bold mt-8 scroll-mt-4">{c.cookiesH}</h2>
+                <div class="mt-2 overflow-x-auto panel">
+                    <table class="w-full text-left text-sm">
+                        <thead><tr>{c.cookiesHead.map(h => <th scope="col" class="p-2 align-top">{h}</th>)}</tr></thead>
+                        <tbody>
+                            {c.cookies.map(row => (
+                                <tr class="border-t" style="border-color: var(--border)">
+                                    {row.map((cell, k) => k === 0
+                                        ? <th scope="row" class="p-2 align-top font-bold break-words">{cell}</th>
+                                        : <td class="p-2 align-top">{cell}</td>)}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                <p class="mt-3">{c.manage} <a class="underline" href="https://adssettings.google.com" rel="noopener noreferrer">adssettings.google.com</a>.</p>
+
+                <h2 class="text-lg font-bold mt-8">{c.rightsH}</h2>
+                <ul class="mt-2 list-disc pl-5 flex flex-col gap-2">
+                    {c.rights.map(item => Array.isArray(item)
+                        ? <li>{item[0]}: {item[1] ?? <mark>{c.pendingLabel}</mark>}</li>
+                        : <li>{item}</li>)}
+                </ul>
+
+                <p class="mt-10 text-center text-sm"><a class="underline" href="/">{c.back}</a></p>
+            </article>
+        ))}
+        <footer class="mt-10 text-center text-sm" style="color: var(--text-muted)">
+            <LegalFooter />
+        </footer>
+    </main>
+</Layout>

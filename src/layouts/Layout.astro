@@ -75,16 +75,32 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700;800&display=swap">
 
-    <!-- Google Analytics -->
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-9D59NL7KTH"></script>
+    <!-- Consent Mode v2: every storage/ad signal is denied until Google's CMP
+         (AdSense > Privacy & messaging) reports a choice. This block must stay
+         before the gtag.js loader and gtag('config'). -->
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied',
+        'wait_for_update': 500
+      });
+      // Queue used by Google's CMP API (footer "Privacy and cookie settings").
+      window.googlefc = window.googlefc || {};
+      window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
+    </script>
+
+    <!-- Google Analytics -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-9D59NL7KTH"></script>
+    <script is:inline>
       gtag('js', new Date());
       gtag('config', 'G-9D59NL7KTH');
     </script>
 
-    <!-- Google AdSense -->
+    <!-- Google AdSense (also delivers the CMP message; no ad units or Auto ads are enabled from code) -->
     <script is:inline async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5778743399428042" crossorigin="anonymous"></script>
 
     <!-- Theme (prevent FOUC) -->
