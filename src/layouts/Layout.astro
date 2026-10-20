@@ -1,20 +1,23 @@
 ---
 import '../styles/global.css';
+import { normalizePathname } from '../lib/seo.js';
 
 interface Props {
     title?: string;
     description?: string;
     image?: string;
+    canonicalPath?: string;
 }
 
 const {
     title = "PokeTypes | Pokemon Type Calculator & Effectiveness Chart",
     description = "Instant Pokemon type calculator and effectiveness chart. Analyze weaknesses, resistances, and dual-type coverage for all 1,000+ Pokemon (Gen 9, Scarlet/Violet included).",
-    image = "/og-image.png"
+    image = "/icon-512.png",
+    canonicalPath
 } = Astro.props;
 
 const siteUrl = "https://poketypes.app";
-const canonicalURL = `${siteUrl}${Astro.url.pathname}`;
+const canonicalURL = `${siteUrl}${canonicalPath ?? normalizePathname(Astro.url.pathname)}`;
 const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
 ---
 
@@ -39,8 +42,6 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
     <meta property="og:title" content={title}>
     <meta property="og:description" content={description}>
     <meta property="og:image" content={finalImageUrl}>
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
     <meta property="og:locale" content="en_US">
 
     <!-- Twitter / X -->

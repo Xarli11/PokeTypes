@@ -2,25 +2,17 @@
 import Layout from '../../layouts/Layout.astro';
 import AppHeader from '../../components/AppHeader.astro';
 import TypeSelectorField from '../../components/TypeSelectorField.astro';
+import TypeLinks from '../../components/TypeLinks.astro';
 import typeData from '../../data/type-data.json';
 import { calculateDefense, calculateOffense } from '../../lib/type-engine/index.js';
+import { parseTypeSlug } from '../../lib/seo.js';
 
 const { slug } = Astro.params;
 const { types, effectiveness, contrast } = typeData;
 
-let t1 = null;
-let t2 = null;
-let t3 = null;
-
-if (slug) {
-    const parts = slug.split('-');
-    const findType = (s: string) => types.find(t => t.toLowerCase() === s.toLowerCase());
-    t1 = findType(parts[0]) || null;
-    t2 = parts[1] ? findType(parts[1]) || null : null;
-    t3 = parts[2] ? findType(parts[2]) || null : null;
-}
-
-if (!t1) return Astro.redirect('/404');
+const parsed = parseTypeSlug(slug, types);
+if (!parsed) return Astro.rewrite('/404');
+const [t1, t2 = null, t3 = null] = parsed;
 
 // ── HTML helpers ─────────────────────────────────────────────────────────────
 
@@ -80,7 +72,7 @@ const selectedTypeHtml = [t1, t2, t3].filter(Boolean).map(t => pill(t!)).join(''
 const typeName = [t1, t2, t3].filter(Boolean).join('/');
 const title = `${typeName} Type Weaknesses, Resistances & Chart | PokeTypes`;
 const description = `${typeName} type weakness chart: full effectiveness analysis, resistances, and immunities for Gen 9 (Scarlet & Violet). See every type that beats ${typeName} and every type ${typeName} beats.`;
-const canonicalPath = `/tipo/${slug}`;
+const canonicalPath = `/tipo/${parsed.map((t: string) => t.toLowerCase()).join('-')}`;
 const siteUrl = 'https://poketypes.app';
 
 const breadcrumbSchema = {
@@ -105,7 +97,7 @@ const webPageSchema = {
 };
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} canonicalPath={canonicalPath}>
     <Fragment slot="head">
         <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
         <script type="application/ld+json" is:inline set:html={JSON.stringify(webPageSchema)} />
@@ -172,6 +164,8 @@ const webPageSchema = {
                 </section>
             </section>
         </div>
+
+        <TypeLinks />
     </div>
     <script src="../../js/main.js"></script>
 </Layout>

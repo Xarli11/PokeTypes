@@ -205,8 +205,14 @@ async function showPokemonDetails(pokemon) {
     currentPokemon = pokemon;
 
     try {
-        statsContainer.innerHTML = `<div class="text-center p-4 text-slate-400">${i18n.t('loading_stats')}</div>`;
-        abilitiesContainer.innerHTML = '';
+        // Server-rendered stats/abilities stay on screen until the PokeAPI data replaces them.
+        if (statsContainer.dataset.ssr) {
+            delete statsContainer.dataset.ssr;
+            delete abilitiesContainer.dataset.ssr;
+        } else {
+            statsContainer.innerHTML = `<div class="text-center p-4 text-slate-400">${i18n.t('loading_stats')}</div>`;
+            abilitiesContainer.innerHTML = '';
+        }
         if (alertsContainer) alertsContainer.innerHTML = '';
         
         const statsWasHidden = statsSection.classList.contains('hidden');
