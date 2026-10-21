@@ -7,13 +7,15 @@ interface Props {
     description?: string;
     image?: string;
     canonicalPath?: string;
+    robots?: string;
 }
 
 const {
     title = "PokeTypes | Pokemon Type Calculator & Effectiveness Chart",
     description = "Instant Pokemon type calculator and effectiveness chart. Analyze weaknesses, resistances, and dual-type coverage for all 1,000+ Pokemon (Gen 9, Scarlet/Violet included).",
     image = "/icon-512.png",
-    canonicalPath
+    canonicalPath,
+    robots = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
 } = Astro.props;
 
 const siteUrl = "https://poketypes.app";
@@ -32,7 +34,7 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
     <meta name="description" content={description}>
     <meta name="keywords" content="pokemon type calculator, pokemon weakness chart, type effectiveness, pokemon SV, Gen 9, dual type calculator, resistance checker, pokemon scarlet violet, pokedex type chart">
     <meta name="author" content="Xarli11">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="robots" content={robots}>
     <link rel="canonical" href={canonicalURL}>
 
     <!-- Open Graph -->
@@ -75,8 +77,9 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
 
     <!-- Consent Mode v2, basic implementation. Defaults deny every signal and gtag.js is NOT
          requested until Google's CMP (AdSense > Privacy & messaging) reports consent mode data
-         (googlefc CONSENT_MODE_DATA_READY) and analytics_storage is not denied. Nothing is sent
-         to Google Analytics before that. See docs/privacy-consent.md. -->
+         (googlefc CONSENT_MODE_DATA_READY) and analytics_storage is explicitly GRANTED. Nothing is
+         sent to Google Analytics otherwise: not applicable, not configured, unknown and denied all
+         keep it blocked (no cookieless pings). See docs/privacy-consent.md. -->
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -108,7 +111,7 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
             }
             if (Object.keys(update).length) gtag('consent', 'update', update);
             var analytics = values[SIGNALS.analytics_storage];
-            if (loaded || !(analytics === 1 || analytics === 3 || analytics === 4)) return;
+            if (loaded || analytics !== 1) return;
             loaded = true;
             gtag('js', new Date());
             gtag('config', 'G-9D59NL7KTH');

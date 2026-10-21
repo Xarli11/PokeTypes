@@ -16,8 +16,9 @@ own URL structure.
 
 **Consent:** `Layout.astro` sets Consent Mode v2 defaults (`ad_storage`,
 `ad_user_data`, `ad_personalization`, `analytics_storage`) to `denied` and does
-not request `gtag.js` until Google's CMP reports consent mode data and
-`analytics_storage` is not denied (basic consent mode). Until then
+not request `gtag.js` unless Google's CMP reports consent mode data with
+`analytics_storage` explicitly granted (basic consent mode; denied, unknown,
+not applicable and not configured all keep it blocked). Until then
 `trackEvent()` calls are only queued in `dataLayer`. Users reopen the choice
 from the footer ("Privacy and cookie settings"). Details and verification in
 `docs/privacy-consent.md`.

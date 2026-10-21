@@ -69,15 +69,21 @@ describe('basic consent mode (Layout inline script against the documented google
         expect(appended).toHaveLength(0);
     });
 
-    it('unknown keeps GA blocked; not applicable loads it but never grants by itself', () => {
-        let b = bootLayout(modeValues(UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN));
-        b.fire();
-        expect(b.commands().some(c => c[1] === 'update')).toBe(false);
-        expect(b.appended).toHaveLength(0);
-        b = bootLayout(modeValues(NOT_APPLICABLE, NOT_APPLICABLE, NOT_APPLICABLE, NOT_APPLICABLE));
-        b.fire();
-        expect(b.commands().some(c => c[1] === 'update')).toBe(false);
-        expect(b.appended).toHaveLength(1);
+    it('only an explicit GRANTED loads gtag.js: unknown, denied, not applicable and not configured keep it blocked', () => {
+        for (const status of [UNKNOWN, DENIED, NOT_APPLICABLE, 4]) {
+            const b = bootLayout(modeValues(status, status, status, status));
+            b.fire();
+            expect(b.appended, `analytics status ${status}`).toHaveLength(0);
+            expect(b.commands().some(c => c[0] === 'config')).toBe(false);
+        }
+    });
+
+    it('not applicable or not configured never grants anything by itself', () => {
+        for (const status of [NOT_APPLICABLE, 4]) {
+            const b = bootLayout(modeValues(status, status, status, status));
+            b.fire();
+            expect(b.commands().some(c => c[1] === 'update')).toBe(false);
+        }
     });
 
     it('a repeated callback never loads gtag.js twice and mirrors a later withdrawal', () => {

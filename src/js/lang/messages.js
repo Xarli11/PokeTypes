@@ -256,6 +256,7 @@ export const messages = {
         footer_privacy: "Privacy Policy",
         footer_cookies: "Cookies",
         footer_privacy_settings: "Privacy and cookie settings",
+        footer_legal_notice: "Legal notice",
 
         // Special Pokemon Names
         "type: null": "Type: Null",
@@ -537,6 +538,7 @@ export const messages = {
         footer_privacy: "Política de privacidad",
         footer_cookies: "Cookies",
         footer_privacy_settings: "Configuración de privacidad y cookies",
+        footer_legal_notice: "Aviso legal",
 
         // Special Pokemon Names
         "type: null": "Código Cero",

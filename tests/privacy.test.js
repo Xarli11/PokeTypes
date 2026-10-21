@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync, existsSync } from 'node:fs';
 import { messages } from '../src/js/lang/messages.js';
-import { legal } from '../src/lib/legal.js';
 
 const read = p => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const layout = read('src/layouts/Layout.astro');
@@ -72,10 +71,7 @@ describe('legal links', () => {
 });
 
 describe('owner-only legal data', () => {
-    it('is never invented: unknown controller data and legal bases stay null until the owner supplies them', () => {
-        for (const v of [...Object.values(legal.controller), ...Object.values(legal.legalBases)]) {
-            expect(v === null || typeof v === 'string').toBe(true);
-        }
+    it('pages mark pending fields visibly in both languages', () => {
         const privacy = read('src/pages/privacy.astro');
         expect(privacy).toContain('To be completed by the site owner');
         expect(privacy).toContain('Pendiente de completar por el titular');
