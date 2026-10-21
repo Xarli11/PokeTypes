@@ -1,0 +1,81 @@
+---
+import Layout from '../layouts/Layout.astro';
+import LegalFooter from '../components/LegalFooter.astro';
+import { legal, legalAccess } from '../lib/legal.js';
+
+// LSSI-CE art. 10 identification, kept apart from the privacy policy (GDPR information).
+// It exists only when the owner has decided art. 10 applies; production never serves it incomplete.
+const access = legalAccess(Astro.url.hostname);
+if (!access.noticeVisible) return Astro.rewrite('/404');
+const { controller, lssi } = legal;
+
+const pending = {
+    en: '[To be completed by the site owner]',
+    es: '[Pendiente de completar por el titular]'
+};
+
+const copy = {
+    en: {
+        lang: 'en', id: 'legal-en', h1: 'Legal notice',
+        intro: 'Identification of the provider of this website (poketypes.app), as required by Spanish Law 34/2002 on information society services (LSSI-CE), article 10.',
+        rows: [
+            ['Name', controller.name],
+            ['Tax ID (NIF)', lssi.taxId],
+            ['Address', lssi.address],
+            ['Email', controller.contactEmail]
+        ],
+        privacy: 'How personal data is processed is explained in the', privacyLink: 'Privacy Policy and Cookies', back: 'Back to PokeTypes',
+        other: 'Leer en español', pendingLabel: pending.en
+    },
+    es: {
+        lang: 'es', id: 'aviso-legal', h1: 'Aviso legal',
+        intro: 'Identificación del prestador de este sitio web (poketypes.app), conforme al artículo 10 de la Ley 34/2002 de servicios de la sociedad de la información y de comercio electrónico (LSSI-CE).',
+        rows: [
+            ['Nombre', controller.name],
+            ['NIF', lssi.taxId],
+            ['Domicilio', lssi.address],
+            ['Correo electrónico', controller.contactEmail]
+        ],
+        privacy: 'El tratamiento de datos personales se explica en la', privacyLink: 'Política de privacidad y cookies', back: 'Volver a PokeTypes',
+        other: 'Read in English', pendingLabel: pending.es
+    }
+};
+const sections = [copy.en, copy.es];
+---
+
+<Layout
+    title="Legal notice | PokeTypes"
+    description="Legal notice and identification of the provider of PokeTypes. Aviso legal e identificación del prestador."
+    robots={access.status.noticeReady ? undefined : 'noindex, nofollow'}
+    googleTags={false}
+>
+    <main class="max-w-3xl mx-auto relative">
+        {!access.production && !access.status.noticeReady && (
+            <p class="panel mb-6 text-sm"><mark>DRAFT, not published: incomplete legal data. Missing: {access.status.noticeMissing.join(', ') || 'none'}.</mark></p>
+        )}
+        {sections.map((c, i) => (
+            <article id={c.id} lang={c.lang} class={i === 0 ? '' : 'mt-16'}>
+                <a href="/" class="inline-flex items-center gap-2 py-2 font-bold" style="color: var(--text)">
+                    <img src="/icon-192.png" alt="" width="28" height="28" />
+                    <span>PokeTypes</span>
+                </a>
+                <h1 class="text-2xl font-bold mt-4">{c.h1}</h1>
+                <p class="mt-1 text-sm" style="color: var(--text-muted)"><a class="underline" href={`#${sections[1 - i].id}`} lang={sections[1 - i].lang}>{c.other}</a></p>
+                <p class="mt-4">{c.intro}</p>
+                <dl class="mt-4 panel">
+                    {c.rows.map(([label, value]) => (
+                        <div class="flex flex-wrap gap-x-3 py-1">
+                            <dt class="font-bold">{label}:</dt>
+                            <dd>{value ?? <mark>{c.pendingLabel}</mark>}</dd>
+                        </div>
+                    ))}
+                </dl>
+                <p class="mt-4">{c.privacy} <a class="underline" href="/privacy">{c.privacyLink}</a>.</p>
+                <p class="mt-10 text-center text-sm"><a class="underline" href="/">{c.back}</a></p>
+            </article>
+        ))}
+        <footer class="mt-10 text-center text-sm" style="color: var(--text-muted)">
+            <LegalFooter settings={false} />
+        </footer>
+    </main>
+</Layout>

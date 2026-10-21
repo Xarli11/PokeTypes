@@ -12,7 +12,8 @@
     "release": "node scripts/release.cjs",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "astro check"
+    "check": "astro check",
+    "check:legal": "node scripts/check-legal.mjs"
   },
   "repository": {
     "type": "git",

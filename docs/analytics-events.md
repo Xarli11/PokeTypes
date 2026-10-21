@@ -14,6 +14,15 @@ any other PII. Every parameter is a bounded enum (a mode, a source, a share
 method, a language code) or a Pokémon/type name already public in the site's
 own URL structure.
 
+**Consent:** `Layout.astro` sets Consent Mode v2 defaults (`ad_storage`,
+`ad_user_data`, `ad_personalization`, `analytics_storage`) to `denied` and does
+not request `gtag.js` unless Google's CMP reports consent mode data with
+`analytics_storage` explicitly granted (basic consent mode; denied, unknown,
+not applicable and not configured all keep it blocked). Until then
+`trackEvent()` calls are only queued in `dataLayer`. Users reopen the choice
+from the footer ("Privacy and cookie settings"). Details and verification in
+`docs/privacy-consent.md`.
+
 **`language`** is always `'en'` or `'es'` as a parameter, never a suffix on
 the event name (i.e. never `pokemon_select_es`) — the language is a
 dimension of every event, not a different event.

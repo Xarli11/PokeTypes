@@ -1,0 +1,53 @@
+---
+import { legalAccess } from '../lib/legal.js';
+
+interface Props {
+    settings?: boolean;
+}
+
+// settings=false on the legal pages: they load no Google tags, so there is no CMP to reopen.
+const { settings = true } = Astro.props;
+
+// Production only shows the legal links once the pages are complete (see legalAccess).
+const { privacyVisible, noticeVisible } = legalAccess(Astro.url.hostname);
+
+// Legal links shown on every page. "Privacy and cookie settings" reopens Google's CMP
+// message with googlefc.showRevocationMessage() (Privacy & Messaging JavaScript API).
+// That call does nothing if googlefc has not loaded, and there is no message to reopen
+// where consent is not requested, so those cases go to the cookies section of /privacy.
+---
+
+{privacyVisible && (
+    <nav aria-label="Legal" class="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1">
+        <a href="/privacy" class="underline py-1" data-i18n="footer_privacy">Privacy Policy</a>
+        <a href="/privacy#cookies" class="underline py-1" data-i18n="footer_cookies">Cookies</a>
+        {noticeVisible && <a href="/legal" class="underline py-1" data-i18n="footer_legal_notice">Legal notice</a>}
+        {settings && <button type="button" id="privacy-settings" class="underline py-1" data-i18n="footer_privacy_settings">Privacy and cookie settings</button>}
+    </nav>
+)}
+{privacyVisible && settings && (
+    <script is:inline>
+    (function () {
+        var gdprApplies = null;
+        window.googlefc = window.googlefc || {};
+        window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
+        window.googlefc.callbackQueue.push({
+            CONSENT_API_READY: function () {
+                if (typeof window.__tcfapi !== 'function') return;
+                window.__tcfapi('addEventListener', 0, function (tcData, success) {
+                    gdprApplies = success && tcData ? !!tcData.gdprApplies : null;
+                });
+            }
+        });
+        document.getElementById('privacy-settings')?.addEventListener('click', function () {
+            if (gdprApplies !== false && typeof window.googlefc.showRevocationMessage === 'function') {
+                window.googlefc.showRevocationMessage();
+            } else if (location.pathname === '/privacy') {
+                location.hash = 'cookies';
+            } else {
+                location.href = '/privacy#cookies';
+            }
+        });
+    })();
+</script>
+)}

@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import AppHeader from '../../components/AppHeader.astro';
 import TypeSelectorField from '../../components/TypeSelectorField.astro';
 import TypeLinks from '../../components/TypeLinks.astro';
+import LegalFooter from '../../components/LegalFooter.astro';
 import pokedex from '../../data/pokedex.json';
 import typeData from '../../data/type-data.json';
 import { calculateDefense, calculateOffense } from '../../lib/type-engine/index.js';
@@ -192,6 +193,10 @@ const heroHtml = `
         </div>
 
         <TypeLinks />
+
+        <footer class="mt-10 text-center text-sm" style="color: var(--text-muted)">
+            <LegalFooter />
+        </footer>
     </div>
     <script src="../../js/main.js"></script>
 </Layout>

@@ -7,13 +7,19 @@ interface Props {
     description?: string;
     image?: string;
     canonicalPath?: string;
+    robots?: string;
+    googleTags?: boolean;
 }
 
 const {
     title = "PokeTypes | Pokemon Type Calculator & Effectiveness Chart",
     description = "Instant Pokemon type calculator and effectiveness chart. Analyze weaknesses, resistances, and dual-type coverage for all 1,000+ Pokemon (Gen 9, Scarlet/Violet included).",
     image = "/icon-512.png",
-    canonicalPath
+    canonicalPath,
+    robots = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+    // false on the pages used as the CMP privacy policy URL (/privacy, /legal): Google requires them
+    // to carry no ad tags, no consent-gated scripts and no Funding Choices message tag.
+    googleTags = true
 } = Astro.props;
 
 const siteUrl = "https://poketypes.app";
@@ -32,7 +38,7 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
     <meta name="description" content={description}>
     <meta name="keywords" content="pokemon type calculator, pokemon weakness chart, type effectiveness, pokemon SV, Gen 9, dual type calculator, resistance checker, pokemon scarlet violet, pokedex type chart">
     <meta name="author" content="Xarli11">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="robots" content={robots}>
     <link rel="canonical" href={canonicalURL}>
 
     <!-- Open Graph -->
@@ -65,27 +71,84 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
     <meta name="mobile-web-app-capable" content="yes">
 
     <!-- DNS Prefetch / Preconnect -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://raw.githubusercontent.com">
     <link rel="dns-prefetch" href="https://pokeapi.co">
-    <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
+    {googleTags && <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">}
 
-    <!-- Font preload (critical display font) -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@400;500;600;700&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700;800&display=swap">
+    <!-- Fonts are self-hosted (src/styles/fonts.css): no request to Google Fonts before consent. Preload the two latin faces used on every page. -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/syne-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/outfit-latin.woff2" crossorigin>
 
-    <!-- Google Analytics -->
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-9D59NL7KTH"></script>
+    {googleTags && (
+    <Fragment>
+    <!-- Consent Mode v2, basic implementation. Defaults deny every signal and gtag.js is NOT
+         requested until Google's CMP (AdSense > Privacy & messaging) reports consent mode data
+         (googlefc CONSENT_MODE_DATA_READY) and analytics_storage is explicitly GRANTED. Nothing is
+         sent to Google Analytics otherwise: not applicable, not configured, unknown and denied all
+         keep it blocked (no cookieless pings). The same live status gates every trackEvent() call
+         (window.pokeAnalyticsGranted) and, once gtag.js is loaded, every hit ('ga-disable' flag), so
+         events from before consent are never queued and a withdrawal takes effect without reload.
+         See docs/privacy-consent.md. -->
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-9D59NL7KTH');
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied',
+        'wait_for_update': 500
+      });
+      window.googlefc = window.googlefc || {};
+      window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
+      (function () {
+        var loaded = false;
+        var mirrored = {};
+        // ConsentModePurposeStatusEnum: 1 GRANTED, 2 DENIED, 3 NOT_APPLICABLE, 4 NOT_CONFIGURED, 0 UNKNOWN
+        var SIGNALS = {
+          ad_storage: 'adStoragePurposeConsentStatus',
+          ad_user_data: 'adUserDataPurposeConsentStatus',
+          ad_personalization: 'adPersonalizationPurposeConsentStatus',
+          analytics_storage: 'analyticsStoragePurposeConsentStatus'
+        };
+        function status() {
+          try { return window.googlefc.getGoogleConsentModeValues(); } catch (e) { return {}; }
+        }
+        // A signal is granted only while the CMP reports GRANTED; every other status is denied.
+        // Only changes are pushed, so nothing is granted by default and a withdrawal is mirrored.
+        function mirror() {
+          var values = status();
+          var update = {};
+          for (var signal in SIGNALS) {
+            var next = values[SIGNALS[signal]] === 1 ? 'granted' : 'denied';
+            if ((mirrored[signal] || 'denied') !== next) { mirrored[signal] = next; update[signal] = next; }
+          }
+          if (Object.keys(update).length) gtag('consent', 'update', update);
+          return values[SIGNALS.analytics_storage] === 1;
+        }
+        window.pokeAnalyticsGranted = mirror;
+        Object.defineProperty(window, 'ga-disable-G-9D59NL7KTH', {
+          get: function () { return status()[SIGNALS.analytics_storage] !== 1; }
+        });
+        window.googlefc.callbackQueue.push({
+          CONSENT_MODE_DATA_READY: function () {
+            if (!mirror() || loaded) return;
+            loaded = true;
+            gtag('js', new Date());
+            gtag('config', 'G-9D59NL7KTH');
+            var tag = document.createElement('script');
+            tag.async = true;
+            tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-9D59NL7KTH';
+            document.head.appendChild(tag);
+          }
+        });
+      })();
     </script>
 
-    <!-- Google AdSense -->
+    <!-- Google AdSense (also delivers the CMP message; no ad units or Auto ads are enabled from code) -->
     <script is:inline async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5778743399428042" crossorigin="anonymous"></script>
+    </Fragment>
+    )}
 
     <!-- Theme (prevent FOUC) -->
     <script is:inline>

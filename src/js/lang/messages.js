@@ -253,6 +253,10 @@ export const messages = {
         bmc_btn: "Buy Me a Coffee",
         footer_copyright: "Data up to Gen 9",
         created_by: "Created by",
+        footer_privacy: "Privacy Policy",
+        footer_cookies: "Cookies",
+        footer_privacy_settings: "Privacy and cookie settings",
+        footer_legal_notice: "Legal notice",
 
         // Special Pokemon Names
         "type: null": "Type: Null",
@@ -531,6 +535,10 @@ export const messages = {
         bmc_btn: "Cómprame un café",
         footer_copyright: "Datos hasta Gen 9",
         created_by: "Creado por",
+        footer_privacy: "Política de privacidad",
+        footer_cookies: "Cookies",
+        footer_privacy_settings: "Configuración de privacidad y cookies",
+        footer_legal_notice: "Aviso legal",
 
         // Special Pokemon Names
         "type: null": "Código Cero",
