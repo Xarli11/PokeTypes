@@ -8,6 +8,7 @@ interface Props {
     image?: string;
     canonicalPath?: string;
     robots?: string;
+    googleTags?: boolean;
 }
 
 const {
@@ -15,7 +16,10 @@ const {
     description = "Instant Pokemon type calculator and effectiveness chart. Analyze weaknesses, resistances, and dual-type coverage for all 1,000+ Pokemon (Gen 9, Scarlet/Violet included).",
     image = "/icon-512.png",
     canonicalPath,
-    robots = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    robots = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+    // false on the pages used as the CMP privacy policy URL (/privacy, /legal): Google requires them
+    // to carry no ad tags, no consent-gated scripts and no Funding Choices message tag.
+    googleTags = true
 } = Astro.props;
 
 const siteUrl = "https://poketypes.app";
@@ -69,12 +73,14 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
     <!-- DNS Prefetch / Preconnect -->
     <link rel="dns-prefetch" href="https://raw.githubusercontent.com">
     <link rel="dns-prefetch" href="https://pokeapi.co">
-    <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
+    {googleTags && <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">}
 
     <!-- Fonts are self-hosted (src/styles/fonts.css): no request to Google Fonts before consent. Preload the two latin faces used on every page. -->
     <link rel="preload" as="font" type="font/woff2" href="/fonts/syne-latin.woff2" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="/fonts/outfit-latin.woff2" crossorigin>
 
+    {googleTags && (
+    <Fragment>
     <!-- Consent Mode v2, basic implementation. Defaults deny every signal and gtag.js is NOT
          requested until Google's CMP (AdSense > Privacy & messaging) reports consent mode data
          (googlefc CONSENT_MODE_DATA_READY) and analytics_storage is explicitly GRANTED. Nothing is
@@ -141,6 +147,8 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
 
     <!-- Google AdSense (also delivers the CMP message; no ad units or Auto ads are enabled from code) -->
     <script is:inline async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5778743399428042" crossorigin="anonymous"></script>
+    </Fragment>
+    )}
 
     <!-- Theme (prevent FOUC) -->
     <script is:inline>

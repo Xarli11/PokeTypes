@@ -1,6 +1,13 @@
 ---
 import { legalAccess } from '../lib/legal.js';
 
+interface Props {
+    settings?: boolean;
+}
+
+// settings=false on the legal pages: they load no Google tags, so there is no CMP to reopen.
+const { settings = true } = Astro.props;
+
 // Production only shows the legal links once the pages are complete (see legalAccess).
 const { privacyVisible, noticeVisible } = legalAccess(Astro.url.hostname);
 
@@ -15,8 +22,10 @@ const { privacyVisible, noticeVisible } = legalAccess(Astro.url.hostname);
         <a href="/privacy" class="underline py-1" data-i18n="footer_privacy">Privacy Policy</a>
         <a href="/privacy#cookies" class="underline py-1" data-i18n="footer_cookies">Cookies</a>
         {noticeVisible && <a href="/legal" class="underline py-1" data-i18n="footer_legal_notice">Legal notice</a>}
-        <button type="button" id="privacy-settings" class="underline py-1" data-i18n="footer_privacy_settings">Privacy and cookie settings</button>
+        {settings && <button type="button" id="privacy-settings" class="underline py-1" data-i18n="footer_privacy_settings">Privacy and cookie settings</button>}
     </nav>
+)}
+{privacyVisible && settings && (
     <script is:inline>
     (function () {
         var gdprApplies = null;

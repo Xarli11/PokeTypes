@@ -47,6 +47,7 @@ const sections = [copy.en, copy.es];
     title="Legal notice | PokeTypes"
     description="Legal notice and identification of the provider of PokeTypes. Aviso legal e identificación del prestador."
     robots={access.status.noticeReady ? undefined : 'noindex, nofollow'}
+    googleTags={false}
 >
     <main class="max-w-3xl mx-auto relative">
         {!access.production && !access.status.noticeReady && (
@@ -74,7 +75,7 @@ const sections = [copy.en, copy.es];
             </article>
         ))}
         <footer class="mt-10 text-center text-sm" style="color: var(--text-muted)">
-            <LegalFooter />
+            <LegalFooter settings={false} />
         </footer>
     </main>
 </Layout>

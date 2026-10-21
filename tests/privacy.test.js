@@ -44,9 +44,11 @@ describe('Consent Mode v2 in Layout', () => {
 
 describe('legal links', () => {
     it('every page that renders the app includes the footer, which links /privacy and the settings button', () => {
-        for (const p of ['src/pages/index.astro', 'src/pages/pokemon/[name].astro', 'src/pages/tipo/[...slug].astro', 'src/pages/privacy.astro']) {
+        for (const p of ['src/pages/index.astro', 'src/pages/pokemon/[name].astro', 'src/pages/tipo/[...slug].astro']) {
             expect(read(p), p).toContain('<LegalFooter />');
         }
+        // The legal pages load no Google tags, so their footer has no CMP settings button (see legal-pages-html.test.js).
+        expect(read('src/pages/privacy.astro')).toContain('<LegalFooter settings={false} />');
         const footer = read('src/components/LegalFooter.astro');
         expect(footer).toContain('href="/privacy"');
         expect(footer).toContain('href="/privacy#cookies"');

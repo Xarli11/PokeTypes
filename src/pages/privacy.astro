@@ -38,7 +38,7 @@ const copy = {
         consentH: 'Your consent choices',
         consent: [
             'Analytics and advertising storage are denied by default. Where a consent message is shown (for example in the EEA, the UK and Switzerland) it is provided by Google\'s consent management tool, and your choice updates the Google tags.',
-            'You can change or withdraw your choice at any time with the "Privacy and cookie settings" link at the bottom of every page. Withdrawing does not affect processing carried out before.',
+            'You can change or withdraw your choice at any time with the "Privacy and cookie settings" link at the bottom of the calculator, Pokemon and type pages. Withdrawing does not affect processing carried out before.',
             'Where no consent message is shown, or you have not accepted analytics, the Google Analytics tag is not loaded: no analytics cookies are set and no analytics requests are sent to Google.'
         ],
         cookiesH: 'Cookies and similar technologies',
@@ -110,7 +110,7 @@ const copy = {
         consentH: 'Tus opciones de consentimiento',
         consent: [
             'El almacenamiento de analítica y publicidad está denegado por defecto. Donde se muestra un mensaje de consentimiento (por ejemplo en el EEE, el Reino Unido y Suiza) lo ofrece la herramienta de gestión del consentimiento de Google, y tu elección actualiza las etiquetas de Google.',
-            'Puedes cambiar o retirar tu elección en cualquier momento con el enlace «Configuración de privacidad y cookies» al final de cada página. Retirarlo no afecta al tratamiento anterior.',
+            'Puedes cambiar o retirar tu elección en cualquier momento con el enlace «Configuración de privacidad y cookies» al final de las páginas de la calculadora, de Pokémon y de tipos. Retirarlo no afecta al tratamiento anterior.',
             'Donde no se muestra mensaje de consentimiento, o no has aceptado la analítica, la etiqueta de Google Analytics no se carga: no se crean cookies de analítica ni se envían solicitudes de analítica a Google.'
         ],
         cookiesH: 'Cookies y tecnologías similares',
@@ -168,6 +168,7 @@ const sections = [copy.en, copy.es];
     title="Privacy Policy and Cookies | PokeTypes"
     description="Privacy policy and cookie information for PokeTypes: what data is processed, how to manage your consent, and how to contact us. Política de privacidad y cookies."
     robots={access.status.privacyReady ? undefined : 'noindex, nofollow'}
+    googleTags={false}
 >
     <main class="max-w-3xl mx-auto relative">
         {access.draft && !access.production && (
@@ -287,7 +288,7 @@ const sections = [copy.en, copy.es];
             </article>
         ))}
         <footer class="mt-10 text-center text-sm" style="color: var(--text-muted)">
-            <LegalFooter />
+            <LegalFooter settings={false} />
         </footer>
     </main>
 </Layout>

@@ -10,10 +10,18 @@ Context confirmed by the owner: PokeTypes is a personal project of a natural per
 |---|---|
 | Consent defaults | `Layout.astro` sets `ad_storage`, `ad_user_data`, `ad_personalization`, `analytics_storage` to `denied` before anything else (`wait_for_update: 500`). |
 | Google Analytics (`gtag.js`) | **Not requested** unless Google's CMP reports consent mode data (`googlefc` `CONSENT_MODE_DATA_READY`) and `analytics_storage` is explicitly **granted**. Denied, unknown, not applicable and not configured all keep it blocked. |
-| AdSense (`adsbygoogle.js`) | Loads on every page: it is what delivers the CMP message. No ad units, no `enable_page_level_ads`. Auto ads must stay off in the AdSense account. |
+| AdSense (`adsbygoogle.js`) | Loads on every page **except `/privacy` and `/legal`** (see "Legal pages carry no Google tags"): it is what delivers the CMP message. No ad units, no `enable_page_level_ads`. Auto ads must stay off in the AdSense account. |
 | Fonts | Served from `/fonts` (`src/styles/fonts.css`). No request to Google Fonts. |
-| Reopen preferences | Footer button "Privacy and cookie settings" (`LegalFooter.astro`). |
+| Reopen preferences | Footer button "Privacy and cookie settings" (`LegalFooter.astro`), on every page except `/privacy` and `/legal`. |
 | Legal pages | `/privacy` (GDPR information, EN + ES) and `/legal` (LSSI-CE art. 10 identification, only if the owner decides it applies). Production serves them only when complete (see "Publication gate"). |
+
+## Legal pages carry no Google tags
+
+AdSense Help: a page used as the privacy policy URL in the CMP must not contain ad tags, scripts that need consent or the Funding Choices message tag. `Layout.astro` therefore has an explicit prop, `googleTags` (default `true`, so every other page is unchanged). With `googleTags={false}` the layout omits the consent mode script (`gtag`, `dataLayer`, `googlefc`, the `ga-disable` flag and the `gtag.js` loader), the AdSense script and the `pagead2.googlesyndication.com` DNS prefetch. `/privacy` and `/legal` pass `googleTags={false}`. Local fonts, theme script, icons, SEO tags and structured data stay.
+
+`LegalFooter` takes `settings` (default `true`); the legal pages pass `false`, which drops the "Privacy and cookie settings" button and its `googlefc` script (there is no CMP on those pages to reopen). The Privacy Policy, Cookies and Legal notice links stay. The policy text says the settings link is at the bottom of the calculator, Pokemon and type pages. Consequence: a visitor on `/privacy` reopens the message from the calculator (the "Back to PokeTypes" link).
+
+`tests/legal-pages-html.test.js` starts the Astro dev server with complete placeholder legal data and checks the final HTML of `/privacy`, `/legal` and `/`: no AdSense, Funding Choices, Analytics or consent code and no Google script or hint on the legal pages; links and anchors work; the home page keeps everything.
 
 ## Consent Mode: basic vs advanced
 
