@@ -52,11 +52,10 @@ describe('basic consent mode (Layout inline script against the documented google
         expect(appended[0].src).toBe('https://www.googletagmanager.com/gtag/js?id=G-9D59NL7KTH');
     });
 
-    it('rejected: signals stay denied and gtag.js is never requested', () => {
+    it('rejected: nothing is granted (defaults already deny) and gtag.js is never requested', () => {
         const { appended, fire, commands } = bootLayout(modeValues(DENIED, DENIED, DENIED, DENIED));
         fire();
-        const update = commands().find(c => c[0] === 'consent' && c[1] === 'update');
-        for (const k of SIGNALS) expect(update[2][k]).toBe('denied');
+        expect(commands().some(c => c[1] === 'update')).toBe(false);
         expect(commands().some(c => c[0] === 'config')).toBe(false);
         expect(appended).toHaveLength(0);
     });
@@ -65,7 +64,7 @@ describe('basic consent mode (Layout inline script against the documented google
         const { appended, fire, commands } = bootLayout(modeValues(GRANTED, GRANTED, GRANTED, DENIED));
         fire();
         const update = commands().find(c => c[0] === 'consent' && c[1] === 'update')[2];
-        expect([update.ad_storage, update.analytics_storage]).toEqual(['granted', 'denied']);
+        expect(update).toEqual({ ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted' });
         expect(appended).toHaveLength(0);
     });
 

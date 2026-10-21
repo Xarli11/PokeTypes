@@ -16,7 +16,7 @@ afterEach(() => {
 describe('trackEvent — gtag available', () => {
     it('calls window.gtag with "event", the given name, and params', () => {
         const gtag = vi.fn();
-        globalThis.window = { gtag };
+        globalThis.window = { gtag, pokeAnalyticsGranted: () => true };
 
         trackEvent('pokemon_select', { pokemon: 'dragonite', source: 'search' });
 
@@ -26,7 +26,7 @@ describe('trackEvent — gtag available', () => {
 
     it('passes an empty params object through when none is given', () => {
         const gtag = vi.fn();
-        globalThis.window = { gtag };
+        globalThis.window = { gtag, pokeAnalyticsGranted: () => true };
 
         trackEvent('mode_change');
 
@@ -34,7 +34,7 @@ describe('trackEvent — gtag available', () => {
     });
 
     it('does not throw even if gtag itself throws', () => {
-        globalThis.window = { gtag: () => { throw new Error('blocked by an ad blocker'); } };
+        globalThis.window = { gtag: () => { throw new Error('blocked by an ad blocker'); }, pokeAnalyticsGranted: () => true };
 
         expect(() => trackEvent('share', { context: 'team' })).not.toThrow();
     });
@@ -60,7 +60,7 @@ describe('trackEvent — gtag unavailable', () => {
 describe('trackEvent — does not duplicate calls', () => {
     it('one trackEvent() call results in exactly one gtag() call', () => {
         const gtag = vi.fn();
-        globalThis.window = { gtag };
+        globalThis.window = { gtag, pokeAnalyticsGranted: () => true };
 
         trackEvent('team_member_add', { pokemon: 'gholdengo', slot: 0, team_size: 1 });
 
@@ -81,7 +81,7 @@ describe('createDebouncedTracker — cancellation', () => {
 
     it('fires exactly once, after the delay, when scheduled once and left alone (no event per keystroke)', () => {
         const gtag = vi.fn();
-        globalThis.window = { gtag };
+        globalThis.window = { gtag, pokeAnalyticsGranted: () => true };
         const tracker = createDebouncedTracker('pokemon_search', 600);
 
         tracker.schedule({ has_results: true, language: 'en' });
@@ -95,7 +95,7 @@ describe('createDebouncedTracker — cancellation', () => {
 
     it('cancel() before the delay elapses prevents the event entirely — "pika" then cleared before 600ms fires 0 events', () => {
         const gtag = vi.fn();
-        globalThis.window = { gtag };
+        globalThis.window = { gtag, pokeAnalyticsGranted: () => true };
         const tracker = createDebouncedTracker('pokemon_search', 600);
 
         tracker.schedule({ has_results: true, language: 'en' }); // typed "pika"
@@ -108,7 +108,7 @@ describe('createDebouncedTracker — cancellation', () => {
 
     it('re-scheduling before the delay elapses only fires once, for the latest params (rapid typing)', () => {
         const gtag = vi.fn();
-        globalThis.window = { gtag };
+        globalThis.window = { gtag, pokeAnalyticsGranted: () => true };
         const tracker = createDebouncedTracker('pokemon_search', 600);
 
         tracker.schedule({ has_results: false, language: 'en' }); // "p"
@@ -124,7 +124,7 @@ describe('createDebouncedTracker — cancellation', () => {
 
     it('a completed search after the debounce elapses fires exactly one event', () => {
         const gtag = vi.fn();
-        globalThis.window = { gtag };
+        globalThis.window = { gtag, pokeAnalyticsGranted: () => true };
         const tracker = createDebouncedTracker('pokemon_search', 600);
 
         tracker.schedule({ has_results: true, language: 'en' });

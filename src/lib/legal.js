@@ -116,7 +116,8 @@ export function legalAccess(hostname, data = legal) {
         status,
         production,
         privacyVisible: !production || status.privacyReady,
-        noticeVisible: status.noticeEnabled && (!production || status.noticeReady),
+        // The notice links to the privacy policy, so it is never visible without it (no dangling link).
+        noticeVisible: status.noticeEnabled && (!production || (status.noticeReady && status.privacyReady)),
         draft: !status.allReady
     };
 }

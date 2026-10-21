@@ -9,6 +9,8 @@
 // for the full audit.
 //
 // Design constraints (deliberate, do not "improve" without re-reading these):
+//   - Consent first: nothing is pushed to dataLayer unless Google's CMP reports
+//     analytics_storage as granted at the moment of the call.
 //   - Never throws, never blocks the UI, no-ops silently if gtag isn't
 //     available (dev/test environments, ad-blockers, gtag.js failing to
 //     load) — a failed measurement must never break the product.
@@ -26,6 +28,9 @@
 export function trackEvent(name, params = {}) {
     try {
         if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
+        // Consent gate (Layout.astro): while Google's CMP does not report analytics as granted
+        // the event is dropped, never queued, so it cannot be sent retroactively after accepting.
+        if (typeof window.pokeAnalyticsGranted !== 'function' || !window.pokeAnalyticsGranted()) return;
         window.gtag('event', name, params);
     } catch (e) {
         // Analytics must never break the app.

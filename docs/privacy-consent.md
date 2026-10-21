@@ -55,6 +55,21 @@ Other limits: the callback mirrors the CMP's statuses into the four signals (1 g
 
 Going back to advanced: restore the static tag and delete the callback block. Nothing else changes.
 
+Outside the CMP regions nothing is granted automatically: the page never turns any signal to `granted` on its own, and a status other than GRANTED is treated as denied everywhere (defaults deny, only a change is mirrored). In practice a visitor outside the EEA/UK/CH sends no Analytics request, sets no analytics cookie and generates no `dataLayer` event.
+
+## Analytics event lifecycle
+
+Found by reproducing it on the previous revision: `trackEvent()` called `gtag('event', ...)` unconditionally, so a calculator action before consent put an event in `dataLayer` (`type_calculate` was there before any choice). When `gtag.js` loads after the visitor accepts it processes the whole queue, so that earlier interaction would have been sent retroactively. Withdrawal had a second gap: with `gtag.js` already loaded, `analytics_storage: denied` still lets the tag send cookieless pings, including its automatic events.
+
+Corrections (`Layout.astro`, `analytics.js`):
+
+- `window.pokeAnalyticsGranted()` reads Google's live consent status (`getGoogleConsentModeValues()`) at the moment of each call. `trackEvent()` returns without pushing anything unless it is GRANTED. Unknown, denied, not applicable, not configured, a missing `googlefc` and any exception all mean "do not send". Debounced events re-check when the timer fires.
+- The same status drives a live `ga-disable-G-9D59NL7KTH` flag (a getter), the documented property that stops Google Analytics measurement. With the tag already loaded, a withdrawal stops every hit, automatic ones included, on the next hit, with no reload and without waiting for a callback. This relies on `gtag.js` reading the flag per hit (documented for opt-out); **not verified with the real tag**, add it to the Tag Assistant run.
+- Consent updates are mirrored whenever the status changes (only changes are pushed, from `denied`), from the callback and from each event, so accept, withdraw, accept converges even if Google never re-fires `CONSENT_MODE_DATA_READY` after the reopen flow. A cleared record (UNKNOWN while the message is reopened) counts as withdrawn.
+- A post-consent page view is not retroactive: on a page load the tag loads after consent and `config` records that page. An event that the app raises while the page restores state (for example `type_calculate` from the URL) is sent only if consent is already known at that moment.
+
+Calculator actions do not depend on Analytics: `trackEvent()` returns `undefined`, no call site uses its result, nothing else in `src/js` touches `gtag`, `dataLayer` or `googlefc`, and the browser check runs the calculator with `googlefc` absent, throwing, `pokeAnalyticsGranted` throwing, and the Google tag stubbed or blocked.
+
 ## Reopening preferences: the documented API
 
 Source: Privacy & Messaging JavaScript API (`developers.google.com/funding-choices/fc-api-docs`) and AdSense Help "Add European regulations message revocation links".
@@ -78,6 +93,9 @@ Tag Assistant (tagassistant.google.com) shows, per message, the **Consent** tab 
 | Accept ads, reject analytics (if the message allows) | `ad_*` granted, `analytics_storage` denied; `gtag.js` not requested |
 | Withdraw: footer "Privacy and cookie settings" after accepting, then reject | Message reopens; update with four types denied; any new `/g/collect` with `gcs=G100`; reload: `gtag.js` no longer requested. Note whether existing `_ga` cookies persist: consent mode does not delete them |
 | Reject then accept through the footer link | Message reopens; after accepting, check whether `gtag.js` loads without reload or on the next page view (open question above) |
+| Before answering, use the calculator, then accept | The earlier actions never appear: in `dataLayer` and in Tag Assistant only events after accepting |
+| After withdrawing with `gtag.js` already loaded, use the calculator and scroll or click outbound links | No `/g/collect` at all (not even `gcs=G100`), no automatic events; confirms the `ga-disable` flag works on the real tag |
+| Accept, withdraw, accept again, with and without reload | Updates granted, denied, granted; events only while granted; `gtag.js` requested once per page load |
 | Outside the EEA/UK/CH (for example a US IP) | No message; **no `gtag.js` request**, no `_ga*` cookies, no `/g/collect`; footer button goes to `/privacy#cookies` |
 | Desktop and mobile (390 px) | Same results; footer links reachable; no horizontal overflow |
 
@@ -87,7 +105,7 @@ Console helper (documented `dataLayer` only; paste in DevTools to list consent c
 dataLayer.filter(a => a[0] === 'consent').map(a => [a[1], JSON.stringify(a[2])])
 ```
 
-Automated coverage in the repo: `tests/consent-behavior.test.js` runs the real inline scripts against a fake `googlefc` that follows the documented contract (accept, reject, partial, unknown, not applicable, not configured, repeated callbacks, withdrawal; footer API with and without CMP). It cannot show what Google's scripts actually do, so it does not replace Tag Assistant.
+Automated coverage in the repo: `tests/consent-behavior.test.js` runs the real inline scripts against a fake `googlefc` that follows the documented contract (accept, reject, partial, unknown, not applicable, not configured, repeated callbacks, withdrawal; footer API with and without CMP). `tests/analytics-lifecycle.test.js` runs the real Layout script together with the real `trackEvent()` through no consent to accept, reject to accept, accept to withdraw to accept (with `gtag.js` loaded, with and without callbacks) and reloads, and guards that calculator code never depends on Analytics. Without the consent gate 9 of its tests fail. None of this shows what Google's scripts actually do, so it does not replace Tag Assistant.
 
 ## AdSense account-level effects (other sites such as Pokepedia)
 
@@ -146,6 +164,10 @@ Publication gate (`legalAccess`, hostname based):
 | Previews (`*.pages.dev`), localhost | Draft rendered, `noindex, nofollow`, banner listing the missing field names | Same as production |
 
 Verified (dev server with a temporary edit that treated `localhost` as production, and environment values that were placeholders in a throwaway process, never saved): no data gives 404 on both pages and no footer links; complete GDPR data with LSSI not applicable gives `/privacy` 200 indexed, `/legal` 404; LSSI applicable but data missing gives `/legal` 404; non-residence address without confirmation gives `/legal` 404; confirmed address gives `/legal` 200 and a footer link.
+
+Links never dangle: `/legal` is visible only if `/privacy` is also visible (it links to it), the footer shows `/legal` only inside the privacy block, and `/privacy` links to `/legal` only when it is visible. This was a real gap (a complete notice with an incomplete policy would have linked to a 404) and is covered for every data state on every host in `tests/legal-links.test.js`. Before publishing the CMP message run `npm run check:legal -- --live https://poketypes.app`: it fails unless `/privacy` (and `/legal` when it applies), `/ads.txt` and the logo answer 200 and are indexable.
+
+Where the injected data can appear (checked by building with marker values): only in the server bundle (`dist/_worker.js`), which is not served (`/_worker.js` answers 404 on the preview and on production); never in client JavaScript, sourcemaps (none are produced), `.astro` caches, the build log or the dev log. Rendered pages: name, email, legal bases, provider roles and transfers only on `/privacy`; NIF and address only on `/legal`, so a NIF or address supplied while `lssi.applies` is false is compiled into the server bundle but rendered nowhere. Malformed JSON is swallowed without echoing it and the checks print field names only (`tests/legal-leaks.test.js`). Cloudflare shows the variable to project members in its dashboard and build logs may print environment variables if a build step does; do not echo it.
 
 Consequences to plan for: the production `/privacy` URL does not exist until the data is complete, so the CMP message cannot point to it before then; and, because Analytics is basic and fail-closed, merging this to `main` before the CMP message is published stops Analytics until it is.
 

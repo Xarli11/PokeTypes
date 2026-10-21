@@ -79,7 +79,10 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
          requested until Google's CMP (AdSense > Privacy & messaging) reports consent mode data
          (googlefc CONSENT_MODE_DATA_READY) and analytics_storage is explicitly GRANTED. Nothing is
          sent to Google Analytics otherwise: not applicable, not configured, unknown and denied all
-         keep it blocked (no cookieless pings). See docs/privacy-consent.md. -->
+         keep it blocked (no cookieless pings). The same live status gates every trackEvent() call
+         (window.pokeAnalyticsGranted) and, once gtag.js is loaded, every hit ('ga-disable' flag), so
+         events from before consent are never queued and a withdrawal takes effect without reload.
+         See docs/privacy-consent.md. -->
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -94,6 +97,7 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
       window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
       (function () {
         var loaded = false;
+        var mirrored = {};
         // ConsentModePurposeStatusEnum: 1 GRANTED, 2 DENIED, 3 NOT_APPLICABLE, 4 NOT_CONFIGURED, 0 UNKNOWN
         var SIGNALS = {
           ad_storage: 'adStoragePurposeConsentStatus',
@@ -101,17 +105,28 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
           ad_personalization: 'adPersonalizationPurposeConsentStatus',
           analytics_storage: 'analyticsStoragePurposeConsentStatus'
         };
+        function status() {
+          try { return window.googlefc.getGoogleConsentModeValues(); } catch (e) { return {}; }
+        }
+        // A signal is granted only while the CMP reports GRANTED; every other status is denied.
+        // Only changes are pushed, so nothing is granted by default and a withdrawal is mirrored.
+        function mirror() {
+          var values = status();
+          var update = {};
+          for (var signal in SIGNALS) {
+            var next = values[SIGNALS[signal]] === 1 ? 'granted' : 'denied';
+            if ((mirrored[signal] || 'denied') !== next) { mirrored[signal] = next; update[signal] = next; }
+          }
+          if (Object.keys(update).length) gtag('consent', 'update', update);
+          return values[SIGNALS.analytics_storage] === 1;
+        }
+        window.pokeAnalyticsGranted = mirror;
+        Object.defineProperty(window, 'ga-disable-G-9D59NL7KTH', {
+          get: function () { return status()[SIGNALS.analytics_storage] !== 1; }
+        });
         window.googlefc.callbackQueue.push({
           CONSENT_MODE_DATA_READY: function () {
-            var values = window.googlefc.getGoogleConsentModeValues();
-            var update = {};
-            for (var signal in SIGNALS) {
-              if (values[SIGNALS[signal]] === 1) update[signal] = 'granted';
-              else if (values[SIGNALS[signal]] === 2) update[signal] = 'denied';
-            }
-            if (Object.keys(update).length) gtag('consent', 'update', update);
-            var analytics = values[SIGNALS.analytics_storage];
-            if (loaded || analytics !== 1) return;
+            if (!mirror() || loaded) return;
             loaded = true;
             gtag('js', new Date());
             gtag('config', 'G-9D59NL7KTH');
