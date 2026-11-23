@@ -1,0 +1,12 @@
+---
+import HomePage from '../../components/pages/HomePage.astro';
+import EsNotFound from '../../components/pages/EsNotFound.astro';
+import { resolveEsRequest } from '../../lib/es-routes.js';
+
+// Spanish pilot: /es. While the pilot is switched off this is a plain 404.
+const result = resolveEsRequest('home', undefined, Astro.url.pathname);
+if (result.status === 301) return Astro.redirect(result.location, 301);
+if (result.status === 404 && !result.englishPath) return Astro.rewrite('/404');
+---
+
+{result.status === 200 ? <HomePage lang="es" /> : <EsNotFound englishPath={result.englishPath} />}

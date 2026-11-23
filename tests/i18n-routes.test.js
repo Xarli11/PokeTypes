@@ -285,10 +285,6 @@ describe('hreflang and locale helpers', () => {
 describe('wiring', () => {
     const read = f => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 
-    it('no /es routes exist yet', () => {
-        expect(() => readFileSync(new URL('../src/pages/es/index.astro', import.meta.url))).toThrow();
-    });
-
     it('the language layer is used by the client and the layout', () => {
         expect(read('src/lib/app-state.js')).toMatch(/statePath\(/);
         expect(read('src/js/main.js')).toMatch(/buildAppUrl\(/);

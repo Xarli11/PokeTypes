@@ -10,7 +10,11 @@ import { i18n } from './modules/i18n.js';
 import { initTypeSelectors, refreshTypeSelectorLabels } from './modules/typeSelector.js';
 import { trackEvent, createDebouncedTracker } from './modules/analytics.js';
 import { normalizeTypeSelection } from './modules/typeSelection.js';
-import { stripLangPrefix } from '../lib/i18n-routes.js';
+import { stripLangPrefix, withLangPrefix } from '../lib/i18n-routes.js';
+import { ES_PILOT_ENABLED, urlForState } from '../lib/i18n-pilot.js';
+import { renderLangSwitch } from '../lib/lang-switch.js';
+import { noticeFor } from '../lib/lang-notice.js';
+import { messages } from './lang/messages.js';
 import { parseAppLocation, buildAppUrl, withMode } from '../lib/app-state.js';
 
 let appData = null;
@@ -46,6 +50,10 @@ async function init() {
         // Initial state from URL
         await applyStateFromURL();
         syncModeInURL();
+        if (ES_PILOT_ENABLED) {
+            renderLanguageSwitch();
+            showLanguageNotice();
+        }
         window.addEventListener('popstate', restoreFromHistory);
         document.addEventListener('poketypes:modechange', e => pushModeToURL(e.detail.mode));
         
@@ -54,7 +62,68 @@ async function init() {
     }
 }
 
+// Spanish pilot ON: the selector is a link to the same page in the other language, or a button saying there is
+// none. It follows the URL, which the app changes with pushState, so it is rebuilt after every URL change.
+function renderLanguageSwitch() {
+    const btn = document.getElementById('lang-toggle');
+    if (!btn) return;
+    const pathname = window.location.pathname.replace(/\/+$/, '') || '/';
+    const html = renderLangSwitch({ lang: i18n.currentLang, pathname, t: key => i18n.t(key) });
+    const template = document.createElement('template');
+    template.innerHTML = html;
+    btn.replaceWith(template.content.firstElementChild);
+}
+
+// Visitors who showed they want Spanish (old saved preference, or they just left a Spanish page) get a small,
+// dismissible note on an English page: a link to the Spanish version, or that there is none yet.
+const INTENT_KEY = 'poketypes_es_intent';
+const NOTICE_DISMISSED_KEY = 'poketypes_lang_notice_dismissed';
+function safeSession(action, key, value) {
+    try { return action === 'get' ? sessionStorage.getItem(key) : sessionStorage.setItem(key, value); } catch { return null; }
+}
+function showLanguageNotice() {
+    const notice = noticeFor({
+        pathname: window.location.pathname.replace(/\/+$/, '') || '/',
+        storedLang: localStorage.getItem('poketypes_lang'),
+        cameFromSpanish: safeSession('get', INTENT_KEY) === '1',
+        dismissed: safeSession('get', NOTICE_DISMISSED_KEY) === '1'
+    });
+    document.getElementById('lang-notice')?.remove();
+    if (!notice) return;
+    const es = messages.es;
+    const text = notice.kind === 'available' ? es.lang_notice_available : es.lang_notice_unavailable;
+    const el = document.createElement('div');
+    el.id = 'lang-notice';
+    el.setAttribute('role', 'status');
+    el.lang = 'es';
+    el.className = 'flex items-center justify-center gap-3 text-xs mb-3 px-3 py-1.5 rounded-md';
+    el.style.cssText = 'color: var(--text-muted); border: 1px solid var(--border)';
+    const span = document.createElement('span');
+    span.textContent = text;
+    el.append(span);
+    if (notice.kind === 'available') {
+        const link = document.createElement('a');
+        link.href = notice.href;
+        link.hreflang = 'es';
+        link.className = 'underline font-bold';
+        link.textContent = es.lang_notice_view;
+        el.append(link);
+    }
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.setAttribute('aria-label', es.lang_notice_dismiss);
+    close.textContent = '×';
+    close.className = 'font-bold px-1';
+    close.addEventListener('click', () => { safeSession('set', NOTICE_DISMISSED_KEY, '1'); el.remove(); });
+    el.append(close);
+    document.querySelector('header')?.insertAdjacentElement('afterend', el);
+}
+
 function updateLanguageToggle() {
+    if (ES_PILOT_ENABLED) {
+        renderLanguageSwitch();
+        return;
+    }
     const btn = document.getElementById('lang-toggle');
     if (btn) {
         // Show current language
@@ -122,15 +191,29 @@ function pushURL(target) {
     // Never stack an entry for the URL already shown (same selection re-applied, language toggle...).
     if (target !== window.location.pathname + window.location.search) {
         window.history.pushState({}, '', target);
+        if (ES_PILOT_ENABLED) renderLanguageSwitch(); // the other-language page changes with the URL
     }
 }
 
 function syncURLWithState(t1, t2, t3, pokemonObj) {
-    pushURL(buildAppUrl({
+    const state = {
         pokemonSlug: pokemonObj && (pokemonObj.apiName || pokemonObj.name).toLowerCase().replace(/\s+/g, '-'),
-        types: [t1, t2, t3].filter(Boolean),
-        mode: getViewMode()
-    }, stripLangPrefix(window.location.pathname).lang));
+        types: [t1, t2, t3].filter(Boolean)
+    };
+    const mode = getViewMode();
+    const pageLang = stripLangPrefix(window.location.pathname).lang;
+
+    // A Spanish page may only move to URLs that exist. Analyses outside the pilot have no Spanish page, so the
+    // browser goes (full navigation, so HTML/metadata/canonical match the URL) to the equivalent English page.
+    if (ES_PILOT_ENABLED && pageLang === 'es' && mode === 'simple') {
+        const next = urlForState(state, 'es');
+        if (next.crossesLanguage) {
+            safeSession('set', INTENT_KEY, '1'); // lets the English page say it has no Spanish version
+            window.location.assign(next.url);
+            return;
+        }
+    }
+    pushURL(buildAppUrl({ ...state, mode }, pageLang));
 }
 
 // A user switched Calculator <-> Team Builder: new entry. Team Builder is /?mode=pro; going back to the
@@ -176,6 +259,7 @@ function clearSelection() {
 // one thing remembered (poketypes_mode = last mode shown), so a reload after going back shows what was on screen.
 async function restoreFromHistory() {
     const state = parseAppLocation(window.location);
+    if (ES_PILOT_ENABLED) renderLanguageSwitch();
 
     // After a reload, the entries around the current one can belong to a different kind of page (a server-rendered
     // /tipo/* or /pokemon/* page has no Team Builder and no home state). Same-document history steps keep this
@@ -390,8 +474,25 @@ function setupEventListeners() {
         }
     });
 
-    // Language Toggle
-    if (langToggle) {
+    // Language selector. Pilot ON: a link (full navigation) or a button that explains there is no Spanish page.
+    if (ES_PILOT_ENABLED) {
+        document.addEventListener('click', (e) => {
+            const unavailable = e.target.closest?.('#lang-toggle[data-unavailable]');
+            if (!unavailable) return;
+            document.getElementById('lang-note')?.remove();
+            const note = document.createElement('div');
+            note.id = 'lang-note';
+            note.setAttribute('role', 'status');
+            note.className = 'text-xs text-center mb-3';
+            note.style.color = 'var(--text-muted)';
+            note.textContent = unavailable.getAttribute('title');
+            document.querySelector('header')?.insertAdjacentElement('afterend', note);
+            setTimeout(() => note.remove(), 5000);
+        });
+    }
+
+    // Language Toggle (legacy, in-place translation: only while the pilot is off)
+    if (langToggle && !ES_PILOT_ENABLED) {
         langToggle.addEventListener('click', () => {
             const newLang = i18n.currentLang === 'es' ? 'en' : 'es';
             i18n.setLanguage(newLang);
@@ -670,7 +771,7 @@ function displayAnalysis(t1, t2, t3 = null) {
     if (!t1 && !t2 && !t3) {
         if (!emptyState) {
             // Tipo/pokemon pages have no empty state — go home
-            window.location.href = '/';
+            window.location.href = withLangPrefix('/', stripLangPrefix(window.location.pathname).lang);
             return;
         }
         section.classList.add('hidden');

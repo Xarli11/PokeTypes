@@ -313,7 +313,10 @@ export const messages = {
         ld_feature_5: "1,000+ Pokemon database",
         ld_feature_6: "Mobile-friendly PWA",
         ld_feature_7: "Interactive type chart",
-        ld_feature_8: "Tactical advisor"
+        ld_feature_8: "Tactical advisor",
+        switch_to_es: "ES – Español",
+        switch_to_en: "EN – English",
+        spanish_unavailable: "Spanish version not available for this page yet"
     },
     es: {
         // UI Headers & Labels
@@ -637,6 +640,17 @@ export const messages = {
         ld_feature_5: "Base de datos de más de 1.000 Pokémon",
         ld_feature_6: "PWA optimizada para móvil",
         ld_feature_7: "Tabla de tipos interactiva",
-        ld_feature_8: "Asesor táctico"
+        ld_feature_8: "Asesor táctico",
+        switch_to_es: "ES – Español",
+        switch_to_en: "EN – English",
+        spanish_unavailable: "Versión en español aún no disponible para esta página",
+        lang_notice_available: "Esta página está disponible en español.",
+        lang_notice_view: "Ver en español",
+        lang_notice_unavailable: "Esta página aún no está disponible en español.",
+        lang_notice_dismiss: "Cerrar aviso",
+        es_404_title: "Página no disponible en español",
+        es_404_text: "Esta página aún no tiene versión en español.",
+        es_404_english: "Ver la versión en inglés",
+        es_404_home: "Ir al inicio"
     }
 };

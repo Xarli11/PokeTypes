@@ -4,6 +4,8 @@
 // theme-toggle, toggle-simple, toggle-pro) — only the markup/classes
 // changed for the Sprint 2 redesign.
 import { createT } from '../lib/i18n-server.js';
+import { ES_PILOT_ENABLED } from '../lib/i18n-pilot.js';
+import { renderLangSwitch } from '../lib/lang-switch.js';
 
 interface Props {
     showModeSwitcher?: boolean;
@@ -13,6 +15,9 @@ interface Props {
 
 const { showModeSwitcher = false, contextLabel = '', lang = 'en' } = Astro.props;
 const { t, h } = createT(lang);
+// With the Spanish pilot on, the selector is a link (or an explicit "not available" button) rendered by the
+// same code the browser uses; while it is off the original button is rendered unchanged.
+const langSwitchHtml = ES_PILOT_ENABLED ? renderLangSwitch({ lang, pathname: Astro.url.pathname.replace(/\/+$/, '') || '/', t }) : '';
 ---
 
 <header class="mb-6">
@@ -45,9 +50,13 @@ const { t, h } = createT(lang);
                 </div>
             )}
 
-            <button id="lang-toggle" class="icon-btn font-bold text-sm tracking-wide" aria-label={t('toggle_language')} type="button">
-                ES
-            </button>
+            {ES_PILOT_ENABLED
+                ? <Fragment set:html={langSwitchHtml} />
+                : (
+                    <button id="lang-toggle" class="icon-btn font-bold text-sm tracking-wide" aria-label={t('toggle_language')} type="button">
+                        ES
+                    </button>
+                )}
 
             <button id="theme-toggle" class="icon-btn" aria-label={t('toggle_dark_mode')} type="button">
                 <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">

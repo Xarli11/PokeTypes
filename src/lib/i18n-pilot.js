@@ -91,3 +91,8 @@ export function urlForState(state, lang, enabled = ES_PILOT_ENABLED) {
     if (isPilotPage(wanted, enabled)) return { url: wanted, lang, crossesLanguage: false };
     return { url: statePath(state, DEFAULT_LANG), lang: DEFAULT_LANG, crossesLanguage: true };
 }
+
+/** Spanish URLs for the sitemap: the pilot pages, and nothing while the pilot is off. */
+export function sitemapSpanishPaths(enabled = ES_PILOT_ENABLED) {
+    return enabled ? PILOT_PAGES.map(page => page.es) : [];
+}

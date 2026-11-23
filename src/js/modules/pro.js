@@ -1,3 +1,4 @@
+import { stripLangPrefix, withLangPrefix } from '../../lib/i18n-routes.js';
 import { loadTeam, saveTeam, addPokemonToSlot, removePokemonFromSlot, clearTeam, setAbility, setNature, setItem, getTeam } from './team.js';
 import { loadAppData } from './data.js';
 import { analyzeTeamDefense, getThreatAlerts, analyzeTeamRoles } from './analysis.js';
@@ -777,7 +778,7 @@ async function shareTeamURL() {
     const encoded = serializeTeam(team);
 
     // Always link to home page, regardless of current route
-    const url = new URL(window.location.origin + '/');
+    const url = new URL(window.location.origin + withLangPrefix('/', stripLangPrefix(window.location.pathname).lang));
     url.searchParams.set('team', encoded);
     url.searchParams.set('mode', 'pro');
     const shareUrl = url.toString();
