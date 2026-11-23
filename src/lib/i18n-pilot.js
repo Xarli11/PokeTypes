@@ -33,7 +33,14 @@ export const ES_DRAFT_KEYS = [
     'breadcrumb_type', 'ld_app_alternate_name', 'ld_app_description',
     'ld_feature_1', 'ld_feature_2', 'ld_feature_3', 'ld_feature_4', 'ld_feature_5', 'ld_feature_6', 'ld_feature_7', 'ld_feature_8',
     'home_aria_label', 'toggle_language', 'toggle_dark_mode', 'share_analysis', 'extra_type_help',
-    'browse_by_type', 'click_to_copy_username', 'team_count_initial'
+    'browse_by_type', 'click_to_copy_username', 'team_count_initial',
+    // C2: language selector, notice and Spanish 404
+    'switch_to_es', 'switch_to_en', 'spanish_unavailable',
+    'lang_notice_available', 'lang_notice_view', 'lang_notice_unavailable', 'lang_notice_dismiss',
+    'es_404_title', 'es_404_text', 'es_404_english', 'es_404_home',
+    // C3a: new keys and rewritten home SEO copy
+    'copied', 'search_start_typing', 'comp_tier_meta',
+    'chart_desc', 'effectiveness_desc', 'dual_desc'
 ];
 
 const normalize = pathname => (pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname);

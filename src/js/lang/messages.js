@@ -8,6 +8,9 @@ export const messages = {
         type_page_h1: "{type} Type Weaknesses & Resistances",
         type_subtitle_prefix: "Effectiveness analysis for",
         search_placeholder: "Search Pokemon...",
+        search_start_typing: "Type to start searching...",
+        copied: "Copied!",
+        comp_tier_meta: "Smogon Tier & Meta",
         reset_btn: "Reset",
         type_1: "Type 1",
         type_2: "Type 2",
@@ -327,6 +330,9 @@ export const messages = {
         type_page_h1: "Debilidades y Resistencias del Tipo {type}",
         type_subtitle_prefix: "Análisis de efectividad para el tipo",
         search_placeholder: "Buscar Pokémon...",
+        search_start_typing: "Escribe para empezar a buscar...",
+        copied: "¡Copiado!",
+        comp_tier_meta: "Tier y meta de Smogon",
         reset_btn: "Reiniciar",
         type_1: "Tipo 1",
         type_2: "Tipo 2",
@@ -442,11 +448,11 @@ export const messages = {
         
         // Footer & Info
         mastering_chart: "Dominando la Tabla de Tipos",
-        chart_desc: "Entender la efectividad de tipos es crucial. Nuestra herramienta te ayuda a encontrar debilidades, resistencias e inmunidades al instante.",
+        chart_desc: "Entender la efectividad de tipos es fundamental para cualquier entrenador Pokémon, tanto si juegas a Pokémon Escarlata y Púrpura (Gen 9) como a títulos clásicos. Nuestra calculadora de tipos te ayuda a encontrar al instante las debilidades, resistencias e inmunidades de cualquier Pokémon de uno o dos tipos.",
         effectiveness_title: "¿Cómo funciona la efectividad?",
-        effectiveness_desc: "Cada ataque tiene un modificador. Estándar es 1x. Super Eficaz es 2x. No muy eficaz es 0.5x. Las inmunidades son 0x.",
+        effectiveness_desc: "Cada ataque del juego tiene un modificador de tipo. Un ataque normal causa 1x de daño. Si un movimiento es muy eficaz, causa 2x. Si es poco eficaz, causa 0.5x. Las inmunidades causan 0x, es decir, el ataque no tiene ningún efecto.",
         dual_title: "Debilidades de Tipo Dual",
-        dual_desc: "¡Las debilidades se acumulan! Si ambos tipos son débiles al mismo elemento, el daño es 4x. Las resistencias pueden cancelar debilidades.",
+        dual_desc: "Muchos Pokémon tienen dos tipos (por ejemplo, Charizard es Fuego/Volador). ¡Las debilidades se acumulan! Si ambos tipos son débiles al mismo elemento (como Roca contra Fuego/Volador), el multiplicador de daño pasa a 4x. Por el contrario, las resistencias pueden anular las debilidades.",
         
         // Empty States
         none: "Ninguno",

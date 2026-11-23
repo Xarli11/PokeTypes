@@ -467,7 +467,7 @@ export function renderCompetitiveData(container, data, pokemonName) {
                     </div>
                     <div>
                         <h2 class="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-[0.2em]">${i18n.t('comp_analysis') || 'Strategic Analysis'}</h2>
-                        <p class="text-xl font-black text-slate-900 dark:text-white">Smogon Tier & Meta</p>
+                        <p class="text-xl font-black text-slate-900 dark:text-white">${i18n.t('comp_tier_meta')}</p>
                     </div>
                 </div>
                 
