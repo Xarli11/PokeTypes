@@ -5,7 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { messages } from '../src/js/lang/messages.js';
 import { PILOT_EN_PATHS } from '../src/lib/i18n-pilot.js';
-import { pokemonSlug } from '../src/lib/seo.js';
+import { abilitySlugsOf } from '../src/lib/seo.js';
 
 const root = new URL('../', import.meta.url);
 const read = f => JSON.parse(readFileSync(new URL(f, root), 'utf8'));
@@ -15,13 +15,7 @@ const args = new Set(process.argv.slice(2));
 
 let slugs = Object.keys(abilityNames);
 if (args.has('--pilot')) {
-    const pilot = new Set(PILOT_EN_PATHS.filter(p => p.startsWith('/pokemon/')).map(p => p.slice(9)));
-    const names = new Set();
-    for (const [key, entry] of Object.entries(pokedex)) {
-        if (!pilot.has(entry.slug ?? pokemonSlug(entry.name))) continue;
-        Object.values(entry.abilities ?? {}).forEach(a => names.add(String(a).toLowerCase().replace(/ /g, '-')));
-    }
-    slugs = [...names];
+    slugs = abilitySlugsOf(pokedex, PILOT_EN_PATHS.filter(p => p.startsWith('/pokemon/')).map(p => p.slice(9)));
 }
 
 const hasText = (data, lang) =>

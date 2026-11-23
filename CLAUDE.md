@@ -27,7 +27,7 @@ Utility scripts (run with `node scripts/<name>`):
 
 ## Tests
 
-Vitest suite in `tests/` (29 files, ~882 tests, Node environment — no DOM, no browser). Pure logic is tested directly; DOM-heavy modules only through their pure helpers.
+Vitest suite in `tests/` (29 files, ~883 tests, Node environment — no DOM, no browser). Pure logic is tested directly; DOM-heavy modules only through their pure helpers.
 
 - `tests/type-engine/*` — effectiveness, modifiers (abilities/items), battle context, Ring Target, triple type, team analysis, SSR/client parity.
 - `tests/seo.test.js` — sitemap, robots.txt, `seo.js` helpers, SSR stats/abilities HTML.

@@ -103,3 +103,18 @@ describe('server-rendered stats and abilities', () => {
         expect(missing).toEqual([]);
     });
 });
+
+describe('abilitySlugsOf', () => {
+    it('uses entry.slug, and falls back to pokemonSlug(entry) (apiName/name) when there is none', async () => {
+        const { abilitySlugsOf } = await import('../src/lib/seo.js');
+        const dex = [
+            { slug: 'pikachu', name: 'Pikachu', abilities: { 0: 'Static', H: 'Lightning Rod' } },
+            { name: 'Charizard-Mega-X', abilities: { 0: 'Tough Claws' } },
+            { name: 'Mr. Mime', apiName: 'mr-mime', abilities: { 0: 'Soundproof', 1: 'Filter' } },
+            { slug: 'gengar', name: 'Gengar', abilities: { 0: 'Cursed Body' } }
+        ];
+        expect(abilitySlugsOf(dex, ['pikachu', 'charizard-mega-x', 'mr-mime']).sort())
+            .toEqual(['filter', 'lightning-rod', 'soundproof', 'static', 'tough-claws']);
+        expect(abilitySlugsOf(dex, ['nope'])).toEqual([]);
+    });
+});

@@ -5,6 +5,17 @@ export function pokemonSlug(pokemon) {
     return (pokemon.apiName || pokemon.name).toLowerCase().replace(/\s+/g, '-');
 }
 
+/** Ability slugs (PokeAPI style) of the Pokemon whose slugs are in `slugs`; entries without `slug` fall back to pokemonSlug(entry). */
+export function abilitySlugsOf(pokedex, slugs) {
+    const wanted = new Set(slugs);
+    const out = new Set();
+    for (const entry of pokedex) {
+        if (!wanted.has(entry.slug ?? pokemonSlug(entry))) continue;
+        Object.values(entry.abilities ?? {}).forEach(a => out.add(String(a).toLowerCase().replace(/ /g, '-')));
+    }
+    return [...out];
+}
+
 // "/tipo/fire/" and "/tipo/fire" are the same document: advertise only one.
 export function normalizePathname(pathname) {
     return pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
