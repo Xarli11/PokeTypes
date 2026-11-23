@@ -154,6 +154,7 @@ describe('every key the SSR layer uses exists in every language', () => {
 
 describe('no English literals left in SSR templates', () => {
     const sources = [
+        'src/components/pages/HomePage.astro', 'src/components/pages/TypePage.astro', 'src/components/pages/PokemonPage.astro',
         'src/pages/index.astro', 'src/pages/tipo/[...slug].astro', 'src/pages/pokemon/[name].astro',
         'src/components/AppHeader.astro', 'src/components/ControlPanel.astro', 'src/components/ShareButton.astro',
         'src/components/TypeLinks.astro', 'src/components/TypeSelectorField.astro', 'src/layouts/Layout.astro',

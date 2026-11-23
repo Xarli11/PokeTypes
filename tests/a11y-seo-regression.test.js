@@ -54,7 +54,7 @@ describe('type pill contrast (WCAG AA, small bold text = 4.5:1)', () => {
 });
 
 describe('landmarks and headings', () => {
-    it.each(['src/pages/index.astro', 'src/pages/tipo/[...slug].astro', 'src/pages/pokemon/[name].astro'])(
+    it.each(['src/components/pages/HomePage.astro', 'src/components/pages/TypePage.astro', 'src/components/pages/PokemonPage.astro'])(
         '%s has exactly one <main> that contains the page content, after the header',
         file => {
             const src = read(file);

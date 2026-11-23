@@ -24,6 +24,8 @@ beforeAll(() => {
     dirs.changed = make('changed', { 'p1.html': 'one', 'p2.html': 'TWO' });
     dirs.empty = make('empty', {});
     dirs.hashA = make('hashA', { 'p.html': '<link href="/_astro/index.AbCdEf12.css">\n<p>\n   Hello\n</p>' });
+    dirs.nameA = make('nameA', { 'p.html': '<script src="/_astro/index.astro_x.AbCdEf12.js"></script><p>Hi</p>' });
+    dirs.nameB = make('nameB', { 'p.html': '<script src="/_astro/HomePage.astro_x.ZyXwVu98.js"></script><p>Hi</p>' });
     dirs.hashB = make('hashB', { 'p.html': '<link href="/_astro/index.ZyXwVu98.css"><p> Hello </p>' });
 });
 
@@ -61,5 +63,11 @@ describe('ssr-snapshot diff', () => {
         expect(diff(dirs.hashA, dirs.hashB, '--ignore-asset-hashes', '--collapse-whitespace').status).toBe(0);
         // text changes are never forgiven
         expect(diff(dirs.a, dirs.changed, '--ignore-asset-hashes', '--collapse-whitespace').status).toBe(1);
+    });
+
+    it('--ignore-asset-names forgives a renamed chunk but not other changes', () => {
+        expect(diff(dirs.nameA, dirs.nameB, '--ignore-asset-hashes').status).toBe(1);
+        expect(diff(dirs.nameA, dirs.nameB, '--ignore-asset-names').status).toBe(0);
+        expect(diff(dirs.a, dirs.changed, '--ignore-asset-names').status).toBe(1);
     });
 });

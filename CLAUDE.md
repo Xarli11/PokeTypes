@@ -22,11 +22,11 @@ Utility scripts (run with `node scripts/<name>`):
 - `sync-abilities.js` — sync ability i18n data
 - `verify-types.js` — validate `src/data/type-data.json` against Smogon's type chart (no npm alias)
 - `audit-images.js` — check sprite URLs / `image-fixes.json`
-- `ssr-snapshot.mjs` — `capture <baseUrl> <dir>` / `diff <dirA> <dirB>`: compare (file sets in both directions + bytes; optional `--ignore-asset-hashes`, `--collapse-whitespace`) the server-rendered HTML of every sitemap URL between two builds (use it to prove a refactor changed nothing)
+- `ssr-snapshot.mjs` — `capture <baseUrl> <dir>` / `diff <dirA> <dirB>`: compare (file sets in both directions + bytes; optional `--ignore-asset-hashes`, `--ignore-asset-names`, `--collapse-whitespace`) the server-rendered HTML of every sitemap URL between two builds (use it to prove a refactor changed nothing)
 
 ## Tests
 
-Vitest suite in `tests/` (27 files, ~816 tests, Node environment — no DOM, no browser). Pure logic is tested directly; DOM-heavy modules only through their pure helpers.
+Vitest suite in `tests/` (27 files, ~820 tests, Node environment — no DOM, no browser). Pure logic is tested directly; DOM-heavy modules only through their pure helpers.
 
 - `tests/type-engine/*` — effectiveness, modifiers (abilities/items), battle context, Ring Target, triple type, team analysis, SSR/client parity.
 - `tests/seo.test.js` — sitemap, robots.txt, `seo.js` helpers, SSR stats/abilities HTML.
@@ -44,7 +44,7 @@ Vitest suite in `tests/` (27 files, ~816 tests, Node environment — no DOM, no 
 
 ### Rendering model
 
-- `/tipo/*` and `/pokemon/*` are **server-rendered** (`src/pages/tipo/[...slug].astro`, `src/pages/pokemon/[name].astro`): title, meta, canonical, JSON-LD, defense/offense groups and (for Pokémon) base stats and ability names are in the HTML. `/` is a mostly client-rendered shell.
+- `/tipo/*` and `/pokemon/*` are **server-rendered**: thin routes (`src/pages/tipo/[...slug].astro`, `src/pages/pokemon/[name].astro`, `src/pages/index.astro`) resolve the request (redirects, 404) and render `src/components/pages/{TypePage,PokemonPage,HomePage}.astro`, which take a `lang` prop: title, meta, canonical, JSON-LD, defense/offense groups and (for Pokémon) base stats and ability names are in the HTML. `/` is a mostly client-rendered shell.
 - The same `src/js/main.js` then hydrates every page: selectors, search, URL state, Team Builder, language toggle. Language is **client-side only** today (`localStorage`); SSR HTML is always English (`<html lang="en">`). No `/es/` routes, no `hreflang`.
 - `/tipo/<slug>` has **one URL per combination**: `canonicalTypeSlug()` (`src/lib/seo.js`) orders types as in the type chart and de-duplicates; any other spelling 301-redirects. Unknown slugs → 404 (`Astro.rewrite('/404')`).
 
