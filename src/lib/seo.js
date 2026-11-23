@@ -20,6 +20,16 @@ export function parseTypeSlug(slug, types) {
     return resolved.every(Boolean) ? resolved : null;
 }
 
+// Stable URL slug for a combination of types. Defense (product) and offense
+// (max) are symmetric, so "flying-fire" and "fire-flying" are the same page:
+// types are de-duplicated and ordered as in the type chart (`allTypes`), which
+// is also the order of the selectors. Single source for the page redirect, the
+// canonical URL, the sitemap and the client-side URL sync.
+export function canonicalTypeSlug(types, allTypes) {
+    const wanted = new Set(types.map(t => t.toLowerCase()));
+    return allTypes.filter(t => wanted.has(t.toLowerCase())).map(t => t.toLowerCase()).join('-');
+}
+
 const STAT_ROWS = [['hp', 'HP'], ['atk', 'Attack'], ['def', 'Defense'], ['spa', 'Sp. Atk'], ['spd', 'Sp. Def'], ['spe', 'Speed']];
 
 // Same markup and thresholds as renderStats() in ui.js, with the bar already

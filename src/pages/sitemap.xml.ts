@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import pokedex from '../data/pokedex.json';
 import typeData from '../data/type-data.json';
-import { pokemonSlug } from '../lib/seo.js';
+import { pokemonSlug, canonicalTypeSlug } from '../lib/seo.js';
 
 const SITE = 'https://poketypes.app';
 
@@ -37,7 +37,7 @@ export const GET: APIRoute = () => {
         ['normal', 'flying'], ['rock', 'water'],
     ];
     dualTypes.forEach(([t1, t2]) => {
-        entries.push(url(`/tipo/${t1}-${t2}`, '0.8', 'monthly'));
+        entries.push(url(`/tipo/${canonicalTypeSlug([t1, t2], typeData.types)}`, '0.8', 'monthly'));
     });
 
     // All Pokemon pages. Several pokedex entries (Arceus plates, Totems...)
