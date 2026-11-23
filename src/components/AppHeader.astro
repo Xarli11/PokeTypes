@@ -3,17 +3,21 @@
 // exact element ids main.js/pro.js already wire up (lang-toggle,
 // theme-toggle, toggle-simple, toggle-pro) — only the markup/classes
 // changed for the Sprint 2 redesign.
+import { createT } from '../lib/i18n-server.js';
+
 interface Props {
     showModeSwitcher?: boolean;
     contextLabel?: string;
+    lang?: string;
 }
 
-const { showModeSwitcher = false, contextLabel = '' } = Astro.props;
+const { showModeSwitcher = false, contextLabel = '', lang = 'en' } = Astro.props;
+const { t, h } = createT(lang);
 ---
 
 <header class="mb-6">
     <div class="max-w-7xl mx-auto flex items-center justify-between gap-3 h-14">
-        <a href="/" class="flex items-center gap-2 shrink-0 min-w-0" aria-label="PokeTypes — Home">
+        <a href="/" class="flex items-center gap-2 shrink-0 min-w-0" aria-label={t('home_aria_label')}>
             <svg class="w-6 h-6 shrink-0" style="color: var(--text-muted)" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8"/>
                 <path d="M5 50 H95" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
@@ -24,7 +28,7 @@ const { showModeSwitcher = false, contextLabel = '' } = Astro.props;
                  the mode switcher + lang/theme controls always fit without
                  page-level horizontal overflow (see docs in this component). -->
             <span class="brand-title hidden sm:inline text-lg sm:text-2xl truncate">
-                <span data-i18n="brand_name">PokeTypes</span>
+                <span data-i18n="brand_name"><Fragment set:html={h('brand_name')} /></span>
             </span>
             {contextLabel && (
                 <span class="hidden md:inline text-sm font-medium truncate" style="color: var(--text-muted)">
@@ -36,16 +40,16 @@ const { showModeSwitcher = false, contextLabel = '' } = Astro.props;
         <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
             {showModeSwitcher && (
                 <div class="mode-switch">
-                    <button id="toggle-simple" class="mode-btn mode-btn-active" data-i18n="mode_calculator" type="button">Calculator</button>
-                    <button id="toggle-pro" class="mode-btn" data-i18n="mode_team_builder" type="button">Team Builder</button>
+                    <button id="toggle-simple" class="mode-btn mode-btn-active" data-i18n="mode_calculator" type="button"><Fragment set:html={h('mode_calculator')} /></button>
+                    <button id="toggle-pro" class="mode-btn" data-i18n="mode_team_builder" type="button"><Fragment set:html={h('mode_team_builder')} /></button>
                 </div>
             )}
 
-            <button id="lang-toggle" class="icon-btn font-bold text-sm tracking-wide" aria-label="Toggle language" type="button">
+            <button id="lang-toggle" class="icon-btn font-bold text-sm tracking-wide" aria-label={t('toggle_language')} type="button">
                 ES
             </button>
 
-            <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark mode" type="button">
+            <button id="theme-toggle" class="icon-btn" aria-label={t('toggle_dark_mode')} type="button">
                 <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>

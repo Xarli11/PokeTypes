@@ -3,24 +3,27 @@
 // `localizePlaceholder` keeps the home page's data-i18n hook on the input; the
 // SSR pages never had it (see i18n.updateDOM()).
 import TypeSelectorField from './TypeSelectorField.astro';
+import { createT } from '../lib/i18n-server.js';
 
 interface Props {
     localizePlaceholder?: boolean;
+    lang?: string;
 }
-const { localizePlaceholder = false } = Astro.props;
+const { localizePlaceholder = false, lang = 'en' } = Astro.props;
+const { t, h } = createT(lang);
 ---
 
 <section class="panel flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
     <div class="relative w-full lg:flex-1">
-        <input id="pokemon-search" type="text" placeholder="Search Pokemon..." data-i18n={localizePlaceholder ? 'search_placeholder' : undefined} class="search-input" autocomplete="off">
+        <input id="pokemon-search" type="text" placeholder={t('search_placeholder')} data-i18n={localizePlaceholder ? 'search_placeholder' : undefined} class="search-input" autocomplete="off">
         <ul id="suggestions" class="hidden"></ul>
     </div>
     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto">
-        <TypeSelectorField selectId="type-select" placeholderKey="type_1" />
-        <TypeSelectorField selectId="type2-select" placeholderKey="type_2" />
-        <TypeSelectorField selectId="type3-select" placeholderKey="type_3" extra tooltipKey="type3_tooltip" />
+        <TypeSelectorField selectId="type-select" placeholderKey="type_1" lang={lang} />
+        <TypeSelectorField selectId="type2-select" placeholderKey="type_2" lang={lang} />
+        <TypeSelectorField selectId="type3-select" placeholderKey="type_3" extra tooltipKey="type3_tooltip" lang={lang} />
         <button id="reset-button" data-i18n="reset_btn" type="button" class="shrink-0 px-4 py-2.5 rounded-md text-sm font-bold transition-colors duration-150" style="color: var(--text-muted); border: 1px solid var(--border)">
-            Reset
+            <Fragment set:html={h('reset_btn')} />
         </button>
     </div>
 </section>

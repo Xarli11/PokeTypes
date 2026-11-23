@@ -4,14 +4,18 @@
 // <select> it controls — kept in the DOM so every existing main.js
 // listener (change events, .value reads/writes from search/reset/URL
 // restore) keeps working unchanged. See typeSelector.js for the wiring.
+import { createT } from '../lib/i18n-server.js';
+
 interface Props {
+    lang?: string;
     selectId: string;
     placeholderKey: string;
     extra?: boolean;
     tooltipKey?: string;
 }
 
-const { selectId, placeholderKey, extra = false, tooltipKey } = Astro.props;
+const { selectId, placeholderKey, extra = false, tooltipKey, lang = 'en' } = Astro.props;
+const { t } = createT(lang);
 const helpId = tooltipKey ? `${selectId}-help` : undefined;
 ---
 
@@ -44,7 +48,7 @@ const helpId = tooltipKey ? `${selectId}-help` : undefined;
              via aria-describedby, so screen reader users hear it just by
              focusing the button — they don't have to find/open this too. -->
         <details class="type-selector-help">
-            <summary aria-label="Extra Type help">?</summary>
+            <summary aria-label={t('extra_type_help')}>?</summary>
             <div id={helpId} role="tooltip" class="type-selector-help-panel" data-i18n={tooltipKey}></div>
         </details>
     )}
