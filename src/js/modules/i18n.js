@@ -1,10 +1,13 @@
 import { messages } from '../lang/messages.js';
-import { detectLang } from '../../lib/i18n-routes.js';
+import { detectLang, getLangFromPath } from '../../lib/i18n-routes.js';
+import { ES_PILOT_ENABLED } from '../../lib/i18n-pilot.js';
 
 class I18n {
     constructor() {
-        // A /es/... URL decides its own language; every other URL keeps using the saved one.
-        this.currentLang = detectLang(typeof location !== 'undefined' ? location.pathname : '/', localStorage.getItem('poketypes_lang'));
+        // Pilot ON: the URL is the only source of the page language (no mixed-language pages because of a
+        // saved preference). Pilot OFF: a /es/... URL decides itself, every other URL keeps the saved language.
+        const pathname = typeof location !== 'undefined' ? location.pathname : '/';
+        this.currentLang = ES_PILOT_ENABLED ? getLangFromPath(pathname) : detectLang(pathname, localStorage.getItem('poketypes_lang'));
         this.abilityMap = {}; // Loaded dynamically
     }
 

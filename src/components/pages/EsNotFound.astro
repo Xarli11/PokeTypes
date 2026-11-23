@@ -1,0 +1,27 @@
+---
+// 404 for /es/* addresses that are not pilot pages: a real 404 (not a soft one),
+// with a way out to the English equivalent when there is one.
+import Layout from '../../layouts/Layout.astro';
+import { createT } from '../../lib/i18n-server.js';
+
+interface Props {
+    englishPath?: string | null;
+}
+const { englishPath = null } = Astro.props;
+const { t, h } = createT('es');
+Astro.response.status = 404;
+Astro.response.statusText = 'Not Found';
+---
+
+<Layout title={t('es_404_title') + ' | PokeTypes'} description={t('es_404_text')} lang="es" canonicalPath="/es">
+    <div class="max-w-xl mx-auto py-16 text-center">
+        <main>
+            <h1 class="text-xl font-black mb-3" style="color: var(--text)"><Fragment set:html={h('es_404_title')} /></h1>
+            <p class="mb-6" style="color: var(--text-muted)"><Fragment set:html={h('es_404_text')} /></p>
+            <p class="flex flex-wrap justify-center gap-4 text-sm font-bold">
+                {englishPath && <a href={englishPath} hreflang="en" class="underline"><Fragment set:html={h('es_404_english')} /></a>}
+                <a href="/es" class="underline"><Fragment set:html={h('es_404_home')} /></a>
+            </p>
+        </main>
+    </div>
+</Layout>

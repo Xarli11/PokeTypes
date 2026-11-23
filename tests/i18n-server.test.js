@@ -132,7 +132,7 @@ describe('every key the SSR layer uses exists in every language', () => {
     const files = [
         ...walk(join(root, 'src/pages')), ...walk(join(root, 'src/components')),
         join(root, 'src/layouts/Layout.astro'), join(root, 'src/lib/type-render.js'), join(root, 'src/lib/seo.js')
-    ].filter(f => /\.(astro|js|ts)$/.test(f));
+    ].filter(f => /\.(astro|js|ts)$/.test(f) && !f.endsWith('EsNotFound.astro')); // Spanish-only page: its keys exist in `es` only
 
     const used = new Set();
     for (const f of files) {

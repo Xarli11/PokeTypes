@@ -1,0 +1,16 @@
+---
+import TypePage from '../../../components/pages/TypePage.astro';
+import EsNotFound from '../../../components/pages/EsNotFound.astro';
+import { resolveEsRequest } from '../../../lib/es-routes.js';
+import { resolveTypeRoute } from '../../../lib/i18n-routes.js';
+
+// Spanish pilot: /es/tipo/<spanish slug>. Only pilot pages exist; permutations, duplicates,
+// case and English aliases of an existing page redirect (301) to its canonical URL.
+const { slug } = Astro.params;
+const result = resolveEsRequest('tipo', slug, Astro.url.pathname);
+if (result.status === 301) return Astro.redirect(result.location, 301);
+if (result.status === 404 && !result.englishPath) return Astro.rewrite('/404');
+const canonicalSlug = resolveTypeRoute(slug, 'es')?.slug;
+---
+
+{result.status === 200 && canonicalSlug ? <TypePage lang="es" canonicalSlug={canonicalSlug} /> : <EsNotFound englishPath={result.englishPath} />}

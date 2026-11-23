@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import pokedex from '../data/pokedex.json';
 import typeData from '../data/type-data.json';
 import { pokemonSlug, canonicalTypeSlug } from '../lib/seo.js';
+import { sitemapSpanishPaths } from '../lib/i18n-pilot.js';
 
 const SITE = 'https://poketypes.app';
 
@@ -45,6 +46,11 @@ export const GET: APIRoute = () => {
     const slugs = new Set((pokedex as Array<{ name: string; apiName?: string }>).map(pokemonSlug));
     slugs.forEach(slug => {
         entries.push(url(`/pokemon/${slug}`, '0.7', 'monthly'));
+    });
+
+    // Spanish pilot pages (none while the pilot is off). hreflang lives in each page's <head>.
+    sitemapSpanishPaths().forEach(path => {
+        entries.push(url(path, '0.6', 'monthly'));
     });
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>

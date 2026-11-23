@@ -1,0 +1,13 @@
+---
+import PokemonPage from '../../../components/pages/PokemonPage.astro';
+import EsNotFound from '../../../components/pages/EsNotFound.astro';
+import { resolveEsRequest } from '../../../lib/es-routes.js';
+
+// Spanish pilot: /es/pokemon/<slug> (official names, same slug as English). Only pilot pages exist.
+const { name } = Astro.params;
+const result = resolveEsRequest('pokemon', name, Astro.url.pathname);
+if (result.status === 301) return Astro.redirect(result.location, 301);
+if (result.status === 404 && !result.englishPath) return Astro.rewrite('/404');
+---
+
+{result.status === 200 ? <PokemonPage lang="es" slug={String(name).toLowerCase()} /> : <EsNotFound englishPath={result.englishPath} />}
