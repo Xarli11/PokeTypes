@@ -449,24 +449,24 @@ export function renderCompetitiveData(container, data, pokemonName) {
     const slug = pokemonName.toLowerCase().replace(/[^a-z0-0]/g, '');
 
     const tierColors = {
-        'Uber': 'bg-red-500', 'OU': 'bg-emerald-500', 'UU': 'bg-blue-500',
-        'RU': 'bg-amber-500', 'NU': 'bg-violet-500', 'PU': 'bg-slate-500',
-        'LC': 'bg-pink-500', 'AG': 'bg-slate-900'
+        'Uber': 'bg-red-600', 'OU': 'bg-emerald-700', 'UU': 'bg-blue-600',
+        'RU': 'bg-amber-700', 'NU': 'bg-violet-600', 'PU': 'bg-slate-500',
+        'LC': 'bg-pink-600', 'AG': 'bg-slate-900'
     };
 
-    const tierColor = tierColors[tier] || 'bg-slate-400';
+    const tierColor = tierColors[tier] || 'bg-slate-600';
 
     container.innerHTML = `
         <div class="flex flex-col gap-6 animate-in fade-in">
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
-                    <div class="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl text-emerald-600 dark:text-emerald-400">
+                    <div class="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl text-emerald-700 dark:text-emerald-400">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                         </svg>
                     </div>
                     <div>
-                        <h3 class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">${i18n.t('comp_analysis') || 'Strategic Analysis'}</h3>
+                        <h2 class="text-xs font-black text-slate-600 dark:text-slate-400 uppercase tracking-[0.2em]">${i18n.t('comp_analysis') || 'Strategic Analysis'}</h2>
                         <p class="text-xl font-black text-slate-900 dark:text-white">Smogon Tier & Meta</p>
                     </div>
                 </div>
@@ -478,14 +478,14 @@ export function renderCompetitiveData(container, data, pokemonName) {
             </div>
 
             <div class="bg-emerald-50 dark:bg-emerald-950/20 p-6 rounded-3xl border border-emerald-100/50 dark:border-emerald-900/20">
-                <p class="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-2">${i18n.t('comp_meta') || 'Meta Summary'}</p>
+                <p class="text-xs font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest mb-2">${i18n.t('comp_meta') || 'Meta Summary'}</p>
                 <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
                     ${(i18n.t('comp_meta_desc') || 'This Pokemon is ranked in {tier}. Its most effective abilities are: {abilities}.')
                         .replace('{tier}', `<strong>${tier}</strong>`)
-                        .replace('{abilities}', `<span class="text-emerald-600 dark:text-emerald-400 font-bold">${abilities}</span>`)}
+                        .replace('{abilities}', `<span class="text-emerald-700 dark:text-emerald-400 font-bold">${abilities}</span>`)}
                 </p>
                 
-                <a href="https://www.smogon.com/dex/sv/pokemon/${slug}" target="_blank" class="inline-flex items-center gap-2 mt-4 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl text-emerald-600 dark:text-emerald-400 font-bold text-xs shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all border border-emerald-100 dark:border-emerald-900/30">
+                <a href="https://www.smogon.com/dex/sv/pokemon/${slug}" target="_blank" class="inline-flex items-center gap-2 mt-4 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl text-emerald-700 dark:text-emerald-400 font-bold text-xs shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all border border-emerald-100 dark:border-emerald-900/30">
                     ${i18n.t('comp_smogon_link') || 'Smogon Strategy'}
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                 </a>
@@ -624,7 +624,7 @@ export function renderTacticalAdvice(container, advice) {
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                         </svg>
                     </span>
-                    <h3 class="font-bold uppercase tracking-wider text-xs text-emerald-100">${i18n.t('advisor_title')}</h3>
+                    <h2 class="font-bold uppercase tracking-wider text-xs text-emerald-100">${i18n.t('advisor_title')}</h2>
                 </div>
 
                 <p class="text-sm md:text-base leading-relaxed font-medium text-white/95">

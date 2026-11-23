@@ -10,6 +10,7 @@ import { i18n } from './modules/i18n.js';
 import { initTypeSelectors, refreshTypeSelectorLabels } from './modules/typeSelector.js';
 import { trackEvent, createDebouncedTracker } from './modules/analytics.js';
 import { normalizeTypeSelection } from './modules/typeSelection.js';
+import { canonicalTypeSlug } from '../lib/seo.js';
 
 let appData = null;
 let currentPokemon = null;
@@ -116,8 +117,7 @@ function syncURLWithState(t1, t2, t3, pokemonObj) {
         url.pathname = `/pokemon/${slug}`;
         url.search = '';
     } else if (t1 || t2 || t3) {
-        const types = [t1, t2, t3].filter(Boolean).map(t => t.toLowerCase());
-        url.pathname = `/tipo/${types.join('-')}`;
+        url.pathname = `/tipo/${canonicalTypeSlug([t1, t2, t3].filter(Boolean), appData.types)}`;
         url.search = '';
     } else {
         url.pathname = '/';

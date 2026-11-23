@@ -5,14 +5,19 @@ import TypeSelectorField from '../../components/TypeSelectorField.astro';
 import TypeLinks from '../../components/TypeLinks.astro';
 import typeData from '../../data/type-data.json';
 import { calculateDefense, calculateOffense } from '../../lib/type-engine/index.js';
-import { parseTypeSlug } from '../../lib/seo.js';
+import { parseTypeSlug, canonicalTypeSlug } from '../../lib/seo.js';
 
 const { slug } = Astro.params;
 const { types, effectiveness, contrast } = typeData;
 
 const parsed = parseTypeSlug(slug, types);
 if (!parsed) return Astro.rewrite('/404');
-const [t1, t2 = null, t3 = null] = parsed;
+
+// One URL per combination: /tipo/flying-fire and /tipo/fire-fire permanently
+// redirect to /tipo/fire-flying and /tipo/fire.
+const canonicalSlug = canonicalTypeSlug(parsed, types);
+if (slug !== canonicalSlug) return Astro.redirect(`/tipo/${canonicalSlug}`, 301);
+const [t1, t2 = null, t3 = null] = canonicalSlug.split('-').map((s: string) => types.find(t => t.toLowerCase() === s)!);
 
 // ── HTML helpers ─────────────────────────────────────────────────────────────
 
@@ -72,7 +77,7 @@ const selectedTypeHtml = [t1, t2, t3].filter(Boolean).map(t => pill(t!)).join(''
 const typeName = [t1, t2, t3].filter(Boolean).join('/');
 const title = `${typeName} Type Weaknesses, Resistances & Chart | PokeTypes`;
 const description = `${typeName} type weakness chart: full effectiveness analysis, resistances, and immunities for Gen 9 (Scarlet & Violet). See every type that beats ${typeName} and every type ${typeName} beats.`;
-const canonicalPath = `/tipo/${parsed.map((t: string) => t.toLowerCase()).join('-')}`;
+const canonicalPath = `/tipo/${canonicalSlug}`;
 const siteUrl = 'https://poketypes.app';
 
 const breadcrumbSchema = {
@@ -105,6 +110,7 @@ const webPageSchema = {
     <div class="max-w-7xl mx-auto relative">
         <AppHeader contextLabel={typeName} />
 
+        <main>
         <div id="view-simple" class="flex flex-col gap-5">
             <!-- SSR in English to match this page's title/meta (see
                  refreshUI() in main.js for the client-side language update
@@ -166,6 +172,7 @@ const webPageSchema = {
         </div>
 
         <TypeLinks />
+        </main>
     </div>
     <script src="../../js/main.js"></script>
 </Layout>

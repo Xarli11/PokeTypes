@@ -25,8 +25,8 @@
      hue family, tuned per theme for AA text contrast (see docs/type-engine.md
      is unrelated; rationale kept here since it's UI-only). */
   --danger: #B91C1C;
-  --warning: #C2410C;
-  --success: #15803D;
+  --warning: #B23A0A;
+  --success: #166534;
 
   --radius-sm: 10px;
   --radius-md: 14px;
@@ -41,11 +41,11 @@
   --surface-raised: #161D29;
   --border: rgba(255, 255, 255, 0.08);
   --text: #F2F4F8;
-  --text-muted: #8B94A3;
+  --text-muted: #9AA3B2;
   --accent: #6C8CFF;
   --accent-contrast: #0B0E14;
 
-  --danger: #EF4444;
+  --danger: #F87171;
   --warning: #F97316;
   --success: #22C55E;
 
@@ -333,11 +333,11 @@
 /* Extra Type help — a native <details> badge, touch/keyboard/mouse alike. */
 .type-selector-help {
   position: absolute;
-  top: -0.4rem;
-  right: -0.4rem;
+  top: -0.5rem;
+  right: -0.5rem;
 }
 .type-selector-help summary {
-  @apply flex items-center justify-center w-5 h-5 rounded-full text-[11px] font-bold cursor-pointer select-none;
+  @apply flex items-center justify-center w-6 h-6 rounded-full text-[11px] font-bold cursor-pointer select-none;
   list-style: none;
   background-color: var(--surface-raised);
   color: var(--text-muted);
