@@ -64,3 +64,21 @@ export function renderAbilitiesHtml(abilities, t = english) {
         return `<div class="flex flex-col gap-1 px-3 py-2.5 rounded-md" style="background: var(--surface-raised); border: 1px solid var(--border)"><div class="flex items-center justify-between gap-2"><span class="font-bold text-sm" style="color: var(--text)">${name}</span>${badge}</div></div>`;
     }).join('');
 }
+
+const OG_LOCALES = { en: 'en_US', es: 'es_ES' };
+
+/** og:locale value for a language (unknown languages fall back to English). */
+export function ogLocale(lang) {
+    return OG_LOCALES[lang] ?? OG_LOCALES.en;
+}
+
+/**
+ * <link rel="alternate" hreflang> tags for a set of equivalent pages.
+ * `alternates`: [{ hreflang: 'en' | 'es' | 'x-default', href: absoluteUrl }].
+ * Returns '' for none, so pages without translations emit nothing.
+ */
+export function renderAlternateLinks(alternates = []) {
+    return alternates
+        .map(({ hreflang, href }) => `<link rel="alternate" hreflang="${hreflang}" href="${href}">`)
+        .join('\n    ');
+}

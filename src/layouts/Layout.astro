@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { normalizePathname } from '../lib/seo.js';
+import { normalizePathname, ogLocale, renderAlternateLinks } from '../lib/seo.js';
 import { createT } from '../lib/i18n-server.js';
 
 interface Props {
@@ -9,9 +9,10 @@ interface Props {
     image?: string;
     canonicalPath?: string;
     lang?: string;
+    alternates?: { hreflang: string; href: string }[];
 }
 
-const { lang = 'en' } = Astro.props;
+const { lang = 'en', alternates = [] } = Astro.props;
 const { t } = createT(lang);
 
 const {
@@ -39,6 +40,7 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
     <meta name="author" content="Xarli11">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href={canonicalURL}>
+    {alternates.length > 0 && <Fragment set:html={renderAlternateLinks(alternates)} />}
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
@@ -47,7 +49,7 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
     <meta property="og:title" content={title}>
     <meta property="og:description" content={description}>
     <meta property="og:image" content={finalImageUrl}>
-    <meta property="og:locale" content="en_US">
+    <meta property="og:locale" content={ogLocale(lang)}>
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image">

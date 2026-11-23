@@ -10,7 +10,7 @@ import { i18n } from './modules/i18n.js';
 import { initTypeSelectors, refreshTypeSelectorLabels } from './modules/typeSelector.js';
 import { trackEvent, createDebouncedTracker } from './modules/analytics.js';
 import { normalizeTypeSelection } from './modules/typeSelection.js';
-import { canonicalTypeSlug } from '../lib/seo.js';
+import { statePath, stripLangPrefix, fromTypeSlug } from '../lib/i18n-routes.js';
 
 let appData = null;
 let currentPokemon = null;
@@ -111,19 +111,13 @@ function refreshUI() {
 
 function syncURLWithState(t1, t2, t3, pokemonObj) {
     const url = new URL(window.location);
-    
-    if (pokemonObj) {
-        const slug = (pokemonObj.apiName || pokemonObj.name).toLowerCase().replace(/\s+/g, '-');
-        url.pathname = `/pokemon/${slug}`;
-        url.search = '';
-    } else if (t1 || t2 || t3) {
-        url.pathname = `/tipo/${canonicalTypeSlug([t1, t2, t3].filter(Boolean), appData.types)}`;
-        url.search = '';
-    } else {
-        url.pathname = '/';
-        url.search = '';
-    }
-    
+
+    url.pathname = statePath({
+        pokemonSlug: pokemonObj && (pokemonObj.apiName || pokemonObj.name).toLowerCase().replace(/\s+/g, '-'),
+        types: [t1, t2, t3].filter(Boolean)
+    }, stripLangPrefix(window.location.pathname).lang);
+    url.search = '';
+
     window.history.pushState({}, '', url);
 }
 
@@ -135,7 +129,9 @@ async function applyStateFromURL() {
         document.getElementById('toggle-pro')?.click();
     }
 
-    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    // /es/... pages carry the language in the URL; the rest of the path is parsed as before.
+    const { lang: pathLang, path: appPath } = stripLangPrefix(window.location.pathname);
+    const pathParts = appPath.split('/').filter(Boolean);
     
     let p = params.get('p');
     let t1 = params.get('t1');
@@ -146,7 +142,7 @@ async function applyStateFromURL() {
     if (pathParts[0] === 'pokemon' && pathParts[1]) {
         p = pathParts[1];
     } else if (pathParts[0] === 'tipo' && pathParts[1]) {
-        const types = pathParts[1].split('-');
+        const types = (pathLang === 'es' && fromTypeSlug(pathParts[1], 'es')?.map(type => type.toLowerCase())) || pathParts[1].split('-');
         t1 = types[0];
         t2 = types[1];
         t3 = types[2];
