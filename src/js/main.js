@@ -5,12 +5,13 @@ import { getTacticalAdvice } from './modules/advisor.js';
 import * as ui from './modules/ui.js';
 import { normalizeSearch } from './modules/ui.js';
 import { initTheme } from './modules/theme.js';
-import { initProMode, refreshProView } from './modules/pro.js';
+import { initProMode, refreshProView, getViewMode, setViewMode } from './modules/pro.js';
 import { i18n } from './modules/i18n.js';
 import { initTypeSelectors, refreshTypeSelectorLabels } from './modules/typeSelector.js';
 import { trackEvent, createDebouncedTracker } from './modules/analytics.js';
 import { normalizeTypeSelection } from './modules/typeSelection.js';
-import { statePath, stripLangPrefix, fromTypeSlug } from '../lib/i18n-routes.js';
+import { stripLangPrefix } from '../lib/i18n-routes.js';
+import { parseAppLocation, buildAppUrl, withMode } from '../lib/app-state.js';
 
 let appData = null;
 let currentPokemon = null;
@@ -44,6 +45,9 @@ async function init() {
         
         // Initial state from URL
         await applyStateFromURL();
+        syncModeInURL();
+        window.addEventListener('popstate', restoreFromHistory);
+        document.addEventListener('poketypes:modechange', e => pushModeToURL(e.detail.mode));
         
     } catch (error) {
         console.error("Initialization failed:", error);
@@ -109,68 +113,118 @@ function refreshUI() {
     populateEmptyStateTypes();
 }
 
+// ── URL <-> state ───────────────────────────────────────────────────────────
+// The URL carries what is analysed (path) and the view mode (?mode=pro). Every
+// user action adds a history entry with pushState; back/forward restores the
+// state from the URL (restoreFromHistory). See src/lib/app-state.js.
+
+function pushURL(target) {
+    // Never stack an entry for the URL already shown (same selection re-applied, language toggle...).
+    if (target !== window.location.pathname + window.location.search) {
+        window.history.pushState({}, '', target);
+    }
+}
+
 function syncURLWithState(t1, t2, t3, pokemonObj) {
-    const url = new URL(window.location);
-
-    url.pathname = statePath({
+    pushURL(buildAppUrl({
         pokemonSlug: pokemonObj && (pokemonObj.apiName || pokemonObj.name).toLowerCase().replace(/\s+/g, '-'),
-        types: [t1, t2, t3].filter(Boolean)
-    }, stripLangPrefix(window.location.pathname).lang);
-    url.search = '';
+        types: [t1, t2, t3].filter(Boolean),
+        mode: getViewMode()
+    }, stripLangPrefix(window.location.pathname).lang));
+}
 
-    window.history.pushState({}, '', url);
+// A user switched Calculator <-> Team Builder: new entry. Team Builder is /?mode=pro; going back to the
+// Calculator pushes the URL of the selection that is still on screen.
+function pushModeToURL(mode) {
+    const [t1, t2, t3] = ['type-select', 'type2-select', 'type3-select'].map(id => document.getElementById(id)?.value);
+    pushURL(buildAppUrl({
+        pokemonSlug: currentPokemon && (currentPokemon.apiName || currentPokemon.name).toLowerCase().replace(/\s+/g, '-'),
+        types: [t1, t2, t3].filter(Boolean),
+        mode
+    }, stripLangPrefix(window.location.pathname).lang));
+}
+
+// The initial load replaces the entry (no new one) so the URL states the mode being shown.
+function syncModeInURL() {
+    const target = withMode(window.location.href, getViewMode());
+    if (target !== window.location.pathname + window.location.search + window.location.hash) {
+        window.history.replaceState({}, '', target);
+    }
+}
+
+function clearPokemonUi() {
+    currentPokemon = null;
+    detailsGate.begin(); // a pending details response belongs to a selection that no longer exists
+    document.getElementById('pokemon-search').value = '';
+    document.getElementById('pokemon-stats')?.classList.add('hidden');
+    document.getElementById('competitive-section')?.classList.add('hidden');
+    document.getElementById('pokemon-hero')?.classList.add('hidden');
+}
+
+function clearSelection() {
+    selectionGate.begin();
+    for (const id of ['type-select', 'type2-select', 'type3-select']) {
+        const select = document.getElementById(id);
+        if (select) select.value = '';
+    }
+    refreshTypeSelectorLabels();
+    clearPokemonUi();
+    displayAnalysis('', '', '');
+}
+
+// Back/forward: bring selection, details, analysis and mode back in line with the URL. The mode is the
+// one thing remembered (poketypes_mode = last mode shown), so a reload after going back shows what was on screen.
+async function restoreFromHistory() {
+    const state = parseAppLocation(window.location);
+
+    // After a reload, the entries around the current one can belong to a different kind of page (a server-rendered
+    // /tipo/* or /pokemon/* page has no Team Builder and no home state). Same-document history steps keep this
+    // document, so let the server send the right page for the URL.
+    const needsHomePage = state.mode === 'pro' ? !document.getElementById('view-pro')
+        : !state.pokemonSlug && state.types.length === 0 && !document.getElementById('empty-state');
+    if (needsHomePage) {
+        window.location.reload();
+        return;
+    }
+
+    if (state.mode !== getViewMode()) setViewMode(state.mode);
+    // The Team Builder entry carries no selection; the Calculator keeps showing what it showed.
+    if (state.mode === 'simple') await applyState(state, { fromHistory: true });
 }
 
 async function applyStateFromURL() {
-    const params = new URLSearchParams(window.location.search);
+    const state = parseAppLocation(window.location);
 
     // Auto-switch to Pro mode if share link requested it
-    if (params.get('mode') === 'pro') {
-        document.getElementById('toggle-pro')?.click();
-    }
+    if (state.mode === 'pro') setViewMode('pro', { track: true });
 
-    // /es/... pages carry the language in the URL; the rest of the path is parsed as before.
-    const { lang: pathLang, path: appPath } = stripLangPrefix(window.location.pathname);
-    const pathParts = appPath.split('/').filter(Boolean);
-    
-    let p = params.get('p');
-    let t1 = params.get('t1');
-    let t2 = params.get('t2');
-    let t3 = params.get('t3');
+    await applyState(state);
+}
 
-    // Path-based detection
-    if (pathParts[0] === 'pokemon' && pathParts[1]) {
-        p = pathParts[1];
-    } else if (pathParts[0] === 'tipo' && pathParts[1]) {
-        const types = (pathLang === 'es' && fromTypeSlug(pathParts[1], 'es')?.map(type => type.toLowerCase())) || pathParts[1].split('-');
-        t1 = types[0];
-        t2 = types[1];
-        t3 = types[2];
-    }
-
+async function applyState({ pokemonSlug, types }, { fromHistory = false } = {}) {
     const typeSelect = document.getElementById('type-select');
     const type2Select = document.getElementById('type2-select');
     const type3Select = document.getElementById('type3-select');
     const searchInput = document.getElementById('pokemon-search');
+    const ticket = selectionGate.begin();
 
-    if (p) {
-        let pokemon = findPokemonBySlug(appData.pokemonList, p);
+    if (pokemonSlug) {
+        let pokemon = findPokemonBySlug(appData.pokemonList, pokemonSlug);
         if (!pokemon) {
             // Until the full pokedex arrives the list is the search index, which has no
             // apiName: form slugs (charizard-mega-x...) only resolve against the full one.
-            const initialTicket = selectionGate.begin();
             try {
-                pokemon = findPokemonBySlug(await loadPokedex(), p);
+                pokemon = findPokemonBySlug(await loadPokedex(), pokemonSlug);
             } catch {
                 // loadPokedex already logged it; fall through to the type-only handling
             }
             // The user may have picked something else while the pokedex was loading.
-            if (!selectionGate.isLatest(initialTicket)) return;
+            if (!selectionGate.isLatest(ticket)) return;
         }
         if (pokemon) {
             const localizedName = i18n.t(pokemon.name.toLowerCase());
             searchInput.value = localizedName !== pokemon.name.toLowerCase() ? localizedName : ui.capitalizeWords(pokemon.name);
-            
+
             typeSelect.value = pokemon.types[0] || '';
             type2Select.value = pokemon.types[1] || '';
             if (type3Select) type3Select.value = pokemon.types[2] || '';
@@ -181,19 +235,25 @@ async function applyStateFromURL() {
         }
     }
 
-    if (t1 || t2 || t3) {
+    if (types.length) {
         const findType = (val) => appData.types.find(t => t.toLowerCase() === val?.toLowerCase());
+        const [t1, t2, t3] = types;
         const validT1 = findType(t1);
         const validT2 = findType(t2);
         const validT3 = findType(t3);
 
-        if (validT1) typeSelect.value = validT1;
-        if (validT2) type2Select.value = validT2;
-        if (validT3 && type3Select) type3Select.value = validT3;
+        if (fromHistory) clearPokemonUi(); // a Pokemon from another entry must not linger under a types-only state
+        typeSelect.value = validT1 || '';
+        type2Select.value = validT2 || '';
+        if (type3Select) type3Select.value = validT3 || '';
         refreshTypeSelectorLabels();
 
         displayAnalysis(typeSelect.value, type2Select.value, type3Select ? type3Select.value : null);
+        return;
     }
+
+    // Nothing selected: the home state. On load there is nothing to restore; on back/forward the screen must clear.
+    if (fromHistory) clearSelection();
 }
 
 async function showPokemonDetails(pokemon) {

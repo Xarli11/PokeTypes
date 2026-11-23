@@ -290,7 +290,8 @@ describe('wiring', () => {
     });
 
     it('the language layer is used by the client and the layout', () => {
-        expect(read('src/js/main.js')).toMatch(/statePath\(/);
+        expect(read('src/lib/app-state.js')).toMatch(/statePath\(/);
+        expect(read('src/js/main.js')).toMatch(/buildAppUrl\(/);
         expect(read('src/js/modules/i18n.js')).toMatch(/detectLang\(/);
         expect(read('src/layouts/Layout.astro')).toMatch(/renderAlternateLinks/);
         expect(read('src/layouts/Layout.astro')).toMatch(/ogLocale\(lang\)/);

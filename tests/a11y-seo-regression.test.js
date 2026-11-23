@@ -145,7 +145,7 @@ describe('one URL per type combination', () => {
         expect(page).toMatch(/slug !== canonicalSlug\) return Astro\.redirect\(`\/tipo\/\$\{canonicalSlug\}`, 301\)/);
     });
 
-    it('client URL sync builds paths with statePath, whose English slugs equal canonicalTypeSlug (tests/i18n-routes.test.js)', () => {
-        expect(read('src/js/main.js')).toMatch(/statePath\(\{/);
+    it('client URL sync builds paths with buildAppUrl -> statePath, whose English slugs equal canonicalTypeSlug (tests/i18n-routes.test.js)', () => {
+        expect(read('src/js/main.js')).toMatch(/buildAppUrl\(\{/);
     });
 });
