@@ -275,7 +275,45 @@ export const messages = {
         "gouging fire": "Gouging Fire",
         "raging bolt": "Raging Bolt",
         "iron boulder": "Iron Boulder",
-        "iron crown": "Iron Crown"
+        "iron crown": "Iron Crown",
+
+        // ── Server-side rendering (SSR) ──────────────────────────────────────
+        // Read by src/lib/i18n-server.js. A key "ssr_<name>" overrides "<name>"
+        // for server-rendered HTML only (the client keeps using "<name>"); it
+        // may exist in one language only, the other falls back to "<name>".
+        ssr_brand_name: "PokeTypes",
+        ssr_defense_breakdown: "Defense",
+        ssr_offense_breakdown: "Offense",
+        ssr_chart_desc: "Understanding type effectiveness is crucial for any Pokemon trainer, whether you're playing Pokemon Scarlet and Violet (Gen 9) or classic titles. Our Pokemon Type Calculator helps you instantly find weaknesses, resistances, and immunities for any single or dual-type Pokemon.",
+        ssr_effectiveness_desc: "Every attack in the game has a type modifier. A standard attack deals 1x damage. If a move is Super Effective, it deals 2x damage. If it's Not Very Effective, it deals 0.5x damage. Immunities result in 0x damage, meaning the attack has no effect at all.",
+        ssr_dual_desc: "Many Pokemon possess two types (e.g., Charizard is Fire/Flying). Weaknesses stack! If both types are weak to the same element (like Rock vs. Fire/Flying), the damage multiplier becomes 4x. Conversely, resistances can cancel out weaknesses.",
+        home_aria_label: "PokeTypes — Home",
+        toggle_language: "Toggle language",
+        toggle_dark_mode: "Toggle dark mode",
+        share_analysis: "Share Analysis",
+        extra_type_help: "Extra Type help",
+        browse_by_type: "Browse by type",
+        click_to_copy_username: "Click to copy username",
+        team_count_initial: "0/6 Pokemon",
+        meta_home_title: "PokeTypes | Pokemon Type Calculator & Effectiveness Chart",
+        meta_home_description: "The most advanced Pokemon type calculator and effectiveness chart. Analyze weaknesses, resistances, and dual-type coverage for all 1,000+ Pokemon (Gen 9, Scarlet/Violet included).",
+        meta_default_description: "Instant Pokemon type calculator and effectiveness chart. Analyze weaknesses, resistances, and dual-type coverage for all 1,000+ Pokemon (Gen 9, Scarlet/Violet included).",
+        meta_keywords: "pokemon type calculator, pokemon weakness chart, type effectiveness, pokemon SV, Gen 9, dual type calculator, resistance checker, pokemon scarlet violet, pokedex type chart",
+        meta_type_title: "{type} Type Weaknesses, Resistances & Chart | PokeTypes",
+        meta_type_description: "{type} type weakness chart: full effectiveness analysis, resistances, and immunities for Gen 9 (Scarlet & Violet). See every type that beats {type} and every type {type} beats.",
+        meta_pokemon_title: "{name} Weaknesses, Resistances & Type Chart | PokeTypes",
+        meta_pokemon_description: "{name} is a {types}-type Pokemon. See its full weakness chart, resistances, immunities, base stats, and abilities. Gen 9 (Scarlet & Violet) type calculator.",
+        breadcrumb_type: "{type} Type",
+        ld_app_alternate_name: "Pokemon Type Calculator",
+        ld_app_description: "Advanced Pokemon type calculator and effectiveness chart for Gen 9 (Scarlet & Violet). Check weaknesses, resistances, immunities and dual-type coverage instantly.",
+        ld_feature_1: "Pokemon type weakness calculator",
+        ld_feature_2: "Dual-type coverage analysis",
+        ld_feature_3: "Team Builder with 6-slot roster",
+        ld_feature_4: "Gen 9 (Scarlet & Violet) support",
+        ld_feature_5: "1,000+ Pokemon database",
+        ld_feature_6: "Mobile-friendly PWA",
+        ld_feature_7: "Interactive type chart",
+        ld_feature_8: "Tactical advisor"
     },
     es: {
         // UI Headers & Labels
@@ -568,6 +606,37 @@ export const messages = {
         "supreme-overlord_desc": "Aumenta el Ataque y At. Esp. por cada aliado derrotado.",
         "purifying salt_desc": "Protege de problemas de estado y reduce el daño de tipo Fantasma a la mitad.",
         "earth eater_desc": "Recupera PS al recibir un ataque de tipo Tierra en lugar de sufrir daño.",
-        "well-baked body_desc": "Sube mucho la Defensa al recibir un ataque de tipo Fuego en lugar de sufrir daño."
+        "well-baked body_desc": "Sube mucho la Defensa al recibir un ataque de tipo Fuego en lugar de sufrir daño.",
+
+        // ── Server-side rendering (SSR) ──────────────────────────────────────
+        // DRAFT Spanish for the i18n pilot; metadata and JSON-LD wording must be
+        // reviewed by a human before /es/ pages go live (they are not served yet).
+        home_aria_label: "PokeTypes — Inicio",
+        toggle_language: "Cambiar idioma",
+        toggle_dark_mode: "Cambiar modo oscuro",
+        share_analysis: "Compartir análisis",
+        extra_type_help: "Ayuda de Tipo Extra",
+        browse_by_type: "Explorar por tipo",
+        click_to_copy_username: "Haz clic para copiar el usuario",
+        team_count_initial: "0/6 Pokémon",
+        meta_home_title: "PokeTypes | Calculadora de tipos Pokémon y tabla de efectividad",
+        meta_home_description: "Calculadora de tipos Pokémon y tabla de efectividad. Consulta debilidades, resistencias e inmunidades de más de 1.000 Pokémon y combinaciones de tipos (Gen 9, Escarlata/Púrpura incluidos).",
+        meta_default_description: "Calculadora de tipos Pokémon y tabla de efectividad. Consulta debilidades, resistencias e inmunidades de más de 1.000 Pokémon y combinaciones de tipos (Gen 9, Escarlata/Púrpura incluidos).",
+        meta_keywords: "calculadora de tipos pokemon, debilidades pokemon, tabla de tipos pokemon, efectividad de tipos, calculadora de doble tipo, resistencias pokemon, pokemon escarlata purpura, gen 9",
+        meta_type_title: "Debilidades y resistencias del tipo {type} | PokeTypes",
+        meta_type_description: "Tabla de debilidades del tipo {type}: análisis de efectividad, resistencias e inmunidades en Gen 9 (Escarlata y Púrpura). Consulta qué tipos vencen a {type} y a qué tipos vence {type}.",
+        meta_pokemon_title: "Debilidades y resistencias de {name} | PokeTypes",
+        meta_pokemon_description: "{name} es un Pokémon de tipo {types}. Consulta su tabla de debilidades, resistencias, inmunidades, estadísticas base y habilidades. Calculadora de tipos de Gen 9 (Escarlata y Púrpura).",
+        breadcrumb_type: "Tipo {type}",
+        ld_app_alternate_name: "Calculadora de tipos Pokémon",
+        ld_app_description: "Calculadora de tipos Pokémon y tabla de efectividad para Gen 9 (Escarlata y Púrpura). Consulta al instante debilidades, resistencias, inmunidades y cobertura de doble tipo.",
+        ld_feature_1: "Calculadora de debilidades por tipo",
+        ld_feature_2: "Análisis de cobertura de doble tipo",
+        ld_feature_3: "Constructor de equipos de 6 Pokémon",
+        ld_feature_4: "Compatible con Gen 9 (Escarlata y Púrpura)",
+        ld_feature_5: "Base de datos de más de 1.000 Pokémon",
+        ld_feature_6: "PWA optimizada para móvil",
+        ld_feature_7: "Tabla de tipos interactiva",
+        ld_feature_8: "Asesor táctico"
     }
 };

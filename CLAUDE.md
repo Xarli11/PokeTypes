@@ -22,11 +22,11 @@ Utility scripts (run with `node scripts/<name>`):
 - `sync-abilities.js` — sync ability i18n data
 - `verify-types.js` — validate `src/data/type-data.json` against Smogon's type chart (no npm alias)
 - `audit-images.js` — check sprite URLs / `image-fixes.json`
-- `ssr-snapshot.mjs` — `capture <baseUrl> <dir>` / `diff <dirA> <dirB>`: compare (file sets in both directions + bytes) the server-rendered HTML of every sitemap URL between two builds (use it to prove a refactor changed nothing)
+- `ssr-snapshot.mjs` — `capture <baseUrl> <dir>` / `diff <dirA> <dirB>`: compare (file sets in both directions + bytes; optional `--ignore-asset-hashes`, `--collapse-whitespace`) the server-rendered HTML of every sitemap URL between two builds (use it to prove a refactor changed nothing)
 
 ## Tests
 
-Vitest suite in `tests/` (24 files, ~682 tests, Node environment — no DOM, no browser). Pure logic is tested directly; DOM-heavy modules only through their pure helpers.
+Vitest suite in `tests/` (25 files, ~745 tests, Node environment — no DOM, no browser). Pure logic is tested directly; DOM-heavy modules only through their pure helpers.
 
 - `tests/type-engine/*` — effectiveness, modifiers (abilities/items), battle context, Ring Target, triple type, team analysis, SSR/client parity.
 - `tests/seo.test.js` — sitemap, robots.txt, `seo.js` helpers, SSR stats/abilities HTML.
@@ -62,6 +62,7 @@ Pure, no DOM; used by SSR pages, client and tests. See `docs/type-engine.md`.
 
 | Path | Purpose |
 |---|---|
+| `src/lib/i18n-server.js` | `createT(lang)` → `{ t, h }` for SSR: same dictionary as the browser (`messages.js`); `ssr_<key>` overrides `<key>` for server HTML only; falls back to English. Pages/components take a `lang` prop (always `'en'` today) |
 | `src/lib/type-render.js` | Pure SSR HTML for defense/offense groups and type pills (shared by `/tipo/*` and `/pokemon/*`; `t` label provider defaults to English) |
 | `src/lib/seo.js` | `pokemonSlug`, `normalizePathname`, `parseTypeSlug`, `canonicalTypeSlug`, SSR stats/abilities HTML |
 | `src/lib/share-team.js` | Team Builder share-link encode/decode (`?team=…&mode=pro`, versioned payload) |
@@ -100,7 +101,7 @@ Pure, no DOM; used by SSR pages, client and tests. See `docs/type-engine.md`.
 ## Conventions
 
 - **Styling**: Tailwind utility classes in `.astro` files; avoid custom CSS unless strictly necessary.
-- **Translations**: All user-facing strings go through `i18n.t('key')`. Add new keys to both `en` and `es` in `src/js/lang/messages.js`. HTML elements use `data-i18n="key"` and are updated by `i18n.updateDOM()`.
+- **Translations**: All user-facing strings go through `i18n.t('key')` in the browser and `createT(lang)` (`src/lib/i18n-server.js`) in `.astro` files/SSR helpers — never hard-code English in a template (`tests/i18n-server.test.js` fails if known literals reappear or a used key is missing in a language). Add new keys to both `en` and `es` in `src/js/lang/messages.js`. HTML elements use `data-i18n="key"` and are updated by `i18n.updateDOM()`.
 - **Accessibility**: type pill text colour comes from `contrast` in `type-data.json`; if you change a type colour in `global.css` or a status colour token, `tests/a11y-seo-regression.test.js` enforces WCAG AA (4.5:1). Keep one `<main>` per page and don't skip heading levels.
 - **Type names**: Always capitalized (`Fire`, not `fire`) when stored; use `ui.capitalizeWords()` for display, `type.toLowerCase()` for lookups.
 - **Offense calc**: Uses `Math.max` across types (best move wins), not multiplication.

@@ -1,11 +1,19 @@
 // Proves a refactor did not change server-rendered HTML.
 //   node scripts/ssr-snapshot.mjs capture <baseUrl> <outDir>   fetch every sitemap URL (+ a few redirect/404 cases)
-//   node scripts/ssr-snapshot.mjs diff <dirA> <dirB>           compare file sets (both directions) and bytes of common files
+//   node scripts/ssr-snapshot.mjs diff <dirA> <dirB> [flags]   compare file sets (both directions) and bytes of common files
+//     --ignore-asset-hashes   treat /_astro/name.<hash>.js|css as /_astro/name.js|css (a changed bundle renames it)
+//     --collapse-whitespace   treat any run of whitespace as one space and ignore it around tags (browsers render both the same)
 // Typical use: build the old commit, serve it (see CLAUDE.md "wrangler pages dev"),
 // capture; build the new commit, capture; diff. Exit code 1 if anything differs.
 import fs from 'node:fs';
 
-const [cmd, a, b] = process.argv.slice(2);
+const [cmd, a, b, ...flags] = process.argv.slice(2);
+const normalize = text => {
+    let out = text;
+    if (flags.includes('--ignore-asset-hashes')) out = out.replace(/(\/_astro\/[^"'\s]*?)\.[A-Za-z0-9_-]{8}\.(js|css)/g, '$1.$2');
+    if (flags.includes('--collapse-whitespace')) out = out.replace(/\s+/g, ' ').replace(/> /g, '>').replace(/ </g, '<').trim();
+    return out;
+};
 
 if (cmd === 'capture') {
     fs.mkdirSync(b, { recursive: true });
@@ -28,7 +36,7 @@ if (cmd === 'capture') {
     const listB = new Set(fs.readdirSync(b));
     const missing = [...listA].filter(f => !listB.has(f));   // captured before, absent after
     const extra = [...listB].filter(f => !listA.has(f));     // absent before, captured after
-    const changed = [...listA].filter(f => listB.has(f) && fs.readFileSync(`${a}/${f}`, 'utf8') !== fs.readFileSync(`${b}/${f}`, 'utf8'));
+    const changed = [...listA].filter(f => listB.has(f) && normalize(fs.readFileSync(`${a}/${f}`, 'utf8')) !== normalize(fs.readFileSync(`${b}/${f}`, 'utf8')));
     const show = list => list.slice(0, 10).map(decodeURIComponent);
     console.log(`${listA.size - missing.length - changed.length}/${listA.size} identical (A: ${listA.size} files, B: ${listB.size} files)`);
     if (missing.length) console.log(`missing in B (${missing.length}):`, show(missing));

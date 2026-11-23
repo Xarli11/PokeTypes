@@ -13,7 +13,7 @@ function make(name, files) {
     for (const [f, content] of Object.entries(files)) writeFileSync(join(dir, f), content);
     return dir;
 }
-const diff = (a, b) => spawnSync(process.execPath, [script, 'diff', a, b], { encoding: 'utf8' });
+const diff = (a, b, ...flags) => spawnSync(process.execPath, [script, 'diff', a, b, ...flags], { encoding: 'utf8' });
 
 beforeAll(() => {
     dirs.root = mkdtempSync(join(tmpdir(), 'ssr-snapshot-'));
@@ -23,6 +23,8 @@ beforeAll(() => {
     dirs.extra = make('extra', { 'p1.html': 'one', 'p2.html': 'two', 'p3.html': 'three' });
     dirs.changed = make('changed', { 'p1.html': 'one', 'p2.html': 'TWO' });
     dirs.empty = make('empty', {});
+    dirs.hashA = make('hashA', { 'p.html': '<link href="/_astro/index.AbCdEf12.css">\n<p>\n   Hello\n</p>' });
+    dirs.hashB = make('hashB', { 'p.html': '<link href="/_astro/index.ZyXwVu98.css"><p> Hello </p>' });
 });
 
 describe('ssr-snapshot diff', () => {
@@ -50,5 +52,14 @@ describe('ssr-snapshot diff', () => {
 
     it('fails on an empty baseline instead of reporting a vacuous pass', () => {
         expect(diff(dirs.empty, dirs.empty).status).toBe(1);
+    });
+
+    it('--ignore-asset-hashes and --collapse-whitespace only forgive what they name', () => {
+        expect(diff(dirs.hashA, dirs.hashB).status).toBe(1);
+        expect(diff(dirs.hashA, dirs.hashB, '--ignore-asset-hashes').status).toBe(1);
+        expect(diff(dirs.hashA, dirs.hashB, '--collapse-whitespace').status).toBe(1);
+        expect(diff(dirs.hashA, dirs.hashB, '--ignore-asset-hashes', '--collapse-whitespace').status).toBe(0);
+        // text changes are never forgiven
+        expect(diff(dirs.a, dirs.changed, '--ignore-asset-hashes', '--collapse-whitespace').status).toBe(1);
     });
 });

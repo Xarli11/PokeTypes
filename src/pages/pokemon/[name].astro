@@ -8,8 +8,11 @@ import pokedex from '../../data/pokedex.json';
 import typeData from '../../data/type-data.json';
 import { calculateDefense, calculateOffense } from '../../lib/type-engine/index.js';
 import { renderDefenseGroups, renderOffenseGroups, renderTypePills } from '../../lib/type-render.js';
+import { createT } from '../../lib/i18n-server.js';
 import { pokemonSlug, renderStatsHtml, renderAbilitiesHtml } from '../../lib/seo.js';
 
+const lang = 'en';
+const { t, h } = createT(lang);
 const { name: nameParam } = Astro.params;
 
 // Find pokemon by slug/apiName on the server
@@ -26,8 +29,8 @@ const siteUrl = 'https://poketypes.app';
 const canonicalPath = `/pokemon/${slug}`;
 const typeLabel = types.join('/');
 
-const title = `${name} Weaknesses, Resistances & Type Chart | PokeTypes`;
-const description = `${name} is a ${typeLabel}-type Pokemon. See its full weakness chart, resistances, immunities, base stats, and abilities. Gen 9 (Scarlet & Violet) type calculator.`;
+const title = t('meta_pokemon_title', { name });
+const description = t('meta_pokemon_description', { name, types: typeLabel });
 const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
 
 const breadcrumbSchema = {
@@ -66,14 +69,14 @@ const t3 = types[2] || null;
 const def = calculateDefense(t1, t2, allTypes, effectiveness, t3);
 const off = calculateOffense(t1, t2, allTypes, effectiveness, t3);
 
-const defenseGroupsHtml = renderDefenseGroups(def, contrastMap);
-const offenseGroupsHtml = renderOffenseGroups(off, contrastMap);
+const defenseGroupsHtml = renderDefenseGroups(def, contrastMap, t);
+const offenseGroupsHtml = renderOffenseGroups(off, contrastMap, t);
 const typePillsHtml = renderTypePills(types, contrastMap);
 
 // Base stats and ability names exist in the local pokedex; PokeAPI is only
 // needed for localized names and descriptions, which main.js adds on load.
-const statsHtml = renderStatsHtml((pokemon as { stats?: Record<string, number> }).stats);
-const abilitiesHtml = renderAbilitiesHtml((pokemon as { abilities?: Record<string, string> }).abilities);
+const statsHtml = renderStatsHtml((pokemon as { stats?: Record<string, number> }).stats, t);
+const abilitiesHtml = renderAbilitiesHtml((pokemon as { abilities?: Record<string, string> }).abilities, t);
 
 const dexNumber = `#${String(id).padStart(4, '0')}`;
 const heroHtml = `
@@ -90,17 +93,17 @@ const heroHtml = `
 `;
 ---
 
-<Layout title={title} description={description} image={imageUrl}>
+<Layout title={title} description={description} image={imageUrl} lang={lang}>
     <Fragment slot="head">
         <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
         <script type="application/ld+json" is:inline set:html={JSON.stringify(pokemonSchema)} />
     </Fragment>
     <div class="max-w-7xl mx-auto relative">
-        <AppHeader contextLabel={name} />
+        <AppHeader contextLabel={name} lang={lang} />
 
         <main>
         <div id="view-simple" class="flex flex-col gap-5">
-            <ControlPanel />
+            <ControlPanel lang={lang} />
 
             <!-- Subject header — pre-rendered from local pokedex data, no loading flash -->
             <section id="pokemon-hero" class="panel !py-2" set:html={heroHtml}></section>
@@ -108,30 +111,30 @@ const heroHtml = `
             <section id="type-details" class="flex flex-col gap-5">
                 <div class="panel !py-3 flex flex-wrap items-center justify-between gap-3">
                     <div id="selected-type-name" class="flex items-center gap-2"></div>
-                    <ShareButton />
+                    <ShareButton lang={lang} />
                 </div>
 
                 <div id="ability-alerts" class="hidden"></div>
 
                 <div class="panel">
-                    <div class="label-group">Defense</div>
+                    <div class="label-group"><Fragment set:html={h('defense_breakdown')} /></div>
                     <div id="defense-groups" set:html={defenseGroupsHtml}></div>
                 </div>
 
                 <div id="tactical-advice" class="hidden"></div>
 
                 <div class="panel">
-                    <div class="label-group">Offense</div>
+                    <div class="label-group"><Fragment set:html={h('offense_breakdown')} /></div>
                     <div id="offense-groups" set:html={offenseGroupsHtml}></div>
                 </div>
 
                 <section id="pokemon-stats" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div class="panel">
-                        <div class="label-group">Base Stats</div>
+                        <div class="label-group"><Fragment set:html={h('base_stats')} /></div>
                         <div id="stats-container" class="space-y-2.5" data-ssr-slug={slug} set:html={statsHtml}></div>
                     </div>
                     <div class="panel">
-                        <div class="label-group">Abilities</div>
+                        <div class="label-group"><Fragment set:html={h('abilities')} /></div>
                         <div id="abilities-container" class="grid grid-cols-1 gap-2" data-ssr-slug={slug} set:html={abilitiesHtml}></div>
                     </div>
                 </section>
@@ -142,7 +145,7 @@ const heroHtml = `
             </section>
         </div>
 
-        <TypeLinks />
+        <TypeLinks lang={lang} />
         </main>
     </div>
     <script src="../../js/main.js"></script>

@@ -1,4 +1,5 @@
 // Small pure helpers shared by the SEO-relevant routes so they can be unit tested.
+import { messages } from '../js/lang/messages.js';
 
 export function pokemonSlug(pokemon) {
     return (pokemon.apiName || pokemon.name).toLowerCase().replace(/\s+/g, '-');
@@ -30,13 +31,17 @@ export function canonicalTypeSlug(types, allTypes) {
     return allTypes.filter(t => wanted.has(t.toLowerCase())).map(t => t.toLowerCase()).join('-');
 }
 
-const STAT_ROWS = [['hp', 'HP'], ['atk', 'Attack'], ['def', 'Defense'], ['spa', 'Sp. Atk'], ['spd', 'Sp. Def'], ['spe', 'Speed']];
+const STAT_ROWS = [['hp', 'stat_hp'], ['atk', 'stat_atk'], ['def', 'stat_def'], ['spa', 'stat_spa'], ['spd', 'stat_spd'], ['spe', 'stat_spe']];
+
+// `t` maps a messages.js key to a label; defaults to English like the SSR pages.
+const english = key => messages.en[key];
 
 // Same markup and thresholds as renderStats() in ui.js, with the bar already
 // filled, so the stats exist in the HTML without waiting for PokeAPI.
-export function renderStatsHtml(stats) {
+export function renderStatsHtml(stats, t = english) {
     if (!stats) return '';
-    return STAT_ROWS.map(([key, label]) => {
+    return STAT_ROWS.map(([key, labelKey]) => {
+        const label = t(labelKey);
         const val = stats[key];
         if (typeof val !== 'number') return '';
         let colorClass = 'bg-red-500';
@@ -50,11 +55,11 @@ export function renderStatsHtml(stats) {
 
 // Ability names from the local pokedex ({ "0": "Blaze", "H": "Solar Power" }).
 // Descriptions stay client-side (PokeAPI), as before.
-export function renderAbilitiesHtml(abilities) {
+export function renderAbilitiesHtml(abilities, t = english) {
     if (!abilities) return '';
     return Object.entries(abilities).map(([key, name]) => {
         const badge = key === 'H'
-            ? '<span class="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded shrink-0" style="background: var(--border); color: var(--text-muted)">Hidden</span>'
+            ? `<span class="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded shrink-0" style="background: var(--border); color: var(--text-muted)">${t('hidden')}</span>`
             : '';
         return `<div class="flex flex-col gap-1 px-3 py-2.5 rounded-md" style="background: var(--surface-raised); border: 1px solid var(--border)"><div class="flex items-center justify-between gap-2"><span class="font-bold text-sm" style="color: var(--text)">${name}</span>${badge}</div></div>`;
     }).join('');

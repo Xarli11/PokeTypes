@@ -14,15 +14,15 @@ export function pill(type, contrast) {
     return `<span class="type-pill bg-type-${type.toLowerCase()} ${tc}">${type}</span>`;
 }
 
-export function pills(list, contrast) {
+export function pills(list, contrast, t = english) {
     return list.length
         ? list.map(type => pill(type, contrast)).join('')
-        : `<span class="text-xs font-bold uppercase tracking-widest" style="color: var(--text-muted)">None</span>`;
+        : `<span class="text-xs font-bold uppercase tracking-widest" style="color: var(--text-muted)">${t('none')}</span>`;
 }
 
-function multRow(mult, severityClass, typeList, contrast) {
+function multRow(mult, severityClass, typeList, contrast, t) {
     if (!typeList.length) return '';
-    return `<div class="flex items-start gap-3"><span class="mult-badge ${severityClass} shrink-0">${MULT_LABELS[mult]}</span><div class="type-pills-container pt-1">${pills(typeList, contrast)}</div></div>`;
+    return `<div class="flex items-start gap-3"><span class="mult-badge ${severityClass} shrink-0">${MULT_LABELS[mult]}</span><div class="type-pills-container pt-1">${pills(typeList, contrast, t)}</div></div>`;
 }
 
 function section(title, rows) {
@@ -33,7 +33,7 @@ function section(title, rows) {
 
 /** @param def result of calculateDefense */
 export function renderDefenseGroups(def, contrast, t = english) {
-    const row = (mult, cls, list) => multRow(mult, cls, list, contrast);
+    const row = (mult, cls, list) => multRow(mult, cls, list, contrast, t);
     return [
         section(t('defense_critical'), [row('8', 'mult-critical', def.weaknesses8x), row('4', 'mult-critical', def.weaknesses4x)]),
         section(t('defense_weak'), [row('2', 'mult-weak', def.weaknesses2x)]),
@@ -46,7 +46,7 @@ export function renderDefenseGroups(def, contrast, t = english) {
 
 /** @param off result of calculateOffense */
 export function renderOffenseGroups(off, contrast, t = english) {
-    const row = (mult, cls, list) => multRow(mult, cls, list, contrast);
+    const row = (mult, cls, list) => multRow(mult, cls, list, contrast, t);
     return [
         section(t('super_effective'), [row('2', 'mult-critical', off.superEffective2x)]),
         section(t('defense_neutral'), [row('1', 'mult-neutral', off.neutral)]),

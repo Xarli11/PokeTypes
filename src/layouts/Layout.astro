@@ -1,17 +1,22 @@
 ---
 import '../styles/global.css';
 import { normalizePathname } from '../lib/seo.js';
+import { createT } from '../lib/i18n-server.js';
 
 interface Props {
     title?: string;
     description?: string;
     image?: string;
     canonicalPath?: string;
+    lang?: string;
 }
 
+const { lang = 'en' } = Astro.props;
+const { t } = createT(lang);
+
 const {
-    title = "PokeTypes | Pokemon Type Calculator & Effectiveness Chart",
-    description = "Instant Pokemon type calculator and effectiveness chart. Analyze weaknesses, resistances, and dual-type coverage for all 1,000+ Pokemon (Gen 9, Scarlet/Violet included).",
+    title = t('meta_home_title'),
+    description = t('meta_default_description'),
     image = "/icon-512.png",
     canonicalPath
 } = Astro.props;
@@ -22,7 +27,7 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang={lang}>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +35,7 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
     <!-- Primary SEO -->
     <title>{title}</title>
     <meta name="description" content={description}>
-    <meta name="keywords" content="pokemon type calculator, pokemon weakness chart, type effectiveness, pokemon SV, Gen 9, dual type calculator, resistance checker, pokemon scarlet violet, pokedex type chart">
+    <meta name="keywords" content={t('meta_keywords')}>
     <meta name="author" content="Xarli11">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href={canonicalURL}>
@@ -96,15 +101,15 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
     </script>
 
     <!-- Base WebApplication Schema -->
-    <script type="application/ld+json" is:inline>
+    <script type="application/ld+json" is:inline set:html={`
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "@id": "https://poketypes.app/#webapp",
       "name": "PokeTypes",
-      "alternateName": "Pokemon Type Calculator",
+      "alternateName": ${JSON.stringify(t('ld_app_alternate_name'))},
       "url": "https://poketypes.app/",
-      "description": "Advanced Pokemon type calculator and effectiveness chart for Gen 9 (Scarlet & Violet). Check weaknesses, resistances, immunities and dual-type coverage instantly.",
+      "description": ${JSON.stringify(t('ld_app_description'))},
       "applicationCategory": "GameApplication",
       "applicationSubCategory": "Strategy",
       "genre": "Pokemon strategy",
@@ -117,14 +122,14 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
         "priceCurrency": "USD"
       },
       "featureList": [
-        "Pokemon type weakness calculator",
-        "Dual-type coverage analysis",
-        "Team Builder with 6-slot roster",
-        "Gen 9 (Scarlet & Violet) support",
-        "1,000+ Pokemon database",
-        "Mobile-friendly PWA",
-        "Interactive type chart",
-        "Tactical advisor"
+        ${JSON.stringify(t('ld_feature_1'))},
+        ${JSON.stringify(t('ld_feature_2'))},
+        ${JSON.stringify(t('ld_feature_3'))},
+        ${JSON.stringify(t('ld_feature_4'))},
+        ${JSON.stringify(t('ld_feature_5'))},
+        ${JSON.stringify(t('ld_feature_6'))},
+        ${JSON.stringify(t('ld_feature_7'))},
+        ${JSON.stringify(t('ld_feature_8'))}
       ],
       "potentialAction": {
         "@type": "SearchAction",
@@ -144,7 +149,7 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
         "name": "Xarli11"
       }
     }
-    </script>
+    `}></script>
 
     <!-- Page-specific head content (JSON-LD, etc.) -->
     <slot name="head" />
