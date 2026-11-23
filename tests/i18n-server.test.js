@@ -11,7 +11,7 @@ const walk = dir => readdirSync(dir).flatMap(f => {
     const p = join(dir, f);
     return statSync(p).isDirectory() ? walk(p) : [p];
 });
-const params = text => [...String(text).matchAll(/\{(\w+)\}/g)].map(m => m[1]).sort();
+const params = text => [...new Set([...String(text).matchAll(/\{(\w+)\}/g)].map(m => m[1]))].sort(); // the set of names: a sentence may repeat a placeholder a different number of times
 
 describe('createT', () => {
     const en = createT('en');

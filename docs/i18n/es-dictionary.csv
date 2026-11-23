@@ -1,0 +1,294 @@
+key,en,es,in_draft_registry,used_in_code,review_status
+abilities,Abilities,Habilidades,no,yes,unreviewed
+ability_considerations,Ability Considerations,Consideraciones de Habilidad,no,yes,unreviewed
+active_analysis,Active Analysis,Análisis Activo,no,no,unreviewed
+advisor_recommended,Recommended:,Recomendado:,no,yes,unreviewed
+advisor_suggestion,Consider adding a {type} partner.,Considera añadir un compañero de tipo {type}.,yes,yes,pending-review
+advisor_title,Smart Tactical Advisor,Consejero Táctico,no,yes,unreviewed
+advisor_weakness,Huge weakness to {type} detected!,¡Se ha detectado una gran debilidad al tipo {type}!,yes,yes,pending-review
+alert_no_resist,No resistances to {type},Sin resistencias a {type},no,no,unreviewed
+alert_weakness,{count} teammates are weak to {type},{count} miembros del equipo son débiles al tipo {type},yes,no,pending-review
+base_stats,Base Stats,Estadísticas base,yes,yes,pending-review
+bmc_btn,Buy Me a Coffee,Cómprame un café,no,yes,unreviewed
+brand_name,Poketypes,Poketypes,no,yes,unreviewed
+breadcrumb_type,{type} Type,Tipo {type},yes,yes,pending-review
+browse_by_type,Browse by type,Explorar por tipo,yes,yes,pending-review
+brute bonnet,Brute Bonnet,Furioseta,no,no,unreviewed
+btn_cancel,Cancel,Cancelar,no,yes,unreviewed
+btn_remove,Remove,Eliminar,no,yes,unreviewed
+bug,Bug,Bicho,no,no,unreviewed
+chart_desc,"Understanding type effectiveness is crucial for any Pokemon trainer. Our tool helps you instantly find weaknesses, resistances, and immunities.","Entender la efectividad de tipos es fundamental para cualquier entrenador Pokémon, tanto si juegas a Pokémon Escarlata y Púrpura (Gen 9) como a títulos clásicos. Nuestra calculadora de tipos te ayuda a encontrar al instante las debilidades, resistencias e inmunidades de cualquier Pokémon de uno o dos tipos.",yes,yes,pending-review
+choose_type,Choose a type,Elegir un tipo,no,yes,unreviewed
+clear_selection,Clear,Quitar,no,yes,unreviewed
+click_to_copy_username,Click to copy username,Haz clic para copiar el usuario,yes,yes,pending-review
+close_btn,Close,Cerrar,no,yes,unreviewed
+comp_analysis,Strategic Analysis,Análisis Estratégico,no,yes,unreviewed
+comp_effects,Competitive Effects,Efectos Competitivos,no,no,unreviewed
+comp_meta,Meta Summary,Resumen de Meta,no,yes,unreviewed
+comp_meta_desc,This Pokemon is ranked in {tier}. Its most effective abilities are: {abilities}.,Este Pokémon está clasificado en {tier}. Habilidades: {abilities}.,yes,yes,pending-review
+comp_no_data,No competitive data found for this format.,Sin datos competitivos en este formato.,no,yes,unreviewed
+comp_smogon_link,Open Smogon Strategy,Ver Estrategia en Smogon,no,yes,unreviewed
+comp_tier_meta,Smogon Tier & Meta,Tier y metajuego de Smogon,yes,yes,pending-review
+comp_usage,Usage Classification,Clasificación de Uso,no,no,unreviewed
+condition_not_confirmed,"Condition not confirmed — shown for reference only, not applied.","Condición no confirmada — solo informativo, no aplicado.",no,yes,unreviewed
+configure_btn,Configure,Configurar,no,yes,unreviewed
+confirm_clear_msg,Remove all Pokémon from this team?,¿Quieres eliminar todos los Pokémon del equipo?,no,yes,unreviewed
+confirm_delete_msg,Are you sure you want to remove this Pokemon from your team?,¿Seguro que quieres eliminar a este Pokémon de tu equipo?,no,yes,unreviewed
+confirm_delete_title,Remove Pokemon?,¿Eliminar Pokémon?,no,yes,unreviewed
+copied,Copied!,¡Copiado!,yes,yes,pending-review
+created_by,Created by,Creado por,no,yes,unreviewed
+dark,Dark,Siniestro,no,no,unreviewed
+defense_breakdown,Defense Breakdown,Defensa,no,yes,unreviewed
+defense_critical,Critical,Crítico,no,yes,unreviewed
+defense_immune,Immune,Inmune,no,yes,unreviewed
+defense_neutral,Neutral,Neutral,no,yes,unreviewed
+defense_resists,Resists,Resiste,no,yes,unreviewed
+defense_strong_resists,Strong Resists,Resistencia elevada,yes,yes,pending-review
+defense_weak,Weak,Débil,no,yes,unreviewed
+dragon,Dragon,Dragón,no,no,unreviewed
+dual_desc,"Weaknesses stack! If both types are weak to the same element, damage is 4x. Resistances can cancel out weaknesses.","Muchos Pokémon tienen dos tipos (por ejemplo, Charizard es Fuego/Volador). ¡Las debilidades se acumulan! Si ambos tipos son débiles al mismo elemento (como Roca contra Fuego/Volador), el multiplicador de daño pasa a 4x. Por el contrario, las resistencias pueden anular las debilidades.",yes,yes,pending-review
+dual_title,Dual Type Weaknesses,Debilidades de Tipo Dual,no,yes,unreviewed
+earth eater_desc,,Recupera PS al recibir un ataque de tipo Tierra en lugar de sufrir daño.,no,no,unreviewed
+effective_result,Effective,Efectivo,no,yes,unreviewed
+effectiveness_desc,Every attack has a type modifier. Standard is 1x. Super Effective is 2x. Not Very Effective is 0.5x. Immunities are 0x.,"Cada ataque del juego tiene un modificador de tipo. Si el tipo del ataque no es especialmente eficaz ni ineficaz contra el objetivo, causa el daño normal (1x). Si es supereficaz, causa 2x; si es poco eficaz, 0,5x. Las inmunidades causan 0x: el ataque no tiene ningún efecto.",yes,yes,pending-review
+effectiveness_title,How Effectiveness Works,¿Cómo funciona la efectividad?,no,yes,unreviewed
+electric,Electric,Eléctrico,no,no,unreviewed
+email_btn,Email Me,Envíame un correo,yes,yes,pending-review
+empty_state_hint,Click any type below to get started instantly,Haz clic en cualquier tipo para empezar al instante,no,yes,unreviewed
+es_404_english,,Ver la versión en inglés,yes,yes,pending-review
+es_404_home,,Ir al inicio,yes,yes,pending-review
+es_404_text,,Esta página aún no tiene versión en español.,yes,yes,pending-review
+es_404_title,,Página no disponible en español,yes,yes,pending-review
+extra_type_help,Extra Type help,Información sobre el tercer tipo,yes,yes,pending-review
+fairy,Fairy,Hada,no,no,unreviewed
+faq_a1,"While it depends on the strategy, the **Steel** type is often considered the best defensive type due to its numerous resistances, while **Fairy** and **Dragon** are top-tier offensive types in Gen 9.","Depende de la estrategia: ningún tipo es el mejor en todos los casos. Acero destaca en defensa por sus múltiples resistencias, mientras que Hada y Dragón son tipos ofensivos muy valorados en la Gen 9.",yes,yes,pending-review
+faq_a2,"To calculate dual type effectiveness, multiply the modifiers of both types. For example, if both types are weak to Water, the Pokemon takes 4x damage.","Se multiplican los modificadores de efectividad de ambos tipos. Por ejemplo, si los dos tipos son débiles al tipo Agua (x2 cada uno), el Pokémon recibe x4 de daño; si uno es débil (x2) y el otro resiste (x0,5), el daño queda en x1.",yes,yes,pending-review
+faq_a3,"Pokemon Scarlet and Violet (Gen 9) maintains the 18 standard types but introduces the **Terastal** phenomenon, allowing Pokemon to change their type mid-battle.","No. La novena generación (Pokémon Escarlata y Púrpura) mantiene los 18 tipos existentes. La novedad es la teracristalización, que permite a un Pokémon cambiar su tipo durante el combate.",yes,yes,pending-review
+faq_a4,"Yes, **Immunities** result in 0x damage. For example, Ghost types are immune to Normal and Fighting moves, and Ground types are immune to Electric attacks.","Sí. Una inmunidad hace que el ataque no cause daño (x0). Por ejemplo, el tipo Fantasma es inmune a los movimientos de tipo Normal y Lucha, y el tipo Tierra es inmune a los de tipo Eléctrico. Un Pokémon de dos tipos es inmune si cualquiera de sus dos tipos lo es.",yes,yes,pending-review
+faq_q1,What is the best Pokemon type?,¿Cuál es el mejor tipo Pokémon?,no,yes,unreviewed
+faq_q2,How to calculate dual type weaknesses?,¿Cómo se calculan las debilidades de un Pokémon de dos tipos?,yes,yes,pending-review
+faq_q3,What are the new types in Gen 9?,¿Hay tipos nuevos en la Gen 9?,yes,yes,pending-review
+faq_q4,Is there a 0x damage type?,¿Existe algún tipo de daño x0?,yes,yes,pending-review
+faq_title,Frequently Asked Questions,Preguntas Frecuentes,no,yes,unreviewed
+fighting,Fighting,Lucha,no,no,unreviewed
+fire,Fire,Fuego,no,no,unreviewed
+flutter mane,Flutter Mane,Melenalete,no,no,unreviewed
+flying,Flying,Volador,no,no,unreviewed
+footer_copyright,Data up to Gen 9,Datos hasta Gen 9,no,yes,unreviewed
+ghost,Ghost,Fantasma,no,no,unreviewed
+global_chart,Global Type Chart,Tabla de Tipos Global,no,yes,unreviewed
+gouging fire,Gouging Fire,Flamariete,no,no,unreviewed
+grass,Grass,Planta,no,no,unreviewed
+great tusk,Great Tusk,Colmilargo,no,no,unreviewed
+ground,Ground,Tierra,no,no,unreviewed
+hadron engine_desc,,"Crea un Campo Eléctrico al entrar en combate. Si hay Campo Eléctrico, aumenta su At. Esp.",no,no,unreviewed
+hadron-engine_desc,,"Crea un Campo Eléctrico al entrar en combate. Si hay Campo Eléctrico, aumenta su At. Esp.",no,no,unreviewed
+hidden,Hidden,Oculta,no,yes,unreviewed
+hide_full_chart,Hide full type chart,Ocultar tabla de tipos completa,no,no,unreviewed
+home_aria_label,PokeTypes — Home,PokeTypes — Inicio,yes,yes,pending-review
+home_h1,Pokemon Type Calculator & Weakness Checker,Calculadora de Tipos y Debilidades Pokémon,no,yes,unreviewed
+ice,Ice,Hielo,no,no,unreviewed
+immunities,Immunities,Inmunidades,no,no,unreviewed
+iron boulder,Iron Boulder,Ferromuro,no,no,unreviewed
+iron bundle,Iron Bundle,Ferrosaco,no,no,unreviewed
+iron crown,Iron Crown,Ferrotesta,no,no,unreviewed
+iron hands,Iron Hands,Ferropalmas,no,no,unreviewed
+iron jugulis,Iron Jugulis,Ferrocuello,no,no,unreviewed
+iron leaves,Iron Leaves,Ferroverdor,no,no,unreviewed
+iron moth,Iron Moth,Ferropolilla,no,no,unreviewed
+iron thorns,Iron Thorns,Ferropúas,no,no,unreviewed
+iron treads,Iron Treads,Ferrodada,no,no,unreviewed
+iron valiant,Iron Valiant,Ferropaladín,no,no,unreviewed
+lang_notice_available,,Esta página está disponible en español.,yes,yes,pending-review
+lang_notice_dismiss,,Cerrar aviso,yes,yes,pending-review
+lang_notice_unavailable,,Esta página aún no está disponible en español.,yes,yes,pending-review
+lang_notice_view,,Ver en español,yes,yes,pending-review
+ld_app_alternate_name,Pokemon Type Calculator,Calculadora de tipos Pokémon,yes,yes,pending-review
+ld_app_description,"Advanced Pokemon type calculator and effectiveness chart for Gen 9 (Scarlet & Violet). Check weaknesses, resistances, immunities and dual-type coverage instantly.","Calculadora de tipos Pokémon y tabla de efectividad para Gen 9 (Escarlata y Púrpura). Consulta al instante debilidades, resistencias, inmunidades y cobertura de doble tipo.",yes,yes,pending-review
+ld_feature_1,Pokemon type weakness calculator,Calculadora de debilidades por tipo,yes,yes,pending-review
+ld_feature_2,Dual-type coverage analysis,Análisis de cobertura de doble tipo,yes,yes,pending-review
+ld_feature_3,Team Builder with 6-slot roster,Constructor de equipos de 6 Pokémon,yes,yes,pending-review
+ld_feature_4,Gen 9 (Scarlet & Violet) support,Compatible con Gen 9 (Escarlata y Púrpura),yes,yes,pending-review
+ld_feature_5,"1,000+ Pokemon database",Base de datos de más de 1.000 Pokémon,yes,yes,pending-review
+ld_feature_6,Mobile-friendly PWA,PWA optimizada para móvil,yes,yes,pending-review
+ld_feature_7,Interactive type chart,Tabla de tipos interactiva,yes,yes,pending-review
+ld_feature_8,Tactical advisor,Asesor táctico,yes,yes,pending-review
+loading_desc,Loading description...,Cargando descripción...,no,yes,unreviewed
+loading_stats,Loading stats...,Cargando estadísticas...,no,yes,unreviewed
+mastering_chart,Mastering the Pokemon Type Chart,Dominando la Tabla de Tipos,no,yes,unreviewed
+member_config_title,Configure Pokemon,Configurar Pokémon,no,yes,unreviewed
+meta_default_description,"Instant Pokemon type calculator and effectiveness chart. Analyze weaknesses, resistances, and dual-type coverage for all 1,000+ Pokemon (Gen 9, Scarlet/Violet included).","Consulta debilidades, resistencias e inmunidades de los tipos Pokémon. Analiza combinaciones de tipos y descubre su efectividad ofensiva y defensiva.",yes,yes,pending-review
+meta_home_description,"The most advanced Pokemon type calculator and effectiveness chart. Analyze weaknesses, resistances, and dual-type coverage for all 1,000+ Pokemon (Gen 9, Scarlet/Violet included).","Calcula las debilidades, resistencias e inmunidades de más de 1.000 Pokémon. Consulta combinaciones de tipos y la tabla de efectividad al instante.",yes,yes,pending-review
+meta_home_title,PokeTypes | Pokemon Type Calculator & Effectiveness Chart,Calculadora de tipos Pokémon y debilidades | PokeTypes,yes,yes,pending-review
+meta_keywords,"pokemon type calculator, pokemon weakness chart, type effectiveness, pokemon SV, Gen 9, dual type calculator, resistance checker, pokemon scarlet violet, pokedex type chart","calculadora de tipos pokemon, debilidades pokemon, tabla de tipos pokemon, efectividad de tipos, calculadora de doble tipo, resistencias pokemon, pokemon escarlata purpura, gen 9",yes,yes,pending-review
+meta_pokemon_description,"{name} is a {types}-type Pokemon. See its full weakness chart, resistances, immunities, base stats, and abilities. Gen 9 (Scarlet & Violet) type calculator.","{name} es de tipo {types}. Consulta sus debilidades, resistencias, inmunidades, estadísticas base y habilidades en PokeTypes.",yes,yes,pending-review
+meta_pokemon_title,"{name} Weaknesses, Resistances & Type Chart | PokeTypes",Debilidades de {name} | PokeTypes,yes,yes,pending-review
+meta_type_combo_description,"{type} type weakness chart: full effectiveness analysis, resistances, and immunities for Gen 9 (Scarlet & Violet). See every type that beats {type} and every type {type} beats.","Debilidades, resistencias e inmunidades de la combinación {type} en Gen 9 (Escarlata y Púrpura): consulta de qué tipos recibe más daño, cuáles resiste y a qué ataques es inmune.",yes,yes,pending-review
+meta_type_combo_title,"{type} Type Weaknesses, Resistances & Chart | PokeTypes",{type}: debilidades y resistencias | PokeTypes,yes,yes,pending-review
+meta_type_description,"{type} type weakness chart: full effectiveness analysis, resistances, and immunities for Gen 9 (Scarlet & Violet). See every type that beats {type} and every type {type} beats.","Tabla de debilidades del tipo {type}: análisis de efectividad, resistencias e inmunidades en Gen 9 (Escarlata y Púrpura). Consulta qué tipos vencen a {type} y a qué tipos vence {type}.",yes,yes,pending-review
+meta_type_title,"{type} Type Weaknesses, Resistances & Chart | PokeTypes",Tipo {type}: debilidades y resistencias | PokeTypes,yes,yes,pending-review
+mode_calculator,Calculator,Calculadora,no,yes,unreviewed
+mode_team_builder,Team Builder,Equipo,no,yes,unreviewed
+modifier_adaptability_description,Doubles the same-type attack bonus (2× instead of 1.5×).,"Aumenta el bonificador por movimiento del mismo tipo (STAB) de 1,5× a 2×.",yes,yes,pending-review
+modifier_aerilate_description,Normal-type moves become Flying-type and gain 20% power.,Los movimientos de tipo Normal se convierten en tipo Volador y ganan un 20 % de potencia.,no,yes,unreviewed
+modifier_air_balloon_description,Grants immunity to Ground-type moves while the item is active.,Otorga inmunidad a los movimientos de tipo Tierra mientras el efecto del objeto esté activo.,no,yes,unreviewed
+modifier_contact_damage_half_description,Halves damage from contact moves.,Reduce a la mitad el daño recibido de movimientos de contacto.,no,yes,unreviewed
+modifier_delta_stream_description,Removes the type weaknesses of Flying-type Pokémon.,"Con Corriente Delta activa, neutraliza las debilidades propias del tipo Volador. La calculadora no simula el clima, así que este efecto no cambia el resultado.",yes,yes,pending-review
+modifier_dragons_maw_description,Boosts the power of Dragon-type moves by 50%.,Aumenta un 50 % la potencia de los movimientos de tipo Dragón.,no,yes,unreviewed
+modifier_electric_immunity_description,Grants immunity to Electric-type moves.,Otorga inmunidad a los movimientos de tipo Eléctrico.,no,yes,unreviewed
+modifier_fire_damage_double_description,Doubles damage taken from Fire-type moves.,Duplica el daño recibido de movimientos de tipo Fuego.,no,yes,unreviewed
+modifier_fire_damage_half_description,Halves damage from Fire-type moves.,Reduce a la mitad el daño recibido de movimientos de tipo Fuego.,no,yes,unreviewed
+modifier_fire_damage_increase_25_description,Takes 25% more damage from Fire-type moves.,Recibe un 25 % más de daño de movimientos de tipo Fuego.,no,yes,unreviewed
+modifier_fire_immunity_description,Grants immunity to Fire-type moves.,Otorga inmunidad a los movimientos de tipo Fuego.,no,yes,unreviewed
+modifier_galvanize_description,Normal-type moves become Electric-type and gain 20% power.,Los movimientos de tipo Normal se convierten en tipo Eléctrico y ganan un 20 % de potencia.,no,yes,unreviewed
+modifier_ghost_damage_half_description,Halves damage from Ghost-type moves.,Reduce a la mitad el daño recibido de movimientos de tipo Fantasma.,no,yes,unreviewed
+modifier_grass_immunity_description,Grants immunity to Grass-type moves.,Otorga inmunidad a los movimientos de tipo Planta.,no,yes,unreviewed
+modifier_ground_immunity_description,Grants immunity to Ground-type moves.,Otorga inmunidad a los movimientos de tipo Tierra.,no,yes,unreviewed
+modifier_half_damage_full_hp_description,Halves damage while the Pokémon is at full HP.,Reduce a la mitad el daño recibido mientras el Pokémon tenga todos sus PS.,no,yes,unreviewed
+modifier_hits_ghost_types_description,Allows Normal- and Fighting-type moves to hit Ghost-type Pokémon.,Permite que los movimientos de tipo Normal y Lucha impacten a los Pokémon de tipo Fantasma.,no,yes,unreviewed
+modifier_ice_damage_half_description,Halves damage from Ice-type moves.,Reduce a la mitad el daño recibido de movimientos de tipo Hielo.,no,yes,unreviewed
+modifier_neuroforce_description,Boosts the power of super-effective moves by 25%.,Aumenta un 25 % el daño de los movimientos supereficaces.,yes,yes,pending-review
+modifier_neutralizing_gas_description,Suppresses every other ability on the field while active.,Anula el resto de habilidades del combate mientras está activa.,no,yes,unreviewed
+modifier_pixilate_description,Normal-type moves become Fairy-type and gain 20% power.,Los movimientos de tipo Normal se convierten en tipo Hada y ganan un 20 % de potencia.,no,yes,unreviewed
+modifier_reduce_super_effective_25_description,Reduces damage from super-effective moves by 25%.,Reduce un 25 % el daño recibido de movimientos supereficaces.,no,yes,unreviewed
+modifier_refrigerate_description,Normal-type moves become Ice-type and gain 20% power.,Los movimientos de tipo Normal se convierten en tipo Hielo y ganan un 20 % de potencia.,no,yes,unreviewed
+modifier_ring_target_description,"Negates immunities caused by the holder's type, but not immunities granted by abilities or other effects.","Anula las inmunidades causadas por el tipo del Pokémon, pero no las otorgadas por habilidades u otros efectos.",no,yes,unreviewed
+modifier_rocky_payload_description,Boosts the power of Rock-type moves by 50%.,Aumenta un 50 % la potencia de los movimientos de tipo Roca.,no,yes,unreviewed
+modifier_stakeout_description,Doubles damage against a Pokémon that just switched in.,Duplica el daño contra un Pokémon que acaba de entrar al combate.,no,yes,unreviewed
+modifier_steelworker_description,Boosts the power of Steel-type moves by 50%.,Aumenta un 50 % la potencia de los movimientos de tipo Acero.,no,yes,unreviewed
+modifier_tera_shell_description,"At full HP, moves that can hit the Pokémon become not very effective.","Mientras el Pokémon tenga todos sus PS, los movimientos que puedan golpearlo pasan a ser poco eficaces.",no,yes,unreviewed
+modifier_tinted_lens_description,Doubles the damage of moves that are not very effective.,Duplica el daño de los movimientos poco eficaces.,no,yes,unreviewed
+modifier_transistor_description,Boosts the power of Electric-type moves by 30%.,Aumenta un 30 % la potencia de los movimientos de tipo Eléctrico.,no,yes,unreviewed
+modifier_water_immunity_description,Grants immunity to Water-type moves.,Otorga inmunidad a los movimientos de tipo Agua.,no,yes,unreviewed
+modifier_wonder_guard_description,Blocks all damage except from super-effective moves.,"Bloquea el daño directo de los movimientos que no sean supereficaces. No evita el daño indirecto (clima, veneno, objetos…).",yes,yes,pending-review
+nature_adamant,Adamant,Firme,no,no,unreviewed
+nature_bashful,Bashful,Tímida,no,no,unreviewed
+nature_bold,Bold,Osada,no,no,unreviewed
+nature_brave,Brave,Audaz,no,no,unreviewed
+nature_calm,Calm,Serena,no,no,unreviewed
+nature_careful,Careful,Cauta,no,no,unreviewed
+nature_docile,Docile,Dócil,no,no,unreviewed
+nature_gentle,Gentle,Amable,no,no,unreviewed
+nature_hardy,Hardy,Fuerte,no,no,unreviewed
+nature_hasty,Hasty,Activa,no,no,unreviewed
+nature_impish,Impish,Agitada,no,no,unreviewed
+nature_jolly,Jolly,Alegre,no,no,unreviewed
+nature_lax,Lax,Floja,no,no,unreviewed
+nature_lonely,Lonely,Huraña,no,no,unreviewed
+nature_mild,Mild,Afable,no,no,unreviewed
+nature_modest,Modest,Modesta,no,no,unreviewed
+nature_naive,Naive,Ingenua,no,no,unreviewed
+nature_naughty,Naughty,Pícara,no,no,unreviewed
+nature_quiet,Quiet,Mansa,no,no,unreviewed
+nature_quirky,Quirky,Rara,no,no,unreviewed
+nature_rash,Rash,Alocada,no,no,unreviewed
+nature_relaxed,Relaxed,Plácida,no,no,unreviewed
+nature_sassy,Sassy,Grosera,no,no,unreviewed
+nature_serious,Serious,Seria,no,no,unreviewed
+nature_timid,Timid,Miedosa,no,no,unreviewed
+neutral_damage,Neutral Damage,Daño Neutro,no,no,unreviewed
+neutral_offense,Neutral Offense,Ataque Neutro,no,no,unreviewed
+no_ability,No ability,Sin habilidad,no,yes,unreviewed
+no_effect,No Effect,Sin Efecto,no,yes,unreviewed
+no_item,No item,Sin objeto,no,yes,unreviewed
+none,None,Ninguno,no,yes,unreviewed
+normal,Normal,Normal,no,no,unreviewed
+not_very_effective,Not Very Effective,Poco eficaz,yes,yes,pending-review
+offense_breakdown,Offense Breakdown,Ataque,no,yes,unreviewed
+orichalcum pulse_desc,,"Pone día soleado al entrar en combate. Si hace sol, aumenta su Ataque.",no,no,unreviewed
+orichalcum-pulse_desc,,"Pone día soleado al entrar en combate. Si hace sol, aumenta su Ataque.",no,no,unreviewed
+poison,Poison,Veneno,no,no,unreviewed
+pressure_detail,{weak} weak · {resist} resist · {immune} immune,Débiles: {weak} · Resisten: {resist} · Inmunes: {immune},yes,yes,pending-review
+pressure_title,{type} Pressure,Presión de {type},no,yes,unreviewed
+pro_add_pokemon,Add Pokemon,Añadir Pokémon,no,yes,unreviewed
+pro_analysis_placeholder,"Add Pokemon to see team coverage, weakness alerts and roles.","Añade Pokémon para ver cobertura, alertas y roles.",no,yes,unreviewed
+pro_clear_team,Clear team,Vaciar equipo,no,yes,unreviewed
+pro_defense_coverage,Defense Coverage,Cobertura Defensiva,no,no,unreviewed
+pro_immune,Immune,Inmune,no,yes,unreviewed
+pro_item,Item,Objeto,no,yes,unreviewed
+pro_nature,Nature,Naturaleza,no,yes,unreviewed
+pro_resist,Resist,Resiste,no,yes,unreviewed
+pro_roles_title,Team Roles (Based on Stats),Roles del equipo según sus estadísticas,yes,yes,pending-review
+pro_share_copied,Link copied!,¡Enlace copiado!,no,yes,unreviewed
+pro_share_team,Share Team,Compartir Equipo,no,yes,unreviewed
+pro_team_analysis,Team Analysis,Análisis de Equipo,no,no,unreviewed
+pro_team_title,Your Team,Tu Equipo,no,yes,unreviewed
+pro_weak,Weak,Débil,no,yes,unreviewed
+protosynthesis-desc,,Aumenta la característica más alta con sol o con Energía Potenciadora.,no,no,unreviewed
+protosynthesis_desc,,Aumenta la característica más alta con sol o con Energía Potenciadora.,no,no,unreviewed
+psychic,Psychic,Psíquico,no,no,unreviewed
+purifying salt_desc,,Protege de problemas de estado y reduce el daño de tipo Fantasma a la mitad.,no,no,unreviewed
+quark drive_desc,,Aumenta la característica más alta en Campo Eléctrico o con Energía Potenciadora.,no,no,unreviewed
+quark-drive_desc,,Aumenta la característica más alta en Campo Eléctrico o con Energía Potenciadora.,no,no,unreviewed
+raging bolt,Raging Bolt,Electrofuria,no,no,unreviewed
+raw_matchup,Raw,Sin modificar,no,yes,unreviewed
+requires_contact,Requires the move to make contact,Requiere que el movimiento haga contacto,no,no,unreviewed
+requires_full_hp,Requires full HP,Requiere PS al máximo,no,no,unreviewed
+reset_btn,Reset,Reiniciar,no,yes,unreviewed
+resistances,Resistances,Resistencias,no,no,unreviewed
+roaring moon,Roaring Moon,Bramaluna,no,no,unreviewed
+rock,Rock,Roca,no,no,unreviewed
+role_mixed_wall,Mixed Wall,Muro Mixto,no,no,unreviewed
+role_phys_sweeper,Phys. Attacker,Atacante Físico,no,yes,unreviewed
+role_phys_wall,Phys. Wall,Muro Físico,no,yes,unreviewed
+role_spec_sweeper,Spec. Attacker,Atacante especial,yes,yes,pending-review
+role_spec_wall,Spec. Wall,Muro Especial,no,yes,unreviewed
+role_speedster,Speedster,Velocista,no,yes,unreviewed
+sandy shocks,Sandy Shocks,Pelarena,no,no,unreviewed
+scream tail,Scream Tail,Colagrito,no,no,unreviewed
+search_placeholder,Search Pokemon...,Buscar Pokémon...,no,yes,unreviewed
+search_start_typing,Type to start searching...,Escribe para empezar a buscar...,yes,yes,pending-review
+select_types,Select a type or Pokemon to begin analysis,Selecciona un tipo o Pokémon para comenzar,no,yes,unreviewed
+share_analysis,Share Analysis,Compartir análisis,yes,yes,pending-review
+show_full_chart,Show full type chart,Mostrar tabla de tipos completa,no,no,unreviewed
+sim_ability_modifier,Ability/item modifier,Modificador de habilidad/objeto,no,no,unreviewed
+sim_attack_type,Attacking Type,Tipo de Ataque,no,yes,unreviewed
+sim_damage_estimate,"~{min}–{max}% HP (ref. 100 BP move, base 100 Atk, 252 EVs)","~{min}–{max}% PS (ref. movimiento de potencia base 100, Atq. base 100, 252 EV)",yes,yes,pending-review
+sim_defender,Defender,Defensor,no,yes,unreviewed
+sim_effective_result,Effective result,Resultado efectivo,no,yes,unreviewed
+sim_effectiveness,Effectiveness,Efectividad,no,no,unreviewed
+sim_raw_matchup,Raw matchup,Sin modificar,no,yes,unreviewed
+sim_select_pokemon,Select Pokemon first,Selecciona un Pokémon primero,no,yes,unreviewed
+sim_standard_effectiveness,Standard type effectiveness.,Efectividad de tipos estándar.,no,yes,unreviewed
+sim_title,Ability Interaction Checker,Comprobador de interacciones de habilidades,yes,yes,pending-review
+slither wing,Slither Wing,Reptalada,no,no,unreviewed
+spanish_unavailable,Spanish version not available for this page yet,Versión en español aún no disponible para esta página,yes,yes,pending-review
+ssr_brand_name,PokeTypes,,no,yes,unreviewed
+ssr_chart_desc,"Understanding type effectiveness is crucial for any Pokemon trainer, whether you're playing Pokemon Scarlet and Violet (Gen 9) or classic titles. Our Pokemon Type Calculator helps you instantly find weaknesses, resistances, and immunities for any single or dual-type Pokemon.",,no,yes,unreviewed
+ssr_defense_breakdown,Defense,,no,yes,unreviewed
+ssr_dual_desc,"Many Pokemon possess two types (e.g., Charizard is Fire/Flying). Weaknesses stack! If both types are weak to the same element (like Rock vs. Fire/Flying), the damage multiplier becomes 4x. Conversely, resistances can cancel out weaknesses.",,no,yes,unreviewed
+ssr_effectiveness_desc,"Every attack in the game has a type modifier. A standard attack deals 1x damage. If a move is Super Effective, it deals 2x damage. If it's Not Very Effective, it deals 0.5x damage. Immunities result in 0x damage, meaning the attack has no effect at all.",,no,yes,unreviewed
+ssr_offense_breakdown,Offense,,no,yes,unreviewed
+stat_atk,Attack,Ataque,no,yes,unreviewed
+stat_def,Defense,Defensa,no,yes,unreviewed
+stat_hp,HP,PS,no,yes,unreviewed
+stat_spa,Sp. Atk,At. Esp,no,yes,unreviewed
+stat_spd,Sp. Def,Def. Esp,no,yes,unreviewed
+stat_spe,Speed,Velocidad,no,yes,unreviewed
+stats_unavailable,Stats unavailable.,Estadísticas no disponibles.,no,yes,unreviewed
+steel,Steel,Acero,no,no,unreviewed
+subtitle,"Quickly analyze type coverage, weaknesses, and resistances for any Pokemon or type combination.","Analiza rápidamente coberturas, debilidades y resistencias para cualquier Pokémon o combinación de tipos.",no,no,unreviewed
+suggestions_desc,"I'm always looking to improve PokeTypes. Whether it's a feature request or a bug report, I'd love to hear from you!","Siempre busco mejorar PokeTypes. Si tienes una idea o encuentras un error, ¡me encantaría escucharte!",no,yes,unreviewed
+suggestions_title,Got suggestions or feedback?,¿Tienes sugerencias?,no,yes,unreviewed
+super_effective,Super Effective,Supereficaz,yes,yes,pending-review
+supreme overlord_desc,,Aumenta el Ataque y At. Esp. por cada aliado derrotado.,no,no,unreviewed
+supreme-overlord_desc,,Aumenta el Ataque y At. Esp. por cada aliado derrotado.,no,no,unreviewed
+switch_to_en,EN – English,EN – English,yes,no,pending-review
+switch_to_es,ES – Español,ES – Español,yes,no,pending-review
+team_count_initial,0/6 Pokemon,0/6 Pokémon,yes,yes,pending-review
+team_defense_title,Team Defense,Defensa del Equipo,no,yes,unreviewed
+title_seo,: Pokemon Type Calculator,: Calculadora de tipos Pokémon,no,no,unreviewed
+toggle_dark_mode,Toggle dark mode,Cambiar tema,yes,yes,pending-review
+toggle_language,Toggle language,Cambiar idioma,yes,yes,pending-review
+type3_tooltip,Simulates effects like Forest's Curse or Trick-or-Treat that add a 3rd typing.,Simula efectos como Condena Silvana o Halloween que añaden un tercer tipo.,no,no,unreviewed
+type: null,Type: Null,Código Cero,no,no,unreviewed
+type_1,Type 1,Tipo 1,no,no,unreviewed
+type_2,Type 2,Tipo 2,no,no,unreviewed
+type_3,Extra Type,Tipo adicional,yes,no,pending-review
+type_page_h1,{type} Type Weaknesses & Resistances,Debilidades y Resistencias del Tipo {type},no,yes,unreviewed
+type_subtitle_prefix,Effectiveness analysis for,Análisis de efectividad para el tipo,no,yes,unreviewed
+walking wake,Walking Wake,Ondulagua,no,no,unreviewed
+walled_by_dual,Totally Walled By (Dual Types),Bloqueado por completo por (tipos duales),yes,yes,pending-review
+water,Water,Agua,no,no,unreviewed
+weaknesses,Weaknesses,Debilidades,no,no,unreviewed
+well-baked body_desc,,Sube mucho la Defensa al recibir un ataque de tipo Fuego en lugar de sufrir daño.,no,no,unreviewed

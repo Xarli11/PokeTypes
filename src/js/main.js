@@ -15,6 +15,7 @@ import { ES_PILOT_ENABLED, urlForState } from '../lib/i18n-pilot.js';
 import { renderLangSwitch } from '../lib/lang-switch.js';
 import { noticeFor } from '../lib/lang-notice.js';
 import { messages } from './lang/messages.js';
+import { localizePokemonName } from '../lib/pokemon-names.js';
 import { parseAppLocation, buildAppUrl, withMode } from '../lib/app-state.js';
 
 let appData = null;
@@ -307,7 +308,7 @@ async function applyState({ pokemonSlug, types }, { fromHistory = false } = {}) 
         }
         if (pokemon) {
             const localizedName = i18n.t(pokemon.name.toLowerCase());
-            searchInput.value = localizedName !== pokemon.name.toLowerCase() ? localizedName : ui.capitalizeWords(pokemon.name);
+            searchInput.value = localizedName !== pokemon.name.toLowerCase() ? localizedName : localizePokemonName(ui.capitalizeWords(pokemon.name), i18n.currentLang);
 
             typeSelect.value = pokemon.types[0] || '';
             type2Select.value = pokemon.types[1] || '';
@@ -566,7 +567,7 @@ function setupEventListeners() {
         // 1. Get matches with localization support and diacritics normalization
         const matches = appData.pokemonList.map(p => {
             const localizedName = i18n.t(p.name.toLowerCase());
-            const displayName = localizedName !== p.name.toLowerCase() ? localizedName : ui.capitalizeWords(p.name);
+            const displayName = localizedName !== p.name.toLowerCase() ? localizedName : localizePokemonName(ui.capitalizeWords(p.name), i18n.currentLang);
             return {
                 ...p,
                 displayName,
@@ -649,7 +650,7 @@ function setupEventListeners() {
 
         // Use localized name for the input field
         const localizedName = i18n.t(pokemon.name.toLowerCase());
-        searchInput.value = localizedName !== pokemon.name.toLowerCase() ? localizedName : ui.capitalizeWords(pokemon.name);
+        searchInput.value = localizedName !== pokemon.name.toLowerCase() ? localizedName : localizePokemonName(ui.capitalizeWords(pokemon.name), i18n.currentLang);
         
         typeSelect.value = pokemon.types[0] || '';
         type2Select.value = pokemon.types[1] || '';

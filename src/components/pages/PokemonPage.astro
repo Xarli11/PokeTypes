@@ -8,6 +8,7 @@ import pokedex from '../../data/pokedex.json';
 import typeData from '../../data/type-data.json';
 import { calculateDefense, calculateOffense } from '../../lib/type-engine/index.js';
 import { renderDefenseGroups, renderOffenseGroups, renderTypePills } from '../../lib/type-render.js';
+import { localizePokemonName } from '../../lib/pokemon-names.js';
 import { createT } from '../../lib/i18n-server.js';
 import { pokemonSlug, renderStatsHtml, renderAbilitiesHtml } from '../../lib/seo.js';
 import { withLangPrefix } from '../../lib/i18n-routes.js';
@@ -21,7 +22,8 @@ const { lang = 'en', slug: requestedSlug } = Astro.props;
 const { t, h, tType, tAbility } = createT(lang);
 const pokemon = pokedex.find(p => pokemonSlug(p) === requestedSlug)!;
 
-const { name, id, types } = pokemon as { name: string; id: number; types: string[]; apiName?: string };
+const { name: internalName, id, types } = pokemon as { name: string; id: number; types: string[]; apiName?: string };
+const name = localizePokemonName(internalName, lang); // display only ("Mega-Charizard X" in Spanish); slug and routes use the internal name
 
 const slug = pokemonSlug(pokemon);
 const siteUrl = 'https://poketypes.app';

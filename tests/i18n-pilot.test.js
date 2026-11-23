@@ -7,6 +7,7 @@ import { messages } from '../src/js/lang/messages.js';
 import { pokemonSlug } from '../src/lib/seo.js';
 import { createT } from '../src/lib/i18n-server.js';
 import { renderTypePills, renderDefenseGroups } from '../src/lib/type-render.js';
+import * as engine from '../src/lib/type-engine/index.js';
 import { calculateDefense } from '../src/lib/type-engine/index.js';
 import { statePath, pathForLang, toTypeSlug, stripLangPrefix } from '../src/lib/i18n-routes.js';
 import {
@@ -279,7 +280,7 @@ describe('C3a: text coverage and engine identifiers', () => {
             expect(es(key), key).not.toBe(en(key));
         }
         expect(es('effectiveness_desc')).toMatch(/2x/);
-        expect(es('effectiveness_desc')).toMatch(/0\.5x/);
+        expect(es('effectiveness_desc')).toMatch(/0[.,]5x/);
         expect(es('effectiveness_desc')).toMatch(/0x/);
         expect(es('dual_desc')).toMatch(/4x/);
         expect(es('dual_desc')).toContain('Fuego/Volador');
@@ -330,5 +331,144 @@ describe('C3a: text coverage and engine identifiers', () => {
         const missing = lang => [...used].filter(k => !(k in messages[lang]) && !(`ssr_${k}` in messages[lang]));
         expect(missing('en')).toEqual([]);
         expect(missing('es')).toEqual([]);
+    });
+});
+
+describe('C3b: editorial rewrite', () => {
+    const { t } = createT('es');
+    const placeholders = text => [...new Set([...String(text).matchAll(/\{[a-z]+\}/g)].map(m => m[0]))].sort();
+    const C3B_KEYS = ['meta_type_combo_title', 'super_effective', 'not_very_effective', 'base_stats', 'type_3', 'sim_title', 'role_spec_sweeper',
+        'defense_strong_resists', 'email_btn', 'pro_roles_title', 'advisor_weakness', 'advisor_suggestion', 'pressure_detail', 'alert_weakness',
+        'walled_by_dual', 'comp_meta_desc', 'sim_damage_estimate', 'modifier_adaptability_description', 'modifier_wonder_guard_description',
+        'modifier_delta_stream_description', 'modifier_neuroforce_description', 'faq_a1', 'faq_q2', 'faq_a2', 'faq_q3', 'faq_a3', 'faq_q4', 'faq_a4',
+        'meta_home_title', 'meta_home_description', 'meta_default_description', 'meta_type_title', 'meta_pokemon_title', 'meta_pokemon_description',
+        'meta_type_combo_description'];
+
+    it('every rewritten string stays in the draft registry (nothing is approved by being present)', () => {
+        expect(C3B_KEYS.filter(k => !ES_DRAFT_KEYS.includes(k))).toEqual([]);
+        expect(ES_PILOT_ENABLED).toBe(false);
+    });
+
+    it('Spanish keeps exactly the placeholders of the English string', () => {
+        const bad = Object.keys(messages.es).filter(k => k in messages.en && JSON.stringify(placeholders(messages.es[k])) !== JSON.stringify(placeholders(messages.en[k])));
+        expect(bad).toEqual([]);
+    });
+
+    it('page metadata templates', () => {
+        const title = (key, params) => t(key, params);
+        expect(title('meta_home_title')).toBe('Calculadora de tipos Pokémon y debilidades | PokeTypes');
+        expect(title('meta_type_title', { type: 'Fuego' })).toBe('Tipo Fuego: debilidades y resistencias | PokeTypes');
+        expect(title('meta_type_combo_title', { type: 'Fuego/Volador' })).toBe('Fuego/Volador: debilidades y resistencias | PokeTypes');
+        expect(title('meta_pokemon_title', { name: 'Pikachu' })).toBe('Debilidades de Pikachu | PokeTypes');
+        expect(t('meta_pokemon_description', { name: 'Pikachu', types: 'Eléctrico' }))
+            .toBe('Pikachu es de tipo Eléctrico. Consulta sus debilidades, resistencias, inmunidades, estadísticas base y habilidades en PokeTypes.');
+        for (const key of ['meta_home_title', 'meta_type_title', 'meta_type_combo_title', 'meta_pokemon_title']) {
+            expect(t(key, { type: 'Fuego/Volador', name: 'Charizard-Mega-X' }).length, key).toBeLessThanOrEqual(70);
+        }
+        for (const key of ['meta_home_description', 'meta_default_description']) expect(t(key).length, key).toBeLessThanOrEqual(160);
+    });
+
+    it('English titles are unchanged: single and combination keys are identical in English', () => {
+        expect(messages.en.meta_type_combo_title).toBe(messages.en.meta_type_title);
+        expect(createT('en').t('meta_type_title', { type: 'Fire' })).toBe('Fire Type Weaknesses, Resistances & Chart | PokeTypes');
+    });
+
+    it('the type page picks the combination title for 2 and 3 types only', () => {
+        const src = read('src/components/pages/TypePage.astro');
+        expect(src).toContain("typeNames.length > 1 ? 'meta_type_combo_title' : 'meta_type_title'");
+    });
+
+    it('Spanish FAQ is plain text: no Markdown markers, and the JSON-LD text equals the visible text', () => {
+        for (const n of [1, 2, 3, 4]) {
+            for (const key of [`faq_q${n}`, `faq_a${n}`]) {
+                expect(messages.es[key], key).not.toMatch(/\*|_{2}|`|<|>/);
+                expect(t(key), key).toBe(messages.es[key]);
+            }
+        }
+        const home = read('src/components/pages/HomePage.astro');
+        expect(home).toContain("const plain = (text: string) => text.replace(/\\*\\*/g, '')"); // no-op for plain text, kept for English
+    });
+
+    it('FAQ answers keep the mechanics right', () => {
+        expect(messages.es.faq_a3).toMatch(/18 tipos/);
+        expect(messages.es.faq_a3).toMatch(/teracristalización/);
+        expect(messages.es.faq_a3).not.toMatch(/nuevos tipos/);
+        expect(messages.es.faq_a2).toMatch(/x4/);
+        expect(messages.es.faq_a2).toMatch(/x1/);
+        expect(messages.es.faq_a4).toMatch(/Fantasma/);
+        expect(messages.es.faq_a4).toMatch(/Tierra/);
+        expect(messages.es.faq_a1).not.toMatch(/el mejor tipo\b/);
+    });
+
+    it('mechanics strings match what the engine implements', () => {
+        const { ABILITY_EFFECTIVENESS } = engine;
+        const keyOf = ability => ABILITY_EFFECTIVENESS[ability][0];
+        expect(keyOf('adaptability').modifier).toBe(2); // STAB x2 (1.5 -> 2)
+        expect(messages.es.modifier_adaptability_description).toMatch(/1,5× a 2×/);
+        expect(keyOf('neuroforce').modifier).toBe(1.25);
+        expect(messages.es.modifier_neuroforce_description).toMatch(/25 %/);
+        expect(messages.es.modifier_neuroforce_description).toMatch(/daño/);
+        expect(keyOf('wonder-guard').blockNonSE).toBe(true);
+        expect(messages.es.modifier_wonder_guard_description).toMatch(/directo/);
+        expect(messages.es.modifier_wonder_guard_description).toMatch(/indirecto/);
+        expect(keyOf('delta-stream').modifier).toBe(1); // not simulated
+        expect(messages.es.modifier_delta_stream_description).toMatch(/no simula/);
+        expect(messages.es.sim_damage_estimate).toMatch(/potencia base 100/);
+        expect(messages.es.sim_damage_estimate).not.toMatch(/\bPP\b|\bBP\b/);
+        expect(messages.es.sim_damage_estimate).toMatch(/\{min\}.*\{max\}/);
+    });
+
+    it('docs/i18n/es-dictionary.csv is generated from the real dictionary and approves nothing', async () => {
+        const { buildCsv } = await import('../scripts/es-dictionary.mjs');
+        expect(read('docs/i18n/es-dictionary.csv')).toBe(buildCsv());
+        expect(buildCsv()).not.toMatch(/,approved\n/);
+        expect(buildCsv().split('\n').filter(l => l.endsWith(',pending-review')).length).toBe(ES_DRAFT_KEYS.length);
+    });
+
+    it('the strategy panel translates ability names, and English output cannot change', () => {
+        expect(read('src/js/modules/ui.js')).toContain('Object.values(data.abilities).map(name => i18n.tAbility(name))');
+        const names = new Set(pokedex.flatMap(p => Object.values(p.abilities ?? {})));
+        const known = [...names].filter(n => abilityNames[n.toLowerCase().replace(/ /g, '-')]);
+        expect(known.length).toBeGreaterThan(290);
+        // i18n.tAbility(name) in English returns entry.en: it must equal the name the panel showed before
+        expect(known.filter(n => abilityNames[n.toLowerCase().replace(/ /g, '-')].en !== n)).toEqual([]);
+        const es = createT('es').tAbility;
+        expect(es('Static')).toBe('Electricidad Estática'); // full name, same as PokéAPI shows after hydration
+        expect(es('Lightning Rod')).toBe('Pararrayos');
+        expect(es("Dragon's Maw")).toBe("Dragon's Maw"); // not in the map: left as is, never invented
+    });
+
+    it('comp_meta_desc is neutral: no claim that abilities are ranked or most effective', () => {
+        expect(messages.es.comp_meta_desc).not.toMatch(/eficaz|efectiv|mejor|más/i);
+        expect(placeholders(messages.es.comp_meta_desc)).toEqual(['{abilities}', '{tier}']);
+    });
+
+    it('combinations have their own description; English is unchanged', () => {
+        expect(messages.en.meta_type_combo_description).toBe(messages.en.meta_type_description);
+        const d = t('meta_type_combo_description', { type: 'Fuego/Volador' });
+        expect(d).toContain('combinación Fuego/Volador');
+        expect(d).toMatch(/debilidades, resistencias e inmunidades/i);
+        expect(d).not.toMatch(/vence|Tipo Fuego/);
+        expect(d.length).toBeLessThanOrEqual(200);
+        expect(read('src/components/pages/TypePage.astro')).toContain("typeNames.length > 1 ? 'meta_type_combo_description' : 'meta_type_description'");
+        expect(t('meta_type_description', { type: 'Fuego' })).toContain('Tabla de debilidades del tipo Fuego'); // single types keep theirs
+    });
+
+    it('Spanish display name of Mega forms has a hyphen; slugs, routes and English are untouched', async () => {
+        const { localizePokemonName } = await import('../src/lib/pokemon-names.js');
+        expect(localizePokemonName('Mega Charizard X', 'es')).toBe('Mega-Charizard X');
+        expect(localizePokemonName('Mega Charizard X', 'en')).toBe('Mega Charizard X');
+        expect(localizePokemonName('Charizard', 'es')).toBe('Charizard');
+        expect(localizePokemonName('Megagross', 'es')).toBe('Megagross');
+        const mega = pokedex.find(p => pokemonSlug(p) === 'charizard-mega-x');
+        expect(localizePokemonName(mega.name, 'es')).toBe('Mega-Charizard X');
+        expect(PILOT_EN_PATHS).toContain('/pokemon/charizard-mega-x');
+        expect(pathForLang('/pokemon/charizard-mega-x', 'es')).toBe('/es/pokemon/charizard-mega-x');
+        expect(read('src/components/pages/PokemonPage.astro')).toContain('localizePokemonName(internalName, lang)');
+    });
+
+    it('ability names agree between SSR dictionary and the full Spanish name for the pilot', () => {
+        expect(abilityNames.static.es).toBe('Electricidad Estática');
+        expect(abilityNames['lightning-rod'].es).toBe('Pararrayos');
     });
 });

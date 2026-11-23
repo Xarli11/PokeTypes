@@ -1,5 +1,6 @@
 import { getEffectiveness, getAbilityModifiers, formatMultiplierSymbol } from '../../lib/type-engine/index.js';
 import { i18n } from './i18n.js';
+import { localizePokemonName } from '../../lib/pokemon-names.js';
 
 const TYPE_COLORS = {
     Normal: '#A8A77A', Fire: '#EE8130', Water: '#6390F0', Grass: '#7AC74C',
@@ -301,7 +302,7 @@ export function renderPokemonHero(container, pokemon, contrastData, imageFixes =
     const fix = imageFixes[pokemon.apiName];
 
     const localizedName = i18n.t(pokemon.name.toLowerCase());
-    const displayName = localizedName !== pokemon.name.toLowerCase() ? localizedName : capitalizeWords(pokemon.name);
+    const displayName = localizedName !== pokemon.name.toLowerCase() ? localizedName : localizePokemonName(capitalizeWords(pokemon.name), i18n.currentLang);
 
     const typePills = pokemon.types.map(t => createTypePill(t, contrastData)).join('');
 
@@ -445,7 +446,7 @@ export function renderCompetitiveData(container, data, pokemonName) {
     }
 
     const tier = data.tier || 'Untiered';
-    const abilities = data.abilities ? Object.values(data.abilities).join(', ') : '---';
+    const abilities = data.abilities ? Object.values(data.abilities).map(name => i18n.tAbility(name)).join(', ') : '---'; // unknown names stay as written
     const slug = pokemonName.toLowerCase().replace(/[^a-z0-0]/g, '');
 
     const tierColors = {
