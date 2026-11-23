@@ -37,7 +37,8 @@ const selectedTypeHtml = renderTypePills([t1, t2, t3].filter(Boolean) as string[
 const typeNames = [t1, t2, t3].filter(Boolean) as string[];
 const typeName = typeNames.join('/'); // internal (English) names: the client translates them from data-type-name
 const displayName = typeNames.map(tType).join('/');
-const title = t('meta_type_title', { type: displayName });
+// One type: "Tipo Fuego: …"; combinations ("Fuego/Volador: …") must not carry the word "Tipo". English text is the same for both.
+const title = t(typeNames.length > 1 ? 'meta_type_combo_title' : 'meta_type_title', { type: displayName });
 const description = t('meta_type_description', { type: displayName });
 const canonicalPath = withLangPrefix(`/tipo/${canonicalSlug}`, lang);
 const homePath = withLangPrefix('/', lang);

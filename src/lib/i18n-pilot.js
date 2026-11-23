@@ -40,7 +40,15 @@ export const ES_DRAFT_KEYS = [
     'es_404_title', 'es_404_text', 'es_404_english', 'es_404_home',
     // C3a: new keys and rewritten home SEO copy
     'copied', 'search_start_typing', 'comp_tier_meta',
-    'chart_desc', 'effectiveness_desc', 'dual_desc'
+    'chart_desc', 'effectiveness_desc', 'dual_desc',
+    // C3b: editorial rewrite (still pending approval)
+    'meta_type_combo_title',
+    'super_effective', 'not_very_effective', 'base_stats', 'type_3', 'sim_title', 'role_spec_sweeper',
+    'defense_strong_resists', 'email_btn', 'pro_roles_title',
+    'advisor_weakness', 'advisor_suggestion', 'pressure_detail', 'alert_weakness', 'walled_by_dual', 'comp_meta_desc',
+    'sim_damage_estimate', 'modifier_adaptability_description', 'modifier_wonder_guard_description',
+    'modifier_delta_stream_description', 'modifier_neuroforce_description',
+    'faq_a1', 'faq_q2', 'faq_a2', 'faq_q3', 'faq_a3', 'faq_q4', 'faq_a4'
 ];
 
 const normalize = pathname => (pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname);
