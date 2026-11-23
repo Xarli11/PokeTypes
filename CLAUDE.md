@@ -22,14 +22,16 @@ Utility scripts (run with `node scripts/<name>`):
 - `sync-abilities.js` — sync ability i18n data
 - `verify-types.js` — validate `src/data/type-data.json` against Smogon's type chart (no npm alias)
 - `audit-images.js` — check sprite URLs / `image-fixes.json`
+- `ssr-snapshot.mjs` — `capture <baseUrl> <dir>` / `diff <dirA> <dirB>`: compare (file sets in both directions + bytes) the server-rendered HTML of every sitemap URL between two builds (use it to prove a refactor changed nothing)
 
 ## Tests
 
-Vitest suite in `tests/` (22 files, ~345 tests, Node environment — no DOM, no browser). Pure logic is tested directly; DOM-heavy modules only through their pure helpers.
+Vitest suite in `tests/` (24 files, ~682 tests, Node environment — no DOM, no browser). Pure logic is tested directly; DOM-heavy modules only through their pure helpers.
 
 - `tests/type-engine/*` — effectiveness, modifiers (abilities/items), battle context, Ring Target, triple type, team analysis, SSR/client parity.
 - `tests/seo.test.js` — sitemap, robots.txt, `seo.js` helpers, SSR stats/abilities HTML.
 - `tests/a11y-seo-regression.test.js` — WCAG contrast of type pills/status colours (computed from `global.css` + `type-data.json`), `<main>` landmark per page, heading levels, 24 px touch target, no `og-image.png` references, one canonical `/tipo/` URL per type combination.
+- `tests/type-render.test.js` — SSR markup is byte-equivalent (SHA-256 golden in `tests/fixtures/`) to the helpers that used to be inlined in the pages, for every single/dual type and 4 triples.
 - `tests/share-team.test.js`, `tests/team-clear.test.js`, `tests/ui/*` — share links, team state, i18n keys, selectors, analytics, form-page details.
 
 `localStorage` is not defined in Node: modules that import `i18n.js` need a stub before import (see `tests/ui/type-selector.test.js`). There are no e2e, accessibility or performance automated tests; Lighthouse/axe checks are run manually. After changes, still provide manual test cases with expected outcomes.
@@ -60,10 +62,11 @@ Pure, no DOM; used by SSR pages, client and tests. See `docs/type-engine.md`.
 
 | Path | Purpose |
 |---|---|
+| `src/lib/type-render.js` | Pure SSR HTML for defense/offense groups and type pills (shared by `/tipo/*` and `/pokemon/*`; `t` label provider defaults to English) |
 | `src/lib/seo.js` | `pokemonSlug`, `normalizePathname`, `parseTypeSlug`, `canonicalTypeSlug`, SSR stats/abilities HTML |
 | `src/lib/share-team.js` | Team Builder share-link encode/decode (`?team=…&mode=pro`, versioned payload) |
 | `src/layouts/Layout.astro` | `<head>`: canonical (`canonicalPath` prop), OG/Twitter, GA4, AdSense, base JSON-LD |
-| `src/components/` | `AppHeader` (header, lang/theme/mode buttons), `TypeSelectorField`, `TypeLinks` (crawlable links to the 18 type pages) |
+| `src/components/` | `AppHeader` (header, lang/theme/mode buttons), `TypeSelectorField`, `ControlPanel` (search + type selectors + reset), `ShareButton`, `TypeLinks` (crawlable links to the 18 type pages) |
 | `src/pages/sitemap.xml.ts` | Sitemap: home, 18 types, 20 dual types (canonical order), every distinct `/pokemon/` slug; no `lastmod` |
 
 ### Client modules (`src/js/modules/`)

@@ -1,11 +1,13 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import AppHeader from '../../components/AppHeader.astro';
-import TypeSelectorField from '../../components/TypeSelectorField.astro';
+import ControlPanel from '../../components/ControlPanel.astro';
+import ShareButton from '../../components/ShareButton.astro';
 import TypeLinks from '../../components/TypeLinks.astro';
 import pokedex from '../../data/pokedex.json';
 import typeData from '../../data/type-data.json';
 import { calculateDefense, calculateOffense } from '../../lib/type-engine/index.js';
+import { renderDefenseGroups, renderOffenseGroups, renderTypePills } from '../../lib/type-render.js';
 import { pokemonSlug, renderStatsHtml, renderAbilitiesHtml } from '../../lib/seo.js';
 
 const { name: nameParam } = Astro.params;
@@ -57,27 +59,6 @@ const pokemonSchema = {
 const { contrast, effectiveness, types: allTypes } = typeData;
 const contrastMap = contrast as Record<string, string>;
 
-function pill(type: string): string {
-    const tc = contrastMap[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
-    return `<span class="type-pill bg-type-${type.toLowerCase()} ${tc}">${type}</span>`;
-}
-function pills(list: string[]): string {
-    return list.length
-        ? list.map(pill).join('')
-        : `<span class="text-xs font-bold uppercase tracking-widest" style="color: var(--text-muted)">None</span>`;
-}
-
-const MULT_LABELS: Record<string, string> = { '8': '8×', '4': '4×', '2': '2×', '1': '1×', '05': '½×', '025': '¼×', '0125': '⅛×', '0': '0×' };
-function multRow(mult: string, severityClass: string, typeList: string[]): string {
-    if (!typeList.length) return '';
-    return `<div class="flex items-start gap-3"><span class="mult-badge ${severityClass} shrink-0">${MULT_LABELS[mult]}</span><div class="type-pills-container pt-1">${pills(typeList)}</div></div>`;
-}
-function section(title: string, rows: string[]): string {
-    const filtered = rows.filter(Boolean);
-    if (!filtered.length) return '';
-    return `<div class="mb-4 last:mb-0"><div class="text-[11px] font-bold uppercase tracking-widest mb-2" style="color: var(--text-muted)">${title}</div><div class="flex flex-col gap-2.5">${filtered.join('')}</div></div>`;
-}
-
 const t1 = types[0];
 const t2 = types[1] || null;
 const t3 = types[2] || null;
@@ -85,23 +66,9 @@ const t3 = types[2] || null;
 const def = calculateDefense(t1, t2, allTypes, effectiveness, t3);
 const off = calculateOffense(t1, t2, allTypes, effectiveness, t3);
 
-const defenseGroupsHtml = [
-    section('Critical', [multRow('8', 'mult-critical', def.weaknesses8x), multRow('4', 'mult-critical', def.weaknesses4x)]),
-    section('Weak', [multRow('2', 'mult-weak', def.weaknesses2x)]),
-    section('Immune', [multRow('0', 'mult-immune', def.immunities)]),
-    section('Resists', [multRow('05', 'mult-resist', def.resistances05x)]),
-    section('Strong Resists', [multRow('025', 'mult-resist', def.resistances025x), multRow('0125', 'mult-resist', def.resistances0125x)]),
-    section('Neutral', [multRow('1', 'mult-neutral', def.neutral)])
-].filter(Boolean).join('');
-
-const offenseGroupsHtml = [
-    section('Super Effective', [multRow('2', 'mult-critical', off.superEffective2x)]),
-    section('Neutral', [multRow('1', 'mult-neutral', off.neutral)]),
-    section('Not Very Effective', [multRow('05', 'mult-resist', off.notVeryEffective)]),
-    section('No Effect', [multRow('0', 'mult-immune', off.noEffect)])
-].filter(Boolean).join('');
-
-const typePillsHtml = types.map(pill).join('');
+const defenseGroupsHtml = renderDefenseGroups(def, contrastMap);
+const offenseGroupsHtml = renderOffenseGroups(off, contrastMap);
+const typePillsHtml = renderTypePills(types, contrastMap);
 
 // Base stats and ability names exist in the local pokedex; PokeAPI is only
 // needed for localized names and descriptions, which main.js adds on load.
@@ -133,20 +100,7 @@ const heroHtml = `
 
         <main>
         <div id="view-simple" class="flex flex-col gap-5">
-            <section class="panel flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
-                <div class="relative w-full lg:flex-1">
-                    <input id="pokemon-search" type="text" placeholder="Search Pokemon..." class="search-input" autocomplete="off">
-                    <ul id="suggestions" class="hidden"></ul>
-                </div>
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto">
-                    <TypeSelectorField selectId="type-select" placeholderKey="type_1" />
-                    <TypeSelectorField selectId="type2-select" placeholderKey="type_2" />
-                    <TypeSelectorField selectId="type3-select" placeholderKey="type_3" extra tooltipKey="type3_tooltip" />
-                    <button id="reset-button" data-i18n="reset_btn" type="button" class="shrink-0 px-4 py-2.5 rounded-md text-sm font-bold transition-colors duration-150" style="color: var(--text-muted); border: 1px solid var(--border)">
-                        Reset
-                    </button>
-                </div>
-            </section>
+            <ControlPanel />
 
             <!-- Subject header — pre-rendered from local pokedex data, no loading flash -->
             <section id="pokemon-hero" class="panel !py-2" set:html={heroHtml}></section>
@@ -154,11 +108,7 @@ const heroHtml = `
             <section id="type-details" class="flex flex-col gap-5">
                 <div class="panel !py-3 flex flex-wrap items-center justify-between gap-3">
                     <div id="selected-type-name" class="flex items-center gap-2"></div>
-                    <button id="share-btn" class="icon-btn" title="Share Analysis" aria-label="Share Analysis" type="button">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                        </svg>
-                    </button>
+                    <ShareButton />
                 </div>
 
                 <div id="ability-alerts" class="hidden"></div>
