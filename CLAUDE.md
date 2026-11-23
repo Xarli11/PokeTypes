@@ -26,13 +26,14 @@ Utility scripts (run with `node scripts/<name>`):
 
 ## Tests
 
-Vitest suite in `tests/` (26 files, ~800 tests, Node environment — no DOM, no browser). Pure logic is tested directly; DOM-heavy modules only through their pure helpers.
+Vitest suite in `tests/` (27 files, ~816 tests, Node environment — no DOM, no browser). Pure logic is tested directly; DOM-heavy modules only through their pure helpers.
 
 - `tests/type-engine/*` — effectiveness, modifiers (abilities/items), battle context, Ring Target, triple type, team analysis, SSR/client parity.
 - `tests/seo.test.js` — sitemap, robots.txt, `seo.js` helpers, SSR stats/abilities HTML.
 - `tests/a11y-seo-regression.test.js` — WCAG contrast of type pills/status colours (computed from `global.css` + `type-data.json`), `<main>` landmark per page, heading levels, 24 px touch target, no `og-image.png` references, one canonical `/tipo/` URL per type combination.
 - `tests/type-render.test.js` — SSR markup is byte-equivalent (SHA-256 golden in `tests/fixtures/`) to the helpers that used to be inlined in the pages, for every single/dual type and 4 triples.
 - `tests/i18n-server.test.js`, `tests/i18n-routes.test.js` — SSR translations (frozen English literals, key coverage, no hard-coded English) and the slug/path model (golden slug table, exhaustive round-trip, permutations, aliases, redirects, English URLs unchanged).
+- `tests/app-state.test.js` — URL/state model and wiring of back/forward. Browser behaviour: `scripts/manual/history-check.mjs` (22 checks; needs `npm i --no-save puppeteer-core` and a local `wrangler pages dev`).
 - `tests/share-team.test.js`, `tests/team-clear.test.js`, `tests/ui/*` — share links, team state, i18n keys, selectors, analytics, form-page details.
 
 `localStorage` is not defined in Node: modules that import `i18n.js` need a stub before import (see `tests/ui/type-selector.test.js`). There are no e2e, accessibility or performance automated tests; Lighthouse/axe checks are run manually. After changes, still provide manual test cases with expected outcomes.
@@ -65,6 +66,7 @@ Pure, no DOM; used by SSR pages, client and tests. See `docs/type-engine.md`.
 |---|---|
 | `src/lib/i18n-server.js` | `createT(lang)` → `{ t, h }` for SSR: same dictionary as the browser (`messages.js`); `ssr_<key>` overrides `<key>` for server HTML only; falls back to English. Pages/components take a `lang` prop (always `'en'` today) |
 | `src/lib/i18n-routes.js` | Language-aware URLs: type slug maps (`typeSlug`, `toTypeSlug`, `fromTypeSlug`, `resolveTypeRoute` → canonical slug + redirect flag), `/es` prefix helpers (`stripLangPrefix`, `withLangPrefix`, `pathForLang`), `statePath` (URL shown by the app), `detectLang`. Spanish slugs derive from `messages.es` (accent-free). No `/es/` routes exist yet |
+| `src/lib/app-state.js` | URL ↔ app state: `parseAppLocation` (types, Pokémon, mode, lang), `buildAppUrl`, `withMode`. Team Builder URL is `/?mode=pro`. `main.js` pushes entries with `pushState` (never the URL already shown) and restores on `popstate` |
 | `src/lib/type-render.js` | Pure SSR HTML for defense/offense groups and type pills (shared by `/tipo/*` and `/pokemon/*`; `t` label provider defaults to English) |
 | `src/lib/seo.js` | `pokemonSlug`, `normalizePathname`, `parseTypeSlug`, `canonicalTypeSlug`, SSR stats/abilities HTML |
 | `src/lib/share-team.js` | Team Builder share-link encode/decode (`?team=…&mode=pro`, versioned payload) |

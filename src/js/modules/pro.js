@@ -67,50 +67,57 @@ export function refreshProView() {
     refreshSimulatorLanguage();
 }
 
-function setupModeToggling() {
+// The current view: 'pro' = Team Builder, 'simple' = Calculator.
+export function getViewMode() {
+    const proView = document.getElementById('view-pro');
+    return proView && !proView.classList.contains('hidden') ? 'pro' : 'simple';
+}
+
+let currentMode = 'simple';
+
+/**
+ * Shows a view. `persist`: remember it in localStorage (a real user choice, not a
+ * history restore). `track`: report a mode_change event, only when it differs.
+ * `notify`: tell main.js a user switched, so it adds a history entry.
+ */
+export function setViewMode(mode, { persist = true, track = false, notify = false } = {}) {
     const simpleView = document.getElementById('view-simple');
     const proView = document.getElementById('view-pro');
     const toggleSimple = document.getElementById('toggle-simple');
     const togglePro = document.getElementById('toggle-pro');
+    if (!simpleView || !proView || !toggleSimple || !togglePro) return;
 
-    function setMode(mode) {
-        if (mode === 'simple') {
-            simpleView.classList.remove('hidden');
-            proView.classList.add('hidden');
-
-            toggleSimple.classList.add('mode-btn-active');
-            togglePro.classList.remove('mode-btn-active');
-
-            localStorage.setItem('poketypes_mode', 'simple');
-        } else {
-            simpleView.classList.add('hidden');
-            proView.classList.remove('hidden');
-
-            togglePro.classList.add('mode-btn-active');
-            toggleSimple.classList.remove('mode-btn-active');
-
-            localStorage.setItem('poketypes_mode', 'pro');
-            renderTeamGrid();
-        }
+    if (track && mode !== currentMode) {
+        trackEvent('mode_change', { from_mode: currentMode, to_mode: mode, language: i18n.currentLang });
     }
+    currentMode = mode;
 
-    if (toggleSimple && togglePro) {
-        // Tracks only real user-triggered switches, not the initial-load
-        // restore below (that's state restoration, not a "change").
-        let currentMode = localStorage.getItem('poketypes_mode') || 'simple';
-        const trackModeChange = (toMode) => {
-            if (toMode === currentMode) return;
-            trackEvent('mode_change', { from_mode: currentMode, to_mode: toMode, language: i18n.currentLang });
-            currentMode = toMode;
-        };
+    const isPro = mode === 'pro';
+    simpleView.classList.toggle('hidden', isPro);
+    proView.classList.toggle('hidden', !isPro);
+    toggleSimple.classList.toggle('mode-btn-active', !isPro);
+    togglePro.classList.toggle('mode-btn-active', isPro);
 
-        toggleSimple.addEventListener('click', () => { trackModeChange('simple'); setMode('simple'); });
-        togglePro.addEventListener('click', () => { trackModeChange('pro'); setMode('pro'); });
+    if (persist) localStorage.setItem('poketypes_mode', mode);
+    if (isPro) renderTeamGrid();
+    if (notify) document.dispatchEvent(new CustomEvent('poketypes:modechange', { detail: { mode } }));
+}
 
-        const savedMode = localStorage.getItem('poketypes_mode') || 'simple';
-        if (savedMode === 'pro') {
-            setMode('pro');
-        }
+function setupModeToggling() {
+    const toggleSimple = document.getElementById('toggle-simple');
+    const togglePro = document.getElementById('toggle-pro');
+    if (!toggleSimple || !togglePro) return;
+
+    // Tracks only real user-triggered switches, not the initial-load
+    // restore below (that's state restoration, not a "change").
+    currentMode = localStorage.getItem('poketypes_mode') || 'simple';
+
+    toggleSimple.addEventListener('click', () => { if (getViewMode() !== 'simple') setViewMode('simple', { track: true, notify: true }); });
+    togglePro.addEventListener('click', () => { if (getViewMode() !== 'pro') setViewMode('pro', { track: true, notify: true }); });
+
+    const savedMode = localStorage.getItem('poketypes_mode') || 'simple';
+    if (savedMode === 'pro') {
+        setViewMode('pro');
     }
 }
 
