@@ -39,7 +39,7 @@ const typeName = typeNames.join('/'); // internal (English) names: the client tr
 const displayName = typeNames.map(tType).join('/');
 // One type: "Tipo Fuego: …"; combinations ("Fuego/Volador: …") must not carry the word "Tipo". English text is the same for both.
 const title = t(typeNames.length > 1 ? 'meta_type_combo_title' : 'meta_type_title', { type: displayName });
-const description = t('meta_type_description', { type: displayName });
+const description = t(typeNames.length > 1 ? 'meta_type_combo_description' : 'meta_type_description', { type: displayName });
 const canonicalPath = withLangPrefix(`/tipo/${canonicalSlug}`, lang);
 const homePath = withLangPrefix('/', lang);
 const siteUrl = 'https://poketypes.app';

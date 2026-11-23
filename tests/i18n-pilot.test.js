@@ -336,12 +336,13 @@ describe('C3a: text coverage and engine identifiers', () => {
 
 describe('C3b: editorial rewrite', () => {
     const { t } = createT('es');
-    const placeholders = text => [...String(text).matchAll(/\{[a-z]+\}/g)].map(m => m[0]).sort();
+    const placeholders = text => [...new Set([...String(text).matchAll(/\{[a-z]+\}/g)].map(m => m[0]))].sort();
     const C3B_KEYS = ['meta_type_combo_title', 'super_effective', 'not_very_effective', 'base_stats', 'type_3', 'sim_title', 'role_spec_sweeper',
         'defense_strong_resists', 'email_btn', 'pro_roles_title', 'advisor_weakness', 'advisor_suggestion', 'pressure_detail', 'alert_weakness',
         'walled_by_dual', 'comp_meta_desc', 'sim_damage_estimate', 'modifier_adaptability_description', 'modifier_wonder_guard_description',
         'modifier_delta_stream_description', 'modifier_neuroforce_description', 'faq_a1', 'faq_q2', 'faq_a2', 'faq_q3', 'faq_a3', 'faq_q4', 'faq_a4',
-        'meta_home_title', 'meta_home_description', 'meta_default_description', 'meta_type_title', 'meta_pokemon_title', 'meta_pokemon_description'];
+        'meta_home_title', 'meta_home_description', 'meta_default_description', 'meta_type_title', 'meta_pokemon_title', 'meta_pokemon_description',
+        'meta_type_combo_description'];
 
     it('every rewritten string stays in the draft registry (nothing is approved by being present)', () => {
         expect(C3B_KEYS.filter(k => !ES_DRAFT_KEYS.includes(k))).toEqual([]);
@@ -432,8 +433,42 @@ describe('C3b: editorial rewrite', () => {
         // i18n.tAbility(name) in English returns entry.en: it must equal the name the panel showed before
         expect(known.filter(n => abilityNames[n.toLowerCase().replace(/ /g, '-')].en !== n)).toEqual([]);
         const es = createT('es').tAbility;
-        expect(es('Static')).toBe('Elec. Estática');
+        expect(es('Static')).toBe('Electricidad Estática'); // full name, same as PokéAPI shows after hydration
         expect(es('Lightning Rod')).toBe('Pararrayos');
         expect(es("Dragon's Maw")).toBe("Dragon's Maw"); // not in the map: left as is, never invented
+    });
+
+    it('comp_meta_desc is neutral: no claim that abilities are ranked or most effective', () => {
+        expect(messages.es.comp_meta_desc).not.toMatch(/eficaz|efectiv|mejor|más/i);
+        expect(placeholders(messages.es.comp_meta_desc)).toEqual(['{abilities}', '{tier}']);
+    });
+
+    it('combinations have their own description; English is unchanged', () => {
+        expect(messages.en.meta_type_combo_description).toBe(messages.en.meta_type_description);
+        const d = t('meta_type_combo_description', { type: 'Fuego/Volador' });
+        expect(d).toContain('combinación Fuego/Volador');
+        expect(d).toMatch(/debilidades, resistencias e inmunidades/i);
+        expect(d).not.toMatch(/vence|Tipo Fuego/);
+        expect(d.length).toBeLessThanOrEqual(200);
+        expect(read('src/components/pages/TypePage.astro')).toContain("typeNames.length > 1 ? 'meta_type_combo_description' : 'meta_type_description'");
+        expect(t('meta_type_description', { type: 'Fuego' })).toContain('Tabla de debilidades del tipo Fuego'); // single types keep theirs
+    });
+
+    it('Spanish display name of Mega forms has a hyphen; slugs, routes and English are untouched', async () => {
+        const { localizePokemonName } = await import('../src/lib/pokemon-names.js');
+        expect(localizePokemonName('Mega Charizard X', 'es')).toBe('Mega-Charizard X');
+        expect(localizePokemonName('Mega Charizard X', 'en')).toBe('Mega Charizard X');
+        expect(localizePokemonName('Charizard', 'es')).toBe('Charizard');
+        expect(localizePokemonName('Megagross', 'es')).toBe('Megagross');
+        const mega = pokedex.find(p => pokemonSlug(p) === 'charizard-mega-x');
+        expect(localizePokemonName(mega.name, 'es')).toBe('Mega-Charizard X');
+        expect(PILOT_EN_PATHS).toContain('/pokemon/charizard-mega-x');
+        expect(pathForLang('/pokemon/charizard-mega-x', 'es')).toBe('/es/pokemon/charizard-mega-x');
+        expect(read('src/components/pages/PokemonPage.astro')).toContain('localizePokemonName(internalName, lang)');
+    });
+
+    it('ability names agree between SSR dictionary and the full Spanish name for the pilot', () => {
+        expect(abilityNames.static.es).toBe('Electricidad Estática');
+        expect(abilityNames['lightning-rod'].es).toBe('Pararrayos');
     });
 });

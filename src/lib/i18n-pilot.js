@@ -42,7 +42,7 @@ export const ES_DRAFT_KEYS = [
     'copied', 'search_start_typing', 'comp_tier_meta',
     'chart_desc', 'effectiveness_desc', 'dual_desc',
     // C3b: editorial rewrite (still pending approval)
-    'meta_type_combo_title',
+    'meta_type_combo_title', 'meta_type_combo_description',
     'super_effective', 'not_very_effective', 'base_stats', 'type_3', 'sim_title', 'role_spec_sweeper',
     'defense_strong_resists', 'email_btn', 'pro_roles_title',
     'advisor_weakness', 'advisor_suggestion', 'pressure_detail', 'alert_weakness', 'walled_by_dual', 'comp_meta_desc',

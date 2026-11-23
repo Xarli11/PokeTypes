@@ -25,7 +25,7 @@ close_btn,Close,Cerrar,no,yes,unreviewed
 comp_analysis,Strategic Analysis,Análisis Estratégico,no,yes,unreviewed
 comp_effects,Competitive Effects,Efectos Competitivos,no,no,unreviewed
 comp_meta,Meta Summary,Resumen de Meta,no,yes,unreviewed
-comp_meta_desc,This Pokemon is ranked in {tier}. Its most effective abilities are: {abilities}.,Este Pokémon está clasificado en {tier}. Sus habilidades más eficaces son: {abilities}.,yes,yes,pending-review
+comp_meta_desc,This Pokemon is ranked in {tier}. Its most effective abilities are: {abilities}.,Este Pokémon está clasificado en {tier}. Habilidades: {abilities}.,yes,yes,pending-review
 comp_no_data,No competitive data found for this format.,Sin datos competitivos en este formato.,no,yes,unreviewed
 comp_smogon_link,Open Smogon Strategy,Ver Estrategia en Smogon,no,yes,unreviewed
 comp_tier_meta,Smogon Tier & Meta,Tier y metajuego de Smogon,yes,yes,pending-review
@@ -123,6 +123,7 @@ meta_home_title,PokeTypes | Pokemon Type Calculator & Effectiveness Chart,Calcul
 meta_keywords,"pokemon type calculator, pokemon weakness chart, type effectiveness, pokemon SV, Gen 9, dual type calculator, resistance checker, pokemon scarlet violet, pokedex type chart","calculadora de tipos pokemon, debilidades pokemon, tabla de tipos pokemon, efectividad de tipos, calculadora de doble tipo, resistencias pokemon, pokemon escarlata purpura, gen 9",yes,yes,pending-review
 meta_pokemon_description,"{name} is a {types}-type Pokemon. See its full weakness chart, resistances, immunities, base stats, and abilities. Gen 9 (Scarlet & Violet) type calculator.","{name} es de tipo {types}. Consulta sus debilidades, resistencias, inmunidades, estadísticas base y habilidades en PokeTypes.",yes,yes,pending-review
 meta_pokemon_title,"{name} Weaknesses, Resistances & Type Chart | PokeTypes",Debilidades de {name} | PokeTypes,yes,yes,pending-review
+meta_type_combo_description,"{type} type weakness chart: full effectiveness analysis, resistances, and immunities for Gen 9 (Scarlet & Violet). See every type that beats {type} and every type {type} beats.","Debilidades, resistencias e inmunidades de la combinación {type} en Gen 9 (Escarlata y Púrpura): consulta de qué tipos recibe más daño, cuáles resiste y a qué ataques es inmune.",yes,yes,pending-review
 meta_type_combo_title,"{type} Type Weaknesses, Resistances & Chart | PokeTypes",{type}: debilidades y resistencias | PokeTypes,yes,yes,pending-review
 meta_type_description,"{type} type weakness chart: full effectiveness analysis, resistances, and immunities for Gen 9 (Scarlet & Violet). See every type that beats {type} and every type {type} beats.","Tabla de debilidades del tipo {type}: análisis de efectividad, resistencias e inmunidades en Gen 9 (Escarlata y Púrpura). Consulta qué tipos vencen a {type} y a qué tipos vence {type}.",yes,yes,pending-review
 meta_type_title,"{type} Type Weaknesses, Resistances & Chart | PokeTypes",Tipo {type}: debilidades y resistencias | PokeTypes,yes,yes,pending-review
