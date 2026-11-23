@@ -445,7 +445,7 @@ export function renderCompetitiveData(container, data, pokemonName) {
     }
 
     const tier = data.tier || 'Untiered';
-    const abilities = data.abilities ? Object.values(data.abilities).join(', ') : '---';
+    const abilities = data.abilities ? Object.values(data.abilities).map(name => i18n.tAbility(name)).join(', ') : '---'; // unknown names stay as written
     const slug = pokemonName.toLowerCase().replace(/[^a-z0-0]/g, '');
 
     const tierColors = {

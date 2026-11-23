@@ -423,4 +423,17 @@ describe('C3b: editorial rewrite', () => {
         expect(buildCsv()).not.toMatch(/,approved\n/);
         expect(buildCsv().split('\n').filter(l => l.endsWith(',pending-review')).length).toBe(ES_DRAFT_KEYS.length);
     });
+
+    it('the strategy panel translates ability names, and English output cannot change', () => {
+        expect(read('src/js/modules/ui.js')).toContain('Object.values(data.abilities).map(name => i18n.tAbility(name))');
+        const names = new Set(pokedex.flatMap(p => Object.values(p.abilities ?? {})));
+        const known = [...names].filter(n => abilityNames[n.toLowerCase().replace(/ /g, '-')]);
+        expect(known.length).toBeGreaterThan(290);
+        // i18n.tAbility(name) in English returns entry.en: it must equal the name the panel showed before
+        expect(known.filter(n => abilityNames[n.toLowerCase().replace(/ /g, '-')].en !== n)).toEqual([]);
+        const es = createT('es').tAbility;
+        expect(es('Static')).toBe('Elec. Estática');
+        expect(es('Lightning Rod')).toBe('Pararrayos');
+        expect(es("Dragon's Maw")).toBe("Dragon's Maw"); // not in the map: left as is, never invented
+    });
 });
