@@ -2,6 +2,7 @@
 //   node scripts/ssr-snapshot.mjs capture <baseUrl> <outDir>   fetch every sitemap URL (+ a few redirect/404 cases)
 //   node scripts/ssr-snapshot.mjs diff <dirA> <dirB> [flags]   compare file sets (both directions) and bytes of common files
 //     --ignore-asset-hashes   treat /_astro/name.<hash>.js|css as /_astro/name.js|css (a changed bundle renames it)
+//     --ignore-asset-names    treat every /_astro/<file> as /_astro/* (a moved page component renames its script chunk)
 //     --collapse-whitespace   treat any run of whitespace as one space and ignore it around tags (browsers render both the same)
 // Typical use: build the old commit, serve it (see CLAUDE.md "wrangler pages dev"),
 // capture; build the new commit, capture; diff. Exit code 1 if anything differs.
@@ -11,6 +12,7 @@ const [cmd, a, b, ...flags] = process.argv.slice(2);
 const normalize = text => {
     let out = text;
     if (flags.includes('--ignore-asset-hashes')) out = out.replace(/(\/_astro\/[^"'\s]*?)\.[A-Za-z0-9_-]{8}\.(js|css)/g, '$1.$2');
+    if (flags.includes('--ignore-asset-names')) out = out.replace(/\/_astro\/[^"'\s]+/g, '/_astro/*');
     if (flags.includes('--collapse-whitespace')) out = out.replace(/\s+/g, ' ').replace(/> /g, '>').replace(/ </g, '<').trim();
     return out;
 };

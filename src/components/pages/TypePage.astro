@@ -1,0 +1,119 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AppHeader from '../AppHeader.astro';
+import ControlPanel from '../ControlPanel.astro';
+import ShareButton from '../ShareButton.astro';
+import TypeLinks from '../TypeLinks.astro';
+import typeData from '../../data/type-data.json';
+import { calculateDefense, calculateOffense } from '../../lib/type-engine/index.js';
+import { createT } from '../../lib/i18n-server.js';
+import { renderDefenseGroups, renderOffenseGroups, renderTypePills } from '../../lib/type-render.js';
+
+// A /tipo page for a combination that is already canonical (the route resolves
+// redirects and 404s). `canonicalSlug` is "fire-flying", in type chart order.
+interface Props {
+    lang?: string;
+    canonicalSlug: string;
+}
+const { lang = 'en', canonicalSlug } = Astro.props;
+const { t, h } = createT(lang);
+const { types, effectiveness, contrast } = typeData;
+const [t1, t2 = null, t3 = null] = canonicalSlug.split('-').map((s: string) => types.find(t => t.toLowerCase() === s)!);
+
+// ── Compute ───────────────────────────────────────────────────────────────────
+
+const contrastMap = contrast as Record<string, string>;
+const def = calculateDefense(t1, t2, types, effectiveness, t3);
+const off = calculateOffense(t1, t2, types, effectiveness, t3);
+
+const defenseGroupsHtml = renderDefenseGroups(def, contrastMap, t);
+const offenseGroupsHtml = renderOffenseGroups(off, contrastMap, t);
+const selectedTypeHtml = renderTypePills([t1, t2, t3].filter(Boolean) as string[], contrastMap);
+
+// ── Meta ──────────────────────────────────────────────────────────────────────
+
+const typeName = [t1, t2, t3].filter(Boolean).join('/');
+const title = t('meta_type_title', { type: typeName });
+const description = t('meta_type_description', { type: typeName });
+const canonicalPath = `/tipo/${canonicalSlug}`;
+const siteUrl = 'https://poketypes.app';
+
+const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": `${siteUrl}${canonicalPath}#breadcrumb`,
+    "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "PokeTypes", "item": `${siteUrl}/` },
+        { "@type": "ListItem", "position": 2, "name": t('breadcrumb_type', { type: typeName }), "item": `${siteUrl}${canonicalPath}` }
+    ]
+};
+
+const webPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${siteUrl}${canonicalPath}`,
+    "url": `${siteUrl}${canonicalPath}`,
+    "name": title,
+    "description": description,
+    "isPartOf": { "@id": `${siteUrl}/#webapp` },
+    "breadcrumb": { "@id": `${siteUrl}${canonicalPath}#breadcrumb` }
+};
+---
+
+<Layout title={title} description={description} canonicalPath={canonicalPath} lang={lang}>
+    <Fragment slot="head">
+        <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
+        <script type="application/ld+json" is:inline set:html={JSON.stringify(webPageSchema)} />
+    </Fragment>
+    <div class="max-w-7xl mx-auto relative">
+        <AppHeader contextLabel={typeName} lang={lang} />
+
+        <main>
+        <div id="view-simple" class="flex flex-col gap-5">
+            <!-- SSR in English to match this page's title/meta (see
+                 refreshUI() in main.js for the client-side language update
+                 on toggle — no hreflang/locale routing here, see docs). -->
+            <h1 id="tipo-h1" data-type-name={typeName} class="text-sm sm:text-base font-bold px-1" style="color: var(--text-muted)"><Fragment set:html={h('type_page_h1', { type: typeName })} /></h1>
+
+            <ControlPanel lang={lang} />
+
+            <section id="pokemon-hero" class="panel !py-2 hidden"></section>
+
+            <section id="type-details" class="flex flex-col gap-5">
+                <div class="panel !py-3 flex flex-wrap items-center justify-between gap-3">
+                    <div id="selected-type-name" class="flex items-center gap-2" set:html={selectedTypeHtml}></div>
+                    <ShareButton lang={lang} />
+                </div>
+
+                <div id="ability-alerts" class="hidden"></div>
+
+                <div class="panel">
+                    <div class="label-group"><Fragment set:html={h('defense_breakdown')} /></div>
+                    <div id="defense-groups" set:html={defenseGroupsHtml}></div>
+                </div>
+
+                <div id="tactical-advice" class="hidden"></div>
+
+                <div class="panel">
+                    <div class="label-group"><Fragment set:html={h('offense_breakdown')} /></div>
+                    <div id="offense-groups" set:html={offenseGroupsHtml}></div>
+                </div>
+
+                <section id="pokemon-stats" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div class="panel">
+                        <div class="label-group"><Fragment set:html={h('base_stats')} /></div>
+                        <div id="stats-container" class="space-y-2.5"></div>
+                    </div>
+                    <div class="panel">
+                        <div class="label-group"><Fragment set:html={h('abilities')} /></div>
+                        <div id="abilities-container" class="grid grid-cols-1 gap-2"></div>
+                    </div>
+                </section>
+            </section>
+        </div>
+
+        <TypeLinks lang={lang} />
+        </main>
+    </div>
+    <script src="../../js/main.js"></script>
+</Layout>
