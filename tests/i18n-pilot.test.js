@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import typeData from '../src/data/type-data.json';
 import pokedex from '../src/data/pokedex.json';
 import abilityNames from '../src/data/abilities-i18n.json';
@@ -235,5 +235,100 @@ describe('wiring', () => {
         const field = read('src/components/TypeSelectorField.astro');
         expect(field).toMatch(/set:html=\{labelHtml\}/);
         expect(field).toMatch(/type-selector-btn-filled/);
+    });
+});
+
+describe('C3a: text coverage and engine identifiers', () => {
+    const C2_KEYS = ['switch_to_es', 'switch_to_en', 'spanish_unavailable', 'lang_notice_available', 'lang_notice_view',
+        'lang_notice_unavailable', 'lang_notice_dismiss', 'es_404_title', 'es_404_text', 'es_404_english', 'es_404_home'];
+    const C3A_KEYS = ['copied', 'search_start_typing', 'comp_tier_meta', 'chart_desc', 'effectiveness_desc', 'dual_desc'];
+
+    it('the draft list includes every C2 and C3a Spanish string', () => {
+        expect([...C2_KEYS, ...C3A_KEYS].filter(k => !ES_DRAFT_KEYS.includes(k))).toEqual([]);
+    });
+
+    it('every draft key exists in Spanish and is not a copy of English', () => {
+        for (const key of ES_DRAFT_KEYS) {
+            expect(messages.es[key], key).toBeTypeOf('string');
+        }
+        const same = ES_DRAFT_KEYS.filter(k => messages.es[k] === messages.en[k] && messages.en[k] !== undefined && !/^(meta_keywords|switch_to_|ld_app_alternate_name)/.test(k));
+        expect(same).toEqual([]);
+    });
+
+    it('no English literal is left in the templates that were fixed', () => {
+        const home = read('src/components/pages/HomePage.astro');
+        expect(home).not.toMatch(/>\s*Copied!\s*</);
+        expect(home).not.toContain('Type to start searching');
+        expect(read('src/js/modules/ui.js')).not.toContain('>Smogon Tier & Meta<');
+        expect(messages.en.copied).toBe('Copied!');
+        expect(messages.en.search_start_typing).toBe('Type to start searching...');
+        expect(messages.en.comp_tier_meta).toBe('Smogon Tier & Meta');
+    });
+
+    it('English SSR home HTML text is unchanged for the fixed strings', () => {
+        const { h } = createT('en');
+        expect(h('copied')).toBe('Copied!');
+        expect(h('search_start_typing')).toBe('Type to start searching...');
+    });
+
+    it('the Spanish home SEO copy carries comparable information to the English SSR copy', () => {
+        const en = createT('en').t;
+        const es = createT('es').t;
+        for (const key of ['chart_desc', 'effectiveness_desc', 'dual_desc']) {
+            expect(es(key).length, key).toBeGreaterThan(en(key).length * 0.8);
+            expect(es(key), key).not.toBe(en(key));
+        }
+        expect(es('effectiveness_desc')).toMatch(/2x/);
+        expect(es('effectiveness_desc')).toMatch(/0\.5x/);
+        expect(es('effectiveness_desc')).toMatch(/0x/);
+        expect(es('dual_desc')).toMatch(/4x/);
+        expect(es('dual_desc')).toContain('Fuego/Volador');
+        expect(es('chart_desc')).toMatch(/Escarlata y Púrpura/);
+    });
+
+    it('the type engine does not depend on translations', () => {
+        for (const file of ['effectiveness', 'modifiers', 'result', 'team', 'index']) {
+            expect(read(`src/lib/type-engine/${file}.js`)).not.toMatch(/i18n|messages|createT|localStorage/);
+        }
+    });
+
+    it('translating type names never changes internal identifiers or engine results', () => {
+        const { tType } = createT('es');
+        const contrast = typeData.contrast;
+        for (const type of types) {
+            expect(tType(type)).not.toBe('');
+            const pill = renderTypePills([type], contrast, tType);
+            expect(pill).toContain(`bg-type-${type.toLowerCase()}`); // class uses the English id
+            expect(pill).toContain(`>${tType(type)}<`);
+        }
+        const before = JSON.stringify(calculateDefense('Fire', 'Flying', types, typeData.effectiveness));
+        createT('es'); // using the Spanish layer must not mutate shared data
+        expect(JSON.stringify(calculateDefense('Fire', 'Flying', types, typeData.effectiveness))).toBe(before);
+        expect(types.every(t => /^[A-Z][a-z]+$/.test(t))).toBe(true);
+    });
+
+    it('Spanish type names are unique (no two types share a label)', () => {
+        const labels = types.map(t => messages.es[t.toLowerCase()]);
+        expect(new Set(labels).size).toBe(types.length);
+    });
+
+    it('every static translation key used by the client and templates exists in English and Spanish', () => {
+        const used = new Set();
+        const walk = dir => {
+            for (const entry of readdirSync(new URL(`../${dir}`, import.meta.url), { withFileTypes: true })) {
+                const path = `${dir}/${entry.name}`;
+                if (entry.isDirectory()) walk(path);
+                else if (/\.(astro|js)$/.test(entry.name) && !path.endsWith('messages.js')) {
+                    const src = read(path);
+                    for (const m of src.matchAll(/data-i18n(?:-[a-z]+)?="([a-z0-9_]+)"/g)) used.add(m[1]);
+                    for (const m of src.matchAll(/i18n\.t\('([a-z0-9_]+)'/g)) used.add(m[1]);
+                }
+            }
+        };
+        walk('src');
+        used.delete('nature_'); // dynamic prefix
+        const missing = lang => [...used].filter(k => !(k in messages[lang]) && !(`ssr_${k}` in messages[lang]));
+        expect(missing('en')).toEqual([]);
+        expect(missing('es')).toEqual([]);
     });
 });

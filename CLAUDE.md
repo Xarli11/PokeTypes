@@ -20,13 +20,14 @@ CI (`.github/workflows/ci.yml`, Node 22) runs `npm run check`, `npm test`, `npm 
 Utility scripts (run with `node scripts/<name>`):
 - `sync-pokedex.cjs` — fetch Pokémon data from Smogon/Showdown into `src/data/pokedex.json`, `search-index.json`, `items.json`
 - `sync-abilities.js` — sync ability i18n data
+- `audit-ability-descriptions.mjs` — abilities with no Spanish description (PokéAPI text or manual `<name>_desc`); `--pilot` limits it to the pilot Pokémon (network)
 - `verify-types.js` — validate `src/data/type-data.json` against Smogon's type chart (no npm alias)
 - `audit-images.js` — check sprite URLs / `image-fixes.json`
 - `ssr-snapshot.mjs` — `capture <baseUrl> <dir>` / `diff <dirA> <dirB>`: compare (file sets in both directions + bytes; optional `--ignore-asset-hashes`, `--ignore-asset-names`, `--collapse-whitespace`) the server-rendered HTML of every sitemap URL between two builds (use it to prove a refactor changed nothing)
 
 ## Tests
 
-Vitest suite in `tests/` (29 files, ~873 tests, Node environment — no DOM, no browser). Pure logic is tested directly; DOM-heavy modules only through their pure helpers.
+Vitest suite in `tests/` (29 files, ~882 tests, Node environment — no DOM, no browser). Pure logic is tested directly; DOM-heavy modules only through their pure helpers.
 
 - `tests/type-engine/*` — effectiveness, modifiers (abilities/items), battle context, Ring Target, triple type, team analysis, SSR/client parity.
 - `tests/seo.test.js` — sitemap, robots.txt, `seo.js` helpers, SSR stats/abilities HTML.
