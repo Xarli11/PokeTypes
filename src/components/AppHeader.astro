@@ -17,7 +17,7 @@ const { t, h } = createT(lang);
 
 <header class="mb-6">
     <div class="max-w-7xl mx-auto flex items-center justify-between gap-3 h-14">
-        <a href="/" class="flex items-center gap-2 shrink-0 min-w-0" aria-label={t('home_aria_label')}>
+        <a href={lang === 'es' ? '/es' : '/'} class="flex items-center gap-2 shrink-0 min-w-0" aria-label={t('home_aria_label')}>
             <svg class="w-6 h-6 shrink-0" style="color: var(--text-muted)" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8"/>
                 <path d="M5 50 H95" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>

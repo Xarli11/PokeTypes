@@ -9,20 +9,23 @@ const MULT_LABELS = { '8': '8×', '4': '4×', '2': '2×', '1': '1×', '05': '½�
 // English-only today.
 const english = key => messages.en[key];
 
-export function pill(type, contrast) {
+const identity = value => value;
+
+// `tType` translates the type name shown (class names and data always use the internal name).
+export function pill(type, contrast, tType = identity) {
     const tc = contrast[type] === 'dark' ? 'type-text-dark' : 'type-text-light';
-    return `<span class="type-pill bg-type-${type.toLowerCase()} ${tc}">${type}</span>`;
+    return `<span class="type-pill bg-type-${type.toLowerCase()} ${tc}">${tType(type)}</span>`;
 }
 
-export function pills(list, contrast, t = english) {
+export function pills(list, contrast, t = english, tType = identity) {
     return list.length
-        ? list.map(type => pill(type, contrast)).join('')
+        ? list.map(type => pill(type, contrast, tType)).join('')
         : `<span class="text-xs font-bold uppercase tracking-widest" style="color: var(--text-muted)">${t('none')}</span>`;
 }
 
-function multRow(mult, severityClass, typeList, contrast, t) {
+function multRow(mult, severityClass, typeList, contrast, t, tType) {
     if (!typeList.length) return '';
-    return `<div class="flex items-start gap-3"><span class="mult-badge ${severityClass} shrink-0">${MULT_LABELS[mult]}</span><div class="type-pills-container pt-1">${pills(typeList, contrast, t)}</div></div>`;
+    return `<div class="flex items-start gap-3"><span class="mult-badge ${severityClass} shrink-0">${MULT_LABELS[mult]}</span><div class="type-pills-container pt-1">${pills(typeList, contrast, t, tType)}</div></div>`;
 }
 
 function section(title, rows) {
@@ -32,8 +35,8 @@ function section(title, rows) {
 }
 
 /** @param def result of calculateDefense */
-export function renderDefenseGroups(def, contrast, t = english) {
-    const row = (mult, cls, list) => multRow(mult, cls, list, contrast, t);
+export function renderDefenseGroups(def, contrast, t = english, tType = identity) {
+    const row = (mult, cls, list) => multRow(mult, cls, list, contrast, t, tType);
     return [
         section(t('defense_critical'), [row('8', 'mult-critical', def.weaknesses8x), row('4', 'mult-critical', def.weaknesses4x)]),
         section(t('defense_weak'), [row('2', 'mult-weak', def.weaknesses2x)]),
@@ -45,8 +48,8 @@ export function renderDefenseGroups(def, contrast, t = english) {
 }
 
 /** @param off result of calculateOffense */
-export function renderOffenseGroups(off, contrast, t = english) {
-    const row = (mult, cls, list) => multRow(mult, cls, list, contrast, t);
+export function renderOffenseGroups(off, contrast, t = english, tType = identity) {
+    const row = (mult, cls, list) => multRow(mult, cls, list, contrast, t, tType);
     return [
         section(t('super_effective'), [row('2', 'mult-critical', off.superEffective2x)]),
         section(t('defense_neutral'), [row('1', 'mult-neutral', off.neutral)]),
@@ -55,6 +58,6 @@ export function renderOffenseGroups(off, contrast, t = english) {
     ].filter(Boolean).join('');
 }
 
-export function renderTypePills(types, contrast) {
-    return types.map(type => pill(type, contrast)).join('');
+export function renderTypePills(types, contrast, tType = identity) {
+    return types.map(type => pill(type, contrast, tType)).join('');
 }

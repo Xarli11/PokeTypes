@@ -4,12 +4,16 @@
 // SSR pages never had it (see i18n.updateDOM()).
 import TypeSelectorField from './TypeSelectorField.astro';
 import { createT } from '../lib/i18n-server.js';
+import typeData from '../data/type-data.json';
 
 interface Props {
     localizePlaceholder?: boolean;
     lang?: string;
+    // Types already chosen for this page, in selector order (type 1, 2, 3).
+    selectedTypes?: string[];
 }
-const { localizePlaceholder = false, lang = 'en' } = Astro.props;
+const { localizePlaceholder = false, lang = 'en', selectedTypes = [] } = Astro.props;
+const contrast = typeData.contrast as Record<string, string>;
 const { t, h } = createT(lang);
 ---
 
@@ -19,9 +23,9 @@ const { t, h } = createT(lang);
         <ul id="suggestions" class="hidden"></ul>
     </div>
     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto">
-        <TypeSelectorField selectId="type-select" placeholderKey="type_1" lang={lang} />
-        <TypeSelectorField selectId="type2-select" placeholderKey="type_2" lang={lang} />
-        <TypeSelectorField selectId="type3-select" placeholderKey="type_3" extra tooltipKey="type3_tooltip" lang={lang} />
+        <TypeSelectorField selectId="type-select" placeholderKey="type_1" lang={lang} selectedType={selectedTypes[0]} contrast={contrast} />
+        <TypeSelectorField selectId="type2-select" placeholderKey="type_2" lang={lang} selectedType={selectedTypes[1]} contrast={contrast} />
+        <TypeSelectorField selectId="type3-select" placeholderKey="type_3" extra tooltipKey="type3_tooltip" lang={lang} selectedType={selectedTypes[2]} contrast={contrast} />
         <button id="reset-button" data-i18n="reset_btn" type="button" class="shrink-0 px-4 py-2.5 rounded-md text-sm font-bold transition-colors duration-150" style="color: var(--text-muted); border: 1px solid var(--border)">
             <Fragment set:html={h('reset_btn')} />
         </button>
