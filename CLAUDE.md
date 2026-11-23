@@ -22,11 +22,11 @@ Utility scripts (run with `node scripts/<name>`):
 - `sync-abilities.js` — sync ability i18n data
 - `verify-types.js` — validate `src/data/type-data.json` against Smogon's type chart (no npm alias)
 - `audit-images.js` — check sprite URLs / `image-fixes.json`
-- `ssr-snapshot.mjs` — `capture <baseUrl> <dir>` / `diff <dirA> <dirB>`: byte-compare the server-rendered HTML of every sitemap URL between two builds (use it to prove a refactor changed nothing)
+- `ssr-snapshot.mjs` — `capture <baseUrl> <dir>` / `diff <dirA> <dirB>`: compare (file sets in both directions + bytes) the server-rendered HTML of every sitemap URL between two builds (use it to prove a refactor changed nothing)
 
 ## Tests
 
-Vitest suite in `tests/` (23 files, ~677 tests, Node environment — no DOM, no browser). Pure logic is tested directly; DOM-heavy modules only through their pure helpers.
+Vitest suite in `tests/` (24 files, ~682 tests, Node environment — no DOM, no browser). Pure logic is tested directly; DOM-heavy modules only through their pure helpers.
 
 - `tests/type-engine/*` — effectiveness, modifiers (abilities/items), battle context, Ring Target, triple type, team analysis, SSR/client parity.
 - `tests/seo.test.js` — sitemap, robots.txt, `seo.js` helpers, SSR stats/abilities HTML.

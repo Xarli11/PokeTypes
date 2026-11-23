@@ -1,6 +1,6 @@
 // Proves a refactor did not change server-rendered HTML.
 //   node scripts/ssr-snapshot.mjs capture <baseUrl> <outDir>   fetch every sitemap URL (+ a few redirect/404 cases)
-//   node scripts/ssr-snapshot.mjs diff <dirA> <dirB>           byte-compare two captures
+//   node scripts/ssr-snapshot.mjs diff <dirA> <dirB>           compare file sets (both directions) and bytes of common files
 // Typical use: build the old commit, serve it (see CLAUDE.md "wrangler pages dev"),
 // capture; build the new commit, capture; diff. Exit code 1 if anything differs.
 import fs from 'node:fs';
@@ -23,10 +23,18 @@ if (cmd === 'capture') {
     await Promise.all(Array.from({ length: 8 }, worker));
     console.log(`captured ${paths.length} URLs into ${b}`);
 } else if (cmd === 'diff') {
-    const files = fs.readdirSync(a);
-    const different = files.filter(f => !fs.existsSync(`${b}/${f}`) || fs.readFileSync(`${a}/${f}`, 'utf8') !== fs.readFileSync(`${b}/${f}`, 'utf8'));
-    console.log(`${files.length - different.length}/${files.length} identical`);
-    if (different.length) { console.log('different:', different.slice(0, 10).map(decodeURIComponent)); process.exit(1); }
+    // Compare the file SETS in both directions, then the contents of the common files.
+    const listA = new Set(fs.readdirSync(a));
+    const listB = new Set(fs.readdirSync(b));
+    const missing = [...listA].filter(f => !listB.has(f));   // captured before, absent after
+    const extra = [...listB].filter(f => !listA.has(f));     // absent before, captured after
+    const changed = [...listA].filter(f => listB.has(f) && fs.readFileSync(`${a}/${f}`, 'utf8') !== fs.readFileSync(`${b}/${f}`, 'utf8'));
+    const show = list => list.slice(0, 10).map(decodeURIComponent);
+    console.log(`${listA.size - missing.length - changed.length}/${listA.size} identical (A: ${listA.size} files, B: ${listB.size} files)`);
+    if (missing.length) console.log(`missing in B (${missing.length}):`, show(missing));
+    if (extra.length) console.log(`extra in B (${extra.length}):`, show(extra));
+    if (changed.length) console.log(`different (${changed.length}):`, show(changed));
+    if (missing.length || extra.length || changed.length || listA.size === 0) process.exit(1);
 } else {
     console.error('usage: capture <baseUrl> <outDir> | diff <dirA> <dirB>');
     process.exit(2);
