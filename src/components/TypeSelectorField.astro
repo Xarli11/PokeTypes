@@ -5,6 +5,7 @@
 // listener (change events, .value reads/writes from search/reset/URL
 // restore) keeps working unchanged. See typeSelector.js for the wiring.
 import { createT } from '../lib/i18n-server.js';
+import { renderTypePills } from '../lib/type-render.js';
 
 interface Props {
     lang?: string;
@@ -12,31 +13,35 @@ interface Props {
     placeholderKey: string;
     extra?: boolean;
     tooltipKey?: string;
+    // Type already chosen for this page (shown as the client would: a pill, not the placeholder).
+    selectedType?: string;
+    contrast?: Record<string, string>;
 }
 
-const { selectId, placeholderKey, extra = false, tooltipKey, lang = 'en' } = Astro.props;
-const { t } = createT(lang);
+const { selectId, placeholderKey, extra = false, tooltipKey, lang = 'en', selectedType = '', contrast = {} } = Astro.props;
+const { t, h, tType } = createT(lang);
+const labelHtml = selectedType ? renderTypePills([selectedType], contrast, tType) : h(placeholderKey);
 const helpId = tooltipKey ? `${selectId}-help` : undefined;
 ---
 
 <div class="relative w-full sm:w-40">
     <button
         type="button"
-        class:list={["type-selector-btn", { "type-selector-btn-extra": extra }]}
+        class:list={["type-selector-btn", { "type-selector-btn-extra": extra, "type-selector-btn-filled": !!selectedType }]}
         data-for={selectId}
         data-placeholder={placeholderKey}
         aria-haspopup="dialog"
         aria-expanded="false"
         aria-describedby={helpId}
     >
-        <span class="type-selector-label" data-i18n={placeholderKey}></span>
+        <span class="type-selector-label" data-i18n={placeholderKey} set:html={labelHtml}></span>
         <svg class="type-selector-caret w-4 h-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
             <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
         </svg>
     </button>
 
     <select id={selectId} class="sr-only" tabindex="-1" aria-hidden="true">
-        <option value="" data-i18n={placeholderKey}></option>
+        <option value="" data-i18n={placeholderKey}><Fragment set:html={h(placeholderKey)} /></option>
     </select>
 
     {tooltipKey && (

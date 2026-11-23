@@ -3,11 +3,22 @@
 // and the sitemap was the only way to reach /tipo/*, so no page linked to them.
 import typeData from '../data/type-data.json';
 import { createT } from '../lib/i18n-server.js';
+import { equivalentPath } from '../lib/i18n-pilot.js';
+import { typeSlug } from '../lib/i18n-routes.js';
 
 const { lang = 'en' } = Astro.props;
-const { t, h } = createT(lang);
+const { t, h, tType } = createT(lang);
 const { types, contrast } = typeData;
 const contrastMap = contrast as Record<string, string>;
+
+// English pages always exist. In Spanish, link to the Spanish page when there is one;
+// otherwise to the English page (never to a /es URL that does not exist).
+const linkFor = (type: string) => {
+    const english = `/tipo/${typeSlug(type, 'en')}`;
+    if (lang !== 'es') return { href: english, toEnglish: false };
+    const spanish = equivalentPath(english, 'es');
+    return spanish ? { href: spanish, toEnglish: false } : { href: english, toEnglish: true };
+};
 ---
 
 <nav aria-label={t('browse_by_type')} class="mt-8">
@@ -15,7 +26,7 @@ const contrastMap = contrast as Record<string, string>;
     <ul class="flex flex-wrap gap-1.5">
         {types.map(type => (
             <li>
-                <a href={`/tipo/${type.toLowerCase()}`} class={`type-pill bg-type-${type.toLowerCase()} ${contrastMap[type] === 'dark' ? 'type-text-dark' : 'type-text-light'}`}>{type}</a>
+                <a href={linkFor(type).href} hreflang={linkFor(type).toEnglish ? 'en' : undefined} class={`type-pill bg-type-${type.toLowerCase()} ${contrastMap[type] === 'dark' ? 'type-text-dark' : 'type-text-light'}`}>{tType(type)}</a>
             </li>
         ))}
     </ul>

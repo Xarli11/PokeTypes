@@ -13,18 +13,18 @@ interface Props {
 const { lang = 'en' } = Astro.props;
 const { t, h } = createT(lang);
 
-// Built from the same English strings the FAQ section shows, so the markup
+// Built from the same strings (in the page language) the FAQ section shows, so the markup
 // cannot drift from the visible content (it previously claimed Steel has 3
 // immunities; it has 1, Poison).
-const en = messages.en as Record<string, string>;
+const dict = (messages[lang as 'en' | 'es'] ?? messages.en) as Record<string, string>;
 const plain = (text: string) => text.replace(/\*\*/g, '');
 const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": [1, 2, 3, 4].map(n => ({
         "@type": "Question",
-        "name": plain(en[`faq_q${n}`]),
-        "acceptedAnswer": { "@type": "Answer", "text": plain(en[`faq_a${n}`]) }
+        "name": plain(dict[`faq_q${n}`]),
+        "acceptedAnswer": { "@type": "Answer", "text": plain(dict[`faq_a${n}`]) }
     }))
 };
 ---

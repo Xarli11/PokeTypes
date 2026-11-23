@@ -55,13 +55,13 @@ export function renderStatsHtml(stats, t = english) {
 
 // Ability names from the local pokedex ({ "0": "Blaze", "H": "Solar Power" }).
 // Descriptions stay client-side (PokeAPI), as before.
-export function renderAbilitiesHtml(abilities, t = english) {
+export function renderAbilitiesHtml(abilities, t = english, tAbility = value => value) {
     if (!abilities) return '';
     return Object.entries(abilities).map(([key, name]) => {
         const badge = key === 'H'
             ? `<span class="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded shrink-0" style="background: var(--border); color: var(--text-muted)">${t('hidden')}</span>`
             : '';
-        return `<div class="flex flex-col gap-1 px-3 py-2.5 rounded-md" style="background: var(--surface-raised); border: 1px solid var(--border)"><div class="flex items-center justify-between gap-2"><span class="font-bold text-sm" style="color: var(--text)">${name}</span>${badge}</div></div>`;
+        return `<div class="flex flex-col gap-1 px-3 py-2.5 rounded-md" style="background: var(--surface-raised); border: 1px solid var(--border)"><div class="flex items-center justify-between gap-2"><span class="font-bold text-sm" style="color: var(--text)">${tAbility(name)}</span>${badge}</div></div>`;
     }).join('');
 }
 

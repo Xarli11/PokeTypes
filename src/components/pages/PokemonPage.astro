@@ -10,6 +10,7 @@ import { calculateDefense, calculateOffense } from '../../lib/type-engine/index.
 import { renderDefenseGroups, renderOffenseGroups, renderTypePills } from '../../lib/type-render.js';
 import { createT } from '../../lib/i18n-server.js';
 import { pokemonSlug, renderStatsHtml, renderAbilitiesHtml } from '../../lib/seo.js';
+import { withLangPrefix } from '../../lib/i18n-routes.js';
 
 // A /pokemon page for a slug the route already knows exists.
 interface Props {
@@ -17,15 +18,16 @@ interface Props {
     slug: string;
 }
 const { lang = 'en', slug: requestedSlug } = Astro.props;
-const { t, h } = createT(lang);
+const { t, h, tType, tAbility } = createT(lang);
 const pokemon = pokedex.find(p => pokemonSlug(p) === requestedSlug)!;
 
 const { name, id, types } = pokemon as { name: string; id: number; types: string[]; apiName?: string };
 
 const slug = pokemonSlug(pokemon);
 const siteUrl = 'https://poketypes.app';
-const canonicalPath = `/pokemon/${slug}`;
-const typeLabel = types.join('/');
+const canonicalPath = withLangPrefix(`/pokemon/${slug}`, lang);
+const homePath = withLangPrefix('/', lang);
+const typeLabel = types.map(tType).join('/');
 
 const title = t('meta_pokemon_title', { name });
 const description = t('meta_pokemon_description', { name, types: typeLabel });
@@ -35,7 +37,7 @@ const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "PokeTypes", "item": `${siteUrl}/` },
+        { "@type": "ListItem", "position": 1, "name": "PokeTypes", "item": `${siteUrl}${homePath}` },
         { "@type": "ListItem", "position": 2, "name": name, "item": `${siteUrl}${canonicalPath}` }
     ]
 };
@@ -67,14 +69,14 @@ const t3 = types[2] || null;
 const def = calculateDefense(t1, t2, allTypes, effectiveness, t3);
 const off = calculateOffense(t1, t2, allTypes, effectiveness, t3);
 
-const defenseGroupsHtml = renderDefenseGroups(def, contrastMap, t);
-const offenseGroupsHtml = renderOffenseGroups(off, contrastMap, t);
-const typePillsHtml = renderTypePills(types, contrastMap);
+const defenseGroupsHtml = renderDefenseGroups(def, contrastMap, t, tType);
+const offenseGroupsHtml = renderOffenseGroups(off, contrastMap, t, tType);
+const typePillsHtml = renderTypePills(types, contrastMap, tType);
 
 // Base stats and ability names exist in the local pokedex; PokeAPI is only
 // needed for localized names and descriptions, which main.js adds on load.
 const statsHtml = renderStatsHtml((pokemon as { stats?: Record<string, number> }).stats, t);
-const abilitiesHtml = renderAbilitiesHtml((pokemon as { abilities?: Record<string, string> }).abilities, t);
+const abilitiesHtml = renderAbilitiesHtml((pokemon as { abilities?: Record<string, string> }).abilities, t, tAbility);
 
 const dexNumber = `#${String(id).padStart(4, '0')}`;
 const heroHtml = `
@@ -91,7 +93,7 @@ const heroHtml = `
 `;
 ---
 
-<Layout title={title} description={description} image={imageUrl} lang={lang}>
+<Layout title={title} description={description} image={imageUrl} canonicalPath={canonicalPath} lang={lang}>
     <Fragment slot="head">
         <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
         <script type="application/ld+json" is:inline set:html={JSON.stringify(pokemonSchema)} />
@@ -101,7 +103,7 @@ const heroHtml = `
 
         <main>
         <div id="view-simple" class="flex flex-col gap-5">
-            <ControlPanel lang={lang} />
+            <ControlPanel lang={lang} selectedTypes={types} />
 
             <!-- Subject header — pre-rendered from local pokedex data, no loading flash -->
             <section id="pokemon-hero" class="panel !py-2" set:html={heroHtml}></section>

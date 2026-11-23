@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { normalizePathname, ogLocale, renderAlternateLinks } from '../lib/seo.js';
 import { createT } from '../lib/i18n-server.js';
+import { alternatesFor, SITE_ORIGIN } from '../lib/i18n-pilot.js';
 
 interface Props {
     title?: string;
@@ -12,7 +13,7 @@ interface Props {
     alternates?: { hreflang: string; href: string }[];
 }
 
-const { lang = 'en', alternates = [] } = Astro.props;
+const { lang = 'en' } = Astro.props;
 const { t } = createT(lang);
 
 const {
@@ -23,7 +24,22 @@ const {
 } = Astro.props;
 
 const siteUrl = "https://poketypes.app";
-const canonicalURL = `${siteUrl}${canonicalPath ?? normalizePathname(Astro.url.pathname)}`;
+const pagePath = canonicalPath ?? normalizePathname(Astro.url.pathname);
+const canonicalURL = `${siteUrl}${pagePath}`;
+// hreflang only between pages that really exist in both languages (pilot pages); [] otherwise.
+const alternates = Astro.props.alternates ?? alternatesFor(pagePath);
+const otherLocale = ogLocale(lang === 'es' ? 'en' : 'es');
+const appUrl = lang === 'es' ? `${SITE_ORIGIN}/es` : `${SITE_ORIGIN}/`;
+// The site search action points at /pokemon/{name}, which only exists in English.
+const searchAction = lang === 'en' ? `      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://poketypes.app/pokemon/{search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      },
+` : '';
 const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
 ---
 
@@ -50,6 +66,7 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
     <meta property="og:description" content={description}>
     <meta property="og:image" content={finalImageUrl}>
     <meta property="og:locale" content={ogLocale(lang)}>
+    {alternates.length > 0 && <meta property="og:locale:alternate" content={otherLocale}>}
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image">
@@ -110,7 +127,7 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
       "@id": "https://poketypes.app/#webapp",
       "name": "PokeTypes",
       "alternateName": ${JSON.stringify(t('ld_app_alternate_name'))},
-      "url": "https://poketypes.app/",
+      "url": ${JSON.stringify(appUrl)},
       "description": ${JSON.stringify(t('ld_app_description'))},
       "applicationCategory": "GameApplication",
       "applicationSubCategory": "Strategy",
@@ -133,15 +150,7 @@ const finalImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
         ${JSON.stringify(t('ld_feature_7'))},
         ${JSON.stringify(t('ld_feature_8'))}
       ],
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://poketypes.app/pokemon/{search_term_string}"
-        },
-        "query-input": "required name=search_term_string"
-      },
-      "author": {
+${searchAction}      "author": {
         "@type": "Person",
         "name": "Xarli11",
         "url": "https://github.com/Xarli11"

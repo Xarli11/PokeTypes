@@ -8,17 +8,19 @@ import typeData from '../../data/type-data.json';
 import { calculateDefense, calculateOffense } from '../../lib/type-engine/index.js';
 import { createT } from '../../lib/i18n-server.js';
 import { renderDefenseGroups, renderOffenseGroups, renderTypePills } from '../../lib/type-render.js';
+import { fromTypeSlug, withLangPrefix } from '../../lib/i18n-routes.js';
 
 // A /tipo page for a combination that is already canonical (the route resolves
-// redirects and 404s). `canonicalSlug` is "fire-flying", in type chart order.
+// redirects and 404s). `canonicalSlug` is the slug of `lang` in type chart order:
+// "fire-flying" (en) or "fuego-volador" (es).
 interface Props {
     lang?: string;
     canonicalSlug: string;
 }
 const { lang = 'en', canonicalSlug } = Astro.props;
-const { t, h } = createT(lang);
+const { t, h, tType } = createT(lang);
 const { types, effectiveness, contrast } = typeData;
-const [t1, t2 = null, t3 = null] = canonicalSlug.split('-').map((s: string) => types.find(t => t.toLowerCase() === s)!);
+const [t1, t2 = null, t3 = null] = fromTypeSlug(canonicalSlug, lang)!;
 
 // ── Compute ───────────────────────────────────────────────────────────────────
 
@@ -26,16 +28,19 @@ const contrastMap = contrast as Record<string, string>;
 const def = calculateDefense(t1, t2, types, effectiveness, t3);
 const off = calculateOffense(t1, t2, types, effectiveness, t3);
 
-const defenseGroupsHtml = renderDefenseGroups(def, contrastMap, t);
-const offenseGroupsHtml = renderOffenseGroups(off, contrastMap, t);
-const selectedTypeHtml = renderTypePills([t1, t2, t3].filter(Boolean) as string[], contrastMap);
+const defenseGroupsHtml = renderDefenseGroups(def, contrastMap, t, tType);
+const offenseGroupsHtml = renderOffenseGroups(off, contrastMap, t, tType);
+const selectedTypeHtml = renderTypePills([t1, t2, t3].filter(Boolean) as string[], contrastMap, tType);
 
 // ── Meta ──────────────────────────────────────────────────────────────────────
 
-const typeName = [t1, t2, t3].filter(Boolean).join('/');
-const title = t('meta_type_title', { type: typeName });
-const description = t('meta_type_description', { type: typeName });
-const canonicalPath = `/tipo/${canonicalSlug}`;
+const typeNames = [t1, t2, t3].filter(Boolean) as string[];
+const typeName = typeNames.join('/'); // internal (English) names: the client translates them from data-type-name
+const displayName = typeNames.map(tType).join('/');
+const title = t('meta_type_title', { type: displayName });
+const description = t('meta_type_description', { type: displayName });
+const canonicalPath = withLangPrefix(`/tipo/${canonicalSlug}`, lang);
+const homePath = withLangPrefix('/', lang);
 const siteUrl = 'https://poketypes.app';
 
 const breadcrumbSchema = {
@@ -43,8 +48,8 @@ const breadcrumbSchema = {
     "@type": "BreadcrumbList",
     "@id": `${siteUrl}${canonicalPath}#breadcrumb`,
     "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "PokeTypes", "item": `${siteUrl}/` },
-        { "@type": "ListItem", "position": 2, "name": t('breadcrumb_type', { type: typeName }), "item": `${siteUrl}${canonicalPath}` }
+        { "@type": "ListItem", "position": 1, "name": "PokeTypes", "item": `${siteUrl}${homePath}` },
+        { "@type": "ListItem", "position": 2, "name": t('breadcrumb_type', { type: displayName }), "item": `${siteUrl}${canonicalPath}` }
     ]
 };
 
@@ -66,16 +71,15 @@ const webPageSchema = {
         <script type="application/ld+json" is:inline set:html={JSON.stringify(webPageSchema)} />
     </Fragment>
     <div class="max-w-7xl mx-auto relative">
-        <AppHeader contextLabel={typeName} lang={lang} />
+        <AppHeader contextLabel={displayName} lang={lang} />
 
         <main>
         <div id="view-simple" class="flex flex-col gap-5">
-            <!-- SSR in English to match this page's title/meta (see
-                 refreshUI() in main.js for the client-side language update
-                 on toggle — no hreflang/locale routing here, see docs). -->
-            <h1 id="tipo-h1" data-type-name={typeName} class="text-sm sm:text-base font-bold px-1" style="color: var(--text-muted)"><Fragment set:html={h('type_page_h1', { type: typeName })} /></h1>
+            <!-- Page language comes from the URL (/tipo/* English, /es/tipo/* Spanish); the client keeps the
+                 same language (see i18n.js) and refreshUI() re-translates this heading on a language change. -->
+            <h1 id="tipo-h1" data-type-name={typeName} class="text-sm sm:text-base font-bold px-1" style="color: var(--text-muted)"><Fragment set:html={h('type_page_h1', { type: displayName })} /></h1>
 
-            <ControlPanel lang={lang} />
+            <ControlPanel lang={lang} selectedTypes={typeNames} />
 
             <section id="pokemon-hero" class="panel !py-2 hidden"></section>
 
